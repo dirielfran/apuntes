@@ -1,0 +1,73 @@
+0001.00      h Decedit(',') Datedit(*DMY.) Option(*Nodebugio)                  
+0002.00      h Indent(' |')                                                    
+0003.00       *================================================================
+0004.00       * Propiedad : Banesco Banco Universal.                           
+0005.00       * Programa  : AT04CARTIA                                         
+0006.00       * Realizado : Jose R. Medina                                     
+0007.00       * Fecha     : 24/Mar/2017.                                       
+0008.00       * Aplicacion: At04 Credito                                       
+0009.00       * Función   : Busca Tasa de Interes Actual                       
+0010.00       *================================================================
+0011.00      F* Maestro para Cartera Dirigida                                  
+0012.00      F*deals     If   E           K DISK                               
+0013.00      F*Sif004hhhhIf   E           K DISK                               
+0014.00      D                                                                 
+0015.00      d*                                                                
+0016.00      dSw               S              3  0          
+0018.00      dTasa             S              9  6                             
+0019.00      d                                                                 
+0020.00      d                                                                 
+0021.00      c*****************************************************************
+0022.00      c* Rutina Principal                                               
+0023.00      c*****************************************************************
+0024.00                                                                        
+0025.00                                                                        
+0026.00      C     *ENTRY        PLIST                                         
+0027.00      C                   Parm                    Dia               2   
+0028.00      C                   Parm                    Mes               2   
+0029.00      C                   Parm                    Ano               4   
+0030.00      c*/Free                                                           
+0031.00      c/Exec Sql                                                        
+0032.00      c+ Declare C1 Cursor For                                          
+0033.00      c+ Select Deaacc as Credito, Dealrt as Tasa                       
+0034.00      c+ From siif0910.Deals Where Deaacc  In( 
+0035.00      c+ Select substring(Caracc,2,30) From B02trabajo.sif004hhhh                          
+0035.01      c+ Where cartic=0 and carest=1                                    
+0036.00      c+ And substring(Caracc,2,30) Not In(Select Traacc                
+0037.00      c+ From Siif0910.Trans Where Tracde ='RA'))                       
+0038.00                                                                        
+0039.00      c/End-exec                                                        
+0040.00      C/Exec Sql                                                        
+0041.00      C+ Open C1                                                        
+0042.00      C/End-Exec                                                        
+0043.00      C                                                                 
+0044.00      c*                  ExSr      Leer                                
+0045.00      c                                                                 
+0046.00      c                   Dow       SqlCod=0                            
+0047.00      C                   ExSr      Leer                                
+0048.00      c                   ExSr      Graba                               
+0049.00      C                   ExSr      Leer                                
+0050.00      c                   Enddo                                         
+0051.00      c                                                                
+0052.00      C/Exec Sql                                                        
+0053.00      C+ Close C1                                                       
+0054.00      c/End-exec                                                        
+0055.00      c                   Seton                                        lr
+0056.00      c                                                                 
+0057.00      c     leer          begsr                                         
+0058.00      C/Exec Sql                                                        
+0059.00      C+ Fetch C1 Into                                                  
+0060.00      C+  :Credito,:Tasa                                   
+0061.00      C/End-Exec                                                         
+0062.00      c                   Endsr                                          
+0063.00      c                                                                  
+0064.00      c     Graba         Begsr                                          
+0065.00      c                                                                  
+0066.00      c/Exec Sql                                                         
+0067.00      c+ Update B02trabajo/Sif004hhhh                                    
+0068.00      c+ Set CarTic=:Tasa                                                
+0069.00      c+ Where  Caracc=:credito                                  
+0070.00      c/End-Exec                                                         
+0071.00      c                                                                  
+0072.00      c                   Endsr                                          
+        ****************** Fin de datos ***************************************                                          

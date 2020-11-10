@@ -1,0 +1,371 @@
+GRUPO400
+
+Rpg Free
+
+
+
+****Update a uno o varios campos:
+ 
+
+update Rexpedi  %fields(SlclFade);
+
+update  Rexpedi                           
+      %Fields(SlTipFac: SlNumFac: SlFecFac); 
+
+
+
+****Chain a una tabla:
+ 
+
+Chain (FaAgeOri: FaAÑoDoc:          
+       FaExpedi: FaCorrel) RExpedi;
+
+
+
+****Setll por clave y sin ella
+ 
+
+setll (AÑoEur: FechaEur)  inchisto99;
+setll 1 inchisto5;
+   Lo normal sería hacer un Dow Not %EOF para que lea mientras no sea fin de 
+fichero, no obstante si queremos saber si existe un registro o no no podremos 
+usar un %Found porque siempre va a dar que lo encuentra. En este caso deberemos 
+poner un %Equal que será  ‘1’  si lo encuentra y ‘0’ si no lo encuentra.
+
+
+
+
+****Pasamos fecha(*eur) a un numerico de 8
+                   hnfecincx = %int(%Char(hnfecinc:*Eur0));   
+   Si quitamos %int lo pasamos a Char de 8.
+*Eur0 : Con el 0 final pasa una fecha ’05.01.2005’ a 05012005; sin el daría un 
+error porque pasaría 05.01.20 comiendose el final.
+
+Lo mismo pero en hora
+ 
+
+EVal      W_HorSit6 = %int(%Char(SlHorsit:*HMS0))
+
+
+
+****Comparar fecha *eur
+
+if hnfecinc <> (D'01.01.0001');
+
+
+
+
+****SubString
+           If  %subst(OrigenM:1:2) = '35' or
+               %subst(OrigenM:1:2) = '38';
+                  %subst(OrigenM:3:1) = ' ';
+           EndIf;
+
+
+
+****Definir y cargar un area de datos en una estructura
+D AgeDs           DS                  dtaara(Agencia)
+D  AgTodo                 1     33                   
+D  LdNombre               4     16                   
+D  LdPlaza                1      3      
+  Después tenemos que cargarla:
+     In  AgeDs;
+
+
+             
+**** Pasar String a numérico.
+  Numerico = %Int(String);
+
+
+
+****Pasar numérico a String.
+  String = %Editc(numerico:’X’);
+
+
+
+
+****Pasar date, time o numérico a carácter
+%char();
+Ej. FechaSys2 = %char(W_FechaSys);
+
+
+
+****Extraer fecha.
+Mes = %Subdt(FechaEur:*M);
+
+
+
+****Cargar fecha u hora del sistema en campo fecha u hora.
+LaFecEnv = %Date();
+LaHorEnv = %Time();
+
+
+
+****Extraer el año en un numerico de uno desde la fecha
+          V_aÑo = *Year;       ‘Recupera el año (dec 4,0)              
+
+
+****Extraigo el ultimo número  a un numérico
+V_AÑo1  = %int(%subst(%editc(V_aÑo:'X'):4:1));
+
+
+
+****Comprobar fecha:
+
+-Esto comprueba cuando se trata de un numérico
+Test(DE) *Eur WkFecFin;   **DE indica fecha  y la E no lo se
+  If %Error;           
+  Eval *in41 = *on;    
+  EndIf;               
+(DE) e exactamente  significa DATE y ERROR., es decir, chequea que sea fecha 
+y en su caso el error. Pero al parecer funciona. En lugar de *eur podemos poner 
+*ymd, *iso, etc.
+
+Si se trata de un campo tipo fecha :
+Test(E) WkFecFin;
+ Es decir, le quitamos el tipo (Date y *Eur) porque ya lo es.
+
+
+
+****Convierte a Fecha*Eur/*Iso  cualquier cosa    
+Eval HNHORAPE  = %Time(W_Horammss:*HMS);
+Eval HNFECRES  = %Date(W_FechaAlf:*Eur);
+
+
+
+Campo_Fecha= %Date(Numerico_de_8:*Eur/*Iso)   
+
+
+
+****Capturar longitud quitando los blancos
+W_Comien = (55-(%len(%trim(W_Rotulo)))                                            
+
+
+
+****Bucles For/EndFor y SELECT;
+ 
+
+ Len = %len(Cadena);
+
+For i = 1 to len;
+  C =%Subst(Cadena:1:1);
+     Select;
+           When C= ‘A’;…
+           When C = ‘B’….
+          . 
+          .
+          .
+          Other;
+   EndSL;
+EndFor;
+
+
+
+****Call/CallB/CallP
+Sólo se permite en Free el callP que sirve tanto para programas de servicio como para módulos 
+o programas. Ahora bien, hay que definir siempre una interfaz PR para cada módulo o programa.
+
+  Este PR lo defininimos con todos los parámetros de entrada que tenga definido el propio 
+procedimiento en su código. Si no tuviera PR por estar hecho en Rpg/400 pondremos la klist 
+del *entry.
+  Si no tuviera parametros de entrada, pondremos no obstante el nombre del programa con su PR 
+en este caso sin parámetros. Al hacer el CallP si no hay parámetros pondremos () sino dará error.
+ Además, y esto es importante, en la interfaz de definición (PR), cuando se trate de definiciones 
+de objetos Pgm y no modulos, deberemos poner la palabra reservada Extpgm(‘Nombre_de_Programa’) 
+para que lo vea. En caso de que se trate de módulos o de programas de servicio esto no será 
+necesario. Ver Salw13.
+Para Hacer un programa en free que tenga un parámetro de entrada y que sea llamado desde fuera 
+con un call (debe ser compilado como pgm –Op. 14-), deberemos poner un PR con la palabra reservada
+ExtPgm, su correspondiente PI y no hace falta definir el parámetro como variable fuera de estos 
+dos sitios. Llel26
+
+
+
+****Division y resto.
+Ojo porque esto sólo sirve para numeros sin posiciones decimales.
+
+Var = %Div(A:B)   
+Var = REM = %REM(A:B); 
+
+Si queremos decimales pondremos 
+ A = D/C; donde a puede definirse con decimales.
+
+
+
+****Sumar, Restar fechas.
+//*saco el día de la fecha               
+    W_dias   = %subdt(W_Fecsys:*D);      
+//*Resto dias a una fecha                
+    W_Fecsys = W_FecSys - %days(W_dias); 
+//*Sumo un día                           
+    W_Fecsys = W_FecSys + %days(1);      
+    W_fecDesde = W_FecSys;               
+//*Sumo  un mes a la fecha               
+    W_Fecsys = W_FecSys + %months(1);    
+    W_Fecsys = W_FecSys - %days(1);      
+    W_fecHasta = W_FecSys;  
+
+
+
+****Call QcmdExc
+    
+   Definimos un prototipo
+
+D QCmdExc         pr                  extpgm('QCMDEXC') 
+D    Cmd                       256a   const             
+D    CmdLen                     15p 5 const                        
+
+   Definimos la variable
+
+D Cmd             s            256                     
+
+  Evaluamos
+
+C                   eval      cmd = 'dsplib br549'      
+
+  Llamamos
+
+C                   callp     qcmdexc (cmd: %size(cmd)) 
+ 
+
+%dech(Nº:Precision entera:precision decimal)
+Transforma el dato numérico a la precisión de enteros y decimales indicada aplicando el redondeo.
+
+Redondeo y uso de Expansores
+Eval(H) RmMonCor = TaReembo / DiDivEur;
+
+Redondeo del resultado de una operación
+ 
+
+Campo è DEC(11,2)  ó (6p 2) normal o empaquetado
+RmMonCor = %dech((TaReembo / DiDivEur):11:2);
+ En este caso lo pasamos al numérico 11,2.
+
+Override en Free.
+FRmRemLle1 Uf A E           k Disk    UsrOpn            
+F                                                           Extfile(W_LibFilL)
+D  W_LibFilL      S             21    inz(*Blank)
+
+  W_LibFilL = 'GFIL' + W_Dest + '/RMREMLLE1';
+           Open    RmRemLle1;
+
+Editar una palabra
+Var =  %Editw(Base_Liquida:'          0.  ') 
+
+Concatenar dos numericos y poner el resultado en otro numérico.
+Prexpedi  (9,0); 
+Slexpe   (8,0);
+Slcorr  (1,0);
+
+ 
+
+Eval      PrExpedi = (Slexpe * 10 ) + SlCorr
+
+Return versus *inlr
+ 
+
+El return devuelve el control al programa llamador pero no libera recursos, mientras que el Lr ademas de finalizar el programa libera todos los recursos. Si terminaramos un programa autónomo con un Return deberíamos hacer un RCLRSC para que se liberen los recursos. Por esto lo normal es utilizar Return en modulos dentro de un pgm y Lr en el programa principal.
+
+De Hora a numérico de 4
+PrHorSit = %int(%Subst(%Char(SlHorsit:*HMS0):1:4));
+
+OVRDBF en Cl
+Si en un cl conviven programas modulares o de servicio con RPG tradicionales los ovr no funcionan correctamente porque se mezclan loa grupos de activación de manera que los programas no los ven. 
+            La solución consiste en poner el parámetro OVRSCOPE(*JOB) en lugar del que viene por defecto OVRSCOPE(*DFTGRPDFN) porque de esta manera el ámbito de los overrides es el del trabajo y no el de los grupos de activación.
+
+Definición de parametros I/O en Free
+En lugar de una Plist  definimos  prototipo e interfaz:
+
+Dllel26                  PR              ExtPgm(‘LLEL26’)
+D Par                                1
+
+Dllel26                  PI              
+D Par                                1
+
+    **No hace falta definir Par como variable aparte. La palabra clave sólo e usa si el programa va a ser un objeto programa pero no si va a ser un módulo.
+
+Monitorizar un error
+DError            S              5  0 Inz(0)
+
+ Write(E) Rpgm1;        
+  If %Error;           
+    Error = %Status;   
+  EndIf;              
+
+   En Error tendremos el codigo de error y según eso podremos actuar.
+  También podemos declara un grupo monitor con um manejo de excepción:
+
+ MONITOR
+              READ  FILE1;
+                 IF   NOT %EOF;
+                  Line = %SUBST(Line(i) :
+                     %SCAN('***': Line(i)) + 1);
+                 ENDIF;
+               ON-ERROR   1211
+               
+               ON-ERROR   *FILE
+ 
+               ON-ERROR   00100 : 00121
+ 
+               ON-ERROR
+                   ... handle all other errors
+ENDMON
+ 
+
+Editar un Numérico (sin ceros por delante)
+Campo_Alfa = %Editc(campoNumerico:’Z’);
+
+Trabajar con tablas o Arrays
+ Las tablas no pueden llamarse con un nombre que empice por TAB.
+
+ 
+
+Apuntes Sobre SQL
+
+Inner Join / Outer Join
+ 
+
+Inner Join: combina los registros de la tabla de la izq. con los de la derecha cuando se cumple la condición, por tanto es la interpretación normal y está incluido por defecto.
+
+Outer Join: Hace referencia a las excepciones. Tenemos 4 tipo básicos.
+            Left Outer Join : incluye los registros de la tabla de la izq. Que no están en la de la derecha y además todos los coincidentes.
+
+            Right Outer Join: incluye los registros de la tabla de la decha. que no están en la de la izq. y además todos los coincidentes.
+
+            Left Exception Join: Incluye sólo los registros de la izq. que no están en la decha.
+
+Right Exception Join: Incluye sólo los registros de la decha. que no están en la izq.
+   
+Ojo con la sintaxis, la forma sería:
+
+select liqsal1.hsexpe, liqsal.hsexpe 
+from  liqsal1 right exception join   liqsal
+on liqsal1.hsexpe = liqsal.hsexpe          
+and liqsal1.hscorr = liqsal.hscorr        
+
+Selección de los valores distintos de un campo y además conteo de los valores repetidos de ese mismo campo.
+Access:
+SELECT DISTINCT (Primitbl.N1), Count(Primitbl.N1) AS Repeticiones
+FROM Primitbl
+GROUP BY Primitbl.N1;
+
+Iseries:
+SELECT DISTINCT slexpe, count(slexpe)  from slexpedi1
+group by slexpe 
+
+******************************************
+https://community.toadworld.com/platforms/ibmdb2/w/wiki/7462.cursors-open-close-and-fetch
+
+
+******************************************
+SELECT LOTE, CTA_CONT, COUNT(*) AS Total,             
+   CASE                                               
+      WHEN GROUPING(LOTE)=0 AND GROUPING(CTA_CONT)=1  
+      Then 'Total Lote'                               
+      WHEN GROUPING(LOTE)=1 AND GROUPING(CTA_CONT)=0  
+      Then 'Total Cuenta'                             
+      WHEN GROUPING(LOTE)=1 AND GROUPING(CTA_CONT)=1  
+      Then 'Total General'                           
+   END AS TipoFila                                    
+FROM B02TRABAJO.AUEXTMAN1                             
+GROUP BY CUBE(LOTE,CTA_CONT)
