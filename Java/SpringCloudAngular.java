@@ -286,9 +286,7 @@ Seccion 3: Backend Eureka Server registrando Microservicios*********************
 			        "nombre": "ricardo",
 			        "apellido": "areiza",
 			        "email": "ricardo@Hotmail.com"
-			    }
-
-		
+			    }		
 21.- *****************************************************************Crear libreria common para servicio generico y Reutilizacio de codigo
 	1.- Desde sts se crea un new Spring Starter Project
 		1.1.- Se crea proyecto
@@ -422,4 +420,180 @@ Seccion 3: Backend Eureka Server registrando Microservicios*********************
 		//	}
 
 		}
+Seccion 4: Backend: Microservicio cursos***************************************************************************************************
+24.- ******************************************************************************************************Creacion de microservicio cursos
+	1.- Desde sts se crea un new Spring Starter Project
+		1.1.- Se crea proyecto
+				name 			 --> microservicios-cursos
+				type         -->Maven
+				Packaging    -->jar
+				Java version --> 8
+				Group 		 --> com.alfonso.app.cursos
+				artifact	 --> microservicios-cursos
+				package      --> com.alfonso.app.cursos
 
+				next-->
+
+				Spring Boot Project 		--> 2.3.4
+				Seleccionas dependencias	-->	Spring Boot DeevTool
+											--> Spring Data JPA
+											--> MySQL Driver
+											--> Spring Web
+											--> Eureka Discovery Client
+	2.- Se agrega en el po.xml dependencia de proyecto microservicios-commons
+		<dependency>
+			<groupId>com.alfonso.commons</groupId>
+			<artifactId>microservicios-commons</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	3.- Se modifica application.properties, se le añaden las configuraciones
+		#Config eureka como cliente
+		spring.application.name=microservicios-cursos
+		#se habilita puerto de forma ramdom, asigna puerto automaticamente
+		server.port=${PORT:0}
+		#Se configura intancia id en eureka de forma random
+		eureka.instance.instance-id=${spring.application.name}:${random.value}
+		#ruta de eureka
+		eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+		#Configuracion del datasource
+		#spring.datasource.url=jdbc:mysql://localhost/db_springboot_backend
+		spring.datasource.url=jdbc:mysql://localhost:3306/db_microservicios?useSSL=false&serverTimezone=America/Argentina/Buenos_Aires&allowPublicKeyRetrieval=true
+		spring.datasource.username=alfonso
+		spring.datasource.password=danger120-
+		spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+		#Se configura el dialecto
+		#InnoDBDialec soporte a integridad referencial
+		spring.jpa.database-platform=org.hibernate.dialect.MySQL57Dialect
+		#Configuracion para que las tables se creen de forma automatica
+		#a partir de las clases entity
+		spring.jpa.generate-ddl=true
+		#Configuracion para mostrar las consultas nativas SQL
+		logging.level.org.hibernate.SQL=debug
+	4.- Se modifica MicroserviciosCursosApplication, se le añade anotacion @EnableEurekaClient
+		@EnableEurekaClient
+		@SpringBootApplication
+		public class MicroserviciosCursosApplication {
+
+			public static void main(String[] args) {
+				SpringApplication.run(MicroserviciosCursosApplication.class, args);
+			}
+
+		}
+	5.- Se crean dos paquetes para la entidad
+		com.alfonso.app.cursos.models.entity
+		com.alfonso.app.cursos.models.repository
+	6.- Se crea entidad Curso en el paquete com.alfonso.app.cursos.models.entity
+		@Entity
+		@Table(name = "cursos")
+		public class Curso {
+			
+			@Id
+			@GeneratedValue(strategy = GenerationType.IDENTITY)
+			private Long id;
+			
+			private String nombre;
+			
+			@Column(name = "create_at")
+			@Temporal(TemporalType.TIMESTAMP)
+			private Date createAt;
+			
+			@PrePersist
+			private void prePersist() {
+				this.createAt = new Date();
+			}
+		}
+	7.- Se crea repositorio ICursoRepository de la clase Curso, en el paquete com.alfonso.app.cursos.models.repository
+		@Repository
+		public interface ICursoRepository extends CrudRepository<Curso, Long> {
+
+		}
+25.- ************************************************************************************Implementacion del componente Service y Controller
+	1.- Implementacion de componente services
+		1.1.- Se crea paquete com.alfonso.app.cursos.services
+		1.2.- Se crea Interface ICursoService, extiende de ICommonService
+			public interface ICursoService extends ICommonService<Curso> {
+
+			}
+		1.3.- Se crea la clase de servicio CursoServiceImpl.java, extiende de CommonServiceImpl e implementa ICursoService
+			@Service
+			public class CursoServiceImpl extends CommonServiceImpl<Curso, ICursoRepository> implements ICursoService {
+
+			}
+	2.- Implementacion de componente controller
+		2.1.- Se crea paquete com.alfonso.app.cursos.controller
+		2.2.- Se crea clase CursoController, extiende de CommonController y se le agrega unicamente el metodo put para modificar,
+		todos los otros metodos los hereda de CommonController.
+			@RestController
+			public class CursoController extends CommonController<Curso, ICursoService> {
+				
+				@PutMapping("/{id}")
+				public ResponseEntity<?> editarCurso(@RequestBody Curso curso, @PathVariable Long id){
+					Optional<Curso> opt = this.entityService.BuscarXId(id);
+					if(!opt.isPresent()) {
+						return ResponseEntity.notFound().build();
+					}
+					Curso cursodb = opt.get();
+					cursodb.setNombre(curso.getNombre());
+					return ResponseEntity.status(HttpStatus.CREATED).body(this.entityService.guardar(cursodb));
+				}
+			}
+26.- ****************************************************************************Creacion de libreria commons para reutilizar entity Alumno
+	1.- Se configura ruta de acceso para microservicios-cursos, en el microservicios-zuul
+		1.1.- Se modifica application.properties en microservicios-zuul, se agrega la ruta al microservicios-usuarios
+			#Se crea la ruta al microservicio usuario
+			zuul.routes.cursos.service-id=microservicios-cursos
+			zuul.routes.cursos.path=/api/cursos/**   -->*/
+	2.- Se crea proyecto commons-alumnos
+
+		2.1.- Desde sts se crea un new Spring Starter Project
+			2.1.1.- Se crea proyecto
+					name 			 --> commons-alumnos
+					type         -->Maven
+					Packaging    -->jar
+					Java version --> 8
+					Group 		 --> com.alfonso.commons.alumnos
+					artifact	 --> commons-alumnos
+					package      --> com.alfonso.commons.alumnos
+
+					next-->
+
+					Spring Boot Project 		--> 2.3.4
+					Seleccionas dependencias	--> Spring Data JPA
+	3.- Se elimina la clase principal
+	4.- Se modifica el pom.xml, se elimina el plugins de Maven
+		<!-- 	<build> -->
+		<!-- 		<plugins> -->
+		<!-- 			<plugin> -->
+		<!-- 				<groupId>org.springframework.boot</groupId> -->
+		<!-- 				<artifactId>spring-boot-maven-plugin</artifactId> -->
+		<!-- 			</plugin> -->
+		<!-- 		</plugins> -->
+		<!-- 	</build> -->
+	5.- Se mueve la clase alumno del proyecto microservicios-usuarios a commons-alumnos
+		5.1.- Se crea paquete com.alfonso.commons.alumnos.entity
+		5.2.- Se mueve la clase alumno de proyecto
+		5.3.- Se elimina el paquete com.alfonso.app.usuarios.entity del proyecto
+		5.4.- Se agrega dependencia de commons-alumnos en microservicios-usuarios, se modifica el pom.xml de microservicios-usuarios
+			<dependency>
+				<groupId>com.alfonso.commons.alumnos</groupId>
+				<artifactId>commons-alumnos</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+		5.5.- Se modifica la clase MicroserviciosUsuariosApplication, se configura scan de paquete de entidad
+			//Se agrega los paquetes para el escaneo de la entidad
+			@EntityScan({"com.alfonso.commons.alumnos.entity"})
+			public class MicroserviciosUsuariosApplication {
+		5.6.- Se agrega dependencia de commons-alumnos en microservicios-cursos, se modifica el pom.xml de microservicios-cursos
+			<dependency>
+				<groupId>com.alfonso.commons.alumnos</groupId>
+				<artifactId>commons-alumnos</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+		5.7.- Se modifica la clase MicroserviciosCursosApplication, se configura scan de paquete de entidad
+			//Se agrega los paquetes para el escaneo de la entidad
+			@EntityScan({"com.alfonso.commons.alumnos.entity",
+							"com.alfonso.app.cursos.models.entity"})
+			public class MicroserviciosCursosApplication {
+
+												
