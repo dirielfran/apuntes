@@ -3,10 +3,12 @@ ng new [nombre aplicativo] 			--> Creacion de aplicativo angular
 ng generate class footer.component  --> crea clase
 ng serve -o                         --> corre en el servidor la aplicacion
 ng generate component directivas    --> crea un componente 
+ng g c components/heroeTarjeta --skipTests=true  --> Creacion de componente sin el archivo de prueba
 ng g c clientes/form --flat 		--> Crea componente con el -- flat se le indica que no cree folder
 ng generate service cliente         --> Se crea clase de servicio
 ng g m miModulo						--> Genera un modulo propio
 ng g g usuarios/guard/auth  		--> genera guard en ruta especificada
+ng g p pipes/noimage				--> Creacion de pipe
 guard 								--> Los Guard son interceptores que sirven para controlar el acceso a las rutas
 .pipe								--> Los pipes son una herramienta de Angular que nos permite transformar visualmente la información,
 										por ejemplo, cambiar un texto a mayúsculas o minúsculas, o darle formato de fecha y hora.
@@ -6392,21 +6394,21 @@ Configuracion del contextPath String Boot***************************************
 		server.servlet.contextPath=/servicios
 *************************************************************************************************************************************
 Chorcuts Visualcode******************************************************************************************************************
-	Ctrl+P. Este te permite navegar a cualquier archivo del proyecto.
-	Ctrl+,. Permite editar la configuración de Visual Studio Code.
-	Ctrl+Mayúsculas+Tab. Te permite cambiar entre los diferentes archivos abiertos.
-	Ctrl+Mayúsculas+P. Abre la paleta de comandos
-	Ctrl+Mayúsculas+O. Para ir a una propiedad, función o método del archivo abierto.
-	Ctrl+G. Para ir a una determinada línea del archivo.
-	Ctrl+AvancePágina. Te mueve al editor de la derecha.
-	Ctrl+RetrocesoPágina. Vas al editor de la izquierda.
-	Ctrl+1. Te mueve al editor que esté mas a la izquierda.
-	Ctrl+2. Vas al editor central.
-	Ctrl+3. Te mueve al editor que esté mas a la derecha.
-	Ctrl+W. Cierra el editor activo.
-	Ctrl+K W. En este caso, cierra todos los editores del grupo.
-	Ctrl+K Ctrl+W. Cierra todos los editores.
-	Ctrl+K Z. Activa el modo zen. El modo zen te permite centrarte en el código en el que estás trabajando. 
+	Ctrl+P. 							Este te permite navegar a cualquier archivo del proyecto.
+	Ctrl+,. 							Permite editar la configuración de Visual Studio Code.
+	Ctrl+Mayúsculas+Tab. 				Te permite cambiar entre los diferentes archivos abiertos.
+	Ctrl+Mayúsculas+P. 					Abre la paleta de comandos
+	Ctrl+Mayúsculas+O. 					Para ir a una propiedad, función o método del archivo abierto.
+	Ctrl+G. 							Para ir a una determinada línea del archivo.
+	Ctrl+AvancePágina. 					Te mueve al editor de la derecha.
+	Ctrl+RetrocesoPágina. 				Vas al editor de la izquierda.
+	Ctrl+1. 							Te mueve al editor que esté mas a la izquierda.
+	Ctrl+2. 							Vas al editor central.
+	Ctrl+3. 							Te mueve al editor que esté mas a la derecha.
+	Ctrl+W. 							Cierra el editor activo.
+	Ctrl+K W. 							En este caso, cierra todos los editores del grupo.
+	Ctrl+K Ctrl+W. 						Cierra todos los editores.
+	Ctrl+K Z. 							Activa el modo zen. El modo zen te permite centrarte en el código en el que estás trabajando. 
 	Para ello, oculta toda la interfaz gráfica excepto el propio editor. Es decir, oculta la barra de actividad, 
 	la barra de estado, la barra lateral y el panel. Además activa el modo de pantalla completa. Para desactivar 
 	el modo zen, tienes que escapar dos veces consecutivas.
@@ -6431,6 +6433,7 @@ Chorcuts Visualcode*************************************************************
 	ctrl+w 									--> cierra la pagina actual
 	ctrl+k ctrl+w 							--> cierra todas las ventanas abiertas
 	ctrl+shift+t 							--> reabre la ultima ventana
+	ctrl + alt flecha						--> selecciona hacia abajo o hacia arriba
 	***Multicursor y edicion rapida	 
 *************************************************************************************************************************************
 Base de Datos creacion de tablas*****************************************************************************************************
@@ -6621,43 +6624,3 @@ Convertir a json o string con la libreria JSON**********************************
 
 
    1. *crear cuenta*
-POST-->localhost:8080/apicc/cuentacorriente
-{
-    "numero": 888888888,
-    "moneda": "Peso",
-    "saldo": 0,
-    "personaf": 4
-
-}
-
-   2. *eliminar cuenta*
-DELETE --> localhost:8080/apicc/cuentacorriente/5
-
-   3. *listar cuentas*
-GET --> localhost:8080/apicc/cuentacorriente
-GET --> localhost:8080/apicc/cuentacorriente/0
-
-   4. *agregar movimiento*
-localhost:8080/apim/movimiento
-{
-    "fecha": "2020-11-01",
-    "tipo": "Debito",
-    "descripcion": "Prueba debito",
-    "importe":100,
-    "cuentacorriente":{
-        "id": 3
-    }
-}
-
- 	5. *listar movimientos x cuenta* (ordenados de forma decreciente, por fecha)
-localhost:8080/apim/moviminetoxcuenta/3
-
-*token
-POST --> http://localhost:8080/oauth/token
-Authorization
-username = angularapp
-password=12345
-Body
-username = admin
-password= 12345
-grant_type = password
