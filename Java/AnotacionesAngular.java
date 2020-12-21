@@ -1469,7 +1469,7 @@ Seccion 6: Aplicacion #6 spotiApp***********************************************
 	2.- Se copia el contenido de home.components.html en tarjetas.components.html y se realizan alguna modificaciones, para que recorra
 	la propiedad items
 		<div class="card-columns mt-5">
-		    <div class="card" *ngFor="let item of items">
+		    <div class="card putero" *ngFor="let item of items">
 		        <img [src]="item.images | noimage" class="card-img-top" alt="...">
 		        <div class="card-body">
 		            <h5 class="card-title">{{item.name}}</h5>
@@ -1545,6 +1545,415 @@ Seccion 6: Aplicacion #6 spotiApp***********************************************
 		        <app-tarjetas [items]="artistas" *ngIf="loading"></app-tarjetas>
 		    </div>
 		</div>
+105.- **********************************************************************Pagina de artista, nueva ruta, parametro por url y servicio
+	1.- Se modifica app.routes.ts, se crea una ruta al componente artists
+		1.1.- Se importa el componente
+			import { ArtistaComponent } from './components/artista/artista.component';
+		1.2.- Se crea la rura 
+			{ path: 'artist/:id', component: ArtistaComponent}, 
+	2.- se modifica tarjetas.compoents.ts, se crea metodo que recupera el id del artista y redirecciona para mostrar el detalle
+		verDetalle( item: any){
+		    console.log(item);
+		    let idArtista:string;
+		    if( item.type === 'artist'){
+		      idArtista = item.id;
+		    }else{
+		      idArtista = item.artists[0].id;
+		    }
+		    console.log(idArtista);
+		  }
+		  2.1.- Se importa objeto Router 
+		  	import { Router } from '@angular/router';
+		  2.2.- Se realiza injeccion de dependencia de Router 
+		  	constructor( private router: Router) { }
+		  2.3.- Se modifica el metodo verDetalle(), se le agrega redireccion al modulo artista
+		  	this.router.navigate(['/artist', idArtista]);
+	3.- Se modifica tarjetas.components.html, se agrega evento click
+		<div class="card puntero" (click)="verDetalle( item )" *ngFor="let item of items">
+	4.- Se modifica artista.compoenents.ts, se añaden cambios para recuperar parametros por url
+		4.1.- Se importa obj ActivatedRoute
+			import { ActivatedRoute } from '@angular/router';
+		4.2.- Se modifica el constructor para recuperar el parametro
+			 constructor( private activatedRoute: ActivatedRoute ) {
+			      this.activatedRoute.params.subscribe( params => {
+			        console.log(params);
+			      });
+			   }
+106.- *****************************************************************************************************Renderizar y obtener artista
+	1.- Se modifica artista.components.ts
+		1.1.- Se agrega propiedad --> artista:any;
+		1.2.- Se crea metodo getArtista(), para que recupere el artista de la clase de servicio
+			getArtista(id:string){
+			    this.spotifyService.getArtista(id).subscribe( artista =>{
+			      this.artista = artista;
+			    });
+			  }
+		1.3.- Se modifica el constructo llama al metodo getArtista() y le pasa el id recuperado
+			  constructor( private activatedRoute: ActivatedRoute,
+                private spotifyService: SpotifyService ) {
+			      this.activatedRoute.params.subscribe( params => {
+			        this.getArtista(params['id']);
+			      });
+			   }
+		1.4.- Se crea propiedad para el loading compoenent --> loading: boolean;
+			1.4.1.- Se modifica el metodo getArtista(), para que maneje el loading
+				getArtista(id:string){
+				    this.loading = true;
+				    this.spotifyService.getArtista(id).subscribe( artista => {
+				      this.artista = artista;
+				      this.loading = false;
+				    });
+				  }
+	2.- Se modifica artista.component.html, se renderiza artista
+		<app-loading *ngIf="loading"></app-loading>
+		<div class="row" *ngIf="!loading">
+		    <div class="col-2">
+		        <img [src]="artista.images | noimage" alt="" class="img-circle" style="height: 150px; width: 150px;">
+		    </div>
+		    <div class="col">
+		        <h3>{{ artista.name }}</h3>
+
+		        <p>
+		            <a [href]="artista.external_urls.spotify" target="_blank">
+		            Ir a la pagina del Artista
+		          </a>
+		        </p>
+		    </div>
+		    <div class="col-4 text-right">
+		        <button routerLink="/serch" class="btn btn-outline-primary">
+		        Regresar
+		      </button>
+		    </div>
+		</div>
+107.- **************************************************************************************************************Servicio Top-Tracks
+	1.- se modifica la clase de sercicio spotify.service.ts, se agrega metodo getTopTrack()
+		  getTopTrack(id:string){
+		    return this.getQuery(`artists/${id}/top-tracks?market=us`).pipe(
+		      map( data => data['tracks'])
+		    );
+		  }
+	2.- Se modifica artista.components.ts, se crea metodo que obtiene el toptrack de la clase de servicio y se llama en el constructor
+		  getTopTrack( id: string){
+		    this.spotifyService.getTopTrack( id ).subscribe( topTrack => {
+		      console.log(topTrack);
+		      this.topTracks = topTrack;
+		    });
+		  }
+		2.1.- Se modifica el constructor, se llemam al metodo creado
+		 	  constructor( private activatedRoute: ActivatedRoute,
+                private spotifyService: SpotifyService ) {
+			      this.activatedRoute.params.subscribe( params => {
+			        this.getArtista(params['id']);
+			        this.getTopTrack(params['id']);
+			      });
+			   }
+		2.2.- Se crea propiedad  -->  topTracks: any[] = [];
+		2.3.- Se modifica artistas.components.ts 
+			<div class="row m-5">
+			    <div class="col">
+			        <table class="table">
+			            <thead>
+			                <tr>
+			                    <th>Foto</th>
+			                    <th>Album</th>
+			                    <th>Cancion</th>
+			                    <th>Vista Previa</th>
+			                </tr>
+			            </thead>
+			            <tbody>
+			                <tr *ngFor="let item of topTracks">
+			                    <td><img [src]="item.album.images | noimage" alt="" class="img-thumb" style="height: 150px; width: 150px;"></td>
+			                    <td>{{item.album.name}}</td>
+			                    <td>{{item.name}}</td>
+			                    <td>
+			                        <audio *ngIf="item.preview_url" [src]="item.preview_url" controls></audio><span *ngIf="!item.preview_url" class="badge badge-primary">Vista previa no Disponible</span>
+			                    </td>
+			                </tr>
+			            </tbody>
+			        </table>
+			    </div>
+			</div>
+108.- ****************************************************************************************************************witget de spotify
+	1.- Se ingresa a los widgets de spotify
+		https://developer.spotify.com/documentation/widgets/generate/embed/
+	2.- Se copia iframe y se le agrega a artistas.components.html
+		<iframe [src]="item.uri | domseguro" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+    3.- Se descargan los recursos de la seccion y pipes, se copia domseguro.pipe.ts y se agrega en la carpeta de pipes del proyecto
+    	 transform( value: string ): any {
+		    const url = 'https://open.spotify.com/embed?uri=';
+		    return this.domSanitizer.bypassSecurityTrustResourceUrl( url + value );
+		  }
+    4.- Se modifica app.module.ts, se configura el pipe domseguro.pipe.ts
+    	4.1.- Se importa 
+    		import { DomseguroPipe } from './pipes/domseguro.pipe';
+    	4.2.- Se agrega al @ngModule
+    		@NgModule({
+			  declarations: [
+			    AppComponent,
+			    HomeComponent,
+			    SearchComponent,
+			    ArtistaComponent,
+			    NavbarComponent,
+			    NoimagePipe,
+			    DomseguroPipe,
+			    TarjetasComponent,
+			    LoadingComponent
+			  ],               
+109.- ***********************************************************************************************Manejo de errores de un observable
+	1.- Se modifica home.components.ts, se agrega manejo de eroores en el observable
+		1.1.- Se crea propiedad boolean para saber si hay o no un error y una propiedad para almacenar el mensaje
+			error: boolean;
+  			mensaje: string;
+  		1.2.- Se modifica el constructor para el manejo del error
+  			 constructor( private httpClient: HttpClient,
+                private spotifyService: SpotifyService) {
+			    this.loading = true;
+			    this.error = false;
+
+			    this.spotifyService.getNewRelease().subscribe( (data: any) => {
+			      this.nuevasCanciones = data;
+			      console.log(this.nuevasCanciones);
+			      this.loading = false;
+			    }, (errorService) => {
+			      this.loading = false;
+			      this.error = true;
+			      this.mensaje = errorService.error.error.message;
+			    });
+
+			  }
+	2.- Se genera componente para despliegue de mensajes de error
+		ng g c components/shared/msgerror --skipTests=true -is
+		2.1.- Se modifica msgerror.components.ts, se crea propiedad para almacenar el error
+			2.1.1.- Se importa Input
+				import { Component, OnInit, Input} from '@angular/core';
+			2.1.2.- Se crea propiedad
+				@Input() mensaje: string;
+		2.2.- Se modifica msgerror.components.html
+			<div class="alert alert-danger animated fadeIn">
+			    <h3>Error:</h3>
+			    <p>{{mensaje}}</p>
+			</div>
+	3.- Se modifica home.components.html, se le agrega el selector y se le mpasa el mensaje
+		<app-msgerror [mensaje]="mensaje" *ngIf="error"></app-msgerror>
+	4.- Se modifica search.compoenets
+		4.1.- Se modifica search.components.ts
+			4.1.1.- Se crean propiedades
+			  error: boolean;
+			  mensaje: string;
+			4.1.2.- Se modifica el metodo obtenerArtista(), para que administre el mensaje de error del observable
+				  obtenerArtista(term: string){
+				    this.loading = true;
+				    this.error = false;
+				    this.spotifyService.getArtistas(term).subscribe( (data:any) => {
+				      this.artistas = data;
+				      this.loading = false;
+				    },(errorServer) => {
+				      this.loading = false;
+				      this.error = true;
+				      this.mensaje = errorServer.error.error.message;
+				    });
+				  }
+		4.2.- Se modifica search.components.html, se le agrega componente y se le pasa el mensaje
+			<app-msgerror [mensaje]="mensaje" *ngIf="error"></app-msgerror>
+Seccion 8: Componentes, Directivas de atributos y ciclo de vida************************************************************************
+139.- *************************************************************************************************Creacion de proyecto Miscelaneos
+	1.- Se descarga de los recursos font-awesome-4.7.0
+	2.- Se descargan las librerias bootstrap, jquery, tether
+	3.- Se crean carpetas en assets b4,jquery,tether, se copia la carpeta font-awesome-4.7.0
+	4.- Se incluye en b4 la carpeta css y js
+	5.- Se incluye en la carpeta jquery --> jquery.slim.js
+	6.- Se incluye en la carpeta tether --> tether.min.js
+	7.- Se modifica angular.json 
+		"styles": [
+              "src/styles.css",
+              "src/assets/b4/css/bootstrap.min.css",
+              "src/assets/font-awesome-4.7.0/css/font-awesome.min.css"
+            ],
+            "scripts": [
+              "src/assets/jquery/jquery.slim.js",
+              "src/assets/tether/tether.min.js",
+              "src/assets/b4/js/bootstrap.min.js"
+            ]
+140.- *************************************************************************************ngStyle y su uso con directivas de atributos
+	1.- Se modifica style.css, crea clase para el componente 
+		.main-container {
+		    margin-top: 40px;
+		}
+	2.- Se modifica app.components.html
+		<div class="container main-container">
+		    <h1>Demos <span>Angular</span></h1>
+		    <hr>
+		    <app-ng-style></app-ng-style>
+		</div>
+
+	3.- Se crea componente, que incluya el template y el style --> ng g c components/ngStyle -it -is
+	4.- Se modifica ng-style.components.ts
+		@Component({
+			  selector: 'app-ng-style',
+			  template: `
+			    <p  [style.fontSize.px]="size">
+			      Esta es una etiqueta
+			    </p>
+			     <button class="btn btn-outline-primary" (click)="size = size + 5">
+			       <i class="fa fa-plus"></i>
+			     </button>
+			     <button class="btn btn-outline-primary" (click)="size = size - 5">
+			       <i class="fa fa-minus"></i>
+			     </button>
+			  `,
+			  styles: [
+			  ]
+			})
+		4.1.- Se agrega propiedad --> size: number = 30;
+141.- *********************************************************************************************Aplicando style a un solo componente
+	1.- Se crea un componente --> ng g c components/css -it -is
+	2.- Se modifica css.components.ts, se agrega styles
+		@Component({
+			  selector: 'app-css',
+			  template: `
+			    <p>
+			      css works!
+			    </p>
+			  `,
+			  styles: [`
+			    p{
+			      color: red;
+			      font-size: 20px
+			    }
+			    `]
+			})
+	3.- Se modifica app.compoents.html, se le agrega selector y se le agrega parrafo
+		<div class="container main-container">
+		    <h1>Demos <span>Angular</span></h1>
+		    <hr>
+		    <!-- <app-ng-style></app-ng-style> -->
+		    <app-css></app-css>
+		    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos corrupti, ea impedit quia nesciunt sapiente, reiciendis iusto perspiciatis quidem, est incidunt modi quibusdam architecto quod aperiam esse velit commodi. Facilis.</p>
+		</div>
+	4.- Se le añade style al app.components.css
+		p {
+		    color: blue !important
+		}
+	5.- Se modifica style.css
+		p {
+		    color: green !important
+		}
+142.- ****************************************************************************ngClass, se añaden clases de estilos a elementos html
+	1.- Se crea componente --> ng g c components/clases -is
+	2.- Se modifica clases.components.ts, se crean propiedades para generar el estilos
+		  alerta = 'alert-danger';
+		  // utilizando obj
+		  propiedades = {
+		    danger: true
+		  }
+	3.- se modifica clases.components.html
+		<div [ngClass]="alerta" class="alert" role="alert">
+		    A simple primary alert—check it out!
+		</div>
+		<button class="btn btn-outline-success" (click)="alerta = 'alert-success'">Verde</button>
+		<button class="btn btn-outline-primary" (click)="alerta = 'alert-primary'">Azul</button>
+		<br><br>
+
+		<p [ngClass]="{'text-danger': propiedades.danger, 'text-info': !propiedades.danger}">
+		    Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet ipsum beatae odit quos! Aut nesciunt culpa consectetur non obcaecati, vel eius quasi ducimus accusamus, laudantium reiciendis cupiditate commodi ex at!
+		</p>
+
+		<button class="btn" [ngClass]="{'btn-danger': propiedades.danger, 'btn-info': !propiedades.danger}" (click)="propiedades.danger = !propiedades.danger">Color</button>
+143.- ****************************************************************************Usando procesos asincronos con indicadores de usuario
+	1.- Se modifica clases.components.ts, se agrega propiedad y metodo
+		loading = false;
+		ejecutaProceso(): void{
+		   this.loading = true;
+		   setTimeout( () => { this.loading = false; }, 3000);
+		  }
+	2.- Se modifica clases.components.html
+		<br><br>
+
+		<h3>Proceso asincrono</h3>
+		<button class="btn btn-primary" (click)="ejecutaProceso()" [disabled]="loading">
+		  <i [ngClass]="{'fa-refresh fa-spin': loading, 'fa-hdd-o':!loading}"  class="fa"></i>
+		  <span *ngIf="!loading">Guardar</span>
+		  <span *ngIf="loading">Esperar</span>
+		</button>
+144.- ********************************************************************************************************Directivas Personalizadas
+	1.- Se crea directiva --> ng g d directivas/resaltado
+	2.- Se modifica app.components.html
+		 <hr> -->
+	    <!-- <h2 appResaltado>Resaltado</h2> -->
+	    <h2 [appResaltado]="'blue'">Resaltado</h2>
+	3.- Se modifica resaltado.directive.ts
+		import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+
+		@Directive({
+		  selector: '[appResaltado]'
+		})
+		export class ResaltadoDirective {
+
+		  @Input("appResaltado") resaltado:string;
+
+		  constructor( private elem: ElementRef) {
+		    //Se cambia la propiedad del elemento
+		    //elem.nativeElement.style.backgroundColor = "yellow";
+
+		  }
+
+		  //Se escucha el evento y se acciona el cambio de la propiedad
+		  @HostListener('mouseenter') mouseEntro(){
+		    //this.elem.nativeElement.style.backgroundColor = "yellow";
+		    this.resaltar('blue');
+		  }
+		  @HostListener('mouseleave') mouseSale(){
+		    this.elem.nativeElement.style.backgroundColor = null;
+		    this.resaltar('green');
+		  }
+
+		  //Metodo que cambia la propiedad del elemento 
+		  private resaltar( color:string = 'yellow'){
+		    this.elem.nativeElement.style.backgroundColor = color;
+		  }
+		}
+145.- ******************************************************************************ngSwitch - multiples opciones con una sola decision
+	1.- Se crea un componente --> ng g c components/ngSwitch -is
+	2.- Se modifica app.components.html
+		   <app-ng-switch></app-ng-switch> 
+	3.- Se modifica ng-switch.components.ts, se crea propiedades
+		  alerta:string = 'danger';
+ 		 lista: string[] = ['danger','success','warning','secundary','primary']
+ 	4.- Se modifica ng-switch.components.ts
+ 		<select name="miselect" [(ngModel)]="alerta" class="form-select">
+		    <option value="0" selected>Seleccione una opcion</option>
+		    <option *ngFor="let item of lista">{{item}}</option>
+		</select>
+		<hr>
+		<div [ngSwitch]="alerta">
+		    <div *ngSwitchCase="'primary'" class="alert alert-primary" role="alert">
+		        A simple primary alert—check it out!
+		    </div>
+		    <div *ngSwitchCase="'secundary'" class="alert alert-secondary" role="alert">
+		        A simple secondary alert—check it out!
+		    </div>
+		    <div *ngSwitchCase="'success'" class="alert alert-success" role="alert">
+		        A simple success alert—check it out!
+		    </div>
+		    <div *ngSwitchCase="'danger'" class="alert alert-danger" role="alert">
+		        A simple danger alert—check it out!
+		    </div>
+		    <div *ngSwitchCase="'warning'" class="alert alert-warning" role="alert">
+		        A simple warning alert—check it out!
+		    </div>
+		</div>
+146.- 
+
+
+
+kioscoApp******************************************************************************************************************************
+	creacion de log
+	mensaje de error al eliminar inventario
+	manejo de excepcion en caso de intentar facturar un producto sin existencia
+	icluir iconos
+	colocar iconos a todos los botones
+***************************************************************************************************************************************
+
 
 
 
@@ -1552,17 +1961,95 @@ Seccion 6: Aplicacion #6 spotiApp***********************************************
 
 
 Complementarios*****************************************************************************************************************
-pipe: nos sirve para cambiar data
+	pipe: nos sirve para cambiar data
+	------------------------------------------------------------------------------------------------------------------------
+	Directivas**************************************************************************************************************
+		Las Directivas extienden la funcionalidad del HTML usando para ello una nueva sintaxis. Con ella podemos usar lógica 
+		que será ejecutada en el DOM (Document Object Model).
+		Cada Directiva que usamos tiene un nombre, y determina donde puede ser usada, sea en un elemento, atributo, 
+		componente o clase.
+		
+		Se dividen en tres tipos diferentes:
+			Directivas de Atributo
+				Alteran la apariencia o comportamiento de un elemento del DOM y son usados como atributos de los elementos.
+					Entre la directivas de atributo, encontramos:
+						ngModel: Implementa binding
+						ngClass: permite añadir/eliminar varias clases
+						ngStyle: permite asignar estilos inline
+			Directivas de estructurales
+				Alteran la estructura del DOM, agregando, eliminando y manipulando los elementos host a los que están unidos.
+				En las directivas estructurales podemos encontrar las siguientes:
+					*ngIf: Nos permite incluir condicionales de lógica en nuestro código
+					*ngFor: Permite ejecutar bucles, los bucles son los que conocemos en lógica de programación como: 
+						for, while, foreach, etc.
+					ngSwitch: esta directiva es similar al *ngIf, y es como el switch en lógica de programación. 
+						En esta directiva se pueden crear los diferentes casos que deseamos evaluar y cuando se cumple 
+						la condición esperada, oculta/muestra el HTML.
+					ngPlural: es una directiva que permite agregar o remover elementos del DOM, basado en un valor númerico.
+					ngTemplate: esta directiva como su nombre lo indica es un template en Angular. El contenido de esta 
+						etiqueta puede reutilizarse en otros templates.
+					ngComponentOutlet: nos permite crear componentes dinámicos.
+			Componentes
+				Las Directivas de Componente son directivas con un Template. Los componentes tienen decoradores
+				“@Component”, el componente es un decorador @Directive que es extendido con características propias 
+				de los templates.
+
+		¿Cómo generar una directiva?
+			Desde el Angular CLI podemos generar una directiva usando el siguiente comando:
+				ng generate directive <name> [options]
+			En su forma abreviada sería:
+				ng g d [name]
+	************************************************************************************************************************
+	ElementRef**************************************************************************************************************
+		Es simplemente una clase que envuelve elementos DOM nativos en el navegador y le permite trabajar con DOM 
+		proporcionando el nativeElementobjeto que expone todos los métodos y propiedades de los elementos nativos.
+		Ejemplo------------------------------------------------------------------------------------------------------
+			import { Directive, ElementRef, OnInit } from '@angular/core';
+
+			@Directive({
+			  selector: '[appMakered]',
+			})
+			export class MakeredDirective {
+			  constructor(
+			    private elementRef: ElementRef
+			  ) { }
+
+			  ngOnInit() {
+			    this.elementRef.nativeElement.style.backgroundColor = 'red';
+			  }
+			}
+			----------------------------------------------------------------------------------------------------
+			import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+
+			@Co
+	************************************************************************************************************************
+	HostListener************************************************************************************************************
+		Decorador que declara un evento DOM para escuchar y proporciona un método de controlador para ejecutar cuando 
+		ocurre ese evento.
+			eventName?	
+			The DOM event to listen for.
+
+			args?	
+			A set of arguments to pass to the handler method when the event occurs.
+			Ejemplo-------------------------------------------------------------------------------------------------
+				  @HostListener('mouseenter') mouseEntro(){
+				    this.elem.nativeElement.style.backgroundColor = "yellow";
+				  }
+				  @HostListener('mouseleave') mouseSale(){
+				    this.elem.nativeElement.style.backgroundColor = null;
+				  }
+	************************************************************************************************************************
+********************************************************************************************************************************
 
 
 
-osede210			
-tarjeta de beneficios 15%			
-comedor es 1$			
-ingles 			
-uade/UCA			
-capacitacion			
-oracle ecomerce	atg		
-garner o magic cuadran			
-115000			
-politica de aumento	empleados de comercio		
+
+
+
+
+
+
+
+
+
+

@@ -537,12 +537,26 @@ Referencias*********************************************************************
 					public class Libro{}
 
 			@JsonIgnoreProperties allowSetters
-				Cuando pasamos trueal allowSetterselemento, se permitirán los establecedores para las propiedades 
+				Cuando pasamos true al allowSetterselemento, se permitirán los establecedores para las propiedades 
 				lógicas especificadas. Significa que las propiedades lógicas especificadas en @JsonIgnoreProperties
 				participarán en la deserialización JSON pero no en la serialización.
 					@JsonIgnoreProperties ( value = { "bookName" , "bookCategory" }, allowSetters = true )
 					public class Libro{}
+		-------------------------------------------------------------------------------------------------
+		@JsonManagedReference -> Administra la parte de avance de la referencia y los campos marcados por 
+		esta anotación son los que se serializan
+		@JsonBackReference -> Administra la parte inversa de la referencia y los campos / colecciones 
+		marcados con esta anotación no se serializan.
+		Caso de uso: tiene relaciones uno-muchos o muchos-muchos en sus entidades / tablas y no usar lo 
+		anterior conduciría a errores como
 
+		Infinite Recursion and hence stackoverflow - > Could not write content: Infinite recursion 
+		(StackOverflowError)
+		Los errores anteriores ocurren porque Jackson (o algún otro similar) intenta serializar ambos 
+		extremos de la relación y termina en una recursividad.
+
+		@JsonIgnore realiza funciones similares, pero las anotaciones mencionadas anteriormente son 
+		preferibles.
 
 	**********************************************************************************************************
 
@@ -4211,7 +4225,13 @@ Anotaciones*********************************************************************
 		y @EnableAutoConfiguration para habilitar la función de configuración automática de Spring Boots,
 		pero ahora puede hacer todo eso simplemente anotando su clase de Aplicación con @SpringBootApplication.
 
+		Si agregó la anotación @SpringBootApplication a la clase, no necesita agregar la anotación @EnableAutoConfiguration, 
+		@ComponentScan y @SpringBootConfiguration . La anotación @SpringBootApplication incluye todas las demás anotaciones.
+
 		Read more: https://javarevisited.blogspot.com/2018/05/the-springbootapplication-annotation-example-java-spring-boot.html#ixzz6C0WGFT39
+	--------------------------------------------------------------------------------------------------------------------------------
+	@ComponentScan
+		Spring Boot escanea automáticamente todos los componentes incluidos en el proyecto usando la anotación 
 	--------------------------------------------------------------------------------------------------------------------------------
 	@RestController 
 		Es una anotación de conveniencia que no hace más que agregar las anotaciones @Controller y @ResponseBody en una sola declaración.
@@ -4358,6 +4378,85 @@ Anotaciones*********************************************************************
 			@Secured({"ROLE_ADMIN", "ROLE_USER"})
 			@PostMapping("/clientes/upload")
 			private ResponseEntity<?> uploadArchivo(@RequestParam("archivo") MultipartFile archivo, @RequestParam("id") Integer idCliente){...}
+Despliegue en un servidor Tomcat*******************************************************************************************************
+	1.- Necesitamos extender la clase SpringBootServletInitializer para admitir la implementación de archivos WAR. El código del 
+	archivo de clase de la aplicación Spring Boot se proporciona a continuación:
+
+		package com.tutorialspoint.demo;
+
+		import org.springframework.boot.SpringApplication;
+		import org.springframework.boot.autoconfigure.SpringBootApplication;
+		import org.springframework.boot.builder.SpringApplicationBuilder;
+		import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
+		@SpringBootApplication
+		public class DemoApplication  extends SpringBootServletInitializer {
+		   @Override
+		   protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		      return application.sources(DemoApplication.class);
+		   }
+		   public static void main(String[] args) {
+		      SpringApplication.run(DemoApplication.class, args);
+		   }
+		}
+	2.- Configuración de la clase principal
+		En Spring Boot, debemos mencionar la clase principal que debería comenzar en el archivo de compilación. Para este propósito, 
+		puede utilizar los siguientes fragmentos de código:
+
+		Para Maven, agregue la clase de inicio en las propiedades pom.xml como se muestra a continuación:
+
+			<start-class>com.tutorialspoint.demo.DemoApplication</start-class>
+	3.- Actualizar el paquete JAR en WAR
+		Tenemos que actualizar el paquete JAR en WAR usando los siguientes fragmentos de código:
+
+		Para Maven, agregue el paquete como WAR en pom.xml como se muestra a continuación:
+
+			<packaging>war</packaging>
+	4.- Ahora, vamos a escribir un punto final de descanso simple para devolver la cadena "Hola mundo desde Tomcat". 
+	Para escribir un punto final de descanso, debemos agregar la dependencia del iniciador web Spring Boot en nuestro 
+	archivo de compilación.
+
+		Para Maven, agregue la dependencia de inicio Spring Boot en pom.xml usando el código que se muestra a continuación:
+
+		<dependency>
+		   <groupId>org.springframework.boot</groupId>
+		   <artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+	5.- Ahora, escriba un punto final de descanso simple en el archivo de clase de la aplicación Spring Boot usando el 
+	código como se muestra a continuación:
+
+			package com.tutorialspoint.demo;
+
+			import org.springframework.boot.SpringApplication;
+			import org.springframework.boot.autoconfigure.SpringBootApplication;
+			import org.springframework.boot.builder.SpringApplicationBuilder;
+			import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+			import org.springframework.web.bind.annotation.RequestMapping;
+			import org.springframework.web.bind.annotation.RestController;
+
+			@SpringBootApplication
+			@RestController
+			public class DemoApplication  extends SpringBootServletInitializer {
+			   @Override
+			   protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+			      return application.sources(DemoApplication.class);
+			   }
+			   public static void main(String[] args) {
+			      SpringApplication.run(DemoApplication.class, args);
+			   }
+			   
+			   @RequestMapping(value = "/")
+			   public String hello() {
+			      return "Hello World from Tomcat";
+			   }
+			}
+	6.- Empaquetado de su aplicación
+		Ahora, cree un archivo WAR para implementarlo en el servidor Tomcat utilizando los comandos Maven y Gradle para empaquetar 
+		su aplicación como se indica a continuación:
+
+		Para Maven, use el comando mvn package para empaquetar su aplicación. Luego, se creará el archivo WAR y puede encontrarlo 
+		en el directorio de destino 
+***************************************************************************************************************************************
 SPRING BOTS****************************************************************************************************************************
 	Spring Boot es un sub-proyecto de Spring Framework que busca facilitarnos la creación de proyectos con 
 	Spring Framework, eliminando la necesidad de crear largos archivos de configuración XML.
@@ -7737,51 +7836,50 @@ $ tail -f /opt/apache-tomcat-8.5.54/logs/catalina.out
 
 
 *****************************************************************************************************************************************
-Proyectos de tipo Academico:
-CineApp: 
-Desarrollo completo de aplicación en Java con Spring MVC, Spring Data, Spring Security, Maven, Hibernate como ORM, conexion a base de 
-datos Mysql,  en el FrontEnd se implementa jsp, bootstrap, jstl, Form Tags de Spring, Configuraciones del DispatcherServlet, 
-viewResolver, rootAplication-context, webConfig por medio de archivos .xml, Administracion de dependencias con Maven, DataBinding, 
-RedirectAttributes, Manejo de errores con BindingResult, Descarga de archivos con MultipartFile, JPARepository, Query Methods, 
-Manejo de Usuarios por roles atraves de SpringSecurity, Anotaciones: @PathVariable, @RequestParam, @GetMapping, @PostMapping, 
-@Autowired, @InitBinder, @Component, @Repository, @Service, @Controller, @RequestMapping, @ModelAttribute, @entity, @Table, 
-@column, @Transient, @OneToOne, @JoinColumn
+	Proyectos de tipo Academico:
+	CineApp: 
+	Desarrollo completo de aplicación en Java con Spring MVC, Spring Data, Spring Security, Maven, Hibernate como ORM, conexion a base de 
+	datos Mysql,  en el FrontEnd se implementa jsp, bootstrap, jstl, Form Tags de Spring, Configuraciones del DispatcherServlet, 
+	viewResolver, rootAplication-context, webConfig por medio de archivos .xml, Administracion de dependencias con Maven, DataBinding, 
+	RedirectAttributes, Manejo de errores con BindingResult, Descarga de archivos con MultipartFile, JPARepository, Query Methods, 
+	Manejo de Usuarios por roles atraves de SpringSecurity, Anotaciones: @PathVariable, @RequestParam, @GetMapping, @PostMapping, 
+	@Autowired, @InitBinder, @Component, @Repository, @Service, @Controller, @RequestMapping, @ModelAttribute, @entity, @Table, 
+	@column, @Transient, @OneToOne, @JoinColumn
 
-EmpleosApp: 
-
-
-Desarrollo completo de aplicación en Java con Spring Boot, Spring Data, Spring Security, Hibernate como ORM, conexion a base de 
-datos Mysql,  en el FrontEnd se implementa thymeleaf, bootstrap, jstl,  Administracion de dependencias con Maven, DataBinding, 
-RedirectAttributes, Manejo de errores con BindingResult, Descarga de archivos con MultipartFile, JPARepository, Query Methods, 
-Manejo de Autenticacion de usurios por medio del AuthenticationManagerBuilder, manejo de roles de usurio con http.authorizeRequests,  
-configuracion de archivo aplication.properties Anotaciones: @PathVariable, @RequestParam, @GetMapping, @PostMapping, @Autowired, 
-@InitBinder, @Component, @Repository, @Service, @Controller, @RequestMapping, @ModelAttribute, @entity, @Table, @column, @Transient, 
-@OneToOne, @JoinColumn
-
-ClientesFacturacionApp: (En curso actual Angular)
-Desarrollo completo de aplicación Java orientada a microservicios con Angular y Spring Boot, Spring Data, Hibernate como ORM, 
-conexion a base de datos Mysql,  en el FrontEnd se implementa thymeleaf, bootstrap, jstl,  
-Administracion de dependencias con Maven, DataBinding, RedirectAttributes, Manejo de errores con BindingResult, Descarga 
-de archivos con MultipartFile, JPARepository, Query Methods, Manejo de Autenticacion de usurios por medio del 
-AuthenticationManagerBuilder, manejo de roles de usurio con http.authorizeRequests,  
-configuracion de archivo aplication.properties, Manejo de respuesta con objetos ResponseEntity,  HttpClient,  
-Anotaciones: @RestController, @CrossOrigin, @PathVariable, @RequestParam, @GetMapping, @PostMapping, @Autowired, 
-@InitBinder, @Component, @Repository, @Service, @Controller, @RequestMapping, @ModelAttribute, @entity, @Table, 
-@column, @Transient, @OneToOne, @JoinColumn
-
-WEbAPI
-Desarrollo completo de aplicación Java orientada a Spring Boot && RestFul Web Services
+	EmpleosApp: 
 
 
-La responsabilidad única de los componentes, la segregación de interfaces, la documentación detallada del código, 
-Programación orientada a que se dependa de las abstracciones y no a las implementaciones, en cuanto a patrones de 
-diseño utilizados, patron de diseño MVC para dividir la aplicación por capas bien diferenciadas, DAO para el acceso 
-a los datos desde repositorios, DTO para la transferencia de objetos en caso de necesitar atributos de varios objetos 
-se crea un objeto DTO que es el que se transfiere, patron Factory lo use en un sistema de facturacion creando un clase 
-que crea objetos de facturacion segun el tipo de factura,  patron proxy se crea una clase que añadia funcionalidad a la 
-clase de legajos del cliente, para así no modificar la actual, a nivel academico he implementado otros mas como Singlenton, 
-Builder, focade o decorator.
+	Desarrollo completo de aplicación en Java con Spring Boot, Spring Data, Spring Security, Hibernate como ORM, conexion a base de 
+	datos Mysql,  en el FrontEnd se implementa thymeleaf, bootstrap, jstl,  Administracion de dependencias con Maven, DataBinding, 
+	RedirectAttributes, Manejo de errores con BindingResult, Descarga de archivos con MultipartFile, JPARepository, Query Methods, 
+	Manejo de Autenticacion de usurios por medio del AuthenticationManagerBuilder, manejo de roles de usurio con http.authorizeRequests,  
+	configuracion de archivo aplication.properties Anotaciones: @PathVariable, @RequestParam, @GetMapping, @PostMapping, @Autowired, 
+	@InitBinder, @Component, @Repository, @Service, @Controller, @RequestMapping, @ModelAttribute, @entity, @Table, @column, @Transient, 
+	@OneToOne, @JoinColumn
 
+	ClientesFacturacionApp: (En curso actual Angular)
+	Desarrollo completo de aplicación Java orientada a microservicios con Angular y Spring Boot, Spring Data, Hibernate como ORM, 
+	conexion a base de datos Mysql,  en el FrontEnd se implementa thymeleaf, bootstrap, jstl,  
+	Administracion de dependencias con Maven, DataBinding, RedirectAttributes, Manejo de errores con BindingResult, Descarga 
+	de archivos con MultipartFile, JPARepository, Query Methods, Manejo de Autenticacion de usurios por medio del 
+	AuthenticationManagerBuilder, manejo de roles de usurio con http.authorizeRequests,  
+	configuracion de archivo aplication.properties, Manejo de respuesta con objetos ResponseEntity,  HttpClient,  
+	Anotaciones: @RestController, @CrossOrigin, @PathVariable, @RequestParam, @GetMapping, @PostMapping, @Autowired, 
+	@InitBinder, @Component, @Repository, @Service, @Controller, @RequestMapping, @ModelAttribute, @entity, @Table, 
+	@column, @Transient, @OneToOne, @JoinColumn
+
+	WEbAPI
+	Desarrollo completo de aplicación Java orientada a Spring Boot && RestFul Web Services
+
+
+	La responsabilidad única de los componentes, la segregación de interfaces, la documentación detallada del código, 
+	Programación orientada a que se dependa de las abstracciones y no a las implementaciones, en cuanto a patrones de 
+	diseño utilizados, patron de diseño MVC para dividir la aplicación por capas bien diferenciadas, DAO para el acceso 
+	a los datos desde repositorios, DTO para la transferencia de objetos en caso de necesitar atributos de varios objetos 
+	se crea un objeto DTO que es el que se transfiere, patron Factory lo use en un sistema de facturacion creando un clase 
+	que crea objetos de facturacion segun el tipo de factura,  patron proxy se crea una clase que añadia funcionalidad a la 
+	clase de legajos del cliente, para así no modificar la actual, a nivel academico he implementado otros mas como Singlenton, 
+	Builder, focade o decorator.
 Platillas gratis**********************************************************************************************************************
 https://colorlib.com/wp/free-bootstrap-ecommerce-website-templates/
 
@@ -7790,8 +7888,223 @@ https://colorlib.com/wp/free-bootstrap-ecommerce-website-templates/
 
 
 
-Migracion de KioscoApp a SpringBoot
-	ContactosController
-	Contactos
-	formgastos
-	listGastos
+Tuto Spring Boot************************************************************************************************************************
+	Referencia --> https://www.tutorialspoint.com/spring_boot/spring_boot_application_properties.htm
+	Spring Boot - Propiedades de la aplicación************************************************************************************
+		1.- Application.properties
+			server.port = 9090
+			spring.application.name = demoservice	
+		2.- TutoSpringBootApplication.java
+	******************************************************************************************************************************
+	Spring Boot - Logging*********************************************************************************************************
+		Spring Boot utiliza el registro de Apache Commons para todos los registros internos. Las configuraciones predeterminadas 
+		de Spring Boot brindan soporte para el uso de Java Util Logging, Log4j2 y Logback. Con estos, podemos configurar el 
+		registro de la consola así como el registro de archivos.
+
+		Si está utilizando Spring Boot Starters, Logback proporcionará un buen soporte para el registro. Además, Logback también 
+		proporciona un buen soporte para Common Logging, Util Logging, Log4J y SLF4J.
+
+		Los mensajes de registro predeterminados se imprimirán en la ventana de la consola. De forma predeterminada, los
+		mensajes de registro “INFO”, “ERROR” y “WARN” se imprimirán en el archivo de registro.
+
+		Niveles de registro
+		Spring Boot admite todos los niveles de registrador, como "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL", "OFF". 
+		Puede definir el registrador raíz en el archivo application.properties como se muestra a continuación:
+
+			logging.level.root = WARN
+
+		Ejemplo---------------------------------------------------------------------------------------------------------------
+		private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	    public void performTask(){
+	        logger.debug("This is a debug message.");
+	        logger.info("This is an info message.");
+	        logger.warn("This is a warn message.");
+	        logger.error("This is an error message.");
+
+	    }
+	    	*** Application.properties
+	    		logging.file.name=D:/prueba.txt
+	******************************************************************************************************************************
+	Servicios web RESTful*********************************************************************************************************
+		Nota : para crear un servicio web RESTful, necesitamos agregar la dependencia web Spring Boot Starter en el archivo de 
+		configuración de la compilación.
+		Ejemplo_______________________________________________________________________________________________________________
+			***POM.xml	
+			<dependency>
+			   <groupId>org.springframework.boot</groupId>
+			   <artifactId>spring-boot-starter-web</artifactId>    
+			</dependency>
+			-----------------------------------------------------------------------------------------------------------------
+			@RestController
+			public class ProductServiceController {
+			   private static Map<String, Product> productRepo = new HashMap<>();
+			   static {
+			      Product honey = new Product();
+			      honey.setId("1");
+			      honey.setName("Honey");
+			      productRepo.put(honey.getId(), honey);
+			      
+			      Product almond = new Product();
+			      almond.setId("2");
+			      almond.setName("Almond");
+			      productRepo.put(almond.getId(), almond);
+			   }
+			   
+			   @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE)
+			   public ResponseEntity<Object> delete(@PathVariable("id") String id) { 
+			      productRepo.remove(id);
+			      return new ResponseEntity<>("Product is deleted successsfully", HttpStatus.OK);
+			   }
+			   
+			   @RequestMapping(value = "/products/{id}", method = RequestMethod.PUT)
+			   public ResponseEntity<Object> updateProduct(@PathVariable("id") String id, @RequestBody Product product) { 
+			      productRepo.remove(id);
+			      product.setId(id);
+			      productRepo.put(id, product);
+			      return new ResponseEntity<>("Product is updated successsfully", HttpStatus.OK);
+			   }
+			   
+			   @RequestMapping(value = "/products", method = RequestMethod.POST)
+			   public ResponseEntity<Object> createProduct(@RequestBody Product product) {
+			      productRepo.put(product.getId(), product);
+			      return new ResponseEntity<>("Product is created successfully", HttpStatus.CREATED);
+			   }
+			   
+			   @RequestMapping(value = "/products")
+			   public ResponseEntity<Object> getProduct() {
+			      return new ResponseEntity<>(productRepo.values(), HttpStatus.OK);
+			   }
+			}
+			-------------------------------------------------------------------------------------------------------------
+				public class Product {
+				   private String id;
+				   private String name;
+
+				   public String getId() {
+				      return id;
+				   }
+				   public void setId(String id) {
+				      this.id = id;
+				   }
+				   public String getName() {
+				      return name;
+				   }
+				   public void setName(String name) {
+				      this.name = name;
+				   }
+				}
+
+			-------------------------------------------------------------------------------------------------------------
+			@SpringBootApplication
+				public class DemoApplication {
+				   public static void main(String[] args) {
+				      SpringApplication.run(DemoApplication.class, args);
+				   }
+				}
+	****************************************************************************************************************************** 
+	Spring Boot - Manejo de excepciones*******************************************************************************************
+		Asesoramiento del controlador*****************************************************************************************
+		@ControllerAdvice-----------------------------------------------------------------------------------------------------
+			Es una anotación, para manejar las excepciones globalmente
+		----------------------------------------------------------------------------------------------------------------------
+		Controlador de excepciones********************************************************************************************
+		@ExceptionHandler-----------------------------------------------------------------------------------------------------
+		 es una anotación que se usa para manejar las excepciones específicas y enviar las respuestas personalizadas al cliente.
+		----------------------------------------------------------------------------------------------------------------------
+			1.- Puede usar el siguiente código para crear la clase @ControllerAdvice para manejar las excepciones globalmente:
+
+				package com.tutorialspoint.demo.exception;
+
+				import org.springframework.web.bind.annotation.ControllerAdvice;
+
+				@ControllerAdvice
+				public class ProductExceptionController {
+				   @ExceptionHandler(value = ProductNotfoundException.class)
+				   public ResponseEntity<Object> exception(ProductNotfoundException exception) {
+				      return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
+				   }
+				}
+			2.- Defina una clase que amplíe la clase RuntimeException.
+
+				package com.tutorialspoint.demo.exception;
+
+				public class ProductNotfoundException extends RuntimeException {
+				   private static final long serialVersionUID = 1L;
+				}
+
+			3.- Puede definir el método @ExceptionHandler para manejar las excepciones como se muestra. Este método se 
+			debe utilizar para escribir el archivo de clase de avisos del controlador.
+
+				@ExceptionHandler(value = ProductNotfoundException.class)
+				public ResponseEntity<Object> exception(ProductNotfoundException exception) {
+				}
+			4.- Ahora, use el código que se proporciona a continuación para lanzar la excepción de la API.
+
+				@RequestMapping(value = "/products/{id}", method = RequestMethod.PUT)
+				public ResponseEntity<Object> updateProduct() { 
+				   throw new ProductNotfoundException();
+				}
+
+			5.- El archivo del controlador de API de servicio de producto se proporciona a continuación para 
+			actualizar el producto. Si no se encuentra el producto, lanza la clase ProductNotFoundException .
+				@RestController
+				public class ProductServiceController {
+				   private static Map<String, Product> productRepo = new HashMap<>();
+				   static {
+				      Product honey = new Product();
+				      honey.setId("1");
+				      honey.setName("Honey");
+				      productRepo.put(honey.getId(), honey);
+				      
+				      Product almond = new Product();
+				      almond.setId("2");
+				      almond.setName("Almond");
+				      productRepo.put(almond.getId(), almond);
+				   }
+				   
+				   @RequestMapping(value = "/products/{id}", method = RequestMethod.PUT)
+				   public ResponseEntity<Object> updateProduct(@PathVariable("id") String id, @RequestBody Product product) { 
+				      if(!productRepo.containsKey(id))throw new ProductNotfoundException();
+				      productRepo.remove(id);
+				      product.setId(id);
+				      productRepo.put(id, product);
+				      return new ResponseEntity<>("Product is updated successfully", HttpStatus.OK);
+				   }
+				}
+			6.- El código para el archivo de clase de la aplicación Spring Boot principal se proporciona a continuación
+
+				package com.tutorialspoint.demo;
+
+				import org.springframework.boot.SpringApplication;
+				import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+				@SpringBootApplication
+				public class DemoApplication {
+				   public static void main(String[] args) {
+				      SpringApplication.run(DemoApplication.class, args);
+				   }
+				}
+			7.- El código de la clase POJO para el producto se proporciona a continuación:
+
+				package com.tutorialspoint.demo.model;
+				public class Product {
+				   private String id;
+				   private String name;
+
+				   public String getId() {
+				      return id;
+				   }
+				   public void setId(String id) {
+				      this.id = id;
+				   }
+				   public String getName() {
+				      return name;
+				   }
+				   public void setName(String name) {
+				      this.name = name;
+				   }
+				}
+
+****************************************************************************************************************************************
+
+nombre.apellido

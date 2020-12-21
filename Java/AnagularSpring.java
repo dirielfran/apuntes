@@ -9,6 +9,7 @@ ng generate service cliente         --> Se crea clase de servicio
 ng g m miModulo						--> Genera un modulo propio
 ng g g usuarios/guard/auth  		--> genera guard en ruta especificada
 ng g p pipes/noimage				--> Creacion de pipe
+ng build --prod 					--> Creacion de mi carpeta de distribucion con la aplicacion mimificada 
 guard 								--> Los Guard son interceptores que sirven para controlar el acceso a las rutas
 .pipe								--> Los pipes son una herramienta de Angular que nos permite transformar visualmente la información,
 										por ejemplo, cambiar un texto a mayúsculas o minúsculas, o darle formato de fecha y hora.

@@ -317,7 +317,7 @@ Seccion 3: Backend Eureka Server registrando Microservicios*********************
 
 	3.- Se elimina la clase principal MicroserviciosCommonsApplication.java
 	4.- Se crean paquetes de service y controller
-		com.alfonso.commons.services
+		com.alfonso.commons.controller
 		com.alfonso.commons.services
 	5.- Se copian la interface y la clase de servicio del microservicio de usuarios a commons
 	6.- Se modifica la interface para convertirla en una generica, para que no dependa de una entidad especifica, se utiliza el API 
@@ -369,7 +369,7 @@ Seccion 3: Backend Eureka Server registrando Microservicios*********************
 	8.- Se renombran tanto la interface como la clase de servicio
 		refactor --> se cambia el nombre  --> CommonServiceImpl
 											  ICommonService
-	9.- Se modifica CommonServiceImpl, Se elimina la anotacion @Service, ya que no es un componente que se vaya ainyectar
+	9.- Se modifica CommonServiceImpl, Se elimina la anotacion @Service, ya que no es un componente que se vaya a inyectar
 	10.- Se añade dependencia de common en microservicio usuarios
 		10.1.- Se copia del pom del proyecto commons, artifact, version y groupId y se añade como dependencia en microservicio usuarios
 			<dependency>
@@ -440,7 +440,7 @@ Seccion 4: Backend: Microservicio cursos****************************************
 											--> MySQL Driver
 											--> Spring Web
 											--> Eureka Discovery Client
-	2.- Se agrega en el po.xml dependencia de proyecto microservicios-commons
+	2.- Se agrega en el pom.xml dependencia de proyecto microservicios-commons
 		<dependency>
 			<groupId>com.alfonso.commons</groupId>
 			<artifactId>microservicios-commons</artifactId>
@@ -739,7 +739,7 @@ Seccion 5: Backend: Microservicios examenes*************************************
 											--> MySQL Driver
 											--> Spring Web
 											--> Eureka Discovery Client
-	2.- Se crean los paquetes .com.alfonso.app.examenes.models.entity y com.alfonso.app.examenes.models.repository
+	2.- Se crean los paquetes com.alfonso.app.examenes.models.entity y com.alfonso.app.examenes.models.repository
 	3.- Se modifica MicroserviciosExamenesApplication.java, se le agrega la condiguracion de @EnableEurekaClient
 		@EnableEurekaClient
 		@SpringBootApplication
@@ -913,3 +913,249 @@ Seccion 5: Backend: Microservicios examenes*************************************
 			
 				return ResponseEntity.status(HttpStatus.CREATED).body(entityService.guardar(examenbd));
 			}
+	2.- Se modifica microservicios-zuul,se modifica application.properties, se le agrega configuracion de microservicios-examenes
+		#Se crea la ruta al microservicio examenes
+		zuul.routes.examenes.service-id=microservicios-examenes
+		zuul.routes.examenes.path=/api/examenes/**   --> */
+36.- *******************************************************************************************************************Probando en postman
+	1.- Probando metodo GET
+		http://localhost:8090/api/examenes
+	2.- Probando metodo POST
+		http://localhost:8090/api/examenes
+
+			{
+			    "nombre": "Examen de Historia",
+			    "preguntas": [
+			        {"texto":"Quien descubrio America?"},
+			        {"texto":"Que paises independizo Bolivar"},
+			        {"texto":"En que año se independizo Venezuela?"}
+			    ]
+			}
+	3.- Probando PUT --> http://localhost:8090/api/examenes/1
+
+		{
+
+	        "nombre": "Examen de Historia",
+
+	        "preguntas": [
+	            {
+	                "id": 1,
+	                "texto": "Quien descubrio America?"
+	            },
+	            {
+	                "id": 2,
+	                "texto": "Que paises independizo Bolivar"
+	            },
+	            {
+	                "texto": "Quien fue Simon Bolivar"
+	            }
+	        ]
+	    }
+37.- ***********************************************************************************************Creacion libreria commons para examenes
+	1.- Se crea proyecto commons-alumnos
+
+		1.1.- Desde sts se crea un new Spring Starter Project
+			1.1.1.- Se crea proyecto
+					name 			 --> commons-examenes
+					type         -->Maven
+					Packaging    -->jar
+					Java version --> 8
+					Group 		 --> com.alfonso.commons.examenes
+					artifact	 --> commons-exameness
+					package      --> com.alfonso.commons.examenes
+
+					next-->
+
+					Spring Boot Project 		--> 2.3.4
+					Seleccionas dependencias	--> Spring Data JPA
+	2.- Se modifica POM.xml, se le comenta el plugins de maven
+		<!-- 	<build> -->
+		<!-- 		<plugins> -->
+		<!-- 			<plugin> -->
+		<!-- 				<groupId>org.springframework.boot</groupId> -->
+		<!-- 				<artifactId>spring-boot-maven-plugin</artifactId> -->
+		<!-- 			</plugin> -->
+		<!-- 		</plugins> -->
+		<!-- 	</build> -->
+	3.- Se elimina la clase principal 
+	4.- Se crea paquete --> com.alfonso.commons.examenes.models.entity
+	5.- Se copian las entidades de microservicios-examenes a commons-examenes
+		Examen.java 
+		Pregunta.java
+	6.- Se modifica pom.xml, se agrega dependencia para jackson anotaciones
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-json</artifactId>
+		</dependency>
+	7.- Se modifica microservicios-examenes y microservicios-cursos, se le agrega dependencia de cammons-examenes
+		<dependency>
+			<groupId>com.alfonso.commons.examenes</groupId>
+			<artifactId>commons-examenes</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+38.- *********************************************************************************************************Relacion entre Curso y Examen
+	1.- Se modifica microservicios-cursos, se modifica entidad Curso, se le agrega atributo examenes con su get y set
+		@ManyToMany(fetch = FetchType.LAZY)
+		private List<Examen> examenes;
+		1.1.- Se agrega metodo addExamen y removeExamen
+			public void addExamen(Examen examen) {
+				this.examenes.add(examen);
+			}
+			
+			public void removeExamen(Examen examen) {
+				this.examenes.remove(examen);
+			}
+		1.2.- Se modifica commons-examenes, se modifica entidad Examen.java, se sobreescribe metodo equals para poder utilizar el 
+		metodo removeExamen 
+			@Override
+			public boolean equals(Object obj) {
+				if(this == obj) {
+					return true;
+				}
+				if(!(obj instanceof Examen)) {
+					return false;
+				}
+				
+				Examen examen = (Examen) obj;
+				
+				return this.id != null && this.id.equals(examen.getId());
+			}
+	2.- Se modifica CursoController.java, se agregan metodos para eliminar y agregar examen al curso
+			//metodo que añade examen al curso
+			@PutMapping("/{id}/asignar-examen")
+			public ResponseEntity<?> asignarExamen(@RequestBody List<Examen> examenes, @PathVariable Long id){
+				Optional<Curso> opt = this.entityService.BuscarXId(id);
+				if(!opt.isPresent()) {
+					return ResponseEntity.noContent().build();
+				}
+				Curso cursodb = opt.get();
+				examenes.forEach(examen -> {
+					cursodb.addExamen(examen);
+				});
+				
+				return ResponseEntity.status(HttpStatus.CREATED).body(this.entityService.guardar(cursodb));
+			}
+			
+			//metodo que elimina un alumno del curso
+			@PutMapping("/{id}/eliminar-examen")
+			public ResponseEntity<?> eliminarExamen(@RequestBody Examen examen, @PathVariable Long id){
+				Optional<Curso> opt = this.entityService.BuscarXId(id);
+				if(!opt.isPresent()) {
+					return ResponseEntity.noContent().build();
+				}
+				Curso cursodb = opt.get();
+				cursodb.removeExamen(examen);
+				
+				return ResponseEntity.status(HttpStatus.CREATED).body(this.entityService.guardar(cursodb));
+			}
+39.- *************************************************************************************************************************Operador Like
+	1.- Se modifica microservicios-examenes, se modifica la clase principal MicroserviciosExamenesApplication.java, se le agrega el 
+	scan de la entidad
+		@EntityScan({"com.alfonso.commons.examenes.models.entity"})
+		1.1.- Se crea query para la busqueda de examen por nombre
+				@Query("SELECT e FROM EXAMEN e WHERE e.nombre like %?1%")
+		1.2.- Se modifica la interface 
+			public List<Examen> findByNombre(String nombre);
+		1.3.- Se modifica la clase de servicio
+				@Override
+				@Transactional(readOnly = true)
+				public List<Examen> findByNombre(String nombre) {
+					return entityRepo.findByNombre(nombre);
+				}
+		1.4.- Se modifica ExamenController.java, se crea metodo para filtrar por nombre
+				@GetMapping("/filtrar/{term}")
+				public ResponseEntity<?> filtrarExamen(@PathVariable String term){
+					return ResponseEntity.ok(entityService.findByNombre(term));
+				}
+	public List<Examen> findByNombre(String nombre);
+	2.- Se modifica microservicios-cursos, se modifica la clase principal MicroserviciosExamenesApplication.java, se le agrega el 
+	scan de la entidad
+		@EntityScan({"com.alfonso.commons.alumnos.models.entity",
+				"com.alfonso.commons.examenes.models.entity",
+				"com.alfonso.app.cursos.models.entity"})
+		
+40.- **************************************************************************************************Se añaden asignaturas a los examenes
+	1.- Se modifica commons-examenes, se agrega pojo Asignatura.java
+		@Entity
+		@Table(name="asignaturas")
+		public class Asignatura {
+			
+			@Id
+			@GeneratedValue(strategy = GenerationType.IDENTITY)
+			private Long id;
+			
+			private String nombre;
+
+			public Long getId() {
+				return id;
+			}
+
+			public void setId(Long id) {
+				this.id = id;
+			}
+
+			public String getNombre() {
+				return nombre;
+			}
+
+			public void setNombre(String nombre) {
+				this.nombre = nombre;
+			}	
+
+		}
+	2.- Se modifica Examen.java, se agrega atributo asignatura con su get y su set
+			@ManyToMany(fetch = FetchType.LAZY)
+			private Asignatura asignatura;
+	3.- Se modifica Asignatura.java, se lecrean relaciones para subclases de asignatura, se agregan set y get
+			//Trae la clase padre
+		@JsonIgnoreProperties(value= {"hijos"})
+		@ManyToOne(fetch = FetchType.LAZY)
+		private Asignatura padre;
+		
+		//Trae todas las subclases
+		@JsonIgnoreProperties(value= {"padre"}, allowSetters = true)
+		@OneToMany(fetch = FetchType.LAZY, mappedBy = "padre", cascade = CascadeType.ALL)
+		private List<Asignatura> hijos;
+		3.1.- Se agrega al contructor la cracion de ArrayList de hijos
+				public Asignatura() {
+					this.hijos= new ArrayList<>();
+				}
+41.- ******************************************************************************Add Componente Service y Controller para las asignaturas
+	1.- Se modifica microservicios-examenes, se agrega IAsignaturaRepository.java
+		public interface IAsignaturaRepository extends CrudRepository<Asignatura, Long> {
+
+		}
+		1.2.- Se modifica IExamenService.java, se agrega metodo abstracto para buscar todas las asignaturas
+			public List<Asignatura> findAllAsignatura();
+		1.3.- Se modifica ExamenServiceImpl.java, se le agrega metodo para buscar asignaturas
+				@Autowired
+				private IAsignaturaRepository asignaturaRepo;
+
+				@Override
+				public Iterable<Asignatura> findAllAsignatura() {
+					return asignaturaRepo.findAll();
+				}
+
+
+
+Apuntes************************************************************************************************************************************
+	Eureka Server**********************************************************************************************************************
+		Eureka Server es una aplicación que contiene la información sobre todas las aplicaciones de servicio al cliente. Cada servicio 
+		Micro se registrará en el servidor Eureka y el servidor Eureka conoce todas las aplicaciones cliente que se ejecutan en cada 
+		puerto y dirección IP. Eureka Server también se conoce como Discovery Server.
+
+		Anotación @EnableEurekaServer----------------------------------------------------------------------------------------
+			se utiliza para hacer que su aplicación Spring Boot actúe como un servidor Eureka
+		@EnableEurekaClient--------------------------------------------------------------------------------------------------
+			hace que su aplicación Spring Boot actúe como un cliente de Eureka.
+	***********************************************************************************************************************************
+	Zuul Server************************************************************************************************************************
+		es una aplicación de puerta de enlace que maneja todas las solicitudes y realiza el enrutamiento dinámico de las aplicaciones 
+		de microservicio. El servidor Zuul también se conoce como servidor perimetral.
+
+		Por ejemplo, / api / user se asigna al servicio del usuario y / api / products se asigna al servicio del producto y Zuul Server 
+		enruta dinámicamente las solicitudes a la aplicación backend correspondiente.
+		@EnableZuulProxy-----------------------------------------------------------------------------------------------------------
+			se utiliza para hacer que su aplicación Spring Boot actúe como un servidor proxy Zuul.
+	***********************************************************************************************************************************
+*******************************************************************************************************************************************
