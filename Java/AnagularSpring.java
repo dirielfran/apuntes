@@ -63,6 +63,7 @@ funcion atob(JavaScript) 			-->Decodificar base64 en JavaScript
 										codificada con base64 y devuelve los datos binarios.
 Almacenar en el sessioStorage 		-->sessionStorage.setItem('usuarios', JSON.stringify(this._usuario));
 Convertir un objeto en json 		-->JSON.stringify(this._usuario)
+cambio de puerto 					--> ng serve --port 4401    
 **************************************************************************************************************************Instalacion
 	node --> https://nodejs.org/es/
 		instalar en ubunto
@@ -87,7 +88,7 @@ Convertir un objeto en json 		-->JSON.stringify(this._usuario)
 	Referecias --> https://www.udemy.com/course/angular-spring/learn/lecture/11991932#overview
 7.- ***************************************************************************************************Introduccion a los componentes
 		
-		Ref--> https://www.udemy.com/course/angular-spring/learn/lecture/21510576#questions/11585058/
+	Ref--> https://www.udemy.com/course/angular-spring/learn/lecture/21510576#questions/11585058/
 10.- ***********************************************************************************************Integracion Bootstrap con Angular
 	1.- Copiamos cdn de la pagina de Bootstrap y lo pegamos en index.html
 		1.0.- copiamos en el 2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo
@@ -867,7 +868,7 @@ Seccion 5: CRUD con Spring API REST*********************************************
 			//Se crea atributo de titulo que se renderiza en el formulario
   			public titulo: string ='Crear Cliente';
 	4.- Se crea la vista, modiificando el archivo form.component.html, el formulario de creacion de cliente
-				<div class="card bg-dark text-white">
+			<div class="card bg-dark text-white">
 		    <div class="card-header">{{ titulo }}</div>
 		    <div class="card-body">
 		        <!--(ngSubmit) invoca un metodo de la clase-->
@@ -962,16 +963,39 @@ Seccion 5: CRUD con Spring API REST*********************************************
 		        //Metodo de sweetAlert
 		        swal.fire('Nuevo Cliente', `Cliente ${cliente.nombre} creado con exito!`, 'success')
 		        
-
 		      }
 		    )
 		  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 50.- *********************************************************************************************Actualizar los datos del formulario
-	1.- Se modifica cliente.service.ts, se crea metodo que obtiene cliente por ide
+	1.- Se modifica cliente.service.ts, se crea metodo que obtiene cliente por id
 		//Se crea metodo que recupera un Cliente
 	  getCliente(id): Observable<Cliente>{
-	    return this.http.get<Cliente>(`${this.urlEndPoint}/id`);
-	  }
+	    return this.http.get<Cliente>(`${this.urlEndPoint}/${id}`);
+	  } 
 	2.- Se modifica archivo form.component.ts para que llame al metodo de la clase de servicio
 		2.1.- Se importan las librerias ActiveRoute
 			import { Router, ActivatedRoute} from '@angular/router';
@@ -6369,6 +6393,11 @@ Seccion 20: Sistema de Chat en tiempo real con web socket***********************
 
 
 
+
+
+
+
+
 Comandos de Mongodb******************************************************************************************************************
 	db            	--> muestra la bd actual
 	use 			--> para usar una bd en especifico 
@@ -6625,3 +6654,36 @@ Convertir a json o string con la libreria JSON**********************************
 
 
    1. *crear cuenta*
+
+
+
+
+
+
+
+
+
+
+
+jide  	--> rapipago
+		--> ducip transportadora de caudales y procesamiento de billetes
+		--> yungan 
+		--> here soluciones
+
+		emilio  dubois 
+
+		anlaistas - desarrolladores
+		desarrollo agil scrum y camban
+
+		java spring 
+		microservicios - docker -openshif
+		java 6 y java 8, servicios java 11 
+
+		red fisica rapipago
+			pcs so linux
+			java 1.6 con swing
+			servicios rest
+
+
+	rapipagoIV
+		Angular8

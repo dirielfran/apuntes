@@ -1,3 +1,76 @@
+Comandos angular-cli
+ng new [nombre aplicativo] 			--> Creacion de aplicativo angular
+ng generate class footer.component  --> crea clase
+ng serve -o                         --> corre en el servidor la aplicacion
+ng generate component directivas    --> crea un componente 
+ng g c components/heroeTarjeta --skipTests=true  --> Creacion de componente sin el archivo de prueba
+ng g c clientes/form --flat 		--> Crea componente con el -- flat se le indica que no cree folder
+ng generate service cliente         --> Se crea clase de servicio
+ng g m miModulo						--> Genera un modulo propio
+ng g g usuarios/guard/auth  		--> genera guard en ruta especificada
+ng g p pipes/noimage				--> Creacion de pipe
+ng build --prod 					--> Creacion de mi carpeta de distribucion con la aplicacion mimificada 
+guard 								--> Los Guard son interceptores que sirven para controlar el acceso a las rutas
+.pipe								--> Los pipes son una herramienta de Angular que nos permite transformar visualmente la información,
+										por ejemplo, cambiar un texto a mayúsculas o minúsculas, o darle formato de fecha y hora.
+Observable 							--> Los observables brindan soporte para pasar mensajes entre partes de su aplicación. 
+										Se usan con frecuencia en Angular y son la	técnica recomendada para el manejo de eventos, 
+										la programación asincrónica y el manejo de múltiples valores. 
+operador map 						--> Este operador nos permite recibir un valor de entrada y devolver un valor diferente al que recibimos.
+flatMap (mergeMap) operator 		--> flatMap, también llamado mergeMap, nos va a permitir operar con otros observables. Básicamente 
+										lo que va a hacer es transformar un Observable en otros Observables y unificar la salida de 
+										todos los Observables bajo un solo stream.
+operador switchMap() operator		--> El funcionamiento de switchMap es muy similar al de flatMap pero con una diferencia muy
+										importante. Por cada nuevo ciclo del stream principal, el stream interior se detiene.
+operador tap() 						--> Realice un efecto secundario para cada emisión en la fuente Observable, pero devuelva un Observable 
+										que sea idéntico a la fuente.
+operador fill() 					--> El fill() método llena los elementos especificados en una matriz con un valor estático.
+										Puede especificar la posición de dónde comenzar y finalizar el llenado. Si no se especifica, 
+										se completarán todos los elementos.
+										Nota: este método sobrescribe la matriz original.
+paramMap(Interface)					--> Un mapa que proporciona acceso a los parámetros obligatorios y opcionales específicos 
+										de una ruta. El mapa admite recuperar un solo valor con get() o varios valores con getAll().
+[(ngModel)]							--> Directiva que va a poblar desde el form a un atributo de la clase y a los atributos de este 
+										(Binding) ESTA MAPEADO AL ATRIBUTO AL FORMULARIO.
+										<input type="text" class="form-control" [(ngModel)]="cliente.apellido" name="apellido">
+(ngSubmit)							--> <!--(ngSubmit) invoca un metodo de la clase-->
+    <form (ngSubmit) ="create()">
+[routerLink]						-->	<!--[routerLink] Nos permite crear rutas internas del proyecto-->
+		            						<button class="btn btn-rounded btn-primary" type="buttom" [routerLink]="['/clientes/form']">Crear Cliente</button>
+[routerLinkActiveOptions]			--> Se le indica que este activo siempre y cuando el path sea exactamente igual
+										[routerLinkActiveOptions]="{exact:true}"
+[ngClass]							--> Adds and removes CSS classes on an HTML element.
+										<li class="page-item" *ngFor="let pagina of paginas" [ngClass]="pagina-1 == paginador.number?'disabled':''">
+[ngValue]							--> [ngValue] permite enlazar un objeto complejo. De esta manera al seleccionar el nombre de la ciudad 
+										desplegaremos el objeto entero. 
+<ng-template>						-->	<!--Se agrega directiva ngIf, si no existe cliente coloca boton crear en caso contrario se utiliza template-->
+                    						<button class="btn btn-primary" role="button" (click)='create()' *ngIf="!cliente.id else elseBlock">Crear</button>
+
+						                    <ng-template #elseBlock>
+						                        <button class="btn btn-primary" role="button" (click)='update()'>Editar</button>
+						                    </ng-template>
+*ngFor                              --> directiva estructural para recorrer una lista
+	<li class="list-group-item" *ngFor="let curso of listaCursos">
+*ngIf								--> directiva estructural condicional if
+	<ul class="list-group" *ngIf="habilitar==true">
+@Input								--> Los inputs nos permiten pasar valores desde el componente «padre» que utiliza dentro del el 
+										otro componente y así intercambiar datos entre estos dos componentes.
+EventEmitter 						--> Úselo en componentes con la directiva para emitir eventos personalizados de forma sincrónica 
+										o asincrónica, y registre controladores para esos eventos suscribiéndose a una instancia.
+funcion btoa(JavaScript)  			-->Convertir a base64 en JavaScript
+										De esto se encarga la función btoa. Quiere decir “Binary to ascii” y bueno, convierte datos 
+										binarios o cualquier tipo de dato a una representación imprimible.
+funcion atob(JavaScript) 			-->Decodificar base64 en JavaScript
+										Ahora entra la función atob, que quiere decir “ASCII to binary”. Recibe una cadena que está 
+										codificada con base64 y devuelve los datos binarios.
+Almacenar en el sessioStorage 		-->sessionStorage.setItem('usuarios', JSON.stringify(this._usuario));
+Convertir un objeto en json 		-->JSON.stringify(this._usuario)
+cambio de puerto 					--> ng serve --port 4401 
+
+
+
+
+
 Seccion 1 Intro************************************************************************************************************************
 Complementarios************************************************************************************************************************
 	Versionado de herramientas
@@ -246,7 +319,7 @@ Seccion 3: Aplicacion Angular***************************************************
 			    bottom: 0px;
 			    width: 100%;
 			}
-	5.- Se modifica footer.component.html, se le agrega clase bootstrap para centrar TypeNotPresentException
+	5.- Se modifica footer.component.html, se le agrega clase bootstrap para centrar 
 		<footer class="footer bg-dark text-center">
 		    <div class="container">
 		        <p>&copy; {{anio}}Elvis Areiza </p>
@@ -449,7 +522,7 @@ Seccion 4: Aplicacion SPA*******************************************************
     	<div class="container main_container">
 		    <router-outlet></router-outlet>
 		</div>
-	5.- Se crean animaciones, se modifica el archivo style.css
+	5.- Se crean animaciones, se modifica el archivo style.css para crear animacion
 		.animated {
 		  -webkit-animation-duration: 1s;
 		  animation-duration: 1s;
@@ -1942,17 +2015,1147 @@ Seccion 8: Componentes, Directivas de atributos y ciclo de vida*****************
 		        A simple warning alert—check it out!
 		    </div>
 		</div>
-146.- 
+146.- **************************************************************************************************************Rutas y Rutas hijas 
+	1.- Se genera componente --> ng g c components/home -it -is
+	1.- se  crea componente --> ng g c components/home -it -is
+	2.- Se modifica el home.components.ts, se añade al template los modulos realizados hasta Authorization
+		@Component({
+		  selector: 'app-home',
+		  template: `
+		    <app-ng-style></app-ng-style>
+		    <app-css></app-css>
+		    <app-clases></app-clases>
+		    <h2 appResaltado>Resaltado</h2>
+		    <h2 [appResaltado]="'blue'">Resaltado</h2>
+		    <app-ng-switch></app-ng-switch>
+		  `,
+		  styles: [
+		  ]
+		})
+	3.- Se crea archivo app.routes.ts, para añadir las rutas del proyecto
+		import { RouterModule, Routes } from '@angular/router';
+		import { HomeComponent } from './components/home/home.component';
+
+
+		const APP_ROUTES: Routes = [
+		  { path: 'home', component: HomeComponent },
+		  { path: '**', pathMatch: 'full', redirectTo: 'home' },
+		];
+
+
+		export const APP_ROUTING = RouterModule.forRoot(APP_ROUTES);
+	4.- Se importa app.routes.ts en app.module.ts
+		import { APP_ROUTING } from './app.routes';
+		4.1.- Se agrega a los imports
+			imports: [
+			    BrowserModule,
+			    FormsModule,
+			    APP_ROUTING
+			  ],
+
+
+	5.- Se modifica app.components.html, se renderizan las rutas principales, se agrega compoente <router-outlet>
+		<router-outlet></router-outlet>
+
+	6.- Se crea componentes usuario y usuarioNuevo
+		ng g c components/usuario
+		ng g c components/usuario/usuarioNuevo -is -it --flat
+		ng g c components/usuario/usuarioEditar -is -it --flat
+		ng g c components/usuario/usuarioDetalle -is -it --flat
+		ng g c components/navbar -is
+	7.- Se modifica navbar.component.html, se le agrega navbar de bootstrap
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		    <a class="navbar-brand" href="#">Navbar</a>
+		    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		    <span class="navbar-toggler-icon"></span>
+		  </button>
+
+		    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+		        <ul class="navbar-nav mr-auto">
+		            <li class="nav-item active">
+		                <a class="nav-link" href="#">Home</a>
+		            </li>
+		            <li class="nav-item">
+		                <a class="nav-link" href="#">Usuarios</a>
+		            </li>
+		        </ul>
+		    </div>
+		</nav>
+	8.- Se modifica app.components.html, se le agrega navbar component
+		<app-navbar></app-navbar>
+	9.- Se modifica app.routes.ts, se agrega la ruta a usuario
+		9.1.- Se importa componente usuarios
+			import { UsuarioComponent } from './components/usuario/usuario.component';
+		9.2.- Se agrega la ruta a usuario
+			const APP_ROUTES: Routes = [
+			  { path: 'home', component: HomeComponent },
+			  { path: 'usuario', component: UsuarioComponent },
+			  { path: '**', pathMatch: 'full', redirectTo: 'home' },
+			];
+	10.- Se modifica navbar.components.html, se le agregan routerLinkActive y routerlink
+		<ul class="navbar-nav mr-auto">
+            <li class="nav-item " routerLinkActive="active">
+                <a class="nav-link" [routerLink]="['home']">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['usuario']">Usuarios</a>
+            </li>
+        </ul>
 
 
 
-kioscoApp******************************************************************************************************************************
-	creacion de log
-	mensaje de error al eliminar inventario
-	manejo de excepcion en caso de intentar facturar un producto sin existencia
-	icluir iconos
-	colocar iconos a todos los botones
-***************************************************************************************************************************************
+
+
+
+Seccion 22:Sección 22:Gráficas Dinámicasen Angular
+335.- Instalaciones Necesarias********************************************************************************************************
+	1.- Install ng2-charts using npm
+		npm install --save ng2-charts
+	2.- Install Chart.js library
+		npm install --save chart.js
+	3.- Se modifica app.module.ts, se importa componente y se añade componente a los imports
+		// Graficos
+		import { ChartsModule } from 'ng2-charts';
+336.- Graficos Lineales**************************************************************************************************************
+	1.- Se crea componente 
+		ng g c components/graficos/linea 
+
+
+
+		npm install chartjs-plugin-annotation --save
+		npm install chartjs-plugin-datalabels --save
+	https://www.youtube.com/watch?v=WB_QK6TqTho
+	https://amoelcodigo.com/graficas-angular-ng2charts/
+	***https://www.positronx.io/angular-chart-js-tutorial-with-ng2-charts-examples/
+
+
+
+
+
+
+
+
+
+
+
+
+
+************************************************************Angular Fit***************************************************************
+**************************************************************************************************************************************
+**************************************************************************************************************************************
+Seccion 4: Introduccion a Angular*****************************************************************************************************
+*******************************************************************************************************************************Modulos
+	Referencia --> https://desarrolloweb.com/articulos/trabajar-modulos-angular.html
+	Un módulo es uno de los elementos principales con los que podemos organizar el código de las aplicaciones en Angular. No deben 
+	ser desconocidos hasta este momento del Manual de Angular, puesto que nuestra aplicación básica ya disponía de uno.
+
+	Sin embargo, en lugar de colocar el código de todos los componentes, directivas o pipes en el mismo módulo principal, lo 
+	adecuado es desarrollar diferentes módulos y agrupar distintos elementos en unos u otros. El orden se realizará de una manera 
+	lógica, atendiendo a nuestras propias preferencias, el modelo de negocio o las preferencias del equipo de desarrollo.
+	
+	Creacion de Modulo********************************************************************************************************
+		ng generate module nombre
+
+		Si abrimos el código del módulo generado "nombre.module.ts", encontraremos cómo se define un módulo en Angular. La 
+		parte más importante es, como ya viene siendo habitual en Angular, un decorador. El decorador de los módulos se 
+		llama @NgModule.
+
+			@NgModule({
+			  imports: [
+			    CommonModule
+			  ],
+			  declarations: []
+			})
+
+		Como ves en el decorador, tienes de momento un par de arrays definidos:
+
+			imports: con los imports que este módulo necesita
+			declarations: con los componentes, u otros artefactos que este module construye.
+
+	Generar un componente dentro de un modulo**********************************************************************************
+		Hasta ahora todos los componentes que habíamos creado habían sido generados dentro del módulo principal, pero si
+		queremos podemos especificar otro módulo donde crearlos, mediante el comando:
+
+			ng generate component nombre/miComponente
+
+		El comando del CLI también modificará el código del módulo, agregando automáticamente el import del 
+		componente y su referencia en el array "declarations". Ahora el código del módulo "nombre-modulo.module.ts" tendrá una 
+		forma como esta:
+
+			import { NgModule } from '@angular/core';
+			import { CommonModule } from '@angular/common';
+			import { MicomponenteComponent } from './micomponente/micomponente.component';
+
+			@NgModule({
+			  imports: [
+			    CommonModule
+			  ],
+			  declarations: [
+			    MiComponenteComponent
+			  ]
+			})
+			export class NombreModuloModule { }
+	Exportar del módulo hacia afuera*******************************************************************************************
+		Más adelante, si queremos que este módulo exponga cosas hacia afuera, que se puedan llegar a utilizar desde otros 
+		módulos, tendremos que agregar una nueva información al decorador del módulo: el array de exports.
+
+		Vamos a suponer que el componente "MiComponenteComponent" queremos que se pueda usar desde otros módulos. Entonces 
+		debemos señalar el nombre de la clase del componente en el array de "exports". Con ello el decorador del module 
+		quedaría de esta manera.
+
+			@NgModule({
+			  imports: [
+			    CommonModule
+			  ],
+			  declarations: [
+			    MiComponenteComponent
+			  ],
+			  exports: [
+			    MiComponenteComponent
+			  ]
+			})
+	
+	Declarar el import en el decorador del module principal***************************************************************
+		La importación de nuestro módulo se realiza en la declaración "imports" del módulo principal.
+
+		Este es el código del decorador del módulo principal.
+
+			@NgModule({
+			  declarations: [
+			    AppComponent
+			  ],
+			  imports: [
+			    BrowserModule,
+			    NombreModule
+			  ],
+			  providers: [],
+			  bootstrap: [AppComponent]
+			})
+**************************************************************************************************************************************
+54.- ***********************************************************************************************************Creacion de modulo dbz
+	1.- Se crea modulo dbz
+		ng g m dbz
+
+		import { NgModule } from '@angular/core';
+		import { CommonModule } from '@angular/common';
+		import { MainPageComponent } from './main-page/main-page.component';
+
+
+
+		@NgModule({
+		  declarations: [MainPageComponent],
+		  imports: [
+		    CommonModule
+		  ]
+		})
+		export class DbzModule { }
+	2.- Se crea componente mainPage
+		ng g c dbz/mainPage
+	3.- Se modifica dbz.module.ts, se crea el componente como exports
+
+		import { NgModule } from '@angular/core';
+		import { CommonModule } from '@angular/common';
+		import { MainPageComponent } from './main-page/main-page.component';
+
+
+
+		@NgModule({
+		  declarations: [MainPageComponent],
+		  imports: [
+		    CommonModule
+		  ],
+		  exports:[
+		    MainPageComponent
+		  ]
+		})
+		export class DbzModule { }
+	4.- Se modifica app.module.ts, Se agrega el modulo dbz al modulo principal
+		@NgModule({
+		  declarations: [
+		    AppComponent,
+		  ],
+		  imports: [
+		    BrowserModule,
+		    HeroesModule,
+		    ContadorModule,
+		    DbzModule
+		  ],
+		  providers: [],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+	5.- Se modifica app.component.html, se le agrega el componente creado
+		<app-main-page></app-main-page>
+**************************************************************************************************************************************
+55.- ***************************************************************************************************************Deseño de pantalla
+	1.- Se modifica main-page.component.html
+		<h1>Dragon Ball Z</h1>
+		<hr>
+		<div class="row">
+		    <div class="col">
+		        <h3>Personajes</h3>
+		        <ul>
+		            <li>Krillin - 700</li>
+		            <li>Goku - 15,000</li>
+		            <li>Veguetta - 8,500</li>
+		        </ul>
+		    </div>
+		    <div class="col">
+		        <h3>Agregar</h3>
+		        <hr>
+		        <form action="">
+		            <input type="text" placeholder="Nombre">
+		            <input type="number" placeholder="poder">
+		            <button>Agregar</button>
+		        </form>
+		        
+		    </div>
+		</div>
+	2.- Se modifica style.css, se le agregan clases
+		.row {
+		    display: flex;
+		}
+
+		.col {
+		    flex-grow: 1;
+		    margin-right: 10px;
+		}
+
+		input {
+		    display: block;
+		    margin: 5px;
+		}
+	3.- Se corre la aplicacion
+		ng serve -o
+**************************************************************************************************************************************
+56.- ***********************************************************************************************************************FormModule
+	1.- Se modifica dbz.module.ts, se le agrega FormModule a los imports
+	2.- Se modifica main-page.component.ts, se modifica  metodo agregar() 
+		  agregar( ){
+			   console.log('Heyyy!!!');
+			  }
+	3.- Se modifica main-page.component.html, se utiliza directiva (ngSubmit)
+		<form (ngSubmit)="agregar()">
+**************************************************************************************************************************************
+57.- **************************************************************************************************************************ngModel
+	1.- Se modifica main-page.component.ts, se crea interface Personaje y se crea atributo de tipo de la interface
+		1.1.- Se crea interface
+			interface Personaje {
+			  nombre: string;
+			  poder: number;
+			}
+		1.2.- Se crea atributo de tipo personaje
+			  nuevo : Personaje = {
+			    nombre: 'Trunck',
+			    poder: 14000
+			  }
+		1.3.- Se modifica metodo agregar(), se imprime por consola el objeto nuevo 
+			  agregar( ){
+				   console.log(this.nuevo);
+				  }
+	2.- Se modifica main-page.component.html, se le agrega directiva [value] para el binding alos input
+            <input type="text" placeholder="Nombre" name="nombre" [(ngModel)]="nuevo.nombre">
+            <input type="number" placeholder="poder" name="poder" [(ngModel)]="nuevo.poder">
+        2.1.- Se modifica titulo, se le agrega impresion de atributo nuevo.nombre
+        	<h3>Agregar <small>{{nuevo.nombre}}</small></h3>
+**************************************************************************************************************************************
+58.- ******************************************************************************************************************Mostrar listado
+	1.- Se modifica main-page.component.ts, se agrega arreglo de personaje
+		personajes: Personaje[] = [];
+		Se modifica el metodo agregar()
+		2.1.- se valida que nombre tenga contenido
+			if(this.nuevo.nombre.trim().length === 0){ return };
+		2.2.- Se pushea el personaje en el arreglo
+			this.personajes.push(this.nuevo);
+		2.3.- Se blanquea el atributo nuevo
+			    this.nuevo = {
+		      nombre: '',
+		      poder : 0
+		    }
+	2.- Se modifica main-page.component.html
+		2.- Se renderiza el arreglo con la directiva *ngFor
+			<li *ngFor="let pers of personajes">
+                {{pers.nombre}} - {{pers.poder | number}}
+            </li>
+**************************************************************************************************************************************
+59.- ******************************************************************************************************Creacion de componente hijo
+	1.- Se crea componente personajes dentro del modulo dbz
+		ng g c dbz/personajes --skipTests
+	2.- Se modifica main-page.components.html
+		2.1.- Se comenta la rederizacion de la lista 
+			        <!-- <h3>Personajes</h3>
+			        <ul>
+			            <li *ngFor="let pers of personajes">
+			                {{pers.nombre}} - {{pers.poder | number}}
+			            </li>
+			        </ul> -->
+		2.2.- Se agrega el componente creado de personajes
+			<div class="col">
+		        <app-personajes></app-personajes>
+		        <!-- <h3>Personajes</h3>
+		        <ul>
+		            <li *ngFor="let pers of personajes">
+		                {{pers.nombre}} - {{pers.poder | number}}
+		            </li>
+		        </ul> -->
+		    </div>
+	3.- Se modifica personajes.component.html, se copia renderizacion de la lista
+		<h3>Personajes</h3>
+		<ul>
+		    <li *ngFor="let pers of personajes">
+		        {{pers.nombre}} - {{pers.poder | number}}
+		    </li>
+		</ul>
+	4.- Se modifica personajes.component.ts, se crea atributo personajes
+		personajes: any[] = [];
+**************************************************************************************************************************************
+60.- ***************************************************************************************************************************@Input
+	1.- Se crea folder dentro del modulo dbz --> Interfaces
+	2.- Se crea archivo interface --> personaje.interface.ts y se copia la interface de main-page
+			export interface Personaje {
+				nombre: string;
+			  poder: number;
+			}
+	3.- Se modifica personajes.compoent.ts, se le agrega tipaje al atributo personajes y el imput
+			@Input() personajes: Personaje[] = [];
+	4.- Se modifica main-page.component.ts, se corta la interface y se importa del archivo creado de interface
+	5.- Se modifica main-page.componet.html
+			<app-personajes [personajes]="personajes"></app-personajes>
+**************************************************************************************************************************************
+61.- *****************************************************************************************************************@Input y Modulos
+	1.- Se crea compoente --> ng g c dbz/agregar --skipTests
+	2.- Se modifica main-page.component.html
+		2.1.- se corta objetos de agregar
+		2.2.- Se agrega el componente agregar
+			<app-agregar [personajes]="personajes"></app-agregar>
+	3.- Se modifica agregar.component.html, se pega los elements cortados de agregar
+		<h3>Agregar <small>{{nuevo.nombre}}</small></h3>
+		<hr>
+		<form (ngSubmit)="agregar()">
+		    <input type="text" placeholder="Nombre" name="nombre" [(ngModel)]="nuevo.nombre">
+		    <input type="number" placeholder="poder" name="poder" [(ngModel)]="nuevo.poder">
+		    <button type="submit">Agregar</button>
+		</form>
+	4.- Se modifca agregar.component.ts
+		1.- Se agrega metodo agregar() y objeto nuevo del componente main-page
+			nuevo : Personaje = {
+			    nombre : '',
+			    poder : 0
+			  }
+
+			  agregar( ){
+			    if(this.nuevo.nombre.trim().length === 0){ return };
+			    this.personajes.push(this.nuevo);
+			    console.log(this.nuevo);
+			    this.nuevo = {
+			      nombre: '',
+			      poder : 0
+			    }
+			    console.log(this.personajes);
+			  }
+		2.- Se le agrega input para el pase de obj del padre al hijo
+			@Input() personajes: Personaje[] = [];
+**************************************************************************************************************************************
+62.- **********************************************************************************************************@OutPuts y EventEmitter
+	1. Se modifica agregar.componet.ts
+		1.- Se importa Output de la libreria @angular/core
+		2.- Se agrega atributo @output que emite el personaje
+			@Output() emitirPresonaje: EventEmitter<Personaje> = new EventEmitter();
+		3.- Se modifica el metodo agregar() para pasarle el personaje por emitter
+			this.emitirPresonaje.emit(this.nuevo);
+	2.- Se modifca main-page.component.html para escuchar e evento OutPuts
+		<app-agregar [personajes]="personajes" (emitirPresonaje)="agregarPersonaje($event)"></app-agregar>
+	3.- Se modifca main-page.component.ts, se agrega metodo agregarPersonaje()
+		agregarPersonaje( argumento: Personaje){
+		    this.personajes.push(argumento);
+		  }
+**************************************************************************************************************************************
+64.- *****************************************************************************************************************Servicios Manual
+	1.- Se crea folder dentro del modulo dbz --> services
+	2.- Se crea archivo --> dbz.service.ts
+		import { Injectable } from "@angular/core";
+
+
+		@Injectable()
+		export class DbzService{
+		  constructor(){
+		    console.log('Servicio inicializado');
+		  }
+		}
+	3.- Se modifica main-page.component.ts, se le agrega inyeccion de dependencia del servicio
+		constructor( public dbzService: DbzService) { }
+**************************************************************************************************************************************
+65.- ***********************************************************************************Centralizar acceso a personajes en el servicio
+	1.- Se modifica la clase de servicio dbz.service.ts
+		1.1.- Se le agrega arreglo
+			private  _personajes: Personaje[] = [{
+			      nombre: 'Goku',
+			      poder: 8000
+			    },
+			    {
+			      nombre: 'Vegueta',
+			      poder: 7000
+			    }
+			  ];
+		1.2.- Se le agrega metodo getter personajes
+			get personajes(): Personaje[]{
+			    //Operador spread:
+			    return [...this._personajes];
+			  }
+			Nota: Al anteponer los tres puntos que representan al spread operator transformamos la variable personajes 
+			 en una lista de argumentos. Es como si le quitáramos los corchetes ( “[]” ) al array.
+		1.3.- Se crea metodo agregarPersonaje()
+			  agregarPersonaje(personaje: Personaje): void{
+			    this._personajes.push(personaje);
+			  }
+	2.- Se modifica main-page.component.html
+		<h1>Dragon Ball Z</h1>
+		<hr>
+		<div class="row">
+		    <div class="col">
+		        <app-personajes></app-personajes>
+		        <!-- <h3>Personajes</h3>
+		        <ul>
+		            <li *ngFor="let pers of personajes">
+		                {{pers.nombre}} - {{pers.poder | number}}
+		            </li>
+		        </ul> -->
+		    </div>
+		    <div class="col">
+		        <app-agregar></app-agregar>
+		    </div>
+		</div>
+	3.- Se modifica main-page.component.ts
+		@Component({
+		  selector: 'app-main-page',
+		  templateUrl: './main-page.component.html',
+		  styleUrls: ['./main-page.component.css']
+		})
+		export class MainPageComponent implements OnInit {
+
+
+		  constructor( ) {
+		  }
+
+		  ngOnInit(): void {
+		  }
+		}
+	4.- Se modifica agregar.component.ts, se comentan los input y OutPuts
+		export class AgregarComponent implements OnInit {
+
+		  //@Input() personajes: Personaje[] = [];
+
+		  //@Output() emitirPresonaje: EventEmitter<Personaje> = new EventEmitter();
+
+		  constructor( private dbzService: DbzService) { }
+
+		  ngOnInit(): void {
+		  }
+
+		  nuevo : Personaje = {
+		    nombre : '',
+		    poder : 0
+		  }
+
+		  agregar( ){
+		    if(this.nuevo.nombre.trim().length === 0){ return };
+		    //this.emitirPresonaje.emit(this.nuevo);
+		    this.dbzService.agregarPersonaje(this.nuevo);
+		    console.log(this.nuevo);
+		    this.nuevo = {
+		      nombre: '',
+		      poder : 0
+		    }
+		  }
+		}
+	5.- Se modifica Personajes.component.ts
+		export class PersonajesComponent implements OnInit {
+
+		  //@Input() personajes: Personaje[] = [];
+		  get personajes(): Personaje[]{
+		    return this.dbzService.personajes;
+		  }
+
+		  constructor(private dbzService: DbzService) { }
+
+		  ngOnInit(): void {
+		  }
+
+		}
+**************************************************************************************************************************************
+Seccion 7: GifsApp aplicacion para buscar imagenes************************************************************************************
+75.- **************************************************************************************************************Inicio del proyecto
+	1.- Se crea proyecto --> ng new gifsApp
+	2.- Se modifica el index y se le agrega el link a bootstrap 5 .CSS
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+	3.- Se corre el proyecto --> ng serve -o
+**************************************************************************************************************************************
+76.- *******************************************************************************************************************Diseño inicial
+	1.- Se modifica app.component.html, se le añade diseño
+		<div class="d-flex">
+		    <!-- Sidebar -->
+		    <div class="bg-dark border-right p-3" id="sidebar">
+			    <h3 class="text-light">GifsApp</h3>
+			    <hr class="text-white">
+			    <div class="list-group list-reset">
+			        <a href="#" class="list-group-item list-group-item-action">
+			      Dashboard
+			    </a>
+			    </div>
+			</div>
+		    <!-- end sidebar -->
+		    <div class="container">
+		        <div class="row p-3">
+		            <div class="col">
+		                <h5>Buscar:</h5>
+		                <input type="text" class="form-control" placeholder="Buscar gifs...">
+		            </div>
+		        </div>
+		        <hr>
+
+		        <div class="row">
+		            <div class="col">
+		                Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat ut id officia vitae voluptas repudiandae, 
+		                pariatur distinctio cum error quas sapiente maxime consequatur minima amet asperiores, quam perferendis 
+		                delectus ipsum!
+		            </div>
+		        </div>
+		    </div>
+		</div>
+**************************************************************************************************************************************
+77.- ********************************************************************************************************************Module shared
+	1.- Se genera un modulo --> ng g m shared
+	2.- Se importa el modulo en el app.module.ts
+	3.- Se genera componente sidebar --> ng g c shared/sidebar --skipTests
+	4.- Se configura el componente para ser exportado en el shared.module.ts
+		@NgModule({
+		  declarations: [SidebarComponent],
+		  imports: [
+		    CommonModule
+		  ],
+		  exports:[
+		    SidebarComponent
+		  ]
+		})
+		export class SharedModule { }
+	5.- Se corta la parte de sidebar de app.component.html y se pega en sidebar.component.html
+**************************************************************************************************************************************
+78.- *****************************************************************************************************GifsModule y sus componentes
+	1.- Se genera modulo gifs enn raiza --> ng g m gifs
+	2.- Se importa el modulo en al app.module.ts
+	3.- Se crean componentes
+		3.1.- Se crea componente buscador --> ng g c gifs/buscador
+		3.2.- Se crea componente resultado --> ng g c gifs/resultado
+	4.- Se modifica buscador.component.html, se copia la parde buscador de gifs-page.component.htm
+	5.- Se modifica resultado.component.html, se copia la parde resultado de gifs-page.component.htm
+**************************************************************************************************************************************
+79.- ********************************************************************************@ViewChild Obtener referencias a objetos del html
+	1.- Se obtiene referencia de elemento html
+  		@ViewChild('txtbuscar') txtBuscar!:ElementRef<HTMLInputElement>;
+  	2.- Se modifica metodo buscar(), se obtiene valor del elemento referenciado y se blanquea
+  		buscar(){
+	    const valor = this.txtBuscar.nativeElement.value;
+	    console.log(valor);
+	    this.txtBuscar.nativeElement.value = '';
+	  }
+	3.- Se elmimina del keyup.enter el argumento en la llamada al metodo buscar()
+		<input type="text" class="form-control" placeholder="Buscar gifs..." (keyup.enter)="buscar( )" #txtbuscar>
+**************************************************************************************************************************************
+80.- ****************************************************************************************************Clase de servicio gifsService
+	1.- Se crea servicio --> ng g s gifs/services/gifs
+	2.- Se modifica la clase de servicio
+		2.1.- Se crea atributo de tipo string[]
+			private _historial: string[] = [];
+		2.2.- Se crea getter
+			 get historial(): string[]{
+			    return [...this.historial];
+			  }
+		2.3.- Se crea metodo buscargifs()
+			buscarGifs( query: string){
+			    this._historial.unshift( query );
+			    console.log(this._historial)
+			  }
+	3.- Se modifica buscador.component.ts, se modifica metodo buscar(), se le agrega el llamado a la clase de servicio para guardar
+	el nuevo valor
+		this.gifsService.buscarGifs(valor);
+	4.- Se modifica sidebar.component.ts
+		4.1.- Se importa la clase de servicio
+			import { GifsService } from '../../gifs/services/gifs.service';
+		4.2.- Se realiza la inyeccion de dependencia
+			 constructor( private gifsService: GifsService ) { }
+		4.3.- Se crea getter que obtienen el historial de la clase de servicio
+			  get historico(): string[]{
+			    return this.gifsService.historial;
+			  }
+	5.- Se modifica sidebar.component.html, se renderiza la lista historico con la directiva *ngFor
+		<a href="#" class="list-group-item list-group-item-action" *ngFor="let cadena of historico">
+          {{cadena}}
+        </a>
+**************************************************************************************************************************************
+81.- **************************************************************************************************Controlar historial de busqueda
+************************************************************************************************************************Pipe titlecase
+	1.- Se modifica buscador.component.ts, se modifica metodo buscar()
+		//Se valida que no incluyan cadenas vacia
+    	if(valor.trim().length === 0){ return;}
+    2.- Se modifica gifs.service.ts, se modifica el metodo buscarGifs(), se valida un nuemro especidico de tarjetas
+    	buscarGifs( query: string){
+		    this._historial.unshift( query );
+		    this._historial = this._historial.slice(0,9);
+		    console.log(this._historial)
+		  }
+		2.1.- Se valida que no existan repetidos
+			buscarGifs( query: string){
+			    query = query.toLowerCase();
+			    //Se valida que no tenga repetidos la lista
+			    if( !this.historial.includes(query)){
+			      this._historial.unshift( query );
+			      this._historial = this._historial.slice(0,9);
+			    }
+
+			    console.log(this._historial)
+			  }
+	3.- Se modifica sidebar.component.html, se utliza pipe titlecase
+		<a href="#" class="list-group-item list-group-item-action" *ngFor="let cadena of historico">
+          {{cadena | titlecase}}
+        </a>
+**************************************************************************************************************************************
+82.- *************************************************************************************************Giphy Api Key - Giphy Developers
+	https://developers.giphy.com/  --> api que nos provee los gifs
+	Api Key: 2b47rkZmZZg8uRXBmOmiQHUPiJT19zqk
+	1.- Se crea una palicacion en Giphy, se copia la key para la aplicacion
+	2.- Se prueba servicio en postman, se copia url de la documentacion de giphy y se prueba
+		GET --> http://api.giphy.com/v1/gifs/trending?api_key=2b47rkZmZZg8uRXBmOmiQHUPiJT19zqk
+**************************************************************************************************************************************
+83.- ********************************************************************************************************************Peticion Http
+	1.- Se prueba con un fetch de JavaScript y luego se comentan
+
+	    //Sentencia fetch de javascript
+		fetch('http://api.giphy.com/v1/gifs/trending?api_key=2b47rkZmZZg8uRXBmOmiQHUPiJT19zqk&limit=20&q=grdragon ball')
+		      .then(  resp => {
+		          resp.json().then( data => {
+		          console.log(data)
+		        })
+		      })
+
+	2.- Se prueba con fetch wait  y luego se comentan
+		2.1.- Se le coloca async al metodo
+			  /* async */ buscarGifs( query: string){
+		2.2.- Se realiza el fetch
+			const resp = await fetch('http://api.giphy.com/v1/gifs/trending?api_key=2b47rkZmZZg8uRXBmOmiQHUPiJT19zqk&limit=20&q=grdragon ball')
+		      const data = await resp.json();
+		      console.log(data) 
+
+	3.- Se realiza la peticion utilizando HttpClient
+		1.- Se importa en el app.module.ts
+			imports: [
+			    BrowserModule,
+			    HttpClientModule,
+			    SharedModule,
+			    GifsModule
+			  ],
+		2.- Se modifica gifs.service.ts
+			2.1.- Se realiza inyeccion de dependencia del httpClient
+				constructor( private http: HttpClient) { }
+			2.2.- Se modifica metodo buscargifs()
+			    this.http.get('http://api.giphy.com/v1/gifs/trending?api_key=2b47rkZmZZg8uRXBmOmiQHUPiJT19zqk')
+			        .subscribe( (resp: any) => {
+			          console.log(resp.data);
+			        })
+**************************************************************************************************************************************
+84.- *************************************************************************************************************Rederizar resultados
+	1.- Se modifica gifs.service.ts, se modifca peticion http para que se encruste la variable query
+		this.http.get(`http://api.giphy.com/v1/gifs/trending?api_key=2b47rkZmZZg8uRXBmOmiQHUPiJT19zqk&limit=20&q=${query}`)
+	        .subscribe( (resp: any) => {
+	          console.log(resp.data);
+	          this.resultados = resp.data;
+	        })
+	2.- Se modifca resultados.component.ts
+		2.1.- Se realiza inyeccion de dependecia del servicio
+			constructor( private gifsService: GifsService) { }
+		2.2.- Se crea getter para buscar resultados de la clase de servicio
+			get resultados(){
+		    return this.gifsService.resultados;
+		  }
+	3.- Se modifica resultados.component.html
+		<div class="row">
+		    <div class="col-md-4 col-sm-6" *ngFor="let gif of resultados">
+		        <div class="card">
+		            <img [src]="gif.images.downsized_medium.url" [alt]="gif.title" class="top">
+		        </div>
+		        <div class="card-body">
+		            <p class="card-text">{{gif.title}}</p>
+		        </div>
+		    </div>
+		</div>
+*************************************************************************************************************************************
+85.- ******************************************************************************************Colocando tipado a las peticiones http
+	Referencia  --> https://quicktype.io/ --> nos convierte un json en un tipado o viceversa
+	1.- Se copia el json de respuesta del postman y se convierte en un tipaje typescript en la pagina de referencia
+	2.- Se crea interface en la carpeta gifs/interfaces/gif.interfaces.ts y se copia el contenido del paso 1
+	3.- Se modifica gifs.service.ts, se le agrega tipado a los resultados
+		3.1.- Se le agrega tipado al atributo resultados
+			public resultados: Gif[] = [];
+		3.2.- Se le agrega tipado a la peticion http.get
+			this.http.get<SerchGIFResponse>(`http://api.giphy.com/v1/gifs/trending?api_key=2b47rkZmZZg8uRXBmOmiQHUPiJT19zqk&limit=20&q=${query}`)
+		        .subscribe( (resp ) => {
+		          console.log(resp.data);
+		          this.resultados = resp.data;
+		        })
+*************************************************************************************************************************************
+86.- ********************************************************************************************************************LocalStorage
+	1.- Se modifica gifs.service.ts, se modifica metodo buscargifs() para que almacene en el LocalStorage
+
+		  /* async */ buscarGifs( query: string){
+		    query = query.toLowerCase();
+		    //Se valida que no tenga repetidos la lista
+		    if( !this.historial.includes(query)){
+		      this._historial.unshift( query );
+		      this._historial = this._historial.slice(0,9);
+		      //Se guarda en el localstorage
+		      localStorage.setItem("historial", JSON.stringify(this._historial));
+		    }
+		1.1.- Se modifica el constructor para que obtenga el historial de localstorage
+			  constructor( private http: HttpClient) {
+			  	//Obtengo del localstorage
+			    this._historial = JSON.parse(localStorage.getItem('historial')!) || [];
+			   }
+*************************************************************************************************************************************
+87.- ***************************************************************************************************************Carga de imagenes
+	1.- Se modifica gifs.service.ts, se modifica metodo buscargifs() para que almacene en el LocalStorage
+	    this.http.get<SerchGIFResponse>(`http://api.giphy.com/v1/gifs/trending?api_key=2b47rkZmZZg8uRXBmOmiQHUPiJT19zqk&limit=20&q=${query}`)
+	        .subscribe( (resp ) => {
+	          console.log(resp.data);
+	          this.resultados = resp.data;
+	          //Se almacenan las respuestas en el localstorage
+	          localStorage.setItem("resultados", JSON.stringify(this.resultados));
+	        })
+	1.1.- Se modifica el constructor para que obtenga el historial de localstorage
+		  constructor( private http: HttpClient) {
+		    //Obtener informacion del localstorage
+		    this._historial = JSON.parse(localStorage.getItem('historial')!) || [];
+		    this.resultados = JSON.parse(localStorage.getItem('resultados')!) || [];
+		   }
+*************************************************************************************************************************************
+88.- ***********************************************************************************************Obtener Imagenes desde el sidebar
+	1.- Se modifica sidebar.component.ts, se crea metodo buscar()
+		  buscar( query:string): void {
+		    this.gifsService.buscarGifs( query );
+		  }
+	2.- Se modifica sidevar.component.html, se agrega la llamada al metodo buscar desde un evento click
+		<div class="bg-dark border-right p-3" id="sidebar">
+		    <h3 class="text-light">GifsApp</h3>
+		    <hr class="text-white">
+		    <div class="list-group list-reset" *ngFor="let cadena of historico">
+		        <a href="#" class="list-group-item list-group-item-action" (click)="buscar(cadena)">
+		          {{cadena | titlecase}}
+		        </a>
+		    </div>
+		</div>
+*************************************************************************************************************************************
+89.- **********************************************************************************************************************HttpParams
+	1.- Se modifica clase de servicio gifs.service.ts
+		1.1.- Se crea constante para el endpoiint
+			private urlEndPoint: string = 'http://api.giphy.com/v1/gifs'
+		1.2.- Se modifica metodo buscargifs(), se crea constante para los parametros de HttpParams
+			   const params = new HttpParams()
+                  .set('api_key', this.apiKey)
+                  .set('limit', '10')
+                  .set('q', query);
+        1.3.- Se modifica metodo buscargifs(), se modifica el metodo http get()
+        	 this.http.get<SerchGIFResponse>(`${this.urlEndPoint}/search`, {params:params})
+		        .subscribe( (resp ) => {
+		          console.log(resp.data);
+		          this.resultados = resp.data;
+		          //Se almacenan las respuestas en el localstorage
+		          localStorage.setItem("resultados", JSON.stringify(this.resultados));
+		        })
+*************************************************************************************************************************************
+90.- ***************************************************************************************************************Animate.style CSS
+
+	Refrencia --> https://animate.style/
+*************************************************************************************************************************************
+Seccion 8: SPA-paisesApp*************************************************************************************************************
+95.- *************************************************************************************************************Inicio del proyecto
+	1.- Se crea carpeta del proyecto paisesApp
+	2.- Se ejecuta dentro del forder --> ng new paisesApp
+	3.- Referencia de api para paises  --> https://restcountries.eu/
+	4.- Se modifica el index.html, se copia el link de bootstrap CSS
+		<!-- CSS only -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" 
+		integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+	5.- Se crean directorios dentro de app
+		shared  --> menu 
+				--> sidebar
+				--> footer
+		
+		paises  --> components
+				--> interfaces
+				--> pages
+				--> services
+*************************************************************************************************************************************
+97.- *******************************************************************************************Creando componentes y modulos basicos
+	1.- Se crean modulos de shared y paises
+		1.1.- 	--> ng g m shared
+				--> ng g m paises
+	2.- Se crean los componentes
+		--> ng g c shared/sidebar --skipTests -is
+		--> ng g c paises/pages/porCapital --skip-tests -is
+		--> ng g c paises/pages/porPais --skip-tests -is
+		--> ng g c paises/pages/porRegion --skip-tests -is
+		--> ng g c paises/pages/verPais --skip-tests
+	3.- Se modifica el shared.module.ts, se configura para exportacion el SidebarComponent
+		@NgModule({
+		  declarations: [SidebarComponent],
+		  exports: [
+		    SidebarComponent
+		  ],
+		  imports: [
+		    CommonModule
+		  ]
+		})
+		export class SharedModule { }
+	4.- Se modifica paises.module.ts, se exportan los componentes a Exportar
+		@NgModule({
+		  declarations: [
+		    VerPaisComponent, 
+		    PorRegionComponent, 
+		    PorPaisComponent, 
+		    PorCapitalComponent
+		  ],
+		  exports: [
+		    VerPaisComponent, 
+		    PorRegionComponent, 
+		    PorPaisComponent, 
+		    PorCapitalComponent
+		  ],
+		  imports: [
+		    CommonModule
+		  ]
+		})
+		export class PaisesModule { }
+	5.- Se modifica el app.module.ts, se configuran en los imports del decorator los modulos creados
+		@NgModule({
+		  declarations: [
+		    AppComponent
+		  ],
+		  imports: [
+		    BrowserModule,
+		    SharedModule,
+		    PaisesModule
+		  ],
+		  providers: [],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+
+	6.- Se modifica el app.component.html y se le agregan los componentes creados para probar
+		<app-por-capital></app-por-capital>
+		<app-por-pais></app-por-pais>
+		<app-por-region></app-por-region>
+		<app-sidebar></app-sidebar>
+		<app-ver-pais></app-ver-pais>
+*************************************************************************************************************************************
+98.- *************************************************************************************************************Estructura del html
+	1.- Se modifica app.component.html
+		<div class="row container mt-4">
+		    <div class="col-3">
+		        <h2>Busqueda</h2>
+		        <hr>
+		        <ul class="list-group">
+		            <li class="list-group-item">Buscar Pais</li>
+		            <li class="list-group-item">Por Region</li>
+		            <li class="list-group-item">Por Capital</li>
+		        </ul>
+		    </div>
+		    <div class="col">
+		        <h2>Por Region</h2>
+		        <hr>
+		        <app-por-region></app-por-region>
+		    </div>
+		</div>
+*************************************************************************************************************************************
+99.- ********************************************************************************************************************RouterModule
+	1.- Se crea en el app un archivo app-routing.module.ts
+	2.- Se modifica el archivo creado
+		import { NgModule} from '@angular/core';
+		import { RouterModule, Routes } from '@angular/router';
+		import { PorPaisComponent } from './paises/pages/por-pais/por-pais.component';
+		import { PorRegionComponent } from './paises/pages/por-region/por-region.component';
+		import { PorCapitalComponent } from './paises/pages/por-capital/por-capital.component';
+		import { VerPaisComponent } from './paises/pages/ver-pais/ver-pais.component';
+
+		const routes: Routes = [
+		  {path:'', component: PorPaisComponent, pathMatch:'full'},
+		  {path:'region', component:PorRegionComponent},
+		  {path:'capital', component: PorCapitalComponent},
+		  {path:'pais/:id', component: VerPaisComponent},
+		  {path:'**', redirectTo:''}
+		];
+
+		@NgModule({
+		  imports:[ RouterModule.forRoot(routes)],
+		  exports: [ RouterModule ]
+		})
+		export class AppRoutingModule{
+
+		}
+	3.- Se modifica app.module.ts, se configura el modulo en los imports
+		  imports: [
+		    BrowserModule,
+		    SharedModule,
+		    PaisesModule,
+		    AppRoutingModule
+		  ],
+	4.- Se modifica app.component.html, se agrega componente router-outlet
+		<div class="row container mt-4">
+		    <div class="col-3">
+		        <h2>Busqueda</h2>
+		        <hr>
+		        <ul class="list-group">
+		            <li class="list-group-item">Buscar Pais</li>
+		            <li class="list-group-item">Por Region</li>
+		            <li class="list-group-item">Por Capital</li>
+		        </ul>
+		    </div>
+		    <div class="col">
+		        <router-outlet></router-outlet>
+		    </div>
+		</div>
+*************************************************************************************************************************************
+100.- *********************************************************************************************************************RouterLink
+	1.- Se modifica app.component.html, se le agregan atributos routerLink a cada elemento para que lo enlace a los componentes
+		<div class="row container mt-4">
+		    <div class="col-3">
+		        <h2>Busqueda</h2>
+		        <hr>
+		        <ul class="list-group">
+		            <li class="list-group-item" routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Buscar Pais</li>
+		            <li class="list-group-item" routerLink="region" routerLinkActive="active">Por Region</li>
+		            <li class="list-group-item" routerLink="capital" routerLinkActive="active">Por Capital</li>
+		        </ul>
+		    </div>
+		    <div class="col">
+		        <router-outlet></router-outlet>
+		    </div>
+		</div>
+*************************************************************************************************************************************
+101.- *********************************************************************************Separa componente sidebar del app.component.ts
+	1.- Se modifica app.component.html
+		1.1.- Se corta lo referente al sidebar y se coloca en sidebar.component.html
+			<h2>Busqueda</h2>
+			<hr>
+			<ul class="list-group">
+			    <li class="list-group-item" routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Buscar Pais</li>
+			    <li class="list-group-item" routerLink="region" routerLinkActive="active">Por Region</li>
+			    <li class="list-group-item" routerLink="capital" routerLinkActive="active">Por Capital</li>
+			</ul>
+		1.2.- Se agrega componente app-sidebar 
+	2.- Se modifica en shared.module.ts, se importa el modulo RouterModule
+		imports: [
+		    CommonModule,
+		    RouterModule
+		  ]
+	3.- Se modifica sidebar.component.ts, se modifica el decorator para agregar estilo css NullPointerException
+		@Component({
+		  selector: 'app-sidebar',
+		  templateUrl: './sidebar.component.html',
+		  styles: [`
+		      li{
+		        cursor:pointer;
+		      }
+		    `
+		  ]
+		})
+*************************************************************************************************************************************
+102.- ************************************************************************************************Componente para buscar por pais
+	1.- Se modifica paises.module.ts, se importa el FormsModule
+		  imports: [
+		    CommonModule,
+		    FormsModule
+		  ]
+	2.- Se modifica por-pais.component.html
+		<h2>Por Paiss</h2>
+		<hr>
+
+		<div class="row">
+		    <div class="col">
+		        <form action="" autocomplete="off" (ngSubmit)="buscar()">
+		            <input type="text" class="form-control" name="termino" placeholder="Buscar Pais..." [(ngModel)]=termino>
+		        </form>
+		    </div>
+		</div>
+		<hr>
+
+		<div class="alert alert-danger">
+		    No se encontro el termino.
+		</div>
+
+		<div class="row">
+		    <div class="col">
+		        <table class="table table-hover">
+		            <thead>
+		                <tr>
+		                    <th>#</th>
+		                    <th>Bandera</th>
+		                    <th>Nombre</th>
+		                    <th>Poblacion</th>
+		                    <th></th>
+		                </tr>
+		            </thead>
+		            <tbody>
+
+		            </tbody>
+		        </table>
+		    </div>
+		</div>
+	3.- Se modifica por-pais.component.ts, se agrega atributo termino y metodo buscar()
+		termino: string = "";
+
+		  buscar(){
+		    console.log(this.termino);
+		  }
+*************************************************************************************************************************************
+103.- ****************************************************************************************************Servicio para buscar paises
+	1.- Se modifica app.module.ts, se importa el modulo HttpClientModule
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule,
+		    HttpClientModule,
+		    SharedModule,
+		    PaisesModule
+		  ],
+	2.- Se modifica paises.service.ts
+		2.1.- Se realiza inyeccion de dependencia del HttpClient
+			constructor( private http: HttpClient ) { }
+		2.2.- Se crea metodo que buscaPaises segun un termino
+			  buscarPais( termino: string):Observable<any>{
+			    return this.http.get(`${this.urlEndPoint}/name/${termino}`)
+			  }
+		2.3.- Se crea atributo con el urlEndPoint
+			private urlEndPoint ='https://restcountries.eu/rest/v2';
+	3.- Se modifica por-pais.component.ts se agrega el servicio que busca el pais
+		3.1.- e realiza inyeccion de dependencia del servicio
+			constructor( private paisesService: PaisService ) { }
+		3.2.- Se modifica metodo buscar()
+			  buscar(){
+			    this.paisesService.buscarPais( this.termino )
+			      .subscribe(
+			          resp => {
+			            console.log(resp);
+			          }
+			      );
+			  }
+*************************************************************************************************************************************
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2039,7 +3242,17 @@ Complementarios*****************************************************************
 				    this.elem.nativeElement.style.backgroundColor = null;
 				  }
 	************************************************************************************************************************
+	Angular CLI Referencia**************************************************************************************************
+
+		https://cli.angular.io/
+	************************************************************************************************************************
+	RouterLink**************************************************************************************************************
+		Cuando se aplica a un elemento en una plantilla, convierte ese elemento en un enlace que inicia la navegación 
+		a una ruta. La navegación abre uno o más componentes enrutados en una o más ubicaciones 
+		de la página.<router-outlet>
+	************************************************************************************************************************
 ********************************************************************************************************************************
+
 
 
 

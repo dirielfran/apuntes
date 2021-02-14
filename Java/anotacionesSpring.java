@@ -4211,6 +4211,52 @@ FIN SPRNG MVC, DATA, SECURITY***************************************************
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Anotaciones****************************************************************************************************************************
 	@SpringBootApplication
 		Utilizamos la anotación @SpringBootApplication en nuestra aplicación o clase principal para habilitar una gran cantidad de 
@@ -5038,6 +5084,20 @@ Seccion 24 Spring Boot y thymeleaf - Injeccion de Dependencias******************
 					//Buscar vacantes de la BDs
 					return"/vacantes/detalle";
 				}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Seccion 25 Spring Boot y thymeleaf -Fragments  -Loyauts********************************************************************************
 *************************************************************************************************************Integracion de Pagina HTML
 	1.- Se copian carpetas Bootstrap - images -tinymce en el proyecto, recursos-static
@@ -6468,21 +6528,6 @@ Seccion 32 SpringBoot&SpringDataJPA - Integracion*******************************
                                
 	3.- Se crea un campo de tipo hidden en la vista formVacantes.html, para que envie el id de la vacante 
     	<input type="hidden"  th:field="*{id}"> 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 **************************************************************************************Ejercicio de operaciones CRUD con Spring Data JPA
 	1. Usar la plantilla del archivo formRegistro.html
 		1.1.- Se configurar namespace thymeleaf en home.html
@@ -6740,18 +6785,6 @@ Seccion 32 SpringBoot&SpringDataJPA - Integracion*******************************
 		    	attr.addFlashAttribute("msg","El usuario fue desbloqueado.");
 		    	return "redirect:/usuarios/index";
 		    }
-
-
-
-
-
-
-
-
-
-
-
-
 *********************************************************************************************Implementacion Formulario Busqueda Vacante
 	1.- Se modifica el home controller para que se realice inyeccion de dependencias de CategoriasServiceJPA;
 		@Autowired
@@ -7212,6 +7245,27 @@ FIN SPRNG BOOT, DATA, SECURITY**************************************************
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 *********************************************Spring Boot && RestFul Web Services*******************************************************
 ************************************************************************************************************************ResponseEntity
 	En ciertas circunstancias se necesita enviar respuestas HTTP desde nuestra aplicación backend hacia la aplicación cliente. Spring 
@@ -7469,6 +7523,28 @@ Creacion del war de la aplicacion***********************************************
 ***************************************************************************************************************************************
 ***************************************************************************************************************************************
 FIN RestFullWebServices, DATA**********************************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -8104,7 +8180,1192 @@ Tuto Spring Boot****************************************************************
 				      this.name = name;
 				   }
 				}
+	******************************************************************************************************************************
+	Spring Boot - Interceptor*****************************************************************************************************
+		Puede usar el Interceptor en Spring Boot para realizar operaciones en las siguientes situaciones:
 
+			Antes de enviar la solicitud al controlador
+
+			Antes de enviar la respuesta al cliente
+
+		Por ejemplo, puede usar un interceptor para agregar el encabezado de la solicitud antes de enviar la solicitud al 
+		controlador y agregar el encabezado de respuesta antes de enviar la respuesta al cliente.
+
+		Para trabajar con interceptor, necesita crear la clase @Component que lo admita y debe implementar la interfaz 
+		HandlerInterceptor .
+
+		Los siguientes son los tres métodos que debe conocer mientras trabaja con interceptores:
+
+			Método preHandle () : se utiliza para realizar operaciones antes de enviar la solicitud al controlador. 
+			Este método debe devolver verdadero para devolver la respuesta al cliente.
+
+			Método postHandle () : se utiliza para realizar operaciones antes de enviar la respuesta al cliente.
+
+			Método afterCompletion () : se utiliza para realizar operaciones después de completar la solicitud y la respuesta.
+
+		Tendrá que registrar este Interceptor con InterceptorRegistry utilizando WebMvcConfigurerAdapter como se muestra a continuación:
+
+			@Component
+			public class ProductServiceInterceptorAppConfig extends WebMvcConfigurerAdapter {
+			   @Autowired
+			   ProductServiceInterceptor productServiceInterceptor;
+
+			   @Override
+			   public void addInterceptors(InterceptorRegistry registry) {
+			      registry.addInterceptor(productServiceInterceptor);
+			   }
+			}
+		Ejemplo______________________________________________________________________________________________________________
+			***ProductServiceInterceptor
+				@Component
+				public class ProductServiceInterceptor implements HandlerInterceptor {
+
+					@Override
+					public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+							throws Exception {
+						System.out.println("Pre Handle method is Calling");
+						return true;
+					}
+
+					@Override
+					public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+							ModelAndView modelAndView) throws Exception {
+						 System.out.println("Post Handle method is Calling");
+					}
+
+					@Override
+					public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+							throws Exception {
+						System.out.println("Request and Response is completed");
+					}
+					
+					
+				}
+			----------------------------------------------------------------------------------------------------------------
+			****ProductServiceInterceptorAppConfig.java
+				@Component
+				public class ProductServiceInterceptorAppConfig implements WebMvcConfigurer{
+
+					@Autowired
+					ProductServiceInterceptor productServiceInterceptor;
+
+					@Override
+					public void addInterceptors(InterceptorRegistry registry) {
+						registry.addInterceptor(productServiceInterceptor);
+					}	
+				}
+			----------------------------------------------------------------------------------------------------------------
+			*** Se modifica ProductServiceController, se agrega metodo get
+				   @RequestMapping(value = "/products")
+				   public ResponseEntity<Object> getProduct() {
+				      return new ResponseEntity<>(productRepo.values(), HttpStatus.OK);
+				   }
+	******************************************************************************************************************************
+	Spring Boot - Servlet Filter**************************************************************************************************
+		Un filtro es un objeto que se utiliza para interceptar las solicitudes y respuestas HTTP de su aplicación. Al usar el 
+		filtro, podemos realizar dos operaciones en dos instancias:
+
+			Antes de enviar la solicitud al controlador
+			Antes de enviar una respuesta al cliente.
+
+		El siguiente código muestra el código de muestra para una clase de implementación de filtro de servlet con la 
+		anotación @Component.
+
+			@Component
+			public class SimpleFilter implements Filter {
+			   @Override
+			   public void destroy() {}
+
+			   @Override
+			   public void doFilter
+			      (ServletRequest request, ServletResponse response, FilterChain filterchain) 
+			      throws IOException, ServletException {}
+
+			   @Override
+			   public void init(FilterConfig filterconfig) throws ServletException {}
+			}
+			------------------------------------------------------------------------------------------------------------
+			@SpringBootApplication
+			@RestController
+			public class DemoApplication {
+			   public static void main(String[] args) {
+			      SpringApplication.run(DemoApplication.class, args);
+			   }
+			   @RequestMapping(value = "/")
+			   public String hello() {
+			      return "Hello World";
+			   }
+			}
+	******************************************************************************************************************************
+	Spring Boot - Tomcat Port Number**********************************************************************************************
+		Spring Boot le permite ejecutar la misma aplicación más de una vez en un número de puerto diferente. En este capítulo, 
+		aprenderá sobre esto en detalle. Tenga en cuenta que el número de puerto predeterminado 8080.
+
+		***Puerto personalizado
+		En el archivo application.properties , podemos establecer un número de puerto personalizado para la propiedad server.port
+
+			server.port = 9090
+
+		***Puerto aleatorio
+		En el archivo application.properties , podemos establecer un número de puerto aleatorio para la propiedad server.port
+
+			server.port = 0
+		
+		Nota : si el número de puerto del servidor es 0 al iniciar la aplicación Spring Boot, Tomcat usa el número de puerto aleatorio.
+	******************************************************************************************************************************	
+	Spring Boot - Rest Template***************************************************************************************************
+		Referencia --> http://www.profesor-p.com/2019/08/03/trabajando-con-la-clase-resttemplate/
+		Rest Template se utiliza para crear aplicaciones que consumen RESTful Web Services. Puede utilizar el método exchange() 
+		para consumir los servicios web para todos los métodos HTTP. 
+
+		RestTemplate esta en el core de Spring por lo cual no es necesario instalar ninguna dependencia. Lo puedes encontrar en 
+		el paquete org.springframework.web.client.RestTemplate
+
+		Para hacer una petición a un recurso web con RestTemplate simplemente se escribiría este código:
+
+			ResponseEntity<Customer> responseEntity= new RestTemplate().getForEntity(URL, Customer.class);
+
+		Donde URLseria la dirección donde queremos realizar la petición (por ejemplo) y Customer es el objeto que esperamos que 
+		nos vaya a devolver esa petición. La petición seria del tipo GET ya que hemos utilizado la función getForEntity.
+
+		En esa llamada se recibe un objeto ResponseEntity donde estará embebido el objeto del tipo indicado, pero si solo nos 
+		interesa recoger el cuerpo del mensaje podríamos utilizar la función getForObject, sin embargo el recoger la clase 
+		ResponseEntity nos ofrece una información que a menudo es necesaria.
+
+		De esta clase podremos utilizar, entre otras, las siguientes funciones:
+
+			getStatusCode()
+				Esta función nos permitirá saber el estado HTTP retornado por la petición. Devuelve un tipo HttpStatus
+
+				Así para saber si el servidor devolvió un OK podremos poner
+
+				  if (responseEntity.getStatusCode()==HttpStatus.OK) { // Todo fue bien
+				  ....
+				  }
+
+			getHeaders()
+				Devuelve un objeto HttpHeaders en el cual tendremos las cabeceras devueltas por el servidor.
+
+			getBody()
+				Devuelve una instancia de la clase devuelto por el servidor. En nuestro ejemplo anterior devolvería un objeto del 
+				tipo Customer
+		----------------------------------------------------------------------------------------------------------------------
+		1.1 Capturar la excepción del tipo HttpClientErrorException
+			Este sería el método fácil. Para ello simplemente deberemos meter entre un try/catch la llamada a la función 
+			de RestTemplate.
+
+			try {
+			    responseEntity = new RestTemplate().getForEntity(localUrl, String.class);
+			} catch (HttpClientErrorException k1) {            
+			    return "Http code is not 2XX. The server responded: " + k1.getStatusCode() + 
+			        " Cause: "+ k1.getResponseBodyAsString();
+			} catch (RestClientException k) {
+			    return "The server didn't respond: " + k.getMessage();
+			}
+		---------------------------------------------------------------------------------------------------------------------
+		 Ejemplo______________________________________________________________________________________________________________
+		 	public static void main(String[] args) {
+				SpringApplication.run(TutoSpringBootApplication.class, args);
+				System.out.println("hello");
+				Product producto = new Product();
+				ResponseEntity<Product> responceEntity = new RestTemplate().getForEntity("http://localhost:9090/products/1", Product.class);
+				System.out.println("*********************************************************************");
+				System.out.println("Probando getStatusCode().");
+				System.out.println(responceEntity.getStatusCode());
+				System.out.println("Probando getBody().");
+				producto = responceEntity.getBody();
+				System.out.println(producto.toString());
+				if(responceEntity.getStatusCode() == HttpStatus.OK) {
+					System.out.println("Todo fue bien");
+				}
+				System.out.println("Probando getHeaders().");
+				System.out.println(responceEntity.getHeaders());
+				System.out.println("Prueba de getProducto");
+				
+				System.out.println("*********************************************************************");
+				System.out.println(getProducto());
+			}
+			
+			
+			public static String getProducto()	{
+				try {
+				    ResponseEntity responseEntity = new RestTemplate().getForEntity("http:/localhost:8080/DOWN", String.class);
+				} catch (HttpClientErrorException k1) {            
+				    return "Http code is not 2XX. The server responded: " + k1.getStatusCode() + 
+				        " Cause: "+ k1.getResponseBodyAsString();
+				} catch (RestClientException k) {
+				    return "The server didn't respond: " + k.getMessage();
+				}
+				return "";
+			}
+
+		GET------------------------------------------------------------------------------------------------------------------
+			
+
+			Consumir la API GET mediante el método RestTemplate - exchange ()
+
+			Tendrá que seguir los puntos dados para consumir la API -
+
+				*Conectó automáticamente el objeto de plantilla de descanso.
+				*Utilice HttpHeaders para configurar los encabezados de solicitud.
+				*Utilice HttpEntity para envolver el objeto de solicitud.
+				*Proporcione la URL, HttpMethod y el tipo de retorno para el método Exchange ().
+
+
+			@RestController
+			public class ConsumeWebService {
+				@Autowired
+				RestTemplate restTemplate;
+				
+				 @RequestMapping(value = "/template/products")
+				 public String getProductList() {
+				      HttpHeaders headers = new HttpHeaders();
+				      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+				      HttpEntity <String> entity = new HttpEntity<String>(headers);
+				      
+				      return restTemplate.exchange("http://localhost:9090/products", HttpMethod.GET, entity, String.class).getBody();
+				   }
+			}
+			______________________________________________________________________________________________________________
+			@SpringBootApplication
+			@RestController
+			public class TutoSpringBootApplication implements CommandLineRunner{
+
+
+				public static void main(String[] args) {
+					SpringApplication.run(TutoSpringBootApplication.class, args);
+			
+				}
+				
+				@Bean
+			   public RestTemplate getRestTemplate() {
+			      return new RestTemplate();
+			   }
+				
+	
+			}
+		POST-----------------------------------------------------------------------------------------------------------------
+			Consumir la API POST mediante el método RestTemplate - exchange ()
+
+			Suponga que esta URL http://localhost:8080/products 
+
+			devuelve la respuesta que se muestra a continuación, vamos a consumir esta respuesta de API mediante el uso de 
+			la plantilla Rest.
+
+			El código que se proporciona a continuación es el cuerpo de la solicitud:
+
+				{
+				   "id":"3",
+				   "name":"Ginger"
+				}
+
+			El código que se proporciona a continuación es el cuerpo de la respuesta:
+
+				Product is created successfully
+			
+			Deberá seguir los puntos que se indican a continuación para consumir la API:
+
+				*Conectó automáticamente el objeto de plantilla de descanso.
+				*Utilice HttpHeaders para establecer los encabezados de solicitud.
+				*Utilice HttpEntity para envolver el objeto de solicitud. Aquí, envolvemos el objeto Producto para enviarlo 
+				al cuerpo de la solicitud.
+				*Proporcione la URL, HttpMethod y el tipo de retorno para el método exchange ().
+
+			@RestController
+			public class ConsumeWebService {
+			   @Autowired
+			   RestTemplate restTemplate;
+
+			   @RequestMapping(value = "/template/products", method = RequestMethod.POST)
+			   public String createProducts(@RequestBody Product product) {
+			      HttpHeaders headers = new HttpHeaders();
+			      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+			      HttpEntity<Product> entity = new HttpEntity<Product>(product,headers);
+			      
+			      return restTemplate.exchange(
+			         "http://localhost:8080/products", HttpMethod.POST, entity, String.class).getBody();
+			   }
+			}
+
+			Ejemplo_____________________________________________________________________________________________________
+				@RequestMapping(value="/template/products/post")
+				 public String createProduct(){
+					 ResponseEntity<Product> responseEntity = new RestTemplate().getForEntity("http://localhost:9090/products/1", Product.class);
+					 Product producto = responseEntity.getBody();
+					 
+					 HttpHeaders headers = new HttpHeaders();
+					 headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+					 HttpEntity <Product> entity = new HttpEntity<Product>(producto,headers); 
+					 
+					 return restTemplate.exchange("http://localhost:9090/products", HttpMethod.POST, entity, String.class).getBody();
+				 }
+		PUT------------------------------------------------------------------------------------------------------------------
+			Consumir la API PUT mediante el método RestTemplate - exchange ()
+
+			Supongamos que esta URL http: //localhost:8080/products/3 
+			devuelve la siguiente respuesta y vamos a consumir esta respuesta de API utilizando Rest Template.
+
+			El código que se proporciona a continuación es el cuerpo de la solicitud:
+
+				{
+				   "name":"Indian Ginger"
+				}
+
+			El código que se proporciona a continuación es el cuerpo de la respuesta:
+
+				Product is updated successfully
+			
+			Deberá seguir los puntos que se indican a continuación para consumir la API:
+
+				*Conectó automáticamente el objeto de plantilla de descanso.
+				*Utilice HttpHeaders para configurar los encabezados de solicitud.
+				*Utilice HttpEntity para envolver el objeto de solicitud. Aquí, envolvemos el objeto Producto para enviarlo al 
+				cuerpo de la solicitud.
+				*Proporcione la URL, HttpMethod y el tipo de retorno para el método exchange ().
+
+				@RestController
+				public class ConsumeWebService {
+				   @Autowired
+				   RestTemplate restTemplate;
+
+				   @RequestMapping(value = "/template/products/{id}", method = RequestMethod.PUT)
+				   public String updateProduct(@PathVariable("id") String id, @RequestBody Product product) {
+				      HttpHeaders headers = new HttpHeaders();
+				      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+				      HttpEntity<Product> entity = new HttpEntity<Product>(product,headers);
+				      
+				      return restTemplate.exchange(
+				         "http://localhost:8080/products/"+id, HttpMethod.PUT, entity, String.class).getBody();
+				   }
+				}
+
+				Ejemplo____________________________________________________________________________________________________
+
+					 @RequestMapping(value="/template/products/{id}")
+					 public String updateProduct(@PathVariable String id) {
+						 ResponseEntity<Product> responseEntity = new RestTemplate().getForEntity("http://localhost:9090/products/1", Product.class);
+						 Product producto = responseEntity.getBody();
+						 producto.setName("Elvis");
+						 
+						 HttpHeaders headers = new HttpHeaders();
+						 headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+						 HttpEntity<Product> entity = new HttpEntity<Product>(producto,headers);
+						 
+						 return restTemplate.exchange("http://localhost:9090/products/"+id, HttpMethod.PUT, entity, String.class).getBody();
+					 }
+	******************************************************************************************************************************
+	Spring Boot - Service Components**********************************************************************************************
+		Los componentes de servicio son el archivo de clase que contiene la anotación @Service. Estos archivos de clase se 
+		utilizan para escribir lógica empresarial en una capa diferente, separada del archivo de clase @RestController. La 
+		lógica para crear un archivo de clase de componente de servicio se muestra aquí:
+
+			public interface ProductService {
+			}
+
+		La clase que implementa la interfaz con la anotación @Service es la que se muestra:
+
+			@Service
+			public class ProductServiceImpl implements ProductService {
+			}
+		Ejemplo_______________________________________________________________________________________________________________
+				public interface IProductService {
+					
+					public abstract void createProduct(Product producto);
+					public abstract void updateProduct(Long id, Product producto);
+					public abstract void deleteProduct(Long id);
+					public abstract Collection<Object> getProducts();
+					
+				}
+			--------------------------------------------------------------------------------------------------------------
+				@Service
+				public class ProductServiceImpl implements IProductService {
+		
+				private static Map<String,Object> mapa = new HashMap<>();
+				
+				static {
+					Product producto1 = new Product();
+					producto1.setId("1");
+					producto1.setName("Elvis");
+					mapa.put(producto1.getId(), producto1.getName());
+					
+
+					Product producto2 = new Product();
+					producto2.setId("2");
+					producto2.setName("Diego");
+					mapa.put(producto2.getId(), producto2.getName());
+				}
+				
+				
+					@Override
+					public void createProduct(Product producto) {
+						mapa.put(producto.getId(), producto.getName());
+					}
+
+					@Override
+					public void updateProduct(Long id, Product producto) {
+						mapa.remove(id);
+						producto.setId(id.toString());
+						mapa.put(producto.getId(), producto.getName());
+					}
+
+					@Override
+					public void deleteProduct(Long id) {
+						mapa.remove(id.toString());
+					}
+
+					@Override
+					public Collection<Object> getProducts() {
+						return mapa.values();
+					}
+
+				}
+			--------------------------------------------------------------------------------------------------------------
+				@RestController
+				@RequestMapping("/api")
+				public class ProductServiciosController {
+	******************************************************************************************************************************
+	Spring Boot - Thymeleaf*******************************************************************************************************
+		Thymeleaf es una biblioteca basada en Java que se utiliza para crear una aplicación web. Proporciona un buen soporte 
+		para servir un XHTML / HTML5 en aplicaciones web. 
+
+		Plantillas de Thymeleaf
+		Thymeleaf convierte sus archivos en archivos XML bien formados. Contiene 6 tipos de plantillas como se indica a continuación:
+
+				XML
+				XML válido
+				XHTML
+				XHTML válido
+				HTML5
+				HTML5 heredado
+
+		Todas las plantillas, excepto Legacy HTML5, se refieren a archivos XML válidos bien formados. El HTML5 heredado nos 
+		permite representar las etiquetas HTML5 en una página web, incluidas las etiquetas no cerradas.
+
+		*Aplicación web
+			Puede utilizar las plantillas de Thymeleaf para crear una aplicación web en Spring Boot. Deberá seguir los pasos a 
+			continuación para crear una aplicación web en Spring Boot utilizando Thymeleaf.
+
+			Use el siguiente código para crear un archivo de clase @Controller para redirigir el URI de solicitud a un 
+			archivo HTML:
+
+				package com.tutorialspoint.demo.controller;
+
+				import org.springframework.stereotype.Controller;
+				import org.springframework.web.bind.annotation.RequestMapping;
+
+				@Controller
+				public class WebController {
+				   @RequestMapping(value = "/index")
+				   public String index() {
+				      return "index";
+				   }
+				}
+
+			En el ejemplo anterior, el URI de la solicitud es / index y el control se redirige al archivo index.html. Tenga 
+			en cuenta que el archivo index.html debe colocarse en el directorio de plantillas y todos los archivos JS y CSS 
+			deben colocarse en el directorio estático en classpath. En el ejemplo que se muestra, usamos un archivo CSS 
+			para cambiar el color del texto.
+
+			Puede usar el siguiente código y crear un archivo CSS en una carpeta separada css y nombrar el archivo como styles.css -
+
+				h4 {
+				   color: red;
+				}
+
+			El código para el archivo index.html se proporciona a continuación:
+
+				<!DOCTYPE html>
+				<html>
+				   <head>
+				      <meta charset = "ISO-8859-1" />
+				      <link href = "css/styles.css" rel = "stylesheet"/>
+				      <title>Spring Boot Application</title>
+				   </head>
+				   <body>
+				      <h4>Welcome to Thymeleaf Spring Boot web application</h4>
+				   </body>
+				</html>
+
+			Ahora, necesitamos agregar la dependencia Spring Boot Starter Thymeleaf en nuestro archivo de configuración de compilación.
+
+			Los usuarios de Maven pueden agregar la siguiente dependencia en el archivo pom.xml:
+
+				<dependency>
+				   <groupId>org.springframework.boot</groupId>
+				   <artifactId>spring-boot-starter-thymeleaf</artifactId>
+				</dependency>
+
+			El código para el archivo de clase de la aplicación Spring Boot principal se proporciona a continuación:
+
+				package com.tutorialspoint.demo;
+
+				import org.springframework.boot.SpringApplication;
+				import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+				@SpringBootApplication
+				public class DemoApplication {
+				   public static void main(String[] args) {
+				      SpringApplication.run(DemoApplication.class, args);
+				   }
+				}
+	******************************************************************************************************************************	
+	Consuming RESTful Web Services************************************************************************************************
+		Este capítulo discutirá en detalle sobre el consumo de servicios web RESTful mediante el uso de jQuery AJAX.
+
+		Cree una aplicación web Spring Boot simple y escriba archivos de clase de controlador que se utilizan para redireccionar 
+		al archivo HTML para consumir los servicios web RESTful.
+
+		Necesitamos agregar el iniciador de Spring Boot Thymeleaf y la dependencia Web en nuestro archivo de configuración de compilación.
+
+		Para los usuarios de Maven, agregue las siguientes dependencias en su archivo pom.xml.
+
+			<dependency>
+			   <groupId>org.springframework.boot</groupId>
+			   <artifactId>spring-boot-starter-thymeleaf</artifactId>
+			</dependency>
+
+			<dependency>
+			   <groupId>org.springframework.boot</groupId>
+			   <artifactId>spring-boot-starter-web</artifactId>
+			</dependency>
+
+		El código para el archivo de clase @Controller se proporciona a continuación:
+
+			@Controller
+			public class ViewController {
+			}
+
+		Puede definir los métodos de solicitud URI para redireccionar al archivo HTML como se muestra a continuación:
+
+			@RequestMapping(“/view-products”)
+			public String viewProducts() {
+			   return “view-products”;
+			}
+			@RequestMapping(“/add-products”)
+			public String addProducts() {
+			   return “add-products”;
+			}
+		Esta API http: //localhost:9090/products 
+		debe devolver el siguiente JSON en respuesta como se muestra a continuación:
+
+			[
+			   {
+			      "id": "1",
+			      "name": "Honey"
+			   },
+			   {
+			      "id": "2",
+			      "name": "Almond"
+			   }
+			]
+
+		Ahora, cree un archivo view-products.html en el directorio de plantillas en la ruta de clases.
+
+		En el archivo HTML, agregamos la biblioteca jQuery y escribimos el código para consumir el servicio 
+		web RESTful al cargar la página.
+			<!DOCTYPE html>
+			<html>
+			   <head>
+			      <meta charset = "ISO-8859-1"/>
+			      <title>View Products</title>
+			      <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+			      
+			      <script>
+			         $(document).ready(function(){
+			            $.getJSON("http://localhost:9090/products", function(result){
+			               $.each(result, function(key,value) {
+			                  $("#productsJson").append(value.id+" "+value.name+" ");
+			               }); 
+			            });
+			         });
+			      </script>
+			   </head>
+			   
+			   <body>
+			      <div id = "productsJson"> </div>
+			   </body>
+			</html>
+
+		El método POST y esta URL http: // localhost: 9090 / products deben contener el cuerpo de la solicitud y la respuesta a continuación.
+
+		El código para el cuerpo de la solicitud se proporciona a continuación:
+
+			{
+			   "id":"3",
+			   "name":"Ginger"
+			}
+
+		El código para el cuerpo de respuesta se proporciona a continuación:
+
+		Product is created successfully
+		Ahora, cree el archivo add-products.html en el directorio de plantillas en la ruta de clases.
+
+		En el archivo HTML, agregamos la biblioteca jQuery y escribimos el código que envía el formulario al servicio web RESTful al hacer clic en el botón.
+
+			<!DOCTYPE html>
+			<html>
+			   <head>
+			      <meta charset = "ISO-8859-1" />
+			      <title>Add Products</title>
+			      <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+			      
+			      <script>
+			         $(document).ready(function() {
+			            $("button").click(function() {
+			               var productmodel = {
+			                  id : "3",
+			                  name : "Ginger"
+			               };
+			               var requestJSON = JSON.stringify(productmodel);
+			               $.ajax({
+			                  type : "POST",
+			                  url : "http://localhost:9090/products",
+			                  headers : {
+			                     "Content-Type" : "application/json"
+			                  },
+			                  data : requestJSON,
+			                  success : function(data) {
+			                     alert(data);
+			                  },
+			                  error : function(data) {
+			                  }
+			               });
+			            });
+			         });
+			      </script>
+			   </head>
+			   
+			   <body>
+			      <button>Click here to submit the form</button>
+			   </body>
+			</html>
+	******************************************************************************************************************************
+	Spring Boot - Soporte CORS****************************************************************************************************
+		Cross-Origin Resource Sharing (CORS) es un concepto de seguridad que permite restringir los recursos implementados en los 
+		navegadores web. Evita que el código JavaScript produzca o consuma las solicitudes contra un origen diferente.
+
+		Por ejemplo, su aplicación web se ejecuta en el puerto 8080 y, al usar JavaScript, está intentando consumir servicios web 
+		RESTful desde el puerto 9090. En tales situaciones, enfrentará el problema de seguridad de Intercambio de recursos entre 
+		orígenes en sus navegadores web.
+
+		Se necesitan dos requisitos para manejar este problema:
+
+			Los servicios web RESTful deben admitir el intercambio de recursos entre orígenes.
+
+			La aplicación de servicio web RESTful debe permitir el acceso a las API desde el puerto 8080.
+
+		En este capítulo, aprenderemos en detalle sobre cómo habilitar solicitudes de origen cruzado para una aplicación de 
+		servicio web RESTful.
+
+		***Habilitar CORS en el método del controlador
+			Necesitamos establecer los orígenes del servicio web RESTful usando la anotación @CrossOrigin para el método del 
+			controlador. Esta anotación @CrossOrigin admite una API REST específica, y no para toda la aplicación.
+
+				@RequestMapping(value = "/products")
+				@CrossOrigin(origins = "http://localhost:8080")
+
+				public ResponseEntity<Object> getProduct() {
+				   return null;
+				}
+
+		***Configuración CORS global
+			Necesitamos definir la configuración de @Bean mostrada para establecer el soporte de configuración CORS 
+			globalmente para su aplicación Spring Boot.
+
+				@Bean
+				public WebMvcConfigurer corsConfigurer() {
+				   return new WebMvcConfigurerAdapter() {
+				      @Override
+				      public void addCorsMappings(CorsRegistry registry) {
+				         registry.addMapping("/products").allowedOrigins("http://localhost:9000");
+				      }    
+				   };
+				}
+	******************************************************************************************************************************
+	Spring Boot - Internationalization********************************************************************************************
+		La internacionalización es un proceso que hace que su aplicación se adapte a diferentes idiomas y regiones sin cambios 
+		de ingeniería en el código fuente. En sus palabras, la internacionalización es una preparación para la localización.
+
+		En este capítulo, aprenderemos en detalle cómo implementar la internacionalización en Spring Boot.
+
+		***Dependencias
+			Necesitamos la dependencia Spring Boot Starter Web y Spring Boot Starter Thymeleaf para desarrollar una aplicación 
+			web en Spring Boot.
+
+			Maven
+				<dependency>
+				   <groupId>org.springframework.boot</groupId>
+				   <artifactId>spring-boot-starter-web</artifactId>
+				</dependency>
+
+				<dependency>
+				   <groupId>org.springframework.boot</groupId>
+				   <artifactId>spring-boot-starter-thymeleaf</artifactId>
+				</dependency>
+
+		***LocaleResolver
+			Necesitamos determinar la configuración regional predeterminada de su aplicación. Necesitamos agregar el bean 
+			LocaleResolver en nuestra aplicación Spring Boot.
+
+				@Bean
+				public LocaleResolver localeResolver() {
+				   SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
+				   sessionLocaleResolver.setDefaultLocale(Locale.US);
+				   return sessionLocaleResolver;
+				}
+
+		***LocaleChangeInterceptor
+			LocaleChangeInterceptor se utiliza para cambiar la nueva configuración regional en función del valor del parámetro 
+			de idioma agregado a una solicitud.
+
+				@Bean
+				public LocaleChangeInterceptor localeChangeInterceptor() {
+				   LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+				   localeChangeInterceptor.setParamName("language");
+				   return localeChangeInterceptor;
+				}
+
+			Para tener este efecto, debemos agregar LocaleChangeInterceptor en el interceptor de registro de la aplicación. 
+			La clase de configuración debe extender la clase WebMvcConfigurerAdapter y anular el método addInterceptors ().
+
+				@Override
+				public void addInterceptors(InterceptorRegistry registry) {
+				   registry.addInterceptor(localeChangeInterceptor());
+				}
+
+		***Fuentes de mensajes
+			La aplicación Spring Boot de forma predeterminada toma las fuentes de mensajes de la carpeta src/main/resources 
+			debajo de la ruta de clase. El nombre del archivo de mensajes de la configuración regional predeterminada debe 
+			ser messages.properties y los archivos de cada configuración regional deben denominarse messages_XX.properties. 
+			El "XX" representa el código local.
+
+			Todas las propiedades del mensaje deben usarse como valores de pares de claves. Si no se encuentran propiedades 
+			en el entorno local, la aplicación utiliza la propiedad predeterminada del archivo messages.properties.
+
+			Los messages.properties predeterminados serán los siguientes:
+
+				welcome.text=Hi Welcome to Everyone
+
+			El idioma francés messages_fr.properties será como se muestra:
+
+				welcome.text=Salut Bienvenue à tous
+
+			Nota : el archivo de origen de los mensajes debe guardarse como formato de archivo "UTF-8".
+		Ejemplo_______________________________________________________________________________________________________________
+			*Internacionalizacion.java
+				@Configuration
+				public class Internacionalizacion implements WebMvcConfigurer {
+
+					//Configuración regional predeterminada de su aplicación
+					@Bean
+					public LocaleResolver localeResolver() {
+						SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
+						sessionLocaleResolver.setDefaultLocale(Locale.US);
+						return sessionLocaleResolver;
+					}
+
+					/*
+					 * LocaleChangeInterceptor se utiliza para cambiar la nueva configuración regional en función del valor del parámetro 
+					 * de idioma agregado a una solicitud.
+					 */
+					@Bean
+					public LocaleChangeInterceptor localeChangeInterceptor() {
+						LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+						localeChangeInterceptor.setParamName("language");
+						return localeChangeInterceptor;
+					}
+
+					/*
+					 * Se agrega LocaleChangeInterceptor en el interceptor de registro de la aplicación.
+					 */
+					@Override
+					public void addInterceptors(InterceptorRegistry registry) {
+						registry.addInterceptor(localeChangeInterceptor());
+					}
+
+				}
+			----------------------------------------------------------------------------------------------------------------
+			*LocalleController
+				@Controller
+				public class LocaleController {
+					@RequestMapping("/locale")
+					public String locale() {
+						return "locale";
+					}
+				}
+			---------------------------------------------------------------------------------------------------------------
+			*locale.html
+				<!DOCTYPE html>
+				<html>
+				   <head>
+				      <meta charset = "ISO-8859-1"/>
+				      <title>Internationalization</title>
+				   </head>
+				   <body>
+				      <h1 th:text = "#{welcome.text}"></h1>
+				   </body>
+				</html>
+			--------------------------------------------------------------------------------------------------------------
+			*messages_es.properties
+				welcome.text = Bienvenidos a test
+			*messages_us.properties
+				welcome.text = welcome a test
+	******************************************************************************************************************************
+	Spring Boot - Scheduling******************************************************************************************************
+		La programación es un proceso de ejecución de tareas para un período de tiempo específico. Spring Boot proporciona un 
+		buen soporte para escribir un programador en las aplicaciones Spring.
+
+		Expresión Java Cron
+		Las expresiones Java Cron se utilizan para configurar las instancias de CronTrigger, una subclase de org.quartz.Trigger. 
+		Para obtener más información sobre la expresión cron de Java, puede consultar este enlace:
+
+			https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm
+
+		La anotación @EnableScheduling se usa para habilitar el programador para su aplicación. Esta anotación debe agregarse al 
+		archivo de clase de la aplicación Spring Boot principal.
+
+			@SpringBootApplication
+			@EnableScheduling
+
+			public class DemoApplication {
+			   public static void main(String[] args) {
+			      SpringApplication.run(DemoApplication.class, args);
+			   }
+			}
+
+		La anotación @Scheduled se utiliza para activar el programador durante un período de tiempo específico.
+
+			@Scheduled(cron = "0 * 9 * * ?")
+			public void cronJobSch() throws Exception {
+			}
+
+		***Tipo de interés fijo
+			El programador de tasa fija se utiliza para ejecutar las tareas en el momento específico. No espera a que se complete la tarea anterior. Los valores deben estar en milisegundos. El código de muestra se muestra aquí:
+
+			@Scheduled(fixedRate = 1000)
+			public void fixedRateSch() { 
+			}
+
+		***Retraso fijo
+		El programador de retardo fijo se utiliza para ejecutar las tareas en un momento específico. Debe esperar a que se complete la tarea anterior. Los valores deben estar en milisegundos. Aquí se muestra un código de muestra:
+
+			@Scheduled(fixedDelay = 1000, initialDelay = 1000)
+			public void fixedDelaySch() {
+			}
+
+		Nota: Este ejemplo utiliza fixedRate, que especifica el intervalo entre invocaciones de métodos, medido desde 
+		la hora de inicio de cada invocación. Hay otras opciones , como fixedDelay, que especifica el intervalo entre 
+		invocaciones medido desde la finalización de la tarea. También puede utilizar @Scheduled(cron=". . .")expresiones 
+		para una programación de tareas más sofisticada.
+		Ejemplo_______________________________________________________________________________________________________________
+			@Component
+			public class Scheduler {
+
+				@Scheduled(cron = "0 22 13 ? * *")
+				public void cronJobSch() {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+					Date now = new Date();
+					String strDate = sdf.format(now);
+					System.out.println("Java cron job expression:: " + strDate);
+				}
+
+				@Scheduled(fixedRate = 5000)
+				public void fixedRateSch() {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+					Date now = new Date();
+					String strDate = sdf.format(now);
+					System.out.println("Fixed Rate scheduler:: " + strDate);
+				}
+
+				@Scheduled(fixedDelay = 1000, initialDelay = 3000)
+				public void fixedDelaySch() {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+					Date now = new Date();
+					String strDate = sdf.format(now);
+					System.out.println("Fixed Delay scheduler:: " + strDate);
+				}
+			}
+		----------------------------------------------------------------------------------------------------------------------
+			@SpringBootApplication
+			@EnableScheduling
+			public class TutoSpringBootApplication {
+
+				 
+
+				public static void main(String[] args) {
+					SpringApplication.run(TutoSpringBootApplication.class, args);
+				}
+				
+				@Bean
+			   public RestTemplate getRestTemplate() {
+			      return new RestTemplate();
+			   }
+			}
+	******************************************************************************************************************************
+	Spring Boot - Eureka Server***************************************************************************************************
+		Eureka Server es una aplicación que contiene la información sobre todas las aplicaciones de servicio al cliente. Cada 
+		servicio Micro se registrará en el servidor Eureka y el servidor Eureka conoce todas las aplicaciones cliente que se 
+		ejecutan en cada puerto y dirección IP. Eureka Server también se conoce como Discovery Server.
+
+		***Construyendo un servidor Eureka
+			Eureka Server viene con el paquete de Spring Cloud. Para ello, necesitamos desarrollar el servidor Eureka y ejecutarlo
+			en el puerto predeterminado 8761.
+
+			necesitamos agregar la anotación @EnableEurekaServer. La anotación @EnableEurekaServer se utiliza para hacer que 
+			su aplicación Spring Boot actúe como un servidor Eureka.
+
+			El código para el archivo de clase de la aplicación Spring Boot principal es el que se muestra a continuación:
+
+				package com.tutorialspoint.eurekaserver;
+
+				import org.springframework.boot.SpringApplication;
+				import org.springframework.boot.autoconfigure.SpringBootApplication;
+				import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
+				@SpringBootApplication
+				@EnableEurekaServer
+				public class EurekaserverApplication {
+				   public static void main(String[] args) {
+				      SpringApplication.run(EurekaserverApplication.class, args);
+				   }
+				}
+
+			Asegúrese de que la dependencia del servidor Spring Cloud Eureka esté agregada en su archivo de configuración de compilación.
+
+			El código para la dependencia del usuario de Maven se muestra a continuación:
+
+				<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				   <artifactId>spring-cloud-starter-eureka-server</artifactId>
+				</dependency>
+
+			De forma predeterminada, Eureka Server se registra en el descubrimiento. Debe agregar la configuración dada a 
+			continuación en su archivo application.properties
+
+				eureka.client.registerWithEureka = false
+				eureka.client.fetchRegistry = false
+				server.port = 8761
+
+			Ahora, puede crear un archivo JAR ejecutable y ejecutar la aplicación Spring Boot utilizando los comandos de 
+			Maven o Gradle que se muestran a continuación:
+
+			Para Maven, use el comando como se muestra a continuación:
+
+				mvn clean install
+			
+			Después de "BUILD SUCCESS", puede encontrar el archivo JAR en el directorio de destino.
+
+			Después de "BUILD SUCCESSFUL", puede encontrar el archivo JAR en el directorio build / libs.
+
+			Ahora, ejecute el archivo JAR usando el siguiente comando:
+
+			 java –jar <JARFILE> 
+
+			Ahora, presione la URL http://localhost:8761/ 
+			en su navegador web y podrá encontrar el servidor Eureka ejecutándose en el puerto 8761
+	******************************************************************************************************************************
+	Service Registration with Eureka**********************************************************************************************
+		En este capítulo, aprenderá en detalle sobre cómo registrar la aplicación de servicio Spring Boot Micro en el servidor 
+		Eureka. Antes de registrar la aplicación, asegúrese de que Eureka Server se esté ejecutando en el puerto 8761 o primero 
+		compile el Eureka Server y ejecútelo. 
+
+		Primero, debe agregar las siguientes dependencias en nuestro archivo de configuración de compilación para registrar 
+		el microservicio con el servidor Eureka.
+
+		Los usuarios de Maven pueden agregar las siguientes dependencias en el archivo pom.xml :
+
+			<dependency>
+			   <groupId>org.springframework.cloud</groupId>
+			   <artifactId>spring-cloud-starter-eureka</artifactId>
+			</dependency>
+
+		Ahora, necesitamos agregar la anotación @EnableEurekaClient en el archivo de clase de la aplicación Spring Boot 
+		principal. La anotación @EnableEurekaClient hace que su aplicación Spring Boot actúe como un cliente de Eureka.
+
+		La aplicación principal de Spring Boot es la siguiente:
+
+			package com.tutorialspoint.eurekaclient;
+
+			import org.springframework.boot.SpringApplication;
+			import org.springframework.boot.autoconfigure.SpringBootApplication;
+			import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+
+			@SpringBootApplication
+			@EnableEurekaClient
+			public class EurekaclientApplication {
+			   public static void main(String[] args) {
+			      SpringApplication.run(EurekaclientApplication.class, args);
+			   }
+			}
+
+		Para registrar la aplicación Spring Boot en Eureka Server, debemos agregar la siguiente configuración en nuestro 
+		archivo application.properties
+
+			eureka.client.serviceUrl.defaultZone  = http://localhost:8761/eureka
+			eureka.client.instance.preferIpAddress = true
+			spring.application.name = eurekaclient
+
+		Ahora, agregue Rest Endpoint para devolver String en la aplicación principal Spring Boot y la dependencia web 
+		Spring Boot Starter en el archivo de configuración de compilación. Observe el código que se proporciona a continuación:
+
+			package com.tutorialspoint.eurekaclient;
+
+			import org.springframework.boot.SpringApplication;
+			import org.springframework.boot.autoconfigure.SpringBootApplication;
+			import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+			import org.springframework.web.bind.annotation.RequestMapping;
+			import org.springframework.web.bind.annotation.RestController;
+
+			@SpringBootApplication
+			@EnableEurekaClient
+			@RestController
+			public class EurekaclientApplication {
+			   public static void main(String[] args) {
+			      SpringApplication.run(EurekaclientApplication.class, args);
+			   }
+			   @RequestMapping(value = "/")
+			   public String home() {
+			      return "Eureka Client application";
+			   }
+			}
+
+		Ejemplo_______________________________________________________________________________________________________________
+		*pom.xml
+			<dependencies>
+				<dependency>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-web</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+				</dependency>
+
+				<dependency>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-test</artifactId>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		*EurekaClienteApplication
+			@EnableEurekaClient
+			@SpringBootApplication
+			@RestController
+			public class EurekaclientApplication {
+
+				public static void main(String[] args) {
+					SpringApplication.run(EurekaclientApplication.class, args);
+				}
+
+				@RequestMapping(value = "/")
+				public String home() {
+					return "Eureka Client application";
+				}
+			}
+		*Application.properties
+			#Config eureka como cliente
+			spring.application.name=eurecaclient
+			#se habilita puerto de forma ramdom, asigna puerto automaticamente
+			server.port=${PORT:0}
+			#Se configura intancia id en eureka de forma random
+			eureka.instance.instance-id=${spring.application.name}:${random.value}
+			#ruta de eureka
+			eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+	******************************************************************************************************************************
+	Spring Boot - Servidor proxy Zuul y enrutamiento******************************************************************************
+		Zuul Server es una aplicación de puerta de enlace que maneja todas las solicitudes y realiza el enrutamiento dinámico
+		de las aplicaciones de microservicio. El servidor Zuul también se conoce como servidor perimetral.
+
+		***Creación de la aplicación de servidor Zuul
+			El servidor Zuul está incluido con la dependencia de Spring Cloud.
+			Agregue la anotación @EnableZuulProxy en su aplicación principal Spring Boot. La anotación @EnableZuulProxy se 
+			utiliza para hacer que su aplicación Spring Boot actúe como un servidor proxy Zuul.
+
+				package com.tutorialspoint.zuulserver;
+
+				import org.springframework.boot.SpringApplication;
+				import org.springframework.boot.autoconfigure.SpringBootApplication;
+				import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+
+				@SpringBootApplication
+				@EnableZuulProxy
+				public class ZuulserverApplication {
+				   public static void main(String[] args) {
+				      SpringApplication.run(ZuulserverApplication.class, args);
+				   }
+				}
+
+			Tendrá que agregar la dependencia Spring Cloud Starter Zuul en nuestro archivo de configuración de compilación.
+
+			Los usuarios de Maven deberán agregar la siguiente dependencia en su archivo pom.xml :
+
+				<dependency>
+				   <groupId>org.springframework.cloud</groupId>
+				   <artifactId>spring-cloud-starter-zuul</artifactId>
+				</dependency>
+
+			Para el enrutamiento de Zuul, agregue las siguientes propiedades en su archivo application.properties
+
+				spring.application.name = zuulserver
+				zuul.routes.products.path = /api/demo/**   **/
+				zuul.routes.products.url = http://localhost:8080/
+				server.port = 8111
+
+			Esto significa que las llamadas http a / api / demo / se reenvían al servicio de productos. Por ejemplo, 
+			/api/demo/products se reenvía a /products 
+
+			Nota : la aplicación http: //localhost:8080/ 
+			ya debería estar ejecutándose antes de enrutar a través de Zuul Proxy.
+
+
+			Ejemplo_________________________________________________________________________________________________________
+				***pom.xml
+					<dependency>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-web</artifactId>
+					</dependency>
+					<dependency>
+						<groupId>org.springframework.cloud</groupId>
+						<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+					</dependency>
+					<dependency>
+						<groupId>org.springframework.cloud</groupId>
+						<artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+					</dependency>
+				***MicroserviciosZuulApplication.java
+					//Se habilita zuulProxy para el enrutamiento de microservicios
+					@EnableZuulProxy
+					//Se habilita eurekaClient
+					@EnableEurekaClient
+					@SpringBootApplication
+					public class MicroserviciosZuulApplication {
+
+						public static void main(String[] args) {
+							SpringApplication.run(MicroserviciosZuulApplication.class, args);
+						}
+
+					}
+				***Application.properties
+					spring.application.name=microservicios-zuul
+					server.port=8090
+
+					#Se registra donde se encuentra eureka 
+					eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+					#Se crea la ruta al microservicio usuario
+					zuul.routes.usuarios.service-id=microservicios-usuarios
+					zuul.routes.usuarios.path=/api/alumnos/**        **/
+
+					#Se crea la ruta al microservicio cursos
+					zuul.routes.cursos.service-id=microservicios-cursos
+					zuul.routes.cursos.path=/api/cursos/**       **/
+
+					#Se crea la ruta al microservicio examenes
+					zuul.routes.examenes.service-id=microservicios-examenes
+					zuul.routes.examenes.path=/api/examenes/**
+
+	******************************************************************************************************************************
+	
 ****************************************************************************************************************************************
 
-nombre.apellido

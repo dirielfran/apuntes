@@ -523,6 +523,16 @@ Remotos
 	trabajar en el proyecto - puedes usar git remote rm:
 *********************************************************************************
 
+******************************************************Setear otra url para remoto --> git remote set-url origin [url repo]
+
+	git remote set-url origin https://github.com/USERNAME/REPOSITORY.git
+*********************************************************************************
+
+
+
+
+
+
 Trabajando con branch************************************************************
 *********************************************************************Crear Branch --> git branch nuevafuncionalidad
 	 git branch Producto
