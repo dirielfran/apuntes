@@ -3146,13 +3146,246 @@ Seccion 8: SPA-paisesApp********************************************************
 			      );
 			  }
 *************************************************************************************************************************************
+104.- **************************************************************************************************************Manejo de Errores
+	1.- Se modifica por-pais.component.ts
+		1.1.- Se crea atriburo necesario como bandera si hay error
+			  hayError: boolean = false;
+		1.2.- Se modifica el metodo buscar() para manejar el error
+			buscar(){
+			    this.hayError = false;
+			    this.paisesService.buscarPais( this.termino )
+			      .subscribe(
+			          resp => {
+			            console.log(resp);
+			          }, error => {
+			            this.hayError = true;
+			            console.log('Error');
+			            console.log(error);
+			          }
+			      );
+			  }
+	2.- Se modifica por-pais.component.html, se añade manejo del mensaje y tabla con la directiva *ngIf
+		2.1.- Se maneja la table segun error
+			<table class="table table-hover" *ngIf="!hayError">
+		2.2.- Se maneja mensaje segun error
+			<div class="alert alert-danger" *ngIf="hayError">
+			    No se encontro el termino {{termino}}
+			</div> *
+*************************************************************************************************************************************
+105.- *******************************************************************************************************Tipado de las peticiones
+	1.- Se crea interface country
+		1.1.- Se pureba en postam el servicio --> GET --> https://restcountries.eu/rest/v2/name/Venezuela y se copia body
+		1.2.- Se utiliza --> https://app.quicktype.io/ para combertir el jacon en tipado typescript
+		1.3.- Se crea interface y se copia el tipado del paso anterior
+			export interface Country {
+			  name:           string;
+			  topLevelDomain: string[];
+			  alpha2Code:     string;
+			  alpha3Code:     string;
+			  callingCodes:   string[];
+			  capital:        string;
+			  altSpellings:   string[];
+			  region:         string;
+			  subregion:      string;
+			  population:     number;
+			  latlng:         number[];
+			  demonym:        string;
+			  area:           number;
+			  gini:           number;
+			  timezones:      string[];
+			  borders:        string[];
+			  nativeName:     string;
+			  numericCode:    string;
+			  currencies:     Currency[];
+			  languages:      Language[];
+			  translations:   Translations;
+			  flag:           string;
+			  regionalBlocs:  RegionalBloc[];
+			  cioc:           string;
+			}
 
+			export interface Currency {
+			  code:   string;
+			  name:   string;
+			  symbol: string;
+			}
 
+			export interface Language {
+			  iso639_1:   string;
+			  iso639_2:   string;
+			  name:       string;
+			  nativeName: string;
+			}
 
+			export interface RegionalBloc {
+			  acronym:       string;
+			  name:          string;
+			  otherAcronyms: string[];
+			  otherNames:    string[];
+			}
 
+			export interface Translations {
+			  de: string;
+			  es: string;
+			  fr: string;
+			  ja: string;
+			  it: string;
+			  br: string;
+			  pt: string;
+			  nl: string;
+			  hr: string;
+			  fa: string;
+			}
+	2.- Se modifica la clase de servicio, se modifica metodo buscarPais(), se le coloca tipado al observable
+		  buscarPais( termino: string):Observable<Country[]>{
+		    return this.http.get<Country[]>(`${this.urlEndPoint}/name/${termino}`);
+		  }
+	Nota ya se puede manejar en el componente donde se subscribe al observable por tipado
+*************************************************************************************************************************************
+106.- ****************************************************************************************LLenar tabla con los datos del servicio
+	1.- Se modifica por-pais.component.ts
+		paises: Country[] = [];
 
+		buscar(){
+	    this.hayError = false;
+	    this.paisesService.buscarPais( this.termino )
+	      .subscribe(
+	          paises => {
+	            console.log(paises);
+	            this.paises = paises;
+	          }, error => {
+	            this.paises = [];
+	            this.hayError = true;
+	          }
+	      );	
+	2.- Se modifica por-paises.component.html, se recorre la lista 
+		        <tr *ngFor="let pais of paises">
+                    <td>{{pais.numericCode}}</td>
+                    <td><img [src]="pais.flag" alt="" class="small-flag"></td>
+                    <td>{{pais.name}}</td>
+                    <td>{{pais.population | number}}</td>
+                    <td>
+                        <a [routerLink]="['./pais', pais.alpha2Code]">Ver...</a>
+                    </td>
+                </tr>
+    3.- Se modifca paises.module.ts, se importa RouterModule para poder utilizar el routerLink
+    	imports: [
+		    CommonModule,
+		    FormsModule,
+		    RouterModule
+		  ]
+*************************************************************************************************************************************
+107.- *******************************************************************************************************Componente Input y Tabla
+	1.- Se genera componente para la table
+		ng g c paises/components/paisTabla --skipTests
+	2.- Se modifica por-pais.component.html, se corta la table y se agrega el componente creado
+		<app-pais-tabla [paises]="paises"></app-pais-tabla>
+	3.- Se modifica pais-tabla.component.html, se agrega la tabla cortada en el paso anterior
+		<table class="table table-hover" *ngIf="paises.length > 0">
+		    <thead>
+		        <tr>
+		            <th>#</th>
+		            <th>Bandera</th>
+		            <th>Nombre</th>
+		            <th>Poblacion</th>
+		            <th>prueba</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		        <tr *ngFor="let pais of paises">
+		            <td>{{pais.numericCode}}</td>
+		            <td><img [src]="pais.flag" alt="" class="small-flag"></td>
+		            <td>{{pais.name}}</td>
+		            <td>{{pais.population | number}}</td>
+		            <td>
+		                <a [routerLink]="['./pais', pais.alpha2Code]">Ver...</a>
+		            </td>
+		        </tr>
+		    </tbody>
+		</table>
+	4.- Se modifica pais-tabla.component.ts, se crea atributo @Input para pasar atributo paises
+		@Input() paises: Country[] = []
+	5.- Se modifica pais-table.component.css
+		.small-flag {
+		    width: 50px;
+		}
+	6.- Se crea componente --> ng g c paises/components/paisInput --skipTests
+	7.- Se modifica por-pais.component.html, se corta el form del input y se agrega componente
+		<div class="row">
+		    <div class="col">
+		        <app-pais-input></app-pais-input>
+		    </div>
+		</div>
+	8.- Se modifica pais-input.component.html, se pega el form del input
+		<form action="" autocomplete="off" (ngSubmit)="buscar()">
+		    <input type="text" class="form-control" name="termino" placeholder="Buscar Pais..." [(ngModel)]=termino>
+		</form>
+	9.- Se modifca pais-input.component.ts, se agrega atributo termino y se agrega metodo buscar()
+		termino: string = '';
 
+		buscar(){
 
+		}
+*************************************************************************************************************************************
+108.- ******************************************************************************Funcionalidades del componente PaisInputComponent
+	1.- Se modifca pais-input.component.ts, se agrega emision del evento
+		1.1.- Se crea atributo con el decorador Output
+		 	@Output() onEnter: EventEmitter<string> = new EventEmitter()
+		1.2.- Se modifica el metodo buscar()
+			  buscar(){
+			    this.onEnter.emit( this.termino );
+			  }
+	2.- Se modofica por-pais.component.html, se agrega la escucha al evento y se le pasa al metodo buscar el evento
+		<div class="row">
+		    <div class="col">
+		        <app-pais-input (onEnter)="buscar( $event )"></app-pais-input>
+		    </div>
+		</div>
+	3.- Se modifca modifica el metodo buscar() para que reciba el termino del evento
+		buscar( termino:string ){
+		    this.hayError = false;
+		    this.termino = termino;
+		    this.paisesService.buscarPais( this.termino )
+		      .subscribe(
+		          paises => {
+		            console.log(paises);
+		            this.paises = paises;
+		          }, error => {
+		            this.paises = [];
+		            this.hayError = true;
+		          }
+		      );
+		  }
+*************************************************************************************************************************************
+109.- *****************************************************************************************************DebounceTime - en el input
+	1.- Se modifica pais-input.component.ts 
+		1.1.- Se agrega atributo @OutPuts
+			@Output() onDebounce : EventEmitter<string> = new EventEmitter();
+		1.2.- Se crea atributo de tipo subject
+			debounce: Subject<string> = new Subject();
+		1.3.- Se modifica el metod ngOnInit()
+			  ngOnInit(): void {
+			    this.debounce
+			    .pipe(debounceTime(300))
+			    .subscribe( valor => {
+			      this.onDebounce.emit( valor )
+			    })
+			  }
+		1.4.- Se crea metodo teclaPresionada()
+			  teclaPresionada(){
+			    this.debounce.next( this.termino );
+			  }
+	2.- Se modifica pais-input.component.html, se añade atributo de tipo input
+		<form action="" autocomplete="off" (ngSubmit)="buscar()">
+		    <input type="text"
+		    class="form-control"
+		    name="termino"
+		    placeholder="Buscar Pais..."
+		    [(ngModel)]=termino
+		    (input)="teclaPresionada()">
+		</form>
+
+*************************************************************************************************************************************
 
 
 

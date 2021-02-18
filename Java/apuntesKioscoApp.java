@@ -1266,6 +1266,11 @@
 
 
 
+****************************************************************************************************Tipo de pago en consignacion
+	
+********************************************************************************************************************************
+
+
 Querys**************************************************************************************************************************
 	select p.nombre as nombre,sum(fi.cantidad) as cantidad,	sum(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) as ganancia, sum(((fi.precio)*fi.cantidad)) as venta  
 	from facturas_items fi inner join productos p on p.id = fi.producto_id inner join itemsfactura_itemsinventario piv on fi.id = piv.itemfactura_id 
@@ -1283,10 +1288,7 @@ Querys**************************************************************************
 				on ii.id = piv.iteminventario_id 
 		group by p.id 
 		order by 3  desc
-		INTO OUTFILE '/tmp/myfilename.csv'
-			FIELDS TERMINATED BY ','
-			ENCLOSED BY '"'
-			LINES TERMINATED BY '\n';
+		INTO OUTFILE '/var/lib/mysql-files/GananciaXProducto010221_310221.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
 
 
 
@@ -1301,6 +1303,58 @@ Querys**************************************************************************
 	select * from facturas_items;
 
 	select * from inventarios_items where producto_id = 96;
+
+	****************************************************************************************************************Gastos
+		 select f.fecha_fact, f.descripcion, f.monto_pesos, f.clasificacion, f.metodopago from gastos f where fecha_fact >= '2021-02-01' and fecha_fact <= '2021-02-15' and f.clasificacion = 'Gasto' INTO OUTFILE '/var/lib/mysql-files/Gastos010221_150221.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
+		 select f.fecha_fact, f.descripcion, f.monto_pesos, f.clasificacion, f.metodopago from gastos f where fecha_fact >= '2021-01-01' and fecha_fact <= '2021-01-15' and f.clasificacion = 'Gasto' INTO OUTFILE '/var/lib/mysql-files/Gastos010121_150121.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
+		 select f.fecha_fact, f.descripcion, f.monto_pesos, f.clasificacion, f.metodopago from gastos f where fecha_fact >= '2021-01-01' and fecha_fact <= '2021-01-31' and f.clasificacion = 'Gasto' INTO OUTFILE '/var/lib/mysql-files/Gastos010121_310221.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
+
+	****************************************************************************************************GanaciasXProducto
+		select  p.nombre as nombre,sum(fi.cantidad) as cantidad, sum(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) as ganancia,
+		 sum(((fi.precio)*fi.cantidad)) as venta
+		from facturas_items fi
+		inner join facturas f on f.id = fi.factura_id
+		inner join productos p on p.id = fi.producto_id
+		inner join itemsfactura_itemsinventario piv on fi.id = piv.itemfactura_id
+		inner join inventarios_items ii on ii.id = piv.iteminventario_id where f.create_at between 20210101 and 20210115
+		group by p.id
+		order by 3  desc
+		INTO OUTFILE '/var/lib/mysql-files/GananciaXProducto010121_150121.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
+
+		select  p.nombre as nombre,sum(fi.cantidad) as cantidad, sum(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) as ganancia,
+		 sum(((fi.precio)*fi.cantidad)) as venta
+		from facturas_items fi
+		inner join facturas f on f.id = fi.factura_id
+		inner join productos p on p.id = fi.producto_id
+		inner join itemsfactura_itemsinventario piv on fi.id = piv.itemfactura_id
+		inner join inventarios_items ii on ii.id = piv.iteminventario_id where f.create_at between 20210101 and 20210131
+		group by p.id
+		order by 3  desc
+		INTO OUTFILE '/var/lib/mysql-files/GananciaXProducto010121_310121.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
+
+		select  p.nombre as nombre,sum(fi.cantidad) as cantidad, sum(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) as ganancia,
+		 sum(((fi.precio)*fi.cantidad)) as venta
+		from facturas_items fi
+		inner join facturas f on f.id = fi.factura_id
+		inner join productos p on p.id = fi.producto_id
+		inner join itemsfactura_itemsinventario piv on fi.id = piv.itemfactura_id
+		inner join inventarios_items ii on ii.id = piv.iteminventario_id where f.create_at between 20210201 and 20210215
+		group by p.id
+		order by 3  desc
+		INTO OUTFILE '/var/lib/mysql-files/GananciaXProducto01021_150221.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
+
+
+	*********************************************************************************************************GanaciaGeneral
+
+	select  sum(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) as ganancia,
+	 sum(((fi.precio)*fi.cantidad)) as venta
+	from facturas_items fi
+	inner join facturas f on f.id = fi.factura_id
+	inner join productos p on p.id = fi.producto_id
+	inner join itemsfactura_itemsinventario piv on fi.id = piv.itemfactura_id
+	inner join inventarios_items ii on ii.id = piv.iteminventario_id where f.create_at between 20210115 and 20210131
+	order by 3  desc
+	INTO OUTFILE '/var/lib/mysql-files/GananciaXProducto01021_150221.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
 ********************************************************************************************************************************
 
 
