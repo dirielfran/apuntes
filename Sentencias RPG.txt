@@ -1,0 +1,434 @@
+********************************************************************************QCPYSRC con sql Embebido
+Se tiene que compilar con nivel de error 2 lvl2
+CARGAR LIBRERIA BANUSRLIB
+********************************************************************************************************
+
+
+
+**********************************************************************************************TUTORIALES
+https://www.mcpressonline.com/programming/rpg/
+http://www.rpgpgm.com/
+http://www.broculos.net/2007/11/as400-chapter-7-modules-and-procedures.html
+********************************************************************************************************
+
+
+
+*****************************************************************************************COPIA EN FUENTE
+C DATOS DATOS1 ALL
+********************************************************************************************************
+
+
+
+*********************************************************************VER TRABAJOS ACTIVOS DEL SUBSISTEMA
+WRKACTJOB SBS(QDBATCH)
+********************************************************************************************************
+
+
+
+**********************************************************CREAR INTERRUPCION EN DEBUG BUSCCANDO REGISTRO
+BREAK 45 WHEN CARACC='L00000000000000000000007662660'
+********************************************************************************************************
+
+
+************************************************************* Display File Description (DSPFD)   -->DSPFD
+*********************************************************************************************************
+
+
+*************************************************************************Borrar data de un archivo CLRPFM
+*********************************************************************************************************
+
+
+*********************************************************************** MUESTRA DESCRIPCION DE UN MENSAJE
+DSPMSGD RANGE(CPF2105) 
+*********************************************************************************************************
+
+
+
+************************************************************************************** DEBUG RPG Y NO RPG
+STRDBG
+STRISDB
+********************************************strisdb ---> para debugear cl   
+*********************************************************************************************************
+
+
+
+*********************************************************************************TRABAJAR CON BIBLIOTECAS
+visualización de la lista Biblioteca (DSPLIBL)
+Crear biblioteca (CRTLIB)
+Trabajo con bibliotecas Uso de PDM (WRKLIBPDM)
+*********************************************************************************************************
+
+
+
+****************************************************************************TRABAJAR CON Archivos FISICOS
+Crear Archivo Físico Fuente (CRTSRCPF)
+Trab con miembros usando PDM (WRKMBRPDM)
+Crear archivo físico (CRTPF)
+Cambio de archivo físico (CHGPF)
+descripción del archivo de visualización (DSPFD)
+descripción del campo de visualización de archivos (DSPFFD)
+Buscar un STRING en un fuente (FNDSTRPDM)
+*********************************************************************************************************
+
+
+
+
+************************************************************************************Arrancar SEU (STRSEU)                        
+...................................................................
+                      Arrancar SEU - Ayuda                         
+                                                                   
+El mandato STRSEU (Arrancar Programa de Utilidad para Entrada del  
+Fuente) le permite crear, cambiar, visualizar o imprimir un miembro
+fuente.                                                            
+*********************************************************************************************************
+
+
+
+
+**************************************************************************MUESTRA CONTENIDO DE UN ARCHIVO
+DSPPFM     FILE(LIB NAME/FILE NAME)    MBR(*FIRST)   =>    despliega el contenido del arch. 
+							  (ej. para verificar datos copiados)
+
+*********************************************************************************************************
+
+
+*****************************************************************************************COPIA DE ARCHIVO
+CPYF     FROMFILE(       )     TOFILE (    )       MBROPT{*ADD                  FMTOPT {*MAP                                                                                               
+                                       *REPLACE	                *DROP
+		CRTFILE {*NO
+			     *YES
+*********************************************************************************************************
+
+
+
+
+***********************************************************************************DESCRIPCION DE ARCHIVO
+DSPFFD .-Display file field descrip.(para consultar lista de campos definidos en un archivo y sus 
+caracteristicas.
+*********************************************************************************************************
+
+
+
+********************************************************************************VER COLA DE TRABAJOS(JOB)
+(WRKSBMJOB) Cuando  se compilan  archivos, programa, pantalla, ect.. se envía a una cola de procesos 
+llamada Work with Submitted Jobs (WRKSBMJOB), la cual despliega el estatus  de los procesos que se 
+encuentran en la cola.
+Estos  estatus son los siguientes:
+
+	JOBQ :     Indica que el proceso esta por entrar a la cola procesos.
+	ACTIVE: Indica que el proceso esta por ejecutarse o se esta ejecutando.
+	OUTQ:    Indica que el proceso ha terminado de ejecutarse.
+	END	:   Indica que el proceso ha sido terminado por el usuario.
+
+Los opciones que se encuentran en este comando  son las siguiente:
+	 3= Hold .- usando esta opción se congela el  proceso.
+  	 4= End .-  Usando esta opción se cancela la ejecución del proceso.
+	6= Release.- 
+	8= work spooled files. Con esta opción  nos despliega el spool de nuestro proceso.
+
+********************************************************************************************************
+
+
+
+**************************************************************************************MANEJO DE ARCHIVOS 
+
+---------------------------------Comandos para manejo de archivos--------------------------------------
+
+********************************************************************MUESTRA LOGICOS DE UN ARCHIVO(DSPDBR)
+Nos muestra todos los logicos que están relacionados con este archivo.
+
+
+****************************************************************************DESCRIPCION DE ARCHIVO(DSPFD)
+Este comando despliega la descripción completa de un archivo, como la librería donde se encuentra el 
+fuente,  el file, la fecha en que fue creada y por quien fue creado,el tipo de archivo, número de campos 
+que lo forman, total de registros, y todos los atributos del archivo, etc.
+
+
+*******************************************************************TODOS LOS CAMPOS DE UN ARCHIVO(DSPFFD)
+Este comando nos sirve para ver todos los campos y las características de cada  uno de los campos que 
+forman al archivo.
+*********************************************************************************************************
+*********************************************************************************************************
+
+
+
+****************************************************************************************MANEJO DE OBJETOS
+************************************************************************DESCRIPCION DE UN OBJETO(DSPOBJD)
+Despliega la descripción de un objeto, nos muestra las caracteristicas completas de un objeto, en que 
+librería y file se encuentra, cuando fue creado y por quien, cual es el fuente de este objeto y donde 
+se encuentra, en que fecha fue creado y cuando fue la ultima fecha de cambio, etc.
+
+********************************************************************************MANEJO DE OBJETOS(WRKOBJ)
+Trabajando con objetos, con este comando podemos manejar los objetos, nos muestra la lista de objetos 
+que se encuentran en la librería seleccionada y después manejar este objeto como copiar, borrar, cambiar 
+de librería al objeto, entre otras cosas.
+*********************************************************************************************************
+*********************************************************************************************************
+
+
+
+
+*********************************************************************************************************
+-------------------------------------Comando para revisar tipo de error---------------------
+*******************************************************************MENSAJE DE ERRORDSPMSGD RANGE(CPF4104)
+El mandato Visualizar descripción de mensajes (DSPMSGD) muestra    
+información detallada sobre los mensajes en un archivo de mensajes. 
+*********************************************************************************************************
+
+
+
+
+**************************************************************************************Ver mensajes de sql
+WRKMSGD MSGF(QSQLMSG)
+https://www.ibm.com/support/knowledgecenter/en/SSEPEK_10.0.0/codes/src/tpc/db2z_n.html
+*********************************************************************************************************
+
+
+
+
+*******************************************************************************Copiar registros en fuente
+ 
+Podemos copiar un registro o un bloque de registros a otra ubicación en un miembro o a otro miembro con 
+los siguientes 
+
+comandos de línea:
+
+*C      : para copiar esta línea a otra ubicación.
+*Cn : para copiar n líneas (comenzando con esta línea) a otra ubicación.  
+*CC   :  Para copiar todas las líneas entre (e incluyendo) esta y la próxima aparición de CC a otra  
+ubicación.
+*CR  : para copiar esta línea a otra ubicación y retener el comando CR en el área de secuencia de la 
+pantalla para operaciones 
+ de copia repetidas. 
+*CCR : Para copiar las líneas entre (e incluyendo) esta línea y la próxima aparición de CCR a otra 
+ubicación y retener el 
+ comando CCR en el área de secuencia de la pantalla para las operaciones de copia repetidas.
+
+****Para especificar la nueva ubicación para las líneas copiadas, escriba uno de los siguientes 
+comandos de línea de secuencia:
+ 
+R    :           Para agregar las líneas copiadas después de esta línea
+An  :           Para agregar las líneas copiadas después de esta línea n veces
+B    :           para agregar las líneas copiadas antes de esta línea
+Bn : para agregar las líneas copiadas antes de esta línea n veces            
+O     : para superponer esta línea con la línea copiada          
+On  : para superponer n líneas (incluida esta línea) con las líneas copiadas          
+OO :           para superponer el grupo de líneas entre (e incluyendo) esta línea y la siguiente 
+aparición de OO con las líneas copiadas
+*******************************************************************************************************
+
+
+
+
+*************************************************************************************Sentencia sometida
+SBMJOB     CMD(CPYF FROMFILE(B02TRABAJO/SIF004HHHH) + */ 
+              TOFILE(B02TRABAJO/SIF004HHC1) +      */    
+           MBROPT(*REPLACE) CRTFILE(*YES)) JOB(COPY_C1)*/
+*******************************************************************************************************
+
+
+
+************************************************************************Programa para ir Object Control
+call eocobjeto/aopl00
+*******************************************************************************************************
+
+
+*************************************************************************************************DTAARA
+http://www.teknodatips.com.ar/as400/261-as400-areas-de-datos-lda.html
+CREACION:
+	CRTDTAARA DTAARA(TEKTCL/AREAPRU) TYPE(*CHAR) LEN(100) VALUE('POSITIVO')
+	CRTDTAARA DTAARA(siofflib/SITAB) TYPE(*CHAR) LEN(35) VALUE(0000000000000000000000000000000000I)                                                                                                                               
+CAMBIO DE CONTENIDO DATA AREA
+	GHGDTAARA DTAARA(TEKTCL/AREAPRU (10 20)) VALUE(DICIEMBRE)
+MOSTRAR CONTENIDO:
+	DSPDTAARA DTAARA(B02TRABAJO/SITAB)
+RECUPERACION DEL CONTENIDO DTAAREA:
+	RTVDTAARA  DTAARA(SIOFFLIB/SIDTA1) RTNVAR(&DATOS)
+SUMPRIME 
+	DLTDTAARA DTA:ARA(TEKTCL/AREA*)
+*******************************************************************************************************
+
+
+
+*************************************************************************************************FUENTE
+*************************************************************************************************CHGVAR
+cAMBIA EL VALOR DE UNA VARIABLE
+CHGVAR     VAR(%SST(&DATOS 2 1)) VALUE('1')
+*******************************************************************************************************
+**************************************************************************************%SUBSTRING or%SST 
+produce una cadena de caracteres que es un subconjunto de una cadena de 
+caracteres existente
+%SST(&DATOS 20 1)
+*******************************************************************************************************
+***************************************************************************************************DLTF
+El mandato Suprimir Archivo (DLTF) suprime uno o más archivos 
+DLTF       FILE(SIOFTLIB/DEALS)
+*******************************************************************************************************
+***************************************************************************************************GOTO
+El comando Ir a (GOTO) se utiliza en procedimientos CL para la bifurcación 
+de una parte del programa a otra.
+*******************************************************************************************************
+*************************************************************************************************CMDLBL
+Especifica el nombre de la etiqueta del comando al que se transfiere el 
+control; cuando se procesa el comando Ir a (GOTO).
+sistema.               
+*******************************************************************************************************
+*******************************************************************************************************
+
+
+****************************************************************************************PANTALLA FUENTE
+****************************************************************monto en pantalla sin ceros a izquierda
+A            TOTMOT2       21Y 2O 12 53EDTCDE(1)      
+*******************************************************************************************************
+*******************************************************************declaracion de pariables en pantalla
+
++3(N) represents numeric input field of length N.
+
++6(N) represents numeric output field of length N.
+
++9(N) represents numeric input/output field of length N.   
+
++I(N) represents character field of length N.
+
++O(N) represents character output field of length N.
+
++B(N) represents character input/output field of length N.  
+******************************************************************************************************
+
+*********************************************************************************************librerias
+BANCYFIL2 
+FTESPLAS  
+PLASLIB   
+PLAFLIB   
+BANCYFILES
+BANUSRLIB 
+EOCOBJETO 
+M03TRABAJO
+M03PRUEBA 
+M03TRAMITE
+DPLAFLIB  
+DPLAOLIB  
+QTEMP     
+E2EWSPIDER
+E2EWSPIDAP
+QGPL      
+PLAOLIB   
+******************************************************************************************************
+
+
+
+***************************************************************************LIBRERIAS PARA COMPILAR PGM
+  Número                     Número                
+    de                         de                  
+secuencia  Biblioteca      secuencia  Biblioteca   
+      0                        140    E2EWSPIDER   
+     10    PLAFLIB             150    E2EWSPIDAP   
+     20    SIIF0910            160    BANFGOB      
+     30    BANOGOB             170    FTESPLAS     
+     40    B02TRABAJO          180    FTESUSRLIB   
+     50    BANCYFILES          190    FTESBANGOB   
+     60    BANUSRLIB           200    FTESSIOF     
+     70    EOCOBJETO           210    A97TRABAJO   
+     80    QGPL                220                 
+     90    QTEMP               230                 
+    100    DESCYFIL3           240                 
+    110    S08PRUEBA           250                 
+    120    S08TRABAJO          260                 
+    130    S08TRAMITE          270                 
+******************************************************************************************************
+
+
+*****************************************************************COPIAR EN ARCHIVO  EXTERNO(EN LA NAS) 
+CPYTOIMPF  FROMFILE(AT11EXTRA) TOSTMF(&RUTA_NAS) +   
+             MBROPT(*REPLACE)  FROMCCSID(00284) +    
+             STMFCODPAG(00850) RCDDLM(*CRLF) +       
+             STRDLM(*NONE) RMVBLANK(*TRAILING) +     
+             FLDDLM('~')   ORDERBY(*ARRIVAL)         
+
+El comando Copiar a archivo de importación (CPYTOIMPF) copia los datos del archivo de origen 
+(generalmente un archivo de base de datos) a un archivo de importación.
+
+PROGRAMA EJEMPLO:
+FTESBANGOB/QCLSRC
+       AT11CLPL1P
+******************************************************************************************************
+
+
+
+
+****************************************************************************************revisar fuente
+****Forma A
+1.-wrkobj -->se busca objeto
+2.-al objeto se le coloca 8  --> Opc y F4
+3.-Una vez en la ventana de -->Visualizar descripción objeto (DSPOBJD)
+4.-Se coloca *Service en -->Detalle 
+                                    
+***Forma B
+1.-WRKOBJPDM--> Se busca el objeto
+2.-al objeto se le coloca --> 5, para visualizar
+3.-Enter 3 veces y te colocas en la tercera ventana de la opcion
+4.-al objeto se le coloca --> 5, para visualizar 
+******************************************************************************************************
+
+
+
+*************************************************************************para revisar menu de pantalla                                    
+1*-strpdm
+
+2*- 
+Archivo . . . . . . . . .   QMENUSRC     Nombre, F4 para lista          
+                                                                        
+  Biblioteca  . . . . . .     FTESUSRLIB *LIBL, *CURLIB, nombre         
+                                                                        
+Miembro:                                                                
+  Nombre  . . . . . . . .   SIF18M*      *ALL, nombre, *genérico*       
+  Tipo  . . . . . . . . .   *ALL         *ALL, tipo, *genérico*, *BLANK 
+
+3*- Se escoje 5 en -->    SIF18MQQ    MNUCMD   
+
+******************************************************************************************************
+
+
+
+*******************************************************************************debug programa sometido
+se holdea
+SBMJOB CMD(CALL PGM(AUDITEXT2B) PARM('1' '2' '3' '4' '5' '6' '2018' '1')) HOLD(*YES)
+ws al trabajo --> para ver los trabajos sometidos
+	5-->1 --> para ver los atributos del trabajo
+Trabajo:   D013JOBD       Usuario:   DESAN00821     Número:   996075
+strsrvjob --> para finalizar endsrvjob
+libero 
+dspmodsrc
+
+*******************************************************************************************************
+
+
+
+
+***************************************************************************strisdb ---> para debugear cl
+********************************************************************************************************
+
+
+
+************************************************************************************condicional IF en CL
+01              PGM
+02
+03         DCL    VAR(&COUNT) TYPE(*DEC) LEN(2 0) VALUE(1)
+04
+05 LOOP:
+06
+07
+08         CHGVAR VAR(&COUNT) VALUE(&COUNT + 1)
+09         IF     COND(&COUNT <= 10) +
+10                   THEN(GOTO CMDLBL(LOOP))
+11         ENDPGM
+
+********************************************************************************************************
+
+
+
+**********************************************************************************Relaciones de una tabla
+Recuperación  . :   Utilice el mandato visualizar relaciones de base de datos
+  (
+) para identificar los archivos y los miembros basados en el archivo 
+*********************************************************************************************************
