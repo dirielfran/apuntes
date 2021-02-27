@@ -3384,6 +3384,7 @@ Seccion 8: SPA-paisesApp********************************************************
 		    [(ngModel)]=termino
 		    (input)="teclaPresionada()">
 		</form>
+<<<<<<< HEAD
 	Se crea implementacion para mostrar sugerencias en el input
 	1.- Se modifica pais-input.component.ts
 		1.1.- Se agrega ondebonce
@@ -3553,6 +3554,16 @@ Seccion 8: SPA-paisesApp********************************************************
 		    </pre>
 		</ng-template>
 *************************************************************************************************************************************
+=======
+
+*************************************************************************************************************************************
+
+
+
+
+
+
+>>>>>>> 339cdde394e2f3dbb48d863b8926b61de24e353c
 
 
 
@@ -3645,6 +3656,7 @@ Complementarios*****************************************************************
 		a una ruta. La navegación abre uno o más componentes enrutados en una o más ubicaciones 
 		de la página.<router-outlet>
 	************************************************************************************************************************
+
 	switchMap***************************************************************************************************************
 		Proyecta cada valor de fuente en un Observable que se fusiona en el Observable de salida, emitiendo valores solo 
 		del Observable proyectado más recientemente.
@@ -3654,7 +3666,7 @@ Complementarios*****************************************************************
 
 		Cuando la fuente emite un nuevo valor, creará un nuevo observable interno y switcha esos valores en su lugar. De lo que 
 		se cancela la suscripción son los observables internos que se crean sobre la marcha, y no la fuente observable.
-	************************************************************************************************************************
+	***********************************************************************************************************************
 ********************************************************************************************************************************
 
 

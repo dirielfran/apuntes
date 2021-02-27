@@ -1309,8 +1309,7 @@ Querys**************************************************************************
 		 select f.fecha_fact, f.descripcion, f.monto_pesos, f.clasificacion, f.metodopago from gastos f where fecha_fact >= '2021-01-01' and fecha_fact <= '2021-01-15' and f.clasificacion = 'Gasto' INTO OUTFILE '/var/lib/mysql-files/Gastos010121_150121.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
 		 select f.fecha_fact, f.descripcion, f.monto_pesos, f.clasificacion, f.metodopago from gastos f where fecha_fact >= '2021-01-01' and fecha_fact <= '2021-01-31' and f.clasificacion = 'Gasto' INTO OUTFILE '/var/lib/mysql-files/Gastos010121_310221.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
 
-		 select sum(f.monto_pesos) from gastos f where fecha_fact >= '2021-02-01' and fecha_fact <= '2021-02-15' and f.clasificacion = 'Gasto' INTO OUTFILE '/var/lib/mysql-files/Gastos010221_150221.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
-		 
+
 	****************************************************************************************************GanaciasXProducto
 		select  p.nombre as nombre,sum(fi.cantidad) as cantidad, sum(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) as ganancia,
 		 sum(((fi.precio)*fi.cantidad)) as venta
