@@ -119,6 +119,11 @@ Referencias*********************************************************************
 	-----------------------------------------------------------------------------------------------------------------------
 	BindingResult es una interface propia de spring para almacenar todos los errores durante el dataBinding
 	Referencia --> https://programandoointentandolo.com/2019/03/spring-boot-validacion-spring-mvc-y-thymeleaf.html
+		0.- Se debe añadir la dependencia 
+			<dependency>
+		        <groupId>org.springframework.boot</groupId>
+		        <artifactId>spring-boot-starter-validation</artifactId>
+		    </dependency>
 		1.- se crean los validadores en el bean
 			Ej:  
 				@Size(min = 3, max = 8, message="El código del producto tiene que tener entre 3 y 8 caracteres")
@@ -4016,7 +4021,7 @@ Spring Data JPA integracion con Spring MVC**************************************
 			Nota: En las consultas solo se debe respetar el orden de los tipos de datos. 
 			Los nombres de los campos pueden ser cualquiera.
 	5.- Encriptar contraseñas con springSecurity********************************************************************************
-		Spring Security recomienda usar el algoritmo bcryptpara encriptar passwords.
+		Spring Security recomienda usar el algoritmo bcrypt para encriptar passwords.
 			https://docs.spring.io/spring-security/site/docs/current/reference/html/ns-config.html#ns-password-encoder
 			Ventajas:
 				Ejecuta un hashing one-way (solo se encripta, pero no se puede desencriptar).
@@ -7895,6 +7900,91 @@ Publicacion de aplicacion CineApp***********************************************
         mailSender.send(email);
 ************************************************************************************************************************************
 
+
+
+**************************************************************************************************Dar formato a decimal en thymeleaf
+	<h5 th:text="'Distancia: '+${#numbers.formatDecimal(distancia, 0, 'POINT' , 2, 'COMMA')}+' Kms.'">
+	</h5>
+************************************************************************************************************************************
+
+
+
+
+************************************************************************************************Consumo de un servicio REST con GSON
+	Referencia --> https://jarroba.com/gson-json-java-ejemplos/
+
+		@GetMapping("/info/{code}") 
+	public ResponseEntity<?> pruebaGeoInfo(@PathVariable String code ){
+		
+		Map<String, Object> response = new HashMap<>();
+		RestTemplate restTemplate = new RestTemplate();
+		System.out.println("https://restcountries.eu/rest/v2/alpha/".concat(code));
+		String  call= restTemplate.getForObject("https://restcountries.eu/rest/v2/alpha/".concat(code),String.class);
+
+		///////////////////////////////////////////////////////////nombre
+		System.out.println("**********************************Nombre");
+		// Obtain Array
+	    JsonObject gsonObj = JsonParser.parseString(call).getAsJsonObject();
+	    InformacionPais pais = null;
+	    System.out.println(gsonObj);
+	    String name = gsonObj.get("name").getAsString();
+	    System.out.println(name);
+	    
+	    ////////////////////////////////////////////////////////lenguajes
+	    System.out.println("**********************************Lenguaje");
+        // List of primitive elements
+	    List<String> cadenas = new ArrayList<String>();
+        JsonArray lenguajes = gsonObj.get("languages").getAsJsonArray();
+        for (JsonElement lenguaje : lenguajes) {
+        	JsonObject gsonObj1 = lenguaje.getAsJsonObject();
+        	String iso639_1 = gsonObj1.get("iso639_1").getAsString();
+        	String iso639_12 = gsonObj1.get("iso639_2").getAsString();
+        	String name1 = gsonObj1.get("name").getAsString();
+        	String nativeName = gsonObj1.get("nativeName").getAsString(); 
+        	cadenas.add(iso639_1);
+        	cadenas.add(iso639_12);
+        	cadenas.add(name1);
+        	cadenas.add(nativeName);
+        	cadenas.forEach(System.out::println);
+        }
+        
+        //////////////////////////////////////////////////////////latitud
+        System.out.println("**********************************Latitud");
+        JsonArray latitudes = gsonObj.get("latlng").getAsJsonArray();
+        List<String> lat = new ArrayList<String>();
+        for (JsonElement item : latitudes) {
+        	lat.add(item.getAsString());
+        }
+        lat.forEach(System.out::println);
+
+        //////////////////////////////////////////////////////////Zona Horaria
+        System.out.println("**********************************Zone Horaria");
+        JsonArray JZonasHor = gsonObj.get("timezones").getAsJsonArray();
+        List<String> zonasHor = new ArrayList<String>();
+        for (JsonElement item : JZonasHor) {
+        	zonasHor.add(item.getAsString());
+        }
+        zonasHor.forEach(System.out::println);
+        
+        
+        //////////////////////////////////////////////////////////currency
+	    System.out.println("**********************************Currency");
+        JsonArray jcurrencies = gsonObj.get("currencies").getAsJsonArray();
+        List<String> currencies = new ArrayList<String>();
+        for (JsonElement lenguaje : jcurrencies) {
+        	JsonObject gsonObj2 = lenguaje.getAsJsonObject();
+        	String codigo = gsonObj2.get("code").getAsString();
+        	String moneda = gsonObj2.get("name").getAsString();
+        	String simbolo = gsonObj2.get("symbol").getAsString(); 
+        	currencies.add(codigo);
+        	currencies.add(moneda);
+        	currencies.add(simbolo);
+        	currencies.forEach(System.out::println);
+        }
+        
+	    return new ResponseEntity<InformacionPais>(pais, HttpStatus.OK);
+	}
+************************************************************************************************************************************
 //Crear usuario con privilegios en mysql
 CREATE USER 'alfonso'@'localhost' IDENTIFIED BY 'danger120-';
 GRANT ALL PRIVILEGES ON * . * TO 'alfonso'@'localhost';
