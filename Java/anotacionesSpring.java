@@ -7831,6 +7831,8 @@ Publicacion de aplicacion CineApp***********************************************
 			<location>/tmp</location>
 		</multipart-config>
 
+	2.- generacion de war  
+		mvn clean package -Dmaven.test.skip=true
 
 
 *************************************************************************************************Recuperar usuario de SpringSecurity

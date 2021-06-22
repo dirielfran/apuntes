@@ -1965,7 +1965,159 @@ Modulo de comisiones************************************************************
 	SQL____________________________________________________________________________________________________________________
 	*Modificacion tabla facturas
 		ALTER TABLE `db_springboot_backend`.`facturas` 
-		ADD COLUMN `Comision_mp` DOUBLE NULL AFTER `cliente_id`;
+		ADD COLUMN `montocomision` DOUBLE NULL AFTER `cliente_id`;
+
+		ALTER TABLE `db_springboot_backend`.`facturas` 
+		ADD COLUMN `pedidosya` DOUBLE NULL AFTER `montocomision`,
+		ADD COLUMN `puntoventa` DOUBLE NULL AFTER `pedidosya`,
+
+		ALTER TABLE `db_springboot_backend`.`facturas` 
+		ADD COLUMN `comision_id` BIGINT NULL AFTER `puntoventa`;
+
+		ALTER TABLE `db_springboot_backend`.`comisiones` 
+		ADD COLUMN `tipo` VARCHAR(60) NULL AFTER `comision`,
+		ADD COLUMN `code` VARCHAR(45) NULL AFTER `tipo`;
+
+		ALTER TABLE `db_springboot_backend`.`facturas` 
+		ADD INDEX `FKcomision_idx` (`comision_id` ASC) VISIBLE;
+		;
+		ALTER TABLE `db_springboot_backend`.`facturas` 
+		ADD CONSTRAINT `FKcomision`
+		  FOREIGN KEY (`comision_id`)
+		  REFERENCES `db_springboot_backend`.`comisiones` (`id`)
+		  ON DELETE NO ACTION
+		  ON UPDATE NO ACTION;
+
+		ALTER TABLE `db_springboot_backend`.`comisiones` 
+		DROP FOREIGN KEY `FKproductocomisiones`;
+		ALTER TABLE `db_springboot_backend`.`comisiones` 
+		CHANGE COLUMN `producto_id` `producto_id` BIGINT NULL ;
+		ALTER TABLE `db_springboot_backend`.`comisiones` 
+		ADD CONSTRAINT `FKproductocomisiones`
+		  FOREIGN KEY (`producto_id`)
+		  REFERENCES `db_springboot_backend`.`productos` (`id`);
+
+		ALTER TABLE `db_springboot_backend`.`comisiones` 
+		CHANGE COLUMN `comision` `comision` DOUBLE NULL ;
+
+		ALTER TABLE `db_springboot_backend`.`comisiones` 
+		CHANGE COLUMN `producto_id` `producto_id` BIGINT(20) NULL DEFAULT NULL ;
+
+
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('3', 'Efectivo PY', 'PYE');
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('4', 'Debito PY', 'PYD');
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('5', 'Credito PY', 'PYC');
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('6', 'Debito MP', 'MPD');
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('7', 'Credito MP', 'MPC');
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('8', 'Debito PV', 'PVD');
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('9', 'Credito PV', 'PVC');
+
+		ALTER TABLE `db_springboot_backend`.`cajachica` 
+		ADD COLUMN `saldopy` DOUBLE NULL AFTER `saldoefectivo`,
+		ADD COLUMN `saldopv` DOUBLE NULL AFTER `caja_id`;
+
+
+		ALTER TABLE `db_springboot_backend`.`cajachica` 
+		CHANGE COLUMN `saldopy` `saldopy` DOUBLE NULL DEFAULT NULL AFTER `saldomp`,
+		CHANGE COLUMN `saldopv` `saldopv` DOUBLE NULL DEFAULT NULL AFTER `saldopy`;
+
+		ALTER TABLE `db_springboot_backend`.`cajas` 
+		ADD COLUMN `pedidosya` DOUBLE NULL AFTER `mercadopago`,
+		ADD COLUMN `puntoventa` DOUBLE NULL AFTER `pedidosya`
+
+		UPDATE `db_springboot_backend`.`cajachica` SET `saldopy` = '0', `saldopv` = '0' WHERE (`id` = '8300');
+
+		ALTER TABLE `db_springboot_backend`.`cajachica` 
+		ADD COLUMN `transferencia` BIT(1) NULL DEFAULT NULL AFTER `caja_id`;
+
+		ALTER TABLE `db_springboot_backend`.`cajachica` 
+		CHANGE COLUMN `transferencia` `transferencia` BIT(1) NULL DEFAULT 0 ;
+
+
+		Luego del Primer pase***********************************************
+		ALTER TABLE `db_springboot_backend`.`facturas` 
+		ADD COLUMN `pedidosyaefectivo` DOUBLE NULL DEFAULT NULL AFTER `montocomision`;
+
+		ALTER TABLE `db_springboot_backend`.`cajas` 
+		ADD COLUMN `pedidosyaefectivo` DOUBLE NULL DEFAULT 0 AFTER `pedidosya`;
+
+		ALTER TABLE `db_springboot_backend`.`cajachica` 
+		ADD COLUMN `saldoefectivopy` DOUBLE NULL DEFAULT NULL AFTER `saldopy`;
+
+		ALTER TABLE `db_springboot_backend`.`cajas` 
+		CHANGE COLUMN `pedidosyaefectivo` `pedidosyaefectivo` DOUBLE NULL DEFAULT NULL ;
+
+
+
+		Modificaciones de EntityCommon
+			ALTER TABLE `db_springboot_backend`.`cajachica` 
+			ADD COLUMN `user` VARCHAR(45) NULL DEFAULT NULL AFTER `id`,
+			ADD COLUMN `create_at` TIMESTAMP NULL DEFAULT NULL AFTER `user`,
+			ADD COLUMN `update_at` TIMESTAMP NULL DEFAULT NULL AFTER `create_at`;
+
+			ALTER TABLE `db_springboot_backend`.`cajachica` 
+			DROP COLUMN `fecha`;
+
+			ALTER TABLE `db_springboot_backend`.`facturas` 
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			ADD COLUMN `update_at` TIMESTAMP NULL AFTER `user`;
+
+			ALTER TABLE `db_springboot_backend`.`facturas` 
+			CHANGE COLUMN `create_at` `create_at` TIMESTAMP NULL DEFAULT NULL ;
+
+			ALTER TABLE `db_springboot_backend`.`facturas` 
+			CHANGE COLUMN `create_at` `create_at` TIMESTAMP NULL DEFAULT NULL ;
+
+			ALTER TABLE `db_springboot_backend`.`facturas` 
+			CHANGE COLUMN `create_at` `create_at` TIMESTAMP NULL DEFAULT NULL AFTER `user`;
+
+
+			ALTER TABLE `db_springboot_backend`.`cajas` 
+			DROP COLUMN `fechamod`,
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			ADD COLUMN `create_at` TIMESTAMP NULL AFTER `user`,
+			ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`;
+
+
+			ALTER TABLE `db_springboot_backend`.`cajas` 
+			CHANGE COLUMN `fechaopen` `fechaopen` TIMESTAMP NOT NULL ,
+			CHANGE COLUMN `fechaclose` `fechaclose` TIMESTAMP NULL DEFAULT NULL ;
+
+
+			ALTER TABLE `db_springboot_backend`.`gastos` 
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			ADD COLUMN `create_at` TIMESTAMP NULL AFTER `user`,
+			ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`;
+
+			ALTER TABLE `db_springboot_backend`.`inventarios` 
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			CHANGE COLUMN `fechacreate` `create_at` TIMESTAMP NOT NULL ,
+			CHANGE COLUMN `fechamod` `update_at` TIMESTAMP NULL DEFAULT NULL ;
+
+			ALTER TABLE `db_springboot_backend`.`facturas_items` 
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			ADD COLUMN `create_at` TIMESTAMP NULL AFTER `user`,
+			ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`;
+
+			ALTER TABLE `db_springboot_backend`.`inventarios_items` 
+			DROP COLUMN `fechamod`,
+			DROP COLUMN `fechacreate`,
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			ADD COLUMN `create_at` TIMESTAMP NULL AFTER `user`,
+			ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`;
+
+			ALTER TABLE `db_springboot_backend`.`perdidas` 
+			ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`,
+			CHANGE COLUMN `user` `user` VARCHAR(50) NOT NULL AFTER `id`,
+			CHANGE COLUMN `create_at` `create_at` TIMESTAMP NOT NULL ;
+
+			ALTER TABLE `db_springboot_backend`.`productos` 
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			CHANGE COLUMN `fechamod` `update_at` TIMESTAMP NULL DEFAULT NULL AFTER `create_at`;
+
+
+
+
 	Backend________________________________________________________________________________________________________________
 	*Facturas.java, se crea atributo comision_mp con get y set
 		private Double comision_mp;
@@ -2100,8 +2252,6 @@ Excepciones*********************************************************************
 			+                            "node_modules/primeng/resources/themes/vela-blue/theme.css",
 			+                            "node_modules/primeng/resources/primeng.min.css"
 ********************************************************************************************************************************** En Desarrollo
-
-
 
 
 
@@ -2241,16 +2391,40 @@ Querys**************************************************************************
 		pass: danger120
 ********************************************************************************************************************************
 
+Complementos********************************************************************************************************************
+	*Cambiar de contraseña usuario mysql
+		update user set authentication_string=password('danger120-') where user='eareiza';
+		flush privileges;
+
+	//Crear usuario con privilegios en mysql
+		CREATE USER 'alfonso'@'localhost' IDENTIFIED BY 'danger120-';
+		GRANT ALL PRIVILEGES ON * . * TO 'alfonso'@'localhost';
+		FLUSH PRIVILEGES;
+
+	//revisar los log de catalina
+		less /opt/tomcat/logs/catalina.out
+		less /opt/apache-tomcat-8.5.54/logs/catalina.out
+
+		$ tail -f /opt/apache-tomcat-8.5.54/logs/catalina.out
+********************************************************************************************************************************
 
 
 Implementaciones que faltan
-	* Implementar exceptions 
+	* Implementar exceptions
+	* IMplementar log4J 
 	* Implementar en el Front la organizacion por modulos
 	* Implementar test 
+	* Implementar swagger
 	* Crear parametrizacion de comision
 	* Crear parametrizacion de cuenta
 		* Crear un entidad Cuenta
-		* Efectivo
-		* Banco
-		* Pedidos Ya
-		* Mercado Pago
+			* Efectivo
+			* Banco
+			* Pedidos Ya
+			* Mercado Pago
+																		* add de usuario a las entidades
+																		* recuperar usuario logeado
+																		* add de fecha de modificacion 
+																		* fechas transformarlas a timestamp
+																		* Implementacion lomBok
+	* softDelete

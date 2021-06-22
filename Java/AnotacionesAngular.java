@@ -802,6 +802,12 @@ Seccion 7: GifsApp aplicacion para buscar imagenes******************************
 90.- ***************************************************************************************************************Animate.style CSS
 
 	Refrencia --> https://animate.style/
+	1.- Se ejecut l instalacion
+		npm install animate.css --save
+	2.- Se modifica angular.json, se le agrega a style
+		"node_modules/animate.css/animate.min.css"
+	3.- Se modifica style.css
+		@import '~animate.css/animate.min';
 *************************************************************************************************************************************
 Seccion 8: SPA-paisesApp*************************************************************************************************************
 95.- *************************************************************************************************************Inicio del proyecto
@@ -1372,7 +1378,7 @@ Seccion 8: SPA-paisesApp********************************************************
 *************************************************************************************************************************************
 111.- ************************************************************************************************Ver pais de forma independiente
 ******************************************************************************************************************operators switchMap
-***********************************************************************************************************************ActivatedRoute
+***********************************************************************************************ActivatedRoute para recibir parametros 
 ************************************************************************************************************************Operators Tap
 	1.- Se modifica ver-pais.component.ts
 		1.1.- Se realiza injeccion de dependencia del ActivatedRoute y la clase de servicio para capturar cambios en la url
@@ -2913,7 +2919,7 @@ Seccion 13: HeroesApp - Angular Material & Angular Flex-Layout******************
 		    FlexLayoutModule
 		  ]
 		})
-		export class HeroesModule { }
+		export class HeroesModule { }+
 *************************************************************************************************************************************
 181.- *********************************************************************************************Material Sidenav, toolbar e iconos
 	1.- Se modifica material.module.ts, se exporta MatSidenavModule
@@ -3049,27 +3055,1103 @@ Seccion 13: HeroesApp - Angular Material & Angular Flex-Layout******************
 	2.- Se se descargan db.json y se coloca en la carpeta del proyecto
 		json-server --watch db.json
 	3.- Se descargan las imagenes y se colocan en los assets del proyecto
-
 *************************************************************************************************************************************
+184. ********************************************************************************Heroes Service - Traer información de los héroes
+	1.- Se crea servicio dentro de heroes 
+		ng g s heroes/services/heroes --skipTests
+	2.- Se modifica appmodule.ts, se importa HttpClientModule
+		import { NgModule } from '@angular/core';
+		import { BrowserModule } from '@angular/platform-browser';
+
+
+		import { AppRoutingModule } from './app-routing.module';
+
+		import { AppComponent } from './app.component';
+		import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+		import { ErrorPageComponent } from './shared/error-page/error-page.component';
+		import { HttpClientModule }from '@angular/common/http'
+		import { MaterialModule } from './material/material.module';
+
+
+		@NgModule({
+		  declarations: [
+		    AppComponent,
+		    ErrorPageComponent
+		  ],
+		  imports: [
+		    BrowserModule,
+		    HttpClientModule,
+		    BrowserAnimationsModule,
+		    AppRoutingModule
+		  ],
+		  providers: [],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+	3.- Se modifica heroes.service.ts.
+		3.1.- Se realiza injeccion de dependencia de HttpClient 
+			constructor( private http: HttpClient ) { }
+		3.2.- Se crea metodo que devuelve un observable con los datos
+			  getHeroes(){
+			    return this.http.get("http://localhost:3000/heroes");
+			  }
+	4.- Se modifica listado.component.ts
+		4.1.- Se realiza injeccion de dependencia del servicio heroeService
+			constructor( private heroesServices: HeroesService) { }
+		4.2.- Se modifica el metodo ngOnInit(), para subscribirse al metodo del servicio getHeroes() y traer la data
+			  ngOnInit(): void {
+			    this.heroesServices.getHeroes().subscribe( resp => console.log(resp));
+			  }
 *************************************************************************************************************************************
+185. ******************************************************************************************************************Interfaz Héroe
+	1.- Se crea interface Heroe 
+		1.1.- Se consulta la respuesta de la data del servidor por postman -->  http://localhost:3000/heroes, se copia la data y 
+		se pega en la herramienta --> https://app.quicktype.io/ para que genere una interface
+		1.2.- Se crea dentro de heroes, folder interfaces y dentro la interface heroe.interface.ts 
+		1.3.- Se modifica heroe.interface.ts, se pega el resultado de la herramenta quicktype
+			export interface Heroe {
+			    id?:              string;
+			    superhero:        string;
+			    publisher:        Publisher;
+			    alter_ego:        string;
+			    first_appearance: string;
+			    characters:       string;
+			    alt_img:          string;
+			}
 
+			export enum Publisher {
+			    DCComics = "DC Comics",
+			    MarvelComics = "Marvel Comics",
+			}
+	2.- Se modifica heroes.service.ts, se modifica metodo getHeroes() para colocar el tipado 
+			  getHeroes(){
+			    return this.http.get<Heroe[]>("http://localhost:3000/heroes");
+			  }
+	3.- Se modifica listado.component.ts
+		3.1.- Se crea atributo de tipo Heroe[] 
+			heroes: Heroe[] = [];
+		3.2.- Se modifica metodo ngoninit(), se le añade la respuest del subscribe al atributo heroes 
+			  ngOnInit(): void {
+				    this.heroesServices.getHeroes().subscribe( resp => this.heroes = resp );
+				  }
+	4.- Se modifica listado.component.html, se genera lista de heroes 
+		<ul>
+		    <li *ngFor="let heroe of heroes">{{heroe.superhero}}</li>
+		</ul>
+*************************************************************************************************************************************
+186. *****************************************************************************************************Material Card - Flex Layout
+************************************************************************************************************************MatCardModule
+	1.- Se modifica material.module.ts, se importa MatCardModule
+		import { NgModule } from '@angular/core';
+		import {MatToolbarModule} from '@angular/material/toolbar';
+		import {MatSidenavModule} from '@angular/material/sidenav';
+		import {MatIconModule} from '@angular/material/icon';
+		import {MatButtonModule} from '@angular/material/button';
+		import {MatListModule} from '@angular/material/list';
+		  import {MatCardModule} from '@angular/material/card';
 
+		@NgModule({
+		  exports:[
+		    MatToolbarModule,
+		    MatSidenavModule,
+		    MatButtonModule,
+		    MatListModule,
+		    MatIconModule,
+		    MatCardModule
+		  ],
+		  imports:[
+		  ]
+		})
+		export class MaterialModule { }
+	2.- Se modifica listado.component.html
+		<h1>Listado Heroes</h1>
+		<mat-divider></mat-divider>
+		<br>
+		<div fxLayout="row wrap">
+		    <div fxFlex="20">
+		        <mat-card *ngFor="let heroe of heroes">
+		            <mat-card-header>
+		                <mat-card-title>{{heroe.superhero}}</mat-card-title>
+		                <mat-card-subtitle>{{heroe.alter_ego}}</mat-card-subtitle>
+		            </mat-card-header>
+		            <img matCardImage src="assets/heroes/{{heroe.id}}.jpg">
+		            <mat-card-content>
+		                <h3>{{heroe.publisher}}</h3>
+		                <p>
+		                    <strong>Primera Aparicion: </strong>{{heroe.first_appearance}}
+		                    <br>
+		                    <strong>Personajes: </strong>{{heroe.characters}}
+		                </p>
+		            </mat-card-content>
+		            <mat-card-actions align="start">
+		                <button mat-button color="warn">Leer mas...</button>
+		                <button mat-button color="info">Editar</button>
+		            </mat-card-actions>
+		            <mat-card-footer>
+		                Footer
+		            </mat-card-footer>
+		        </mat-card>    
+		    </div>
+		</div>+
+*************************************************************************************************************************************
+187. *******************************************************************************************Flex Layout - Diferentes resoluciones
+	1.- Se modifica listado.component.html, se agregan diferentes resoluciones para diferentes tamaños de pantalla con los fxLayout
+		<h1>Listado Heroes</h1>
+			<mat-divider></mat-divider>
+			<br>
+			<div fxLayout="row wrap" 
+			    fxLayoutAlign="center" 
+			    fxLayoutGap="20px"
+			    fxLayout.xs="column">
+			    <div *ngFor="let heroe of heroes"
+			        fxFlex="20"
+			        fxFlex.lg = "15"
+			        fxFlex.sm = "30">
+			        <mat-card >
+			            <mat-card-header>
+			                <mat-card-title>{{heroe.superhero}}</mat-card-title>
+			                <mat-card-subtitle>{{heroe.alter_ego}}</mat-card-subtitle>
+			            </mat-card-header>
+			            <img matCardImage src="assets/heroes/{{heroe.id}}.jpg">
+			            <mat-card-content>
+			                <h3>{{heroe.publisher}}</h3>
+			                <p>
+			                    <strong>Primera Aparicion: </strong>{{heroe.first_appearance}}
+			                    <br>
+			                    <strong>Personajes: </strong>{{heroe.characters}}
+			                </p>
+			            </mat-card-content>
+			            <mat-card-actions align="start">
+			                <button mat-button color="warn">Leer mas...</button>
+			                <button mat-button color="info">Editar</button>
+			            </mat-card-actions>
+			        </mat-card>    
+			    </div>
+			    
+			</div>
+	2.-  Se modifica listado.component.ts, se agrega margen css en el decorator
+		@Component({
+			  selector: 'app-listado',
+			  templateUrl: './listado.component.html',
+			  styles: [`
+			    mat-card{
+			      margin-top: 20px
+			    }
+			  `  ]
+			})
+*************************************************************************************************************************************
+188. ***************************************************************************************************Tarea - HeroeTarjetaComponent
+	1.- Se genera componente dentro de heroe
+		ng g c heroes/components/HeroeTarjeta --skipTests
+	2.- Se modifica listado.component.html, se corta el mat-card, y se agrega componente app-heroe-tarjeta
+		<h1>Listado Heroes</h1>
+		<mat-divider></mat-divider>
+		<br>
+		<div fxLayout="row wrap" 
+		    fxLayoutAlign="center" 
+		    fxLayoutGap="20px"
+		    fxLayout.xs="column">
+		    <div *ngFor="let heroe of heroes"
+		        fxFlex="20"
+		        fxFlex.lg = "15"
+		        fxFlex.sm = "30">
+		        <app-heroe-tarjeta [heroe]="heroe"></app-heroe-tarjeta> 
+		    </div>    
+		</div>
+	3.- Se modifica heroe-tarjeta.component.html y se peca el mat-card, se le agrega como atributo input el heroe 
+		<mat-card >
+		    <mat-card-header>
+		        <mat-card-title>{{heroe.superhero}}</mat-card-title>
+		        <mat-card-subtitle>{{heroe.alter_ego}}</mat-card-subtitle>
+		    </mat-card-header>
+		    <img matCardImage src="assets/heroes/{{heroe.id}}.jpg">
+		    <mat-card-content>
+		        <h3>{{heroe.publisher}}</h3>
+		        <p>
+		            <strong>Primera Aparicion: </strong>{{heroe.first_appearance}}
+		            <br>
+		            <strong>Personajes: </strong>{{heroe.characters}}
+		        </p>
+		    </mat-card-content>
+		    <mat-card-actions align="start">
+		        <button mat-button color="warn">Leer mas...</button>
+		        <button mat-button color="info">Editar</button>
+		    </mat-card-actions>
+		</mat-card>   
+	4.- Se modifica heroes-tarjeta.component.ts, se agrega atributo @intut 
+		@Input() heroe!: Heroe;	
+*************************************************************************************************************************************
+189. **************************************************************************************************************Tarea - PipeImagen
+	1.- Se crea pipe perzonalizado para imagen  --> ng g p heroes/pipes/imagenPip
+	2.- Se modifica imagen-pipe.pipe.ts, se modifica metodo transform()
+		  transform(heroe: Heroe): unknown {
+		    return `assets/heroes/${heroe.id}.jpg`;
+		  }
+	3.- Se modifica heroe-tarjeta.component.html, se utiliza pipe para renderizar la imagen 
+		<img matCardImage [src]="heroe | imagenPipe">
+*************************************************************************************************************************************
+190. ***********************************************************************************************Tarea - Ruta Héroe y Editar Héroe
+************************************************************************************activatedRoute para obtener parametro del request
+	1.- Se modifica heroe-tarjeta.component.html, se agregan las rutas a los botones
+		<button mat-button color="warn" [routerLink] = "['/heroes',heroe.id]">Leer mas...</button>
+        <button mat-button color="info" [routerLink] = "['/heroes/editar', heroe.id]">Editar</button>
+    2.- Se modifica heroe.component.ts, se modifica ngOnInit, se recupera parametro con activatedRoute
+    	  constructor( private activatedRoute: ActivatedRoute) { }
 
+		  ngOnInit(): void {
+		    this.activatedRoute.params.subscribe( ({id}) => console.log( id ))
+		  }	    
+*************************************************************************************************************************************
+191. ***************************************************************************************************************Pantalla de Héroe
+***********************************************************************************************************switchMa de rxjs/operators
+	1.-  Se modifica heroes.service.ts, se crea metodo que devuelve observable con la data de heroe 
+		  getHeroe(id:string): Observable<Heroe>{
+		    return this.http.get<Heroe>(`http://localhost:3000/heroes/${id}`);
+		  }
+	2.- Se modifica el heroe.compoent.ts, se modifica ngoninit(), se trabaja con el switchMap de rxjs/operators para convertir el 
+		observeble en el observable que recuperamos del servicio 
+		2.1.- Se crea atributo de tipo Heroe
+			heroe!: Heroe;
 
+		2.2.- Se modifica ngOnInit(), se llama al metodo de servicio getHeroe()
+		  ngOnInit(): void {
+		    this.activatedRoute.params.pipe(
+		      switchMap( ({id}) => {
+		        return this.heroeService.getHeroe(id)
+		      })
+		    ).subscribe( hero => {
+		      console.log(hero);
+		      this.heroe = hero;
+		    })
+		  }
+	3.- Se modifica heroe.component.html, se renderiza spinner y template con validacion si existe o no Heroe
+		//<mat-grid-list cols="2" *ngIf="!heroe; else divHeroe">
+		    <mat-grid-tile>
+		        <mat-spinner></mat-spinner>
+		    </mat-grid-tile>
+		</mat-grid-list>
 
+		<ng-template #divHeroe>
+		    {{ heroe | json }}
+		</ng-template>
+*************************************************************************************************************************************
+192. **************************************************************************************************Diseño de la pantalla de Héroe
+	1.- Se modifica heroe.component.html, se renderiza informacion del heroe 
+		<ng-template #divHeroe>
+		    <div fxLayout="row"
+		            fxLayout.xs="column"
+		            fxLayoutGap="30px">
+		        <div fxFlex="50">
+		            <h1>{{heroe.superhero}}<small>{{heroe.alter_ego}}</small></h1>
+		            <mat-divider></mat-divider>
+		            <br>
+		            <img [src]="heroe | imagenPipe" >
+		        </div>
+		        <div fxFlex="50">
+		            <h1>{{heroe.publisher}}</h1>
+		            <mat-divider></mat-divider>
+		            <br>
+		            <mat-list>
+		                <mat-list-item>{{ heroe.first_appearance }}</mat-list-item>
+		                <mat-list-item>{{ heroe.characters }}</mat-list-item>
+		                <mat-list-item>{{ heroe.publisher }}</mat-list-item>
+		                <mat-list-item>{{ heroe.alter_ego }}</mat-list-item>
+		            </mat-list>
+		            <button mat-button (click)="regresar()" color="warm">Regresar</button>
+		        </div>
+		    </div>
+		</ng-template>
+	2.- Se modifica heroe.component.ts, se agrega style al decorador, para que la imagen tenga un 100%  y se modifican las puntas
+		@Component({
+		  selector: 'app-heroe',
+		  templateUrl: './heroe.component.html',
+		  styles: [`
+		    img{
+		      width: 100%;
+		      border-radius: 5px;
+		    }
+		  `
+		  ]
+		})
+	3.- Se modifica heroe-tarjeta.component.css, se agrega margen a las cards 
+		mat-card{
 
+		    margin-top: 20px
+		}
+*************************************************************************************************************************************
+193. ************************************************************************************************************Variables de entorno
+	1.- Se modifica environments.ts (test), se le agrega urlBase
+		export const environment = {
+		  production: false,
+		  baseUrl: 'http://localhost:3000'
+		};
+	2.- Se modifica environments.prod.ts(produccion), se agrega urlBase de produccion
+		export const environment = {
+		  production: true,
+		  baseUrl: 'http://prueba.com/api'
+		};
+	3.- Se modifica heroes.service.ts, se agrega el manejo de url por variable de entorno
+		3.1.- Se crea variable que toma url del environment 
+			private baseUrl: string = environment.baseUrl;
+		3.2.- Se modifica metodos para que tomen parte de la url del environments
+			  getHeroes(){
+			    return this.http.get<Heroe[]>(`${this.baseUrl}/heroes`);
+			  }
 
+			  getHeroe(id:string): Observable<Heroe>{
+			    return this.http.get<Heroe>(`${this.baseUrl}/heroes/${id}`);
+			  }+++++
+*************************************************************************************************************************************
+194. ***********************************************************************************************************Material Autocomplete
+	1.-  Se modifica material.module.ts, se importan librerias de angular material necesarias para el autocomplete 
+		y se incluyen en los exports
+		import {MatAutocompleteModule} from '@angular/material/autocomplete';
+		import { MatFormFieldModule } from '@angular/material/form-field';
+		import { MatInputModule } from '@angular/material/input';
 
+		@NgModule({
+		  exports:[
+		    MatToolbarModule,
+		    MatSidenavModule,
+		    MatButtonModule,
+		    MatListModule,
+		    MatIconModule,
+		    MatCardModule,
+		    MatProgressSpinnerModule,
+		    MatGridListModule,
+		    MatAutocompleteModule,
+		    MatFormFieldModule,
+		    MatInputModule
+		  ],
+	2.- Se modifica heroes.module.ts, se importa FormsModule de @angular/forms 
+		import { MaterialModule } from '../material/material.module';
 
+		@NgModule({
+		  declarations: [AgregarComponent, BuscarComponent, HeroeComponent, HomeComponent, ListadoComponent, HeroeTarjetaComponent, ImagenPipePipe],
+		  imports: [
+		    CommonModule,
+		    FlexLayoutModule,
+		    MaterialModule,
+		    HeroesRoutingModule,
+		    FormsModule
+		  ]
+		})
+		export class HeroesModule { }
+	3.- Se modifica buscar.component.html, se enderiza el autocomplete de ejemplo de la documentacion de AngularMaterial
+		<div fxLayout="column">
+		    <div>
+		        <h1>Buscar Heroes</h1>
+		        <mat-divider></mat-divider>
+		    </div>
+		    <div>
+		        <h3>Buscador</h3>
+		        <mat-form-field >
+		            <mat-label>Number</mat-label>
+		            <input type="text"
+		                    placeholder="Pick one"
+		                    aria-label="Number"
+		                    matInput
+		                    [(ngModel)]="termino"
+		                    [matAutocomplete]="auto" 
+		                    (input)="buscando()">
+		            <mat-autocomplete autoActiveFirstOption 
+		                    #auto="matAutocomplete"
+		                    (optionSelected)="opcionSeleccionada( $event )">
+		            <mat-option *ngFor="let heroe of heroes" [value]="heroe">
+		                {{heroe.superhero}}
+		            </mat-option>
+		            </mat-autocomplete>
+		        </mat-form-field>
+		    </div>
+		    <pre>
+		        {{heroeSeleccionado | json}}
+		    </pre>
+		</div>
 
+	4.- Se modifica buscar.componets.ts
+		4.1.- Se agregan atributo para el autocomplete
+			termino: string = '';
+  			heroes: Heroe[] = [];
+  			heroeSeleccionado!: Heroe;
+  		4.2.- Se crea metodo buscando() y opcionSeleccionada(), se encarga de traer la data al uutocomplete
+  			  buscando(){
+			    this.heroeService.getSugerencias( this.termino ).subscribe( heroes => this.heroes = heroes);
+			  }
 
+			  opcionSeleccionada( event: MatAutocompleteSelectedEvent ){
+			    const hero: Heroe = event.option.value;
+			    this.termino =  hero.superhero;
+			    this.heroeService.getHeroe( hero.id! ).subscribe( heroe => this.heroeSeleccionado = heroe);
+			    console.log( hero );
+			  }
+	5.- Se modifica heroes.service.ts, se crea metodo getSugerencias()
+		  getSugerencias( termino:string){
+		    return this.http.get<Heroe[]>(`${this.baseUrl}/heroes?q=${termino}&_limit=5`);
+		  }
+*************************************************************************************************************************************
+196. ************************************************************************************Tarea - Autocomplete cuando no encontró nada
+	1.- Se modifica buscar.component.html
+		1.1.- Se agrega mat-option, con mensaje en caso de que no se encuentren elementos
+			<mat-option value="" *ngIf=" heroes.length === 0 && termino.trim().length > 0">
+                No se encontro nada con el termino {{ termino }}
+            </mat-option>
+        1.2.- Se agrega componente app-heroe-tarjeta, en caso de que exista heroeSeleccionado
+        	<div *ngIf="heroeSeleccionado">
+		        <app-heroe-tarjeta [heroe]="heroeSeleccionado"></app-heroe-tarjeta>
+		    </div>
+	2.- Se modifia buscar.component.ts, metodo opcionSeleccionada(), se valida si existe valor en el evento opcionSeleccionada()
+		opcionSeleccionada( event: MatAutocompleteSelectedEvent ){
+		    if(!event.option.value){
+		      console.log('No hay valor');
+		      this.heroeSeleccionado = undefined;
+		      return;
+		    }
+		    const hero: Heroe = event.option.value;
+		    this.termino =  hero.superhero;
+		    this.heroeService.getHeroe( hero.id! ).subscribe( heroe => this.heroeSeleccionado = heroe);
+		    console.log( hero );
+		  } ++
+*************************************************************************************************************************************
+************************************************************* Fin Seccion ***********************************************************
+**********************************Sección 14: HeroesApp - CRUD (Continuación con Angular Material)***********************************
+203. ***************************************************************************************Diseño de la pantalla para agregar héroes
+	1.- Se modifica material.module.ts, se agrega import de modulo
+		import { MatSelectModule } from '@angular/material/select';
 
+		exports:[
+		    MatToolbarModule,
+		    MatSidenavModule,
+		    MatButtonModule,
+		    MatListModule,
+		    MatIconModule,
+		    MatCardModule,
+		    MatProgressSpinnerModule,
+		    MatGridListModule,
+		    MatAutocompleteModule,
+		    MatFormFieldModule,
+		    MatInputModule,
+		    MatSelectModule
+		  ],
+	2.- Se modifica agregar.component.ts, se agregan atributos publishers para el select y uno de tipo heros 
+		publishers = [
+		    {
+		      id: 'DC Comics',
+		      desc: 'Dc - Comics'
+		    },   
+		    {
+		      id: 'Marvel Comics',
+		      desc: 'Marvel - Comics'
+		    }
+		  ]
 
+		  heroe: Heroe = {
+		    superhero : '',
+		    alter_ego : '',
+		    characters : '',
+		    first_appearance: '',
+		    publisher: Publisher.DCComics,
+		    alt_img: ''
+		  }
+	3.- Se modifica agregar.components.htm , se renderiza el formulario
+		<h1>Nuevo heroe <small>ASD</small></h1>
+		<div fxLayout="row" fxLayoutGap="40px">
+		    <div fxFlex="50" fxLayout="column">
+		        <div fxLayout="row" fxLayoutGap="20px">
+		            <mat-form-field fxFlex="100"> 
+		                <mat-label>Super Heroe</mat-label>
+		                    <input matInput 
+		                           type="text"
+		                           required
+		                           placeholder="">
+		            </mat-form-field>
+		            <mat-form-field fxFlex="100"> 
+		                <mat-label>Alter Ego</mat-label>
+		                    <input matInput 
+		                           type="text"
+		                           required
+		                           placeholder="">
+		            </mat-form-field>
+		        </div>
+		        <mat-form-field > 
+		            <mat-label>Primera Aparicion</mat-label>
+		                <input matInput 
+		                       type="text"
+		                       required
+		                       placeholder="">
+		        </mat-form-field>
 
+		        <mat-form-field > 
+		            <mat-label>Personajes</mat-label>
+		                <input matInput 
+		                       type="text"
+		                       required
+		                       placeholder="">
+		        </mat-form-field>
 
+		        <mat-form-field>
+		            <mat-label>Creador</mat-label>
+		            <mat-select  placeholder="">
+		                <mat-option  *ngFor="let publisher of publishers" [value]="publisher.id">
+		                    {{publisher.desc}}
+		                </mat-option>
+		            </mat-select>
+		        </mat-form-field>
 
+		        <mat-form-field > 
+		            <mat-label>Photo Url</mat-label>
+		                <input matInput 
+		                       type="url"
+		                       required
+		                       placeholder="">
+		        </mat-form-field>
+		        <br>
+		        <button mat-raised-button color="primary">
+		            <mat-icon class="mat-18">edit</mat-icon>
+		            Guardar
+		        </button>
 
-Seccion 16: Formularios -Template y LazyLoad*****************************************************************************************
+		    </div>
+		    <div fxFlex="50">
+		        <img [src]=" heroe | imagenPipe " alt="">
+		    </div>
+		</div>
+*************************************************************************************************************************************
+204. *******************************************************************************************************Insertar en base de datos
+	1.- Se modifica agregar.component.html, se le agregan fxLayout.xs="column", para el responsive en pantallas muy pequeñas, 
+	se le añade los ngModel para el databinding con el objeto heroe, se le agrega evento click al boton
+		<h1>Nuevo heroe <small>ASD</small></h1>
+		<div fxLayout="row" 
+		    fxLayoutGap="40px"
+		    fxLayout.xs="column">
+
+		    <div fxFlex="50" 
+		        fxLayout="column">
+
+		        <div fxLayout="row" 
+		            fxLayoutGap="20px" 
+		            fxLayout.xs="column">
+
+		            <mat-form-field fxFlex="100" fxLayout.xs="column"> 
+		                <mat-label>Super Heroe</mat-label>
+		                    <input matInput 
+		                           type="text"
+		                           required
+		                           placeholder=""
+		                           [(ngModel)]="heroe.superhero">
+		            </mat-form-field>
+
+		            <mat-form-field fxFlex="100"> 
+		                <mat-label>Alter Ego</mat-label>
+		                    <input matInput 
+		                           type="text"
+		                           required
+		                           placeholder=""
+		                           [(ngModel)]="heroe.alter_ego">
+		            </mat-form-field>
+		        </div>
+		        <mat-form-field > 
+		            <mat-label>Primera Aparicion</mat-label>
+		                <input matInput 
+		                       type="text"
+		                       required
+		                       placeholder=""
+		                       [(ngModel)]="heroe.first_appearance">
+		        </mat-form-field>
+
+		        <mat-form-field > 
+		            <mat-label>Personajes</mat-label>
+		                <input matInput 
+		                       type="text"
+		                       required
+		                       placeholder=""
+		                       [(ngModel)]="heroe.characters">
+		        </mat-form-field>
+
+		        <mat-form-field>
+		            <mat-label>Creador</mat-label>
+		            <mat-select  placeholder="" [(ngModel)]="heroe.publisher">
+		                <mat-option  *ngFor="let publisher of publishers" [value]="publisher.id">
+		                    {{publisher.desc}}
+		                </mat-option>
+		            </mat-select>
+		        </mat-form-field>
+
+		        <mat-form-field > 
+		            <mat-label>Photo Url</mat-label>
+		                <input matInput 
+		                       type="url"
+		                       required
+		                       placeholder=""
+		                       [(ngModel)]="heroe.alt_img">
+		        </mat-form-field>
+		        <br>
+		        <button mat-raised-button 
+		            color="primary"
+		            (click)="guardar()">
+		            <mat-icon class="mat-18">edit</mat-icon>
+		            Guardar
+		        </button>
+
+		    </div>
+		    <div fxFlex="50">
+		        <img [src]=" heroe | imagenPipe " alt="">
+		    </div>
+		</div>
+	2.- Se modifica heroes.service.ts, se agrega metodo guardar 
+		  postHeroe( heroe: Heroe): Observable<Heroe>{
+		    return this.http.post<Heroe>(`${this.baseUrl}/heroes`, heroe);
+		  }
+	3.- Se modifica agregar.component.ts, se crea metodo guardar()
+		  guardar(){
+		    if(this.heroe.superhero.trim().length === 0){
+		      return;
+		    }
+		    this.heroeService.postHeroe(this.heroe).subscribe( resp => console.log(resp));
+
+		  }
+*************************************************************************************************************************************
+205. *******************************************************************************************************************Editar héroes
+	1.- Se modifica heroes.service.ts, se crea metodo para modificar heroe 
+		  putHeroe(heroe: Heroe): Observable<Heroe>{
+		    return this.http.put<Heroe>(`${this.baseUrl}/heroes/${heroe.id}`, heroe);
+		  }
+	2.- Se modifica agregar.componet.ts 
+		2.1.- Se realiza injeccion de dependencia de Router y activatedRoute
+			  constructor( private heroeService: HeroesService,
+                private activatedRoute: ActivatedRoute,
+                private router: Router) { }
+		2.2.- Se modifica el metodo ngOnInit() para que recupere el id en caso de existir
+			  ngOnInit(): void {
+			    this.activatedRoute.params.pipe(
+			      switchMap( ({id}) => this.heroeService.getHeroe(id))
+			    ).subscribe( heroe => this.heroe = heroe );
+			  }
+		2.3.- Se modifica metodo guardar() para que actualice o guarde en caso de que exista id 
+			  guardar(){
+			    if(this.heroe.superhero.trim().length === 0){
+			      return;
+			    }
+			    if(this.heroe.id){
+			      this.heroeService.putHeroe(this.heroe).subscribe( heroe => this.router.navigate(['/editar',heroe]));
+			    }else{
+			      this.heroeService.postHeroe(this.heroe).subscribe( resp => console.log(resp));
+			    }
+
+			  }
+*************************************************************************************************************************************
+206. ***********************************************************************************************Excepciones en nuestro ImagenPipe
+***************************************************************************************************this.router.url.includes('editar')
+	1.- Se modifica imagen-pipe.pipe.ts, se agregan validaciones de imagen 
+		transform(heroe: Heroe): unknown {
+		    if(!heroe.id && !heroe.alt_img){
+		      return 'assets/heroes/no-image.jpg';
+		    }else if(heroe.alt_img){
+		      return heroe.alt_img;
+		    }else{
+		      return `assets/heroes/${heroe.id}.jpg`;
+		    }
+		  }
+	2.- Se modifica agregar.component.ts, se modifica metodo ngoninit() para que valide la url si es de editar no busca la imagen 
+		ngOnInit(): void {
+		    if(!this.router.url.includes('editar')){
+		      return;
+		    }
+		    this.activatedRoute.params.pipe(
+		      switchMap( ({id}) => this.heroeService.getHeroe(id))
+		    ).subscribe( heroe => this.heroe = heroe );
+		  }
+	3.- Se modifica assets, se agrega imagen no-image.jpg en heroes
+*************************************************************************************************************************************
+207. **************************************************************************************************************Eliminar registros
+	1.- Se modifica heroes.service.ts, se agrega metodo para eliminar heroes
+		  deleteHeroe(id: string): Observable<any>{
+		    return this.http.delete<any>(`${this.baseUrl}/heroes/${id}`);
+		  }	
+	2.- Se modifica agregar.component.ts
+		2.1.- Se crea metodo para eliminar que llame al servicio
+			  eliminar(){
+			    this.heroeService.deleteHeroe(this.heroe.id!).subscribe( resp => this.router.navigate(['/heroes']) );
+			  }
+		2.2.- Se agrega margen al botton, en el decorator
+			@Component({
+			  selector: 'app-agregar',
+			  templateUrl: './agregar.component.html',
+			  styles: [`
+			    img {
+			      width: 100%;
+			      border-radius: 5px
+			    }
+			    button{
+			      margin-left: 10px
+			    }
+			  `]
+			})
+	3.- Se modifica agregar.component.html, se agrega boton de eliminar 
+		<div>
+            <button mat-raised-button 
+                color="primary"
+                (click)="guardar()">
+                <mat-icon class="mat-18">edit</mat-icon>
+                {{(!heroe.id)?'Guardar':'Editar'}}
+            </button>
+            <button mat-raised-button
+                    *ngIf="heroe.id"
+                    color="warn"
+                    (click)="eliminar()">Eliminar</button>   
+        </div>  	 	
+*************************************************************************************************************************************
+209. ***************************************************************************************************************Material Snackbar
+**************************************************************************************************************************MatSnackBar
+	1.- Se modifica material.module.ts, se agrega export de  MatSnackBarModule, para mostrar mensaje informativo
+
+		import {MatSnackBarModule} from '@angular/material/snack-bar';	
+
+		@NgModule({
+		  exports:[
+		    MatToolbarModule,
+		    MatSidenavModule,
+		    MatButtonModule,
+		    MatListModule,
+		    MatIconModule,
+		    MatCardModule,
+		    MatProgressSpinnerModule,
+		    MatGridListModule,
+		    MatAutocompleteModule,
+		    MatFormFieldModule,
+		    MatInputModule,
+		    MatSelectModule,
+		    MatSnackBarModule
+		  ],
+		  imports:[
+		  ]
+		})
+		export class MaterialModule { }
+	2.- Se modifica agregar.component.ts
+		2.1.- Se crea metodo para despliegue de snackBar 
+			2.1.1.- Se crea injeccion de dpendencia de MatSnackBar 
+				 constructor( private heroeService: HeroesService,
+	                private activatedRoute: ActivatedRoute,
+	                private router: Router,
+	                private _snackBar: MatSnackBar) { }
+			2.1.2.- Se crea metodo mostrarSnackBar 
+				  mostrarSnackBar(mensaje: string){
+				    this._snackBar.open(mensaje, 'Ok!', {
+				      duration: 2500
+				    });
+				  }
+		2.2.- Se modifica metodo guardar(), para mostrar mensaje de exito 
+			  guardar(){
+			    if(this.heroe.superhero.trim().length === 0){
+			      return;
+			    }
+			    if(this.heroe.id){
+			      this.mostrarSnackBar('Heroe Modificado con exito');
+			      this.heroeService.putHeroe(this.heroe).subscribe( heroe => this.router.navigate(['/heroes']));
+			    }else{
+			      this.mostrarSnackBar('Heroe se guardo con exito');
+			      this.heroeService.postHeroe(this.heroe).subscribe( resp => this.router.navigate(['/heroes']));
+			    }
+
+			  }
+*************************************************************************************************************************************
+210. *****************************************************************************************************************Material Dialog
+**********************************************************************************************************************MatDialogModule
+	1.- Se modifica material.module.ts, se exporta MatDialogModule
+		import {MatDialogModule} from '@angular/material/dialog';
+		@NgModule({
+		  exports:[
+		    MatToolbarModule,
+		    MatSidenavModule,
+		    MatButtonModule,
+		    MatListModule,
+		    MatIconModule,
+		    MatCardModule,
+		    MatProgressSpinnerModule,
+		    MatGridListModule,
+		    MatAutocompleteModule,
+		    MatFormFieldModule,
+		    MatInputModule,
+		    MatSelectModule,
+		    MatSnackBarModule,
+		    MatDialogModule
+		  ],
+		  imports:[
+		  ]
+		})
+		export class MaterialModule { }
+	2.- Se modifica agregar.component.ts, se modifica metodo eliminar para agregarle dialog 
+		2.1.- Se raliza la injeccion de dependencia de MatDialog 
+			constructor( private heroeService: HeroesService,
+                private activatedRoute: ActivatedRoute,
+                private router: Router,
+                private _snackBar: MatSnackBar,
+                private _Dialog: MatDialog) { }
+		2.2.- S modifica etodo eliminar() 
+			eliminar(){
+			    this._Dialog.open(ConfirmDialogComponent)
+			    this.heroeService.deleteHeroe(this.heroe.id!).subscribe( resp => this.router.navigate(['/heroes']) );
+			  }
+	3.- Se crea modulo confirmDialog 	
+		ng g c heroes/components/confirmDialog --skipTests
+
+	4.- Se modifica confirm-dialog.component.ts 
+		4.1.- Se realiza injeccion de dependencia de  MatDialogRef pasandole como referencia el componente ConfirmDialogComponent
+			 constructor( private dialogRef: MatDialogRef<ConfirmDialogComponent> ) { }
+		4.2.- Se   crean metodo para crear y para elminar
+		  eliminar(){
+		    this.dialogRef.close();
+		  }
+
+		  cancelar(){
+		    this.dialogRef.close();
+		  }
+	5.- Se modifica confirm-dialog.component.html, se renderiza el dialog
+		<h1>¿Estas Seguro?</h1>
+		<hr>
+		<p>Estas a punto de elimiar un heroe.
+		    <br>
+		    ¿Desea Continuar?
+		</p>
+
+		<div>
+		    <button mat-button (click)="eliminar()" color="warn">Eliminar</button>
+		    <button mat-button (click)="cancelar()">Cancelar</button>
+		</div>
+*************************************************************************************************************************************
+211. *********************************************************************************************Información desde y hacia el dialog
+**************************************************************************************************************@Inject(MAT_DIALOG_DATA
+****************************************************************************************************************************MatDialog
+*************************************************************************************************MatDialogRef<ConfirmDialogComponent>
+	1.- Se modifica agregar.component.ts
+		1.1.- Se realiza injeccion de dependencia de MatDialog
+			  constructor( private heroeService: HeroesService,
+                private activatedRoute: ActivatedRoute,
+                private router: Router,
+                private _snackBar: MatSnackBar,
+                private _dialog: MatDialog) { }
+		1.2.- Se odifica metodo eliminar()
+			  eliminar(){
+			  	//se utiliza metodo open() de obj MatDialog, se le pasa el componente que rendirazara, y un objeto con el ancho
+			  	//y la data, ... son para que cree otra referencia de heroe, se obtiene un obj MatDialogRef
+			    const dialog = this._dialog.open(ConfirmDialogComponent, {
+			      width: '250px',
+			      data: {...this.heroe}
+			    })
+
+			    //se subscribe al metodo afterClosed del objeto MatDialog y si trae como respuesta true(confirmacion) se llama al 
+			    //metodo del servicio que borra un heroe 
+			    dialog.afterClosed().subscribe(
+			      (result ) => {
+			        if (result) {
+			          this.heroeService.deleteHeroe(this.heroe.id!).subscribe( resp => this.router.navigate(['/heroes']) );
+			        }
+			      }
+			    )
+			  }
+	2.- Se modifica confirm-dialog.component.ts, se recibe l data por medio del @Inject(MAT_DIALOG-DATA) en el constructor
+		  constructor( private dialogRef: MatDialogRef<ConfirmDialogComponent>,
+               			 @Inject(MAT_DIALOG_DATA) public data: Heroe  ) { }
+
+		2.1.- Se modifica metodo eliminar(), se le pasa por argumento true al metodo close del dialogRef, este es el que recibe el 
+		 metodo eliminar en  agregar.component  
+		 	  eliminar(){
+			    this.dialogRef.close(true);
+			  }
+
+	3.- Se modifica confirm-dialog.component.html, se agrega referencia al heroe que se va a eliminar  
+		<p>Estas a punto de elimiar al heroe {{ data.superhero}}.
+		    <br>
+		    ¿Desea Continuar?
+		</p>
+*************************************************************************************************************************************
+************************************************************* Fin Seccion ***********************************************************
+***************************************************Sección 15: Protección de Rutas***************************************************
+217. ********************************************************************************************************Pantalla de Login Básico
+	1.- Se modifica login.component.ts, se crea metodo que navegara al listado de heroes 
+		1.1.- Se injecta la dependencia a Router 
+			constructor( private route: Router) { } 
+		1.2.- Se rcea metodo
+			 login(){
+			    this.route.navigate(['/heroes'])
+			  }
+	2.- Se modifica login.component.html, se renderiza boton  
+		<mat-grid-list cols="1">
+		    <mat-grid-tile>
+		        <button mat-raised-button color="primary" (click)="login()">Ingresar</button>
+		    </mat-grid-tile>
+		</mat-grid-list>
+	3.- Se modifica home.component.ts, se crea metodo que nos lleva a modulo login 
+		  constructor( private route: Router ) { }
+
+		  logout(){
+		    this.route.navigate(['/auth'])
+		  }
+	4.- Se modifica login.component.html, se agrega evento click al boton de logout 
+		<button mat-icon-button style="margin-right: 50px" (click)="logout()">
+*************************************************************************************************************************************
+218. **************************************************************AuthService - Servicio para mantener el estado de la autenticación
+	1.- Se crea interface Auth 
+		1.1.- Se crea interface auth --> interfaces --> auth.interface.ts  
+			export interface Auth{
+			    id          : string;
+			    email       : string;
+			    usuario     : string;
+			}
+	2.- Se genera clase de servicio --> ng g s auth/services/auth --skip-tests, se le crea metodo getLogin()
+		@Injectable({
+		  providedIn: 'root'
+		})
+		export class AuthService {
+
+		  private urlBase = environment.baseUrl;
+
+		  constructor( private http: HttpClient) { }
+
+		  getLogin(): Observable<Auth>{
+		    return this.http.get<Auth>(this.urlBase+'/usuarios/1');
+		  }
+		}
+	3.- Se modifica login.component.ts, se modifica metodo login para que llame al servicio y valide si existe el heroe  
+		constructor( private route: Router, 
+                private authService: AuthService) { }
+
+			  ngOnInit(): void {
+			  }
+
+			  login(){
+			    this.authService.getLogin().subscribe( usu => {
+			      if(usu.id){
+			        this.route.navigate(['/heroes'])
+			      }
+			    });
+			  }
+*************************************************************************************************************************************
+219. ***************************************************************************************Mostrar la información del usuario activo
+	1.- Se modifica auth.service.ts, se agrega getter de auth con su atributo 
+		private _auth: Auth | undefined;
+
+  
+		  get auth(): Auth{
+		    return {...this._auth!};
+		  }
+		  //Se  modifica para obteh¿ner el usuario y guardarlo en variable _auth
+		  getLogin(): Observable<Auth>{
+		    return this.http.get<Auth>(this.urlBase+'/usuarios/1').pipe(
+		      tap( auth => this._auth = auth )
+		    );
+		  }
+	2.- Se modifica home.component.ts, se obtiene suth de servicio  
+
+		  constructor( private route: Router,
+            private authService: AuthService ) { }
+
+		  get auth(){
+		    return this.authService.auth;
+		  }
+	3.- Se modifica home.component.html, Se renderiza el usuario
+		<span style="margin-right: 10px;">{{auth.usuario}}</span>
+*************************************************************************************************************************************
+220. ********************************************************************************************************Angular Guards - CanLoad
+	1.- Se genera guars --> ng g guard auth/guards/auth --skip-tests
+		? Which interfaces would you like to implement? 
+			 (*) CanActivate
+			 ( ) CanActivateChild
+			 ( ) CanDeactivate
+			>(*) CanLoad
+	2.- Se modifica auth.guard.ts, se modifica el metodo calLoad() para que valide el usuario si existe antes de cargar el modulo en
+		Se realiza injeccion de dependencia del servicio
+		constructor( private authService: AuthService){}
+
+		 canLoad(
+		    route: Route,
+		    segments: UrlSegment[]): Observable<boolean> | Promise<boolean>  | boolean {
+		      if(this.authService.auth.id){
+		        return true;
+		      }
+		      console.log('canLoad', false); 
+		     /*  console.log(route);
+		      console.log(segments);     */  
+		    return false;
+		  }
+	3.- Se modifica app-routing.module.ts, se utiliza canLoad para la carga del modulo de heroes 
+		  {
+		    path: 'heroes',
+		    loadChildren: () => import('./heroes/heroes.module').then( m => m.HeroesModule),
+		    canLoad: [ AuthGuard]
+		  },++
+*************************************************************************************************************************************
+221. *********************************************************************************************************************CanActivate
+	1.- Se modifica auth.guard.ts, se modifica metodo para que valide la ruta activa  
+		canActivate(
+		    route: ActivatedRouteSnapshot,
+		    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+		      if(this.authService.auth.id){
+		        console.log(state);
+		        return true;
+		      }
+		      console.log('canActive', false);  
+		    return false;
+		  }
+	2.- Se modifica app-routing.module.ts, se agrega canActive a la carga del modulo de heroes 
+		  {
+		    path: 'heroes',
+		    loadChildren: () => import('./heroes/heroes.module').then( m => m.HeroesModule),
+		    canLoad: [ AuthGuard],
+		    canActivate: [ AuthGuard ]
+		  },++
+*************************************************************************************************************************************
+222. **************************************************************************************************Mantener la sesión del usuario
+	1.- Se modifica auth.service.ts, se crea metodo de verificacion de authenticacion 
+		 verificaAuthenticacion(): Observable<boolean> {
+		    if( !localStorage.getItem('token')){
+		      return of(false);
+		    }
+
+		    return this.http.get<Auth>(this.urlBase+'/usuarios/1').pipe(
+		      map( auth => {
+		        this._auth = auth;
+		        return true;
+		      })
+		    );
+		  }
+	2.- Se modifica auth.guard.ts, se modifican metodos canActive y canLoad, se utiliza metodo de verificacion del servicio 
+		  canActivate(
+			    route: ActivatedRouteSnapshot,
+			    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+			      /* if(this.authService.auth.id){
+			        console.log(state);
+			        return true;
+			      }
+			      console.log('canActive', false);  
+			    return false; */
+			    return this.authService.verificaAuthenticacion().pipe(
+			      tap( estado => {
+			        if ( !estado ){
+			          this.router.navigate(['./auth/login']);
+			        }
+			      })
+			    );
+			  }
+			  canLoad(
+			    route: Route,
+			    segments: UrlSegment[]): Observable<boolean> | Promise<boolean>  | boolean {
+			     /* if(this.authService.auth.id){
+			        return true;
+			      }
+			      console.log('canLoad', false); 
+			      console.log(route);
+			      console.log(segments);     */  
+			      return this.authService.verificaAuthenticacion().pipe(
+			        tap( estado => {
+			          if ( !estado ){
+			            this.router.navigate(['./auth/login']);
+			          }
+			        })
+			      );
+			  }
+*************************************************************************************************************************************
+************************************************************* Fin Seccion ***********************************************************
+********************************************Seccion 16: Formularios -Template y LazyLoad*********************************************
 226.- **************************************************************************************************Inicio de seccion Formularios
 	1.- Creacion de Proyecto --> ng new Formularios
 	2.- Se modifica index.html, se coloca link de bootstrap
@@ -3729,7 +4811,7 @@ Seccion 16: Formularios -Template y LazyLoad************************************
 		        </div>
 		    </div>
 ************************************************************************************************************************************
-Seccion 17: Formularios Reactivos***************************************************************************************************
+***************************************************Seccion 17: Formularios Reactivos************************************************
 246.- *****************************************************************************************Continuacion del proyecto formularios
 	1.- Se modifica reactive/basicos.component.html
 		<h2>Reactive Basicos</h2>
@@ -3769,21 +4851,21 @@ Seccion 17: Formularios Reactivos***********************************************
 		        </form>
 		    </div>
 		</div>
-		<!-- <div class="row">
-		    <div class="col">
+		<div class="row">
+		    //<div class="col">
 		        <span>Valid</span>
 		        <pre>{{myForm.valid}}</pre>
 		        <span>Value</span>
-		        <pre>{{myForm.value | json}}</pre> -->
+		        <pre>{{myForm.value | json}}</pre>
 		        <!-- Valida si el formulario fue tocado por el usuario -->
-		<!--         <span>Pristine</span>
+				<span>Pristine</span>
 		        <pre>{{myForm.pristine }}</pre>
 		        <span>Touched</span>
 		        <pre>{{myForm.touched | json}}</pre>
 		        <span>CustomDirective</span>
 		        <pre>{{myForm.controls.existencia?.errors| json}}</pre>
 		    </div>
-		</div> -->
+		</div>
 	2.- Se modifica reactive/dinamicos.component.html
 		/*<h2>Reactive <small>dinamicos</small></h2>
 		<hr>
@@ -4245,7 +5327,7 @@ Seccion 17: Formularios Reactivos***********************************************
 
 		    <div class="row">
 		        <div class="col">
-		            <button class="btn btn-primary float-end" >Guardar</button>
+		            //<button class="btn btn-primary float-end" >Guardar</button>
 		        </div>
 		    </div>
 		</form>
@@ -4293,7 +5375,8 @@ Seccion 17: Formularios Reactivos***********************************************
 	Referencias
 		https://angular.io/guide/reactive-forms
 ************************************************************************************************************************************
-Seccion 18: Formularios: Validaciones manuales y asincronas*************************************************************************
+************************************************************ Fin Seccion ***********************************************************
+*************************************Seccion 18: Formularios: Validaciones manuales y asincronas************************************
 262.- *****************************************************************************************************Continuacion del proyecto+
 	1.- Se modifica sidemenu.component.html, se renderiza la opcion de Validaciones
 		<h2>Validaciones</h2>
@@ -4804,7 +5887,8 @@ Seccion 18: Formularios: Validaciones manuales y asincronas*********************
             </div>+
 ************************************************************************************************************************************
 ************************************************************************************************************************************
-Seccion 19: Formularios Reactivos . Multiples Select Anidados***********************************************************************
+************************************************************ Fin Seccion ***********************************************************
+**********************************Seccion 19: Formularios Reactivos . Multiples Select Anidados*************************************
 279.- ***********************************************************************************************Inicio del proyecto -selectores
 	1.- Se crea proyecto selectores
 	ng new selectores
@@ -5423,7 +6507,8 @@ Seccion 19: Formularios Reactivos . Multiples Select Anidados*******************
 			  }
 ************************************************************************************************************************************
 ************************************************************************************************************************************
-Seccion 20: LifeCicle Hooks*********************************************************************************************************
+************************************************************ Fin Seccion ***********************************************************
+*****************************************************Seccion 20: LifeCicle Hooks****************************************************
 292.- *************************************************************************************************Inicio del proyecto lifeCicle
 	Referencia --> https://angular.io/guide/lifecycle-hooks
 	1.- Se crea proyecto lifeCicle
@@ -5546,6 +6631,7 @@ Seccion 20: LifeCicle Hooks*****************************************************
 			  }
 ************************************************************************************************************************************
 ************************************************************************************************************************************
+************************************************************ Fin Seccion ***********************************************************
 
 
 
@@ -6120,12 +7206,1380 @@ Seccion 22: Grafica es Angular**************************************************
 		    )
 		  };
 ************************************************************************************************************************************
+************************************************************************************************************************************
+************************************************************ Fin Seccion ***********************************************************
+*****************************************Sección 23: Directivas personalizadas de Angulars******************************************
+341. *********************************************************************************************Inicio de proyecto - DirectivasApp
+	Refrencias --> 
+		Angular Material Directivas --> https://angular.io/guide/attribute-directives 
+		Bootstrap 					--> https://getbootstrap.com/docs/5.0/getting-started/introduction/
+
+	1.- Creacion de proyecto --> ng new directivasApp   
+	2.- Se corre el proyecto --> ng serve -o 
+	3.- Se modifica index.html, se borra contenido y se peg cdn de bootstrap 
+		 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+************************************************************************************************************************************ 
+342. ****************************************************************************************************Estructura de la aplicación
+	1.- Se crean folders 
+		productos
+		shared 
+	2.- Se crean modulos  
+		ng g m productos --routing
+		ng g m shared
+	3.- Se crea componentes
+		ng g c productos/pages/agregar --skip-tests -is
+	4.- Se modifica app-routing.module.ts,se modifica constante routes se cargan los modulos por lazyLoad
+		const routes: Routes = [
+		  {
+		    path: 'productos',
+		    loadChildren: () => import('./productos/productos.module').then( m => m.ProductosModule)
+		  },
+		  {
+		    path: '**',
+		    redirectTo: 'productos'
+		  }
+		]
+	5.- Se modifica productos-routing.module.ts, se modifica constante routes, se cargan las rutas hijas 
+		const routes: Routes = [{
+		  path: '',
+		  children:[
+		    {
+		      path: 'agregar', 
+		      component: AgregarComponent
+		    },
+		    {
+		      path: '**',
+		      redirectTo: 'agregar'
+		    }
+		  ]
+		}];
+	6.- Se modifica app.component.html, se agrega componente router-outlet 
+		<div class="container">
+		    <router-outlet></router-outlet>
+		</div>
+	7.- Se modifica agregar.component.html, se renderiza formulario  
+		<h1 class="mt-5">Agregar Productos</h1>
+		<hr>
+		<form>
+		    <div class="row g-3 align-items-center mb-3">
+		        <div class="col-auto">
+		            <label for="" class="col-form-label">
+		                Nombre: 
+		            </label>
+		        </div>
+		        <div class="col-auto">
+		            <input type="text" class="form-control">
+		        </div>
+		        <div class="col-auto">
+		            <span class="form-text">
+		                Este campo es requerido.
+		            </span>
+		        </div>
+		    </div>
+		    <div class="row mt-3">
+		        <div class="col">
+		            <button class="btn btn-primary">  
+		                Guardar 
+		            </button>
+		        </div>
+		    </div>
+		</form>
+
+		<h3 class="mt-5">
+		    Formulario
+		</h3>+
+************************************************************************************************************************************
+343. ************************************************************************************************Formulario reactivo tradicional
+	1.- Se modifica productos.module.ts, se importa ReactiveFormsModule 
+		import { NgModule } from '@angular/core';
+		import { CommonModule } from '@angular/common';
+		import { ReactiveFormsModule } from '@angular/forms';
+
+		import { ProductosRoutingModule } from './productos-routing.module';
+		import { AgregarComponent } from './pages/agregar/agregar.component';
+
+
+		@NgModule({
+		  declarations: [
+		    AgregarComponent
+		  ],
+		  imports: [
+		    CommonModule,
+		    ProductosRoutingModule,
+		    ReactiveFormsModule
+		  ]
+		})
+		export class ProductosModule { }
+	2.- Se modifica agregar.component.ts 
+		2.1.- Se crea atrbuto de tipo FormGroup 
+			  myForm: FormGroup = this.formBuilder.group({
+			    nombre: ['', Validators.required]
+			  }); 
+		2.2.- Se realiza la Injeccion de dependencia de FormBuilder 
+			constructor( private formBuilder: FormBuilder) { }
+		2.3.- Se crea metodo tieneError() 
+			  tieneError( campo: string ): boolean{
+			    return this.myForm.get(campo)?.valid || false;
+			  }
+	3.- Se modifica agregar.component.html 
+		3.1.- Se le agrega validacion al mensaje de error del campo nombre 
+			<div class="col-auto">
+	            <span class="form-text" *ngIf="!tieneError('nombre')">
+	                Este campo es requerido.
+	            </span>
+	        </div>
+	    3.2.- Se agregan valores del estado y el formulario 
+	    	<h3 class="mt-5">Formulario</h3>
+			<pre>Value: {{myForm.value | json }}</pre>
+			<pre>Estado: {{myForm.valid | json }}</pre>
+************************************************************************************************************************************
+344. *********************************************************************************************Directiva personalizada - ErrorMsg
+	1.- Se crea folder en shares --> directives  
+	2.- Se crea directiva 
+		ng g d shared/directives/errorMsg --skip-Tests
+	3.- Se modifica shared.module.ts, se exporta la directiva 
+		@NgModule({
+		  declarations: [
+		    ErrorMsgDirective
+		  ],
+		  exports:[
+		    ErrorMsgDirective
+		  ],
+		  imports: [
+		    CommonModule
+		  ]
+		})
+		export class SharedModule { }
+	4.- Se modifica productos.module.ts, se importa sharedModule para poder utilizar la directiva 
+		@NgModule({
+		  declarations: [
+		    AgregarComponent
+		  ],
+		  imports: [
+		    CommonModule,
+		    ProductosRoutingModule,
+		    ReactiveFormsModule,
+		    SharedModule
+		  ]
+		})
+		export class ProductosModule { }
+	5.- Se modifica la directiva, se implementa OnInit y se le agregan impresion por consola 
+		@Directive({
+		  selector: '[appErrorMsg]'
+		})
+		export class ErrorMsgDirective implements OnInit{
+
+		  constructor() {
+		    console.log('Constructor Directiva.');
+		  }
+		  
+		  
+		  ngOnInit(): void {
+		    console.log('OnInit() Directiva.');
+		  }
+
+		}
+************************************************************************************************************************************
+345. ************************************************************************************Directive Input - Cambiar el color del host
+	1.- Se modifica error.msg.directive.ts 
+		1.1.- Se le agregan atributos  
+			htmlElement: ElementRef<HTMLElement>;
+  			@Input() color: string = 'red';
+  		1.2.- Se modifica constructor, se hace ID de un EementRef<HTMLElement>, se  inicializa htmlElement 
+  			  constructor( private eleRef: ElementRef<HTMLElement>) {
+			    console.log('Constructor Directiva.');
+			    this.htmlElement = eleRef;
+			  }
+		1.3.- Se crea metodo que setea valor al elemento html  
+			  setColor(): void{
+			    this.htmlElement.nativeElement.style.color = this.color;
+			  }
+		1.4.- Se modifica OnInit(), se setea el color  
+			ngOnInit(): void {
+				    this.setColor();
+				  } 
+	2.- Se modifica agregar.component.html, se le agrega directiva al elemento span y a la muestra del elemento formulario  
+	    <div class="col-auto">
+            <span class="form-text" *ngIf="!tieneError('nombre')" 
+            appErrorMsg
+            color="blue">
+                Este campo es requerido.
+            </span>
+        </div>
+
+	    <h3 class="mt-5" appErrorMsg color="blue">Formulario</h3>
+************************************************************************************************************************************
+346. **********************************************************************************************Cambiar el mensaje de la etiqueta
+	1.- Se modifica error.msg.directive.ts 
+			1.1.- Se le agregan atributos  
+				@Input() mensaje: string = 'Mensaje por Default'
+			1.2.- Se crea metodo para setear mensaje al elemento html 
+				  setMensaje(): void{
+				    this.htmlElement.nativeElement.innerText = this.mensaje;
+				  }
+			1.3.- Se modifica metodo para agregar clase al elemento html   
+				  setColor(): void{
+				    this.htmlElement.nativeElement.style.color = this.color;
+				    this.htmlElement.nativeElement.classList.add('form-text');
+
+				  }
+			1.4.- Se modifica OnInit(), se setea el mensaje  
+				  ngOnInit(): void {
+				    this.setColor();
+				    this.setMensaje();
+				  } 
+		2.- Se modifica agregar.component.html, se le agrega mensaje al elemento  
+		           <div class="col-auto">
+			            <span *ngIf="!tieneError('nombre')" 
+			            appErrorMsg
+			            mensaje= "Debe indicar un mensaje"
+			            color="red">
+			                Este campo es requerido.
+			            </span>
+			        </div>
+************************************************************************************************************************************
+348. ******************************************************************************************************************Input setters
+	1.- Se modifica error-msg.directive.ts
+		@Directive({
+		  selector: '[appErrorMsg]'
+		})
+		export class ErrorMsgDirective implements OnInit{
+
+			//Se crean atributos
+		  private _color: string ='red';
+		  private _mensaje: string ='Mensaje por defecto';
+
+		  htmlElement: ElementRef<HTMLElement>;
+
+		  //Se crean los setter de las propiedades
+		  @Input() set color(valor: string ){
+		    this._color = valor;
+		    this.setColor();
+		  }
+		  @Input() set mensaje( valor: string){
+		    this._mensaje = valor;
+		    this.setMensaje();
+		  }
+
+		  @Input() set valido( valor: boolean ){
+		    if (valor){
+		      this.htmlElement.nativeElement.classList.add('hidden');
+		    }else{
+		      this.htmlElement.nativeElement.classList.remove('hidden');    
+		    }
+		  }
+
+		  //En el constructor se inicializa obj de tipo ElementRef
+		  constructor( private eleRef: ElementRef<HTMLElement>) {
+		    this.htmlElement = eleRef;
+		  }
+		  
+		  //Se aplican metodos al crearse obj 
+		  ngOnInit(): void {
+		    this.setColor();
+		    this.setMensaje();
+		    this.setEstilo();
+		  }
+
+		  //Cambia clase del elemento que tiene la directiva
+		  setEstilo(): void{
+		    this.htmlElement.nativeElement.classList.add('form-text');
+		  }
+		  
+		  //Cambia color del elemento que tiene la directiva
+		  setColor(): void{
+		    this.htmlElement.nativeElement.style.color = this._color;
+		  }
+
+		  //Cambia mensaje en el elemento que tiene la directiva
+		  setMensaje(): void{
+		    this.htmlElement.nativeElement.innerText = this._mensaje;
+		  }
+
+		}
+	2.- @Component({
+		  selector: 'app-agregar',
+		  templateUrl: './agregar.component.html',
+		  styles: [
+		  ]
+		})
+		export class AgregarComponent implements OnInit {
+
+			//Propiedades
+		  texto1: string = 'Elvis Areiza';
+		  color: string = 'green';
+
+		  //Formulario
+		  myForm: FormGroup = this.formBuilder.group({
+		    nombre: ['', Validators.required]
+		  }); 
+
+		  constructor( private formBuilder: FormBuilder) { }
+
+		  ngOnInit(): void {
+		  }
+
+		  //Validacion 
+		  tieneError( campo: string ): boolean{
+		    return this.myForm.get(campo)?.valid || false;
+		  }
+
+		  cambiarNombre(){
+		    this.texto1 = Math.random().toString();
+		  }
+
+		  //Generacion de color de forma aleatoria
+		  cambiarColor(){
+		    this.color = "#xxxxxx".replace(/x/g, y=>(Math.random()*16|0).toString(16));
+		  }
+
+		}
+	3.- Se modifica el elemento con su directiva y se crea elemento de lerta
+		<h1 class="mt-5">Agregar Productos</h1>
+		<hr>
+		<form [formGroup]="myForm">
+		    <div class="row g-3 align-items-center mb-3">
+		        <div class="col-auto">
+		            <label for="" class="col-form-label">
+		                Nombre: 
+		            </label>
+		        </div>
+		        <div class="col-auto">
+		            <input type="text" 
+		            class="form-control" 
+		            formControlName="nombre">
+		        </div>
+		        <div class="col-auto">
+		            <span appErrorMsg
+		                [valido]="tieneError('nombre')"             
+		                [mensaje]= "texto1"
+		                [color]= "color">
+		                Este campo es requerido.
+		            </span>
+		        </div>
+		    </div>
+		    <div class="row mt-3">
+		        <div class="col">
+		            <button class="btn btn-primary" (click)="cambiarNombre()">  
+		                Nombre 
+		            </button>
+		        </div>
+		    </div>
+		    <div class="row mt-3">
+		        <div class="col">
+		            <button class="btn btn-primary" (click)="cambiarColor()">  
+		                Color 
+		            </button>
+		        </div>
+		    </div>
+		</form>
+
+		<h3 class="mt-5" appErrorMsg color="blue">Formulario</h3>
+		<pre>Value: {{myForm.value | json }}</pre>
+		<pre>Estado: {{myForm.valid | json }}</pre>
+
+		<div class="row mt-5" *ngIf="tieneError('nombre')">
+		    <div class="col">
+		        <div class="alert alert-primary">Todo Ok!</div>
+		    </div>
+		</div>
+************************************************************************************************************************************
+351. ****************************************************************************************Directivas estructurales personalizadas
+************************************************************************************************************TemplateRef<HTMLElement>
+********************************************************************************************************************ViewContainerRef
+	1.- Se crea directiva 
+		ng g d shared/directives/customIf --skip-tests
+	2.- Se modifica shares.module.ts, se exporta la directiva 
+		@NgModule({
+		  declarations: [
+		    ErrorMsgDirective,
+		    CustomIfDirective
+		  ],
+		  exports:[
+		    ErrorMsgDirective,
+		    CustomIfDirective
+		  ],
+		  imports: [
+		    CommonModule
+		  ]
+		})
+		export class SharedModule { }
+	3.- Se modifica custom-if.directive.ts 
+		@Directive({
+		  selector: '[appCustomIf]'
+		})
+		export class CustomIfDirective {
+
+		  @Input() set appCustomIf( condicion: boolean ){
+		    if(condicion){
+		      this.viewContainer.createEmbeddedView( this.templateRef );
+		    }else{
+		      this.viewContainer.clear();
+		    }
+		  }
+
+		  constructor( private templateRef: TemplateRef<HTMLElement>,
+		                private viewContainer: ViewContainerRef) { }
+
+		}
+	4.- Se modifica agregar.component.html, se modifica el elemento html para que utilice la directiva 
+		<div class="row mt-5" *appCustomIf="myForm.valid">
+		    <div class="col">
+		        <div class="alert alert-primary">Todo Ok!</div>
+		    </div>
+		</div>
+************************************************************************************************************************************
+************************************************************************************************************************************
+******************************************************* Fin Seccion ****************************************************************
+************************************************Sección 24: Auth Backend - MEAN*****************************************************
+356. *************************************************************************************************Inicio de proyecto - Auth MEAN
+	1.- Se crea proyecto --> npm init 
+	2.- Se crea en raiz archivo --> index.js 
+	3.- Se visualiza el package.json creado 
+	4.- Se ejecuta con --> node index.js
+************************************************************************************************************************************
+357. ******************************************************************************************************************Npm - Nodemon
+	1.- Se instala nodemon, para que realice los cambios en caliente 
+		npm install -g nodemon
+		1.1.- Se corre con nodemon
+			nodemon index.js
+	2.- Se modifica package.json,se modifica scripts para que tome variables de inicio del aplicativo 
+		{
+		  "name": "auth",
+		  "version": "1.0.0",
+		  "description": "",
+		  "main": "index.js",
+		  "scripts": {
+		    "test": "echo \"Error: no test specified\" && exit 1",
+		    "dev": "nodemon index.js",
+		    "start": "node index.js"
+		  },
+		  "author": "",
+		  "license": "ISC",
+		  "dependencies": {
+		    "jshint": "^2.13.0"
+		  }
+		}
+	3.- Se corre el aplicativo 
+		test -->  npm run dev 
+		prod --> npm start 
+************************************************************************************************************************************
+358. ***************************************************************************************Instalaciones necesarias para el backend
+	1.- Se realizan instalaciones 
+		npm i bcriptjs cors dotenv express express-validator jsonwebtoken mongoose
+		encriptacion de contraseñas 				--> bcriptjs 
+		manejos de cors 							--> cors 
+		configuracion de variables de entorno 		--> dotenv 
+		servidor con servicio rest 					--> express 
+		validaciones 								--> express-validator 
+		para crear JWT 								--> jsonwebtoken 
+		conexion y trabajo con BDs Mongo 			--> mongoose
+
+		Nota:  Todas las instalaciones las podemos observar en el package.json como dependencias  
+			{
+			  "name": "auth",
+			  "version": "1.0.0",
+			  "description": "",
+			  "main": "index.js",
+			  "scripts": {
+			    "test": "echo \"Error: no test specified\" && exit 1",
+			    "dev": "nodemon index.js",
+			    "start": "node index.js"
+			  },
+			  "author": "",
+			  "license": "ISC",
+			  "dependencies": {
+			    "bcryptjs": "^2.4.3",
+			    "cors": "^2.8.5",
+			    "dotenv": "^10.0.0",
+			    "express": "^4.17.1",
+			    "express-validator": "^6.11.1",
+			    "jshint": "^2.13.0",
+			    "jsonwebtoken": "^8.5.1",
+			    "mongoose": "^5.12.13"
+			  }
+			}
+************************************************************************************************************************************
+359. *************************************************************************************************Configurar servidor de Express
+	1.- Se modifica index.js, se crea servidor de apicaciones
+		const express = require('express');
+
+		// Crear el servidor de aplicaciones express
+		const app = express();
+
+		//peticion Get
+		app.get('/', (req, res) =>{
+		    res.json({
+		        ok: true,
+		        msg: 'Todod ok',
+		        id: 12345
+		    });
+		}) ;
+
+		app.listen( 4000, () => {
+		    console.log('Servidor corriendo en el puerto ${4000}')
+		})
+************************************************************************************************************************************
+360. ******************************************************************************************Crear las rutas de nuestra aplicación
+	1.- Se crea folder en rais --> ruta --> auth.js 
+	2.- Se modifica auth.js, se crea connstructo
+		//Se desestructura para obtener Router
+		const { Router }= require('express');
+
+
+		const router = Router();
+
+		//controlador
+
+		//Crear usuario
+		router.post('/new', (req, res) => {
+		    return res.json({
+		        ok: true,
+		        msg: 'Crear usuario /new'
+		    })
+		})
+
+		//Crear Login
+		router.post('/', (req, res) => {
+		    return res.json({
+		        ok: true,
+		        msg: 'Crear Login /'
+		    })
+		})
+
+		//validar JWT
+		router.get('/renew', (req, res) => {
+		    return res.json({
+		        ok: true,
+		        msg: 'renew /renew'
+		    })
+		})
+
+		//Se Exporta 
+		module.exports = router;
+	3.- Se modifica index.js 
+		1.- Se elimina peticion get y añade ruta a peticion  
+			//Rutas
+			app.use('/api/auth', require('./routes/auth'));
+************************************************************************************************************************************
+361. **********************************************************************************************Separar el controlador de la ruta
+	1.- Se crea folder --> controllers --> auth.controller.js 
+	2.- Se modifica auth.controller.js, se cortan los callbacks de los response en el auth.j y se crean como costantes, luego se 
+		exportan
+
+
+		const crearUsuario = (req, res) => {
+		    return res.json({
+		        ok: true,
+		        msg: 'Crear usuario /new'
+		    });
+		}
+
+		const crearLogin = (req, res) => {
+		    return res.json({
+		        ok: true,
+		        msg: 'Crear Login /'
+		    })
+		}
+
+		const validarToken = (req, res) => {
+		    return res.json({
+		        ok: true,
+		        msg: 'renew /renew'
+		    })
+		}
+
+		module.exports = {
+		    crearUsuario,
+		    crearLogin,
+		    validarToken
+		}
+	3.- Se modifica auth.js, se cortan los callbacks y se reemplazan por el llamado de constantes importadas de auth.controller.js, 
+		se prueban las rutas por postman
+
+		//controlador
+
+		//Crear usuario
+		router.post('/new', crearUsuario)
+
+		//Crear Login
+		router.post('/', crearLogin)
+
+		//validar JWT
+		router.get('/renew', validarToken)
+
+	 	rutas a probar
+	 	get 	--> http://localhost:4000/api/auth/renew
+	 	post 	--> http://localhost:4000/api/auth/
+	 	post 	--> http://localhost:4000/api/auth/new
+************************************************************************************************************************************
+362. ***************************************************************************************Configurar CORS y body de las peticiones
+	1.- Se modifica index.js, se crean midlewere para cors y lectura y parseo de request 
+
+		//CORS
+		app.use( cors() );
+
+		//Lectura y parseo del body
+		app.use( express.json() )
+	2.- Se modifica auth.controller.js, se modifican metodos para capturar el body del request y mostrarlo por consola
+		const crearUsuario = (req, res) => {
+		    const { name, email, pass } = req.body;
+		    console.log( name, email, pass);
+		    return res.json({
+		        ok: true,
+		        msg: 'Crear usuario /new'
+		    });
+		}
+
+		const crearLogin = (req, res) => {
+		    const { name, email } = req.body;
+		    console.log( name, email);
+		    return res.json({
+		        ok: true,
+		        msg: 'Crear Login /'
+		    })
+		}
+************************************************************************************************************************************
+363. ***************************************************************************************************Variables de entorno de Node
+	1.- Se crea archivo de eviroment y se le agrega variable para el puerto 
+		PORT=4000
+	2.- Se modifica index.js, se importan las configuraciones de dotenv, se imprimen por consola y se modifica variabe de puerto 
+	listen
+		require('dotenv').config();
+
+		console.log( process.env );
+
+
+		app.listen( process.env.PORT , () => {
+		    console.log(`Servidor corriendo en el puerto ${process.env.PORT}`);
+		});
+************************************************************************************************************************************
+364. *******************************************************************************************Servir una página HTTP desde Express
+	1.- Se crea directorio publico 
+		--> public --> index.html 
+	2.- Se modifica index.html, se renderiza vista  
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+		    <meta charset="UTF-8">
+		    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+		    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		    <title>Acceso denegado</title>
+		</head>
+		<body>
+		    <h1>Acceso denegado</h1>
+		</body>
+		</html>
+	3.- Se modifica index.js, se agrega directorio publico para el acceso por explorador 
+		//Directorio publico
+		app.use( express.static('public'));
+************************************************************************************************************************************
+365. ****************************************************************************************************Validar campos obligatorios
+	1.- Se modifica el auth.js, se modifica la creacion de login, se le agregan vladaciones a los campos  
+		//Crear Login
+		router.post('/',[
+		    check('email', 'El email es obligatorio.').isEmail(),
+		    check('password', 'El password debe contener minimo 5 caracteres.').isLength( {min: 5} ),
+		], crearLogin);
+	2.- Se modifica auth.controller.js, se modifica crearLogin, se agrega manejo de errores si viene en el reqest 
+		const crearLogin = (req, res = response) => {
+
+		    const errors = validationResult( req );
+		    if( !errors.isEmpty() ){
+		        return res.status(400).json({
+		            ok: false,
+		            errors: errors.mapped()
+		        });
+		    }
+
+		    const { email, password } = req.body;
+		    console.log( password, email);
+		    return res.json({
+		        ok: true,
+		        msg: 'Crear Login /'
+		    })
+		}
+************************************************************************************************************************************
+366. **********************************************************************************************************Tarea: Validar campos
+	1.- Se modifica el auth.js, se modifica la creacion de login, se le agregan vladaciones a los campos  
+		//Crear usuario
+		router.post('/new', [
+		    check('name', 'El campo name es obligatorio y no puede estar vacio').not().isEmpty(),
+		    check('pass', 'El campo pass es obligatorio y debe ser robusta').isStrongPassword(),
+		    check('email', 'El campo email es obligatorio y debe tener el formato de email').isEmail(),
+		 ] ,crearUsuario)
+	2.- Se modifica auth.controller.js, se modifica crearLogin, se agrega manejo de errores si viene en el reqest 
+		const crearUsuario = (req, res = response ) => {
+		    const errors = validationResult( req );
+		    if( !errors.isEmpty() ){
+		        return res.status(400).json({
+		            ok: false,
+		            errors: errors.mapped()
+		        })
+		    }
+		    const { name, email, pass } = req.body;
+		    console.log( name, email, pass);
+		    return res.json({
+		        ok: true,
+		        msg: 'Crear usuario /new'
+		    });
+		}
+************************************************************************************************************************************
+367. ********************************************************************************************* Custom Middleware - ValidarCampos
+	1.- Se crea folder para validaciones y archivo validar-campos.js 
+		middlewares --> validar-campos.js 
+	2.- Se modifica archivo creado, se corta el manejo de errores en el auth.controller.js y se pega en la constante validarCampos 
+		const { response } = require('express');
+		const { validationResult } = require("express-validator");
+
+		const validarCampos = ( req, res = response, next) =>{
+		    const errors = validationResult( req );
+		    if( !errors.isEmpty() ){
+		        return res.status(400).json({
+		            ok: false,
+		            errors: errors.mapped()
+		        })
+		    }
+
+		    next();
+		}
+
+		module.exports = {
+		    validarCampos
+		}
+	3.- Se modifica auth.js, se agrega a los metodo validarCampos 
+		//Crear usuario
+		router.post('/new', [
+		    check('name', 'El campo name es obligatorio y no puede estar vacio').not().isEmpty(),
+		    check('pass', 'El campo pass es obligatorio y debe ser robusta').isStrongPassword(),
+		    check('email', 'El campo email es obligatorio y debe tener el formato de email').isEmail(),
+		    validarCampos
+		 ] ,crearUsuario)
+
+		//Crear Login
+		router.post('/',[
+		    check('email', 'El email es obligatorio.').isEmail(),
+		    check('password', 'El password debe contener minimo 5 caracteres.').isLength( {min: 5} ),
+		    validarCampos
+		], crearLogin);
+	4.- Se modifica auth.controller.js, se elimina manejo de errores de los metodos  
+		const crearUsuario = (req, res = response ) => {
+    
+		    const { name, email, pass } = req.body;
+		    console.log( name, email, pass);
+		    return res.json({
+		        ok: true,
+		        msg: 'Crear usuario /new'
+		    });
+		}
+
+		const crearLogin = (req, res = response) => {
+
+
+		    const { email, password } = req.body;
+		    console.log( password, email);
+		    return res.json({
+		        ok: true,
+		        msg: 'Crear Login /'
+		    })
+		}
+************************************************************************************************************************************
+368. *********************************************************************************************Configurar base de datos - MongoDB
+	https://cloud.mongodb.com --> referencia
+	https://www.udemy.com/course/angular-fernando-herrera/learn/lecture/24468434#overview
+	1.- Se crea Bd
+		user: eareizac
+		pass: UnCBCqbB4ClLqMtf
+	2.- Se descarga el aplicativo MongoDB Compass 
+	3.- Se modifica archivo .env, se agrega la cadena de conexion 
+		BD_CNN=mongodb+srv://eareiza:UnCBCqbB4ClLqMtf@clustertutoangular.ljd5e.mongodb.net/myAngular
+************************************************************************************************************************************
+369. ****************************************************************************************Conectar MongoDB Atlas - Compass y Node
+	1.- Conectar desde compass con el string de conexion
+		1.1.- Se añade ip de conexion en networw access desde el aplicativo de mongoDB en el explorador 
+			0.0.0.0/0
+	2.- Se crea archivo de configuracion de la DB. 
+		raiz --> db --> config.js 
+	3.- Se modifica config.js 
+		//Se importa mongoose
+		const mongoose = require("mongoose");
+
+		//Se cre la conexion 
+		const dbConection = async() =>{
+		    try {
+		        await mongoose.connect(process.env.BD_CNN, {
+		            useNewUrlParser: true,
+		            userUniFiedTopology: true,
+		            useCreateIndex: true
+		        });
+		        console.log('BD online')
+		    } catch ( error ) {
+		        console.log(error);
+		        throw new Error('Error a la hora de inicializar DB.')
+		    }
+		}
+
+		// Se exporta 
+		module.exports = {
+		    dbConection
+		}
+	4.- Se modifica index.js, se ejecuta conexion 
+		//Base de Datos
+		dbConection();
+************************************************************************************************************************************
+370. **************************************************************************************************Crear modelo de base de datos
+	1.- Se crea archivo modelo, Usuario.js 
+		raiz --> models --> Usuario.js 
+		//Se importa 
+		const { Schema, model } = require("mongoose");
+
+		//Se crea el schema 
+		const UsuarioSchema = Schema({
+		    name: {
+		        type: String,
+		        required: true
+		    },
+		    email:{
+		        type: String,
+		        required: true,
+		        unique: true
+		    },
+		    pass:{
+		        type: String,
+		        required: true
+		    }
+		});
+
+		//Se crea
+		module.exports = model('Usuario', UsuarioSchema);
+************************************************************************************************************************************
+371. *************************************************************************************************Crear usuario en base de datos
+	1.- Se modifica auth.controller.js, se modifica metodo crearUsuario() 
+		const crearUsuario = async(req, res = response ) => {
+		    const { name, email, pass } = req.body;
+		    console.log( name, email, pass);
+		    try {
+		        //Verificar el email
+		        const usuario = await Usuario.findOne({ email: email });
+		        if( usuario ){
+		            return res.status(400).json({
+		                ok: false, 
+		                msg: 'Usuario con ese email ya existe'
+		            })
+		        }
+		        //Crear usuario con el modelo
+		        const userDB = new Usuario( req.body );
+		        //Crear usuario en la BD 
+		        await userDB.save(); 
+		        // Generar respuesta exitosa
+		        return res.status(201).json({
+		            ok: true,
+		            uid: userDB.id,
+		            name,
+		            msg:'Usuario se ha creado con exito.'
+		        });
+		    } catch (error) {
+		        console.log(error);
+		        return res.status(500).json({
+		            ok: false,
+		            msg: 'Por favor comuniquese con el Adiministrador del sistema '
+		        });
+		    }
+		}
+	2.- Se prueba en post man 
+		Post --> http://localhost:4000/api/auth/new
+		{
+		    "name": "Antonio piñando",
+		    "email": "aa@gmail.com",
+		    "pass": "Danger120-" 
+		}
+************************************************************************************************************************************
+372. **********************************************************************************************************Hash de la contraseña
+	1.- Se modifica auth.controller.js, se modifica la contraseña con hash de bcrypt.js 
+		const bcrypt = require('bcryptjs');
+		1.1.- Se modifica metodo crearUsuario();
+		// Encriptacion de la contraseña
+        const salt = bcrypt.genSaltSync(10);
+        userDB.pass = bcrypt.hashSync(pass , salt);
+************************************************************************************************************************************
+373. ***********************************************************************************************************Generar JsonWebToken
+	1.- Se modifica archivo de enviroment --> .env , se agrega clave secreta  
+		PORT=4000
+		BD_CNN=mongodb+srv://eareiza:UnCBCqbB4ClLqMtf@clustertutoangular.ljd5e.mongodb.net/myAngular
+		SECRET_JWT_SEED=3ST0D3B3S3RS3CR370
+	2.- Se crea archivo pra la creacion de token raiz --> helpers --> jwt.js  
+		 const jwt = require('jsonwebtoken');
+
+		const generarJWT = (uid, name) => {
+		    const payload = {uid, name};
+		    //Promesa
+		    return new Promise( (resolve, reject) => {
+		        //Creacion de token
+		        jwt.sign( payload, process.env.SECRET_JWT_SEED, {
+		            expiresIn: '24h'
+		        }, (err,token) => {
+		            if( err ){
+		                //Todo Mal
+		                console.log(err);
+		                reject(err);
+		            }else{
+		                //Todo bien 
+		                resolve(token);
+		            }
+		        })
+		    })
+		}
+
+		module.exports = {
+		    generarJWT
+		}
+	3.- Se modifica auth.controller.js, se modifica metodo crearUsuario(), se genera token y se envia en el body  de la respuesta. 
+		const crearUsuario = async(req, res = response ) => {
+
+		    const { name, email, pass } = req.body;
+		    console.log( name, email, pass);
+		    
+		    try {
+
+		        //Verificar el email
+		        const usuario = await Usuario.findOne({ email: email });
+
+		        if( usuario ){
+		            return res.status(400).json({
+		                ok: false, 
+		                msg: 'Usuario con ese email ya existe'
+		            })
+		        }
+
+		        //Crear usuario con el modelo
+		        const userDB = new Usuario( req.body );
+
+		        // Encriptacion de la contraseña
+		        const salt = bcrypt.genSaltSync(10);
+		        userDB.pass = bcrypt.hashSync(pass , salt);
+
+		        // Generacion de token
+		        const token = await generarJWT( userDB.id, userDB.name );
+
+		        //Crear usuario en la BD 
+		        await userDB.save();
+		        
+		        // Generar respuesta exitosa
+		        return res.status(201).json({
+		            ok: true,
+		            uid: userDB.id,
+		            name,
+		            msg:'Usuario se ha creado con exito.',
+		            jwt: token 
+		        });
+		        
+
+		    } catch (error) {
+		        console.log(error);
+		        return res.status(500).json({
+		            ok: false,
+		            msg: 'Por favor comuniquese con el Adiministrador del sistema '
+		        });
+		    }    
+		}
+************************************************************************************************************************************
+374. ***************************************************************************************************************Login de usuario
+	1.- Se modifica auth.controller.js, se modifica metodo crearLogin(), se valida contraseña y password 
+		const crearLogin = async(req, res = response) => {
+		    const { email, password } = req.body;
+		    
+		    try {
+		        const dbUser = await Usuario.findOne({ email });
+
+		        if( !dbUser ){
+		            return res.status(400).json({
+		                ok: false,
+		                msg: 'El correo no existe.'
+		            })
+		        }
+
+		        //Valido password 
+		        console.log(dbUser.pass)
+		        const validPassword = bcrypt.compareSync( password, dbUser.pass);
+
+		        if( !validPassword ){
+		            return res.status(400).json({
+		                ok: false,
+		                msg: 'La contraseña es invalida.'
+		            })
+		        }
+
+		        //genero token 
+		        const token = await generarJWT( dbUser.id, dbUser.name );
+		        
+		        //Respuesta
+		        return res.json({
+		            ok: true,
+		            uid: dbUser.id,
+		            name: dbUser.name,
+		            msg:'Usuario se ha logueado.',
+		            jwt: token
+		        })
+
+		    } catch (error) {
+		        console.error(error);
+		        return res.status(500).json({
+		            ok: false,
+		            msg: 'Hable con el administrador.'
+		        });
+		    }
+		    
+		}
+************************************************************************************************************************************
+375. *******************************************************************************************************Renovar y validar el JWT
+	1.- Se crea archivo middlewares --> validar-jwt.js
+		const { response } = require('express');
+		const jwt = require('jsonwebtoken');
+
+
+		const validaJWT = ( req, res= response, next )=>{
+		    const token = req.header('x-token');
+		    if(!token){
+		        return res.status(401).json({
+		            ok: false,
+		            msg: 'Error en el token'
+		        })
+		    }
+
+		    try {
+		        
+		        const { uid, name } = jwt.verify( token, process.env.SECRET_JWT_SEED);
+		        //Se añade a la request id y  name 
+		        req.uid = uid;
+		        req.name = name;        
+		    } catch (error) {
+		        return res.status(401).json({
+		            ok: false,
+		            msg: 'Token no valido'
+		        })
+		    }
+		    //Todo OK
+		    next();
+		}
+
+		module.exports = {
+		    validaJWT
+		}
+	2.- Se modifica auth.js, Se agrega middleware a la peticion http
+		//validar JWT
+		router.get('/renew', validaJWT, validarToken)
+	3.- Se modifica auth.controller.js, se modifica metodo validarToken()   
+		const validarToken = (req, res = response) => {
+			//Se recupera id y name del request 
+		    const {uid, name} = req;
+		    return res.json({
+		        ok: true,
+		        msg: 'renew /renew',
+		        uid, 
+		        name
+		    })
+		}
+************************************************************************************************************************************
+376. **********************************************************************************************Solución a la tarea - Generar JWT
+	1.- Se modifica auth.controller.js, se modifica metodo validarToken(), se genera token  
+
+		const validarToken = async(req, res = response) => {
+		    const {uid, name} = req;
+
+		    //genero token 
+		    const token = await generarJWT( uid, name );
+
+
+		    return res.json({
+		        ok: true,
+		        msg: 'renew /renew',
+		        uid, 
+		        name,
+		        token 
+		    })
+		}
+************************************************************************************************************************************
+************************************************************************************************************************************
+************************************************************************************************************************************
+******************************************************* Fin Seccion ****************************************************************
+*************************************************Sección 25: AuthApp - MEAN*********************************************************
+381. *************************************************************************************************Inicio de proyecto - Auth MEAN
+	1.- Se crea el proyecto --> ng new AuthApp
+	2.- Semodifica app.component.html,seborratodoy se coloca
+		<h1>Hello word</h1>
+	3.-Secorreelproyecto -->ng serve -o
+************************************************************************************************************************************
+382. **********************************************************************************************Estructura del proyecto - AuthApp
+	1.- Se crea folders 
+		auth 	--> pages 
+				--> services 
+				--> interfaces
+		protected 
+		guards
+	2.-Se creanmodulos  
+		ng g m protected --routing
+		ng g m auth --routing
+	3.-Se crean componentes 
+		ng g c auth/pages/login --skipTests -is
+		ng g c auth/pages/register --skipTests -is
+		ng g c auth/pages/main --skipTests -is
+		ng g c protected/dashboard --skipTests -is
+	4.- Se copian los archivos font y mages en assets --> carpeta de  recursos del tuto
+	5.- Se copia contenido de login.css en style.css del proyecto --> recursos del tuto   
+************************************************************************************************************************************
+383. ***************************************************************************************************************Rutas y LazyLoad
+	1.- Se modifica app.component.html,se le agrega router-outlet  
+		 <router-outlet></router-outlet>
+	2.- Se modifica app-routing.module.ts, se agrega carga perezosa a los modulos  
+		const routes: Routes = [
+		  {
+		    path: 'auth',
+		    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
+		  },
+		  {
+		    path: 'dashboard',
+		    loadChildren: () => import('./protected/protected.module').then(m => m.ProtectedModule)
+		  },
+		  {
+		    path: '**',
+		    redirectTo: 'auth'
+		  }
+		]; 
+	3.- Se modifica main.component.html, se le agrega router-outlet  
+		<router-outlet></router-outlet> 
+	4.- Se modifica auth-routing.module.ts, se agregan las rutas
+		const routes: Routes = [
+		  {
+		    path: '',
+		    component: MainComponent,
+		    children: [
+		      { path: 'login', component: LoginComponent },
+		      { path: 'register', component: RegisterComponent },
+		      { path: '**', redirectTo: 'login' }
+		    ]
+		  }
+		];
+	5.- Se modifica protected-routing.module.ts, se agregan rutas hijas 
+		const routes: Routes = [
+		  {
+		    path: '',
+		    children: [
+		      { path: '', component: DashboardComponent},
+		      { path: '**', redirectTo: ''}
+		    ]
+		  }
+		];
+************************************************************************************************************************************
+384. **************************************************************************************Diseño de la pantalla de Registro y Login
+	1.- Se modifica main.component.html
+		<div class="limiter">
+		    <div class="container-login100" style="background-image: url('../../../../assets/images/bg-01.jpg');">
+		        <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
+		           <router-outlet></router-outlet>
+		        </div>
+		    </div>
+		</div>
+	2.- Se modifica auth.module.ts, se importa ReactiveFormsModule  
+		@NgModule({
+		  declarations: [
+		    LoginComponent,
+		    RegisterComponent,
+		    MainComponent
+		  ],
+		  imports: [
+		    CommonModule,
+		    AuthRoutingModule, 
+		    ReactiveFormsModule
+		  ]
+		})
+		export class AuthModule { }
+	3.- Se modifica login.component.ts, se crea el formGroup 
+		myForm: FormGroup = this.formBuilder.group({
+		    email: ['', [Validators.required, Validators.email]],
+		    password: ['', [Validators.required, Validators.minLength(6)]]
+		  })
+
+		  constructor( private formBuilder: FormBuilder) { }
+
+		    login(){
+		    console.log(this.myForm.value);
+		    console.log(this.myForm.valid);
+		  }
+
+	4.- Se modifica login.component.html se renderiza formulario reactivo  
+		<form class="login100-form" autocomplete="off"
+		    [formGroup]="myForm" 
+		    (ngSubmit)="login()">
+		                
+		    <span class="login100-form-title p-b-49">
+		        Login
+		    </span>
+
+		    <div class="wrap-input100 m-b-23">
+		        <span class="label-input100">Email</span>
+		        <input class="input100"
+		               type="email" 
+		               formControlName="email" 
+		               placeholder="Ingrese su email">
+		        <span class="focus-input100"></span>
+		    </div>
+
+		    <div class="wrap-input100">
+		        <span class="label-input100">Password</span>
+		        <input class="input100"
+		               type="password"
+		               formControlName="password" 
+		               placeholder="Ingrese su contraseña">
+		        <span class="focus-input100"></span>
+		    </div>
+		    
+		    <div class="text-right p-t-8 p-b-31"></div>
+		    
+		    <div class="container-login100-form-btn">
+		        <div class="wrap-login100-form-btn">
+		            <div class="login100-form-bgbtn"></div>
+		            <button class="login100-form-btn"  type="submit">
+		                Login
+		            </button>
+		        </div>
+		    </div>
+
+		    <div class="flex-col-c p-t-60">
+		        <span class="txt1 p-b-17">
+		            ¿No tienes cuenta?
+		        </span>
+
+		        <a routerLink="/auth/register" class="txt2">
+		            Crear una aquí
+		        </a>
+		    </div>
+		</form>
+	5.- Se modifica register.component.ts 
+		import { Component, OnInit } from '@angular/core';
+		import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+		@Component({
+		  selector: 'app-register',
+		  templateUrl: './register.component.html',
+		  styles: [
+		  ]
+		})
+		export class RegisterComponent implements OnInit {
+
+		  myForm: FormGroup = this.formBuilder.group({
+		    name: ['', [Validators.required, Validators.minLength(6)]],
+		    email: ['', [Validators.required, Validators.email]],
+		    pass: ['', [Validators.required, Validators.minLength(6)]],
+		    
+		  })
+
+		  constructor( private formBuilder: FormBuilder) { }
+
+		  ngOnInit(): void {
+		  }
+
+		  register(){
+		    console.log(this.myForm.value);
+		    console.log(this.myForm.valid);
+		  }
+
+		}
+	6.- Se modifica register.component.html 
+		import { Component, OnInit } from '@angular/core';
+		import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+		@Component({
+		  selector: 'app-register',
+		  templateUrl: './register.component.html',
+		  styles: [
+		  ]
+		})
+		export class RegisterComponent implements OnInit {
+
+		  myForm: FormGroup = this.formBuilder.group({
+		    name: ['', [Validators.required, Validators.minLength(6)]],
+		    email: ['', [Validators.required, Validators.email]],
+		    pass: ['', [Validators.required, Validators.minLength(6)]],
+		    
+		  })
+
+		  constructor( private formBuilder: FormBuilder) { }
+
+		  ngOnInit(): void {
+		  }
+
+		  register(){
+		    console.log(this.myForm.value);
+		    console.log(this.myForm.valid);
+		  }
+
+		}
+
+************************************************************************************************************************************
+************************************************************ Fin Seccion ***********************************************************
+
+
+
+
 
 
 
 Complementarios*********************************************************************************************************************
-	pipe: nos sirve para cambiar data
-	------------------------------------------------------------------------------------------------------------------------
+	CanLoad Guard***********************************************************************************************************
+		The CanLoadGuard evita la carga del módulo de carga diferida . Generalmente usamos esta protección cuando no 
+		queremos que un usuario no autorizado navegue a alguna de las rutas del módulo, también se detenga y luego 
+		incluso vea el código fuente del módulo.
+
+		El Angular proporciona canActivateGuard, que evita que usuarios no autorizados accedan a la ruta. Pero no impide 
+		que se descargue el módulo. El usuario puede utilizar la consola de desarrollo de Chrome para ver el código 
+		fuente. The CanLoadGuard evita que se descargue el módulo.
+
+
+		@Injectable({
+			  providedIn: 'root'
+			})
+			export class RoleGuard implements CanActivate, CanLoad{
+
+			  constructor(private authService: AuthService,
+			    private router: Router){ }
+
+			  canLoad(route: Route, segments: UrlSegment[]): boolean | Observable<boolean> | Promise<boolean> {
+			    //Se valida si el usuario no esta autenticado
+			    if(!this.authService.isAuthenticated()){
+			      this.router.navigate(['/login']);
+			      return false;
+			    }
+			    
+			    //Se obtiene el role de la ruta
+			    if(this.authService.hasRole(route.data['role'])){
+			      return true;
+			    }
+			    swal.fire('Acceso denegado.',`Usuario ${this.authService.usuario.username} no tiene acceso a este recurso`,'warning');
+			    this.router.navigate(['/clientes']);
+			    return false;
+			  }
+
+			  canActivate(
+			    next: ActivatedRouteSnapshot,
+			    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+			      //Se valida si el usuario no esta autenticado
+			      if(!this.authService.isAuthenticated()){
+			        this.router.navigate(['/login']);
+			        return false;
+			      }
+
+			      //Se obtiene el role de la ruta
+			      let role = next.data['role'] as string;
+			      if(this.authService.hasRole(role)){
+			        return true;
+			      }
+
+			      swal.fire('Acceso denegado.',`Usuario ${this.authService.usuario.username} no tiene acceso a este recurso`,'warning');
+			      this.router.navigate(['/clientes']);
+			      return false;
+			  }
+			}
+	************************************************************************************************************************
 	Directivas**************************************************************************************************************
 		Las Directivas extienden la funcionalidad del HTML usando para ello una nueva sintaxis. Con ella podemos usar lógica 
 		que será ejecutada en el DOM (Document Object Model).
@@ -6163,7 +8617,7 @@ Complementarios*****************************************************************
 			En su forma abreviada sería:
 				ng g d [name]
 	************************************************************************************************************************
-	ElementRef y Render2************************************************************************************************************
+	ElementRef y Render2****************************************************************************************************
 		Es simplemente una clase que envuelve elementos DOM nativos en el navegador y le permite trabajar con DOM 
 		proporcionando el nativeElementobjeto que expone todos los métodos y propiedades de los elementos nativos.
 
@@ -6396,7 +8850,8 @@ Complementarios*****************************************************************
 	************************************************************************************************************************
 ************************************************************************************************************************************
 
-
+errores 
+Module parse failed: Identifier 'ɵngcc0' has already been declared
 
 
 Modificaciones de Kiosco pendientes************************************************************************************************
@@ -6406,6 +8861,9 @@ Modificaciones de Kiosco pendientes*********************************************
 ***********************************************************************************************************************************
 
 
+
+
+https://apexcharts.com/angular-chart-demos/
 
 
 
@@ -8452,37 +10910,6 @@ Seccion 8: Componentes, Directivas de atributos y ciclo de vida*****************
             </li>
         </ul>
 
-
-
-
-
-
-Seccion 22:Sección 22:Gráficas Dinámicasen Angular
-335.- Instalaciones Necesarias********************************************************************************************************
-	1.- Install ng2-charts using npm
-		npm install --save ng2-charts
-	2.- Install Chart.js library
-		npm install --save chart.js
-	3.- Se modifica app.module.ts, se importa componente y se añade componente a los imports
-		// Graficos
-		import { ChartsModule } from 'ng2-charts';
-336.- Graficos Lineales**************************************************************************************************************
-	1.- Se crea componente 
-		ng g c components/graficos/linea 
-
-
-
-		npm install chartjs-plugin-annotation --save
-		npm install chartjs-plugin-datalabels --save
-	https://www.youtube.com/watch?v=WB_QK6TqTho
-	https://amoelcodigo.com/graficas-angular-ng2charts/
-	***https://www.positronx.io/angular-chart-js-tutorial-with-ng2-charts-examples/
-
-
-https://www.argentinasx.com/contactos/lucila
-https://www.argentinasx.com/escorts/giovanna
-https://www.argentinasx.com/rubro59/zoehot
-http://www.argentinasensual.com/rubro59/ema.html
 
 
 

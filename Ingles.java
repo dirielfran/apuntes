@@ -33,8 +33,46 @@ ISBN 9780194058926
 	* Correo liceobritanico
 		st.areiza.elvis85@liceobritanico.com
 		danger120-
+
+	*Clave Ingles EF:
+		elvis.areiza.contreras@everis.com
+		danger120-
+
+	*English File 
+		dirielfran@gmail.com
+		Danger120-
 ***************************************************************************************************
 
 
-i like drinking tea 
 
+- Group A (Red): meet.google.com/oeu-utmf-boe
+- Group B (Purple): meet.google.com/ezy-zzzn-fkq
+- Group C (Green): meet.google.com/haa-tnfm-xhy
+- Group D (Yellow): meet.google.com/ygn-sijx-yap
+
+
+green 
+pilot 
+and cashier
+
+can you repeat me?
+
+hi!
+how are you?
+where are you from?
+what time do you get up every day?
+do you like breakfast?
+what time do you start to working?
+what eat in the breakfast?
+what is your job?
+what is the company?
+do you usually visit country? (pilot)
+How are you going to work?
+how many days do you work at weekend?
+how many hours do you work day? 
+is your job dangerous ?
+what do you do after the job?
+are you tired ?
+what´s your id card on the work?
+
+thats great.
