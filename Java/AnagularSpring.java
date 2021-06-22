@@ -966,30 +966,6 @@ Seccion 5: CRUD con Spring API REST*********************************************
 		      }
 		    )
 		  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 50.- *********************************************************************************************Actualizar los datos del formulario
 	1.- Se modifica cliente.service.ts, se crea metodo que obtiene cliente por id
 		//Se crea metodo que recupera un Cliente
@@ -1404,7 +1380,7 @@ Seccion 7: Manejo de errrores Angular (FrontEnd)********************************
 		    );
 		  }
 Seccion 8: ***********************************************************************Validacion de form por el lado de Angular (FronEnd)
-	1.- Se modifica el archivo form.component.ts, para validar el formulario
+	1.- Se modifica el archivo form.component.html, para validar el formulario
 		1.1.- Validacion de input de nombre
 			 <!-- Se agrega validaciones al input required, minlength, se asigna a una variable local nombre el objeto ngModel -->
 	            <input type="text" class="form-control" [(ngModel)]="cliente.nombre" name="nombre" required minlength="4" #nombre="ngModel">
@@ -1698,6 +1674,21 @@ Seccion 10: Transformacion de datos del observable usando map*******************
 				import { NgModule, LOCALE_ID } from '@angular/core';
 			3.1.3.- Se modifica configuracion del LOCALE_ID para que use el registerLocaleData configurado ('es')
 				providers: [ClienteService, {provide: LOCALE_ID, useValue: 'es' }],
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 78.- *******************************************************************************************Uso del operador map en el Observable
 	1.- Se modifica cliente.service.ts
 		1.1.- Se importa el operador 
@@ -2817,7 +2808,11 @@ Seccion 15: Authenticacion OAuth2 con JWT: Backend Spring***********************
 			JSON.parse(window.atob(payload));
 121.- ************************************************************************************************************Añadir dependencias
 	Se reviza en spring.io, spring security OUTH, se valida --> https://spring.io/projects/spring-security-oauth
-	Se busca en mvnrepository --> spring-security-oauth2  y --> spring-security-jwt  --> si es mayor a java 8  tambien buscar --> jaxb api y jaxb Runtime
+	Se busca en mvnrepository 
+			--> spring-security-oauth2  y 
+			--> spring-security-jwt  
+			--> si es mayor a java 8  tambien buscar 
+			--> jaxb api y jaxb Runtime
 	1.- Se instalan dependencias en el pom.xml
 		<!-- https://mvnrepository.com/artifact/org.springframework.security.oauth/spring-security-oauth2 -->
 		<dependency>
@@ -2991,31 +2986,32 @@ Seccion 15: Authenticacion OAuth2 con JWT: Backend Spring***********************
 				auth.userDetailsService(this.usurioService).passwordEncoder(passwordEncoder());
 			}
 		2.4.- Se crea metod de encriptacion 
-			//Registra en el contenedor de spring lo retornado, queda disponible para inyeccion de dependencia de cualquier otro componente
+			//Registra en el contenedor de spring lo retornado, queda disponible para inyeccion de dependencia de cualquier 
+			//otro componente
 			@Bean
 			public BCryptPasswordEncoder passwordEncoder() {
 				return new BCryptPasswordEncoder();
 			}
 
 
-		@Configuration
-		public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
-			
-			@Autowired
-			private UserDetailsService usurioService;
+			@Configuration
+			public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
+				
+				@Autowired
+				private UserDetailsService usurioService;
 
-			//Se registra en el authentication manager
-			@Override
-			@Autowired
-			protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-				auth.userDetailsService(this.usurioService).passwordEncoder(passwordEncoder());
+				//Se registra en el authentication manager
+				@Override
+				@Autowired
+				protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+					auth.userDetailsService(this.usurioService).passwordEncoder(passwordEncoder());
+				}
+				
+				@Bean
+				public BCryptPasswordEncoder passwordEncoder() {
+					return new BCryptPasswordEncoder();
+				}
 			}
-			
-			@Bean
-			public BCryptPasswordEncoder passwordEncoder() {
-				return new BCryptPasswordEncoder();
-			}
-		}
 126.- ********************************************************************************************************Actualizacion de la 121
 	Se recomienda modificar el pom con las siguientes versiones
 		<dependency>
@@ -3029,7 +3025,7 @@ Seccion 15: Authenticacion OAuth2 con JWT: Backend Spring***********************
 			<version>1.0.9.RELEASE</version>
 		</dependency>
 127.- *****************************************************************************************Configuracion del authorization Server
-	1.- En el paquete auth, se crea clase AuthorizationServerConfig, extiende de WebSecurityConfigurerAdapter
+	1.- En el paquete auth, se crea clase AuthorizationServerConfig, extiende de AuthorizationServerConfigurerAdapter
 	2.- Se le añaden las notaciones @Configuration y @EnableAuthorizationServer
 		@Configuration
 		//habilitar un servidor de autorización (es decir, an AuthorizationEndpointy a TokenEndpoint) en el contexto de la aplicación actual,
@@ -3041,6 +3037,7 @@ Seccion 15: Authenticacion OAuth2 con JWT: Backend Spring***********************
 		
 		@Autowired
 		@Qualifier("authenticationManager")
+		private AuthenticationManager authenticationManager;
 		3.1.- Se implementan metodos de configuracion de la interface AuthorizationServerConfigurerAdapter
 			@Override
 			public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -3080,11 +3077,11 @@ Seccion 15: Authenticacion OAuth2 con JWT: Backend Spring***********************
 				return jwtAccessTokenConverter;
 			}
 
-	private AuthenticationManager authenticationManager;
+			private AuthenticationManager authenticationManager;
 	4.- Se modifica la clase SpringSecurityConfig.java, Se registra el AuthorizationManager como bean
 		4.1.- Se abre en eclipse el modulo de override/implements methods
 			alt+shift+s
-		4.2.- Se selecciona el metodo SuthenticationManager() y se registra como @bean
+		4.2.- Se selecciona el metodo authenticationManager() y se registra como @bean
 			@Bean("authenticationManager")
 			@Override
 			protected AuthenticationManager authenticationManager() throws Exception {
@@ -3392,7 +3389,7 @@ Seccion 15: Authenticacion OAuth2 con JWT: Backend Spring***********************
 		info.put("nombre", usuario.getNombre());
 		info.put("apellido", usuario.getApellido());
 		info.put("email", usuario.getEmail());
-	4.- Se prueba en postman, generando el togen y validandolo en la pagina Jwt.io
+	4.- Se prueba en postman, generando el token y validandolo en la pagina Jwt.io
 135.- ************************************************************************************************Agregando seguridad a las rutas
 	1.- Se modifica la clase ResourceServerConfig.java, se agregan permisos por rol a las rutas
 		@Configuration
@@ -3809,7 +3806,7 @@ Seccion 16: Authenticacion Outh2 con JWT: FrontEnd Angular**********************
 		    });
 		  }
 147.- ***************************************************************************Chequear en el login si el usuario ya inicio session
-	1.- Se modifica la clase de servicio auth.component.ts, se crea metodo para validar si usuario ya tiene sesion
+	1.- Se modifica la clase de servicio auth.service.ts, se crea metodo para validar si usuario ya tiene sesion
 		isAuthenticated(): boolean{
 		    let payload = this.obtenerDatosToken(this.token);
 		    if (payload != null && payload.user_name && payload.user_name.length>0){
@@ -3851,7 +3848,7 @@ Seccion 16: Authenticacion Outh2 con JWT: FrontEnd Angular**********************
 	        </div>
 	      </li>
 	    </ul>
-	3.- Se modifica login.service.ts, se crea metodo de logout
+	3.- Se modifica auth.service.ts, se crea metodo de logout
 		  logout():void{
 		    this._usuario = null;
 		    this._token = null;
@@ -6407,7 +6404,6 @@ Seccion 20: Sistema de Chat en tiempo real con web socket***********************
 
 
 
-
 Comandos de Mongodb******************************************************************************************************************
 	db            	--> muestra la bd actual
 	use 			--> para usar una bd en especifico 
@@ -6671,29 +6667,91 @@ Convertir a json o string con la libreria JSON**********************************
 
 
 
+Aplicacion de geolacalizaciom
+***********************************
+	*Premisas
+		*Dado una ip obtenga informacion asociada del pais al que pertenece
+			* nombre y codigo ISO  
+			* El idioma Oficial
+			* Hora actual del pais, si el pais cubre mas de una zona horaria mostrar todas
+			* Distancia estimada entre BAs y el pais en Kms
+			* Moneda local y cotizacion en dolares(si esta disponible)
+		
+		* Basado en informacion anterior 
+			* Distancia mas lejana a buenos aires desde la cual se haya consultado el servicio
+			* Distancia mas cercana ....
+			* Dsitancia Promedio de todas las ejecuciones del servicio
+			* Tomar en consideracion la fluctuaciones agresivas del servicio entre 100 y un millon por segundo --> averiguar de upsert
+
+	* apis a consultar
+		● Geolocalización de IPs: https://ip2country.info/
+		● Información de paises: http://restcountries.eu/
+		● Información sobre monedas: http://fixer.io/
+			key --> b49556d595487883252ecfd8fbcabb78
+			raiz --> http://data.fixer.io/api/
+
+
+Referencias:
+https://jarroba.com/gson-json-java-ejemplos/
+https://opensofty.com/es/2019/11/25/que-es-upsert-y-como-hacerlo-en-mysql/
+http://expertojava.ua.es/experto/restringido/2014-15/rest/rest.html
+https://donnierock.com/2015/03/16/calculando-la-distancia-entre-doos-coordenadas-en-java/
+https://sacavix.com/2020/04/14/dockerizando-una-app-spring-boot/
+https://medium.com/@hansleolml/docker-spring-boot-mysql-2eb59bc9a622
+
+
+Documentar  --> Jautodoc  --> Referencia  --> https://evelb.es/autodocumentar-codigo-con-jautodoc/
+CTRL + ALT + J
+
+
+DateUtil.getZonedTime(countryCodeInfo.getTimeZones().get(x)) + " ("+countryCodeInfo.getTimeZones().get(x)+") "
+
+CREATE TABLE `estadisticasip` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `create_at` date DEFAULT NULL,
+  `distancia` double DEFAULT NULL,
+  `fecha_modificacion` date DEFAULT NULL,
+  `ip` varchar(255) DEFAULT NULL,
+  `nombre_destino` varchar(255) DEFAULT NULL,
+  `nombre_origen` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+https://github.com/mauricionrgarcia/examen-mercadolibre-mutante/tree/master/src/main/java/com/mercadolibre/exam/mutant
+
+https://github.com/kelvyns/mutants-service#arquitectura
+
+
+mvn install para la creacion del jar
+docker build -t dockerbasico
+docker run -it -p 8080:8080 dockerbasico
+
+
+puntos pendientes
+prueba unitarias
+endpoints
 
 
 
+prueba 2
+docker --version
+docker info
+docker pull hello-world
+docker run hello-world
+docker run -d -p 6033:3306 --name=docker-mysql --env="MYSQL_ROOT_PASSWORD=root" --env="MYSQL_PASSWORD=root" --env="MYSQL_DATABASE=fraudemeli" mysql
+docker image ls
+docker container ls
+docker exec -it docker-mysql bash
+se ingresa en mysql y se valida la creacion de bd -- showdatabase;
+Se crea Dockerfile
+	FROM openjdk:8-jdk-slim
+	COPY "./target/Geolocalizacion-0.0.1-SNAPSHOT.jar" "appmeli.jar"
+	EXPOSE 8080
+	ENTRYPOINT ["java","-jar","appmeli.jar"]
 
-jide  	--> rapipago
-		--> ducip transportadora de caudales y procesamiento de billetes
-		--> yungan 
-		--> here soluciones
-
-		emilio  dubois 
-
-		anlaistas - desarrolladores
-		desarrollo agil scrum y camban
-
-		java spring 
-		microservicios - docker -openshif
-		java 6 y java 8, servicios java 11 
-
-		red fisica rapipago
-			pcs so linux
-			java 1.6 con swing
-			servicios rest
+docker build -f Dockerfile -t spring-meli .
+docker run -t --link docker-mysql:mysql -p 8080:8080 spring-meli
 
 
-	rapipagoIV
-		Angular8
+
+when(this.userRepository.findByUsername(TestUtil.VALID_USER_USERNAME)).thenReturn(userActive);

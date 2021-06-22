@@ -191,7 +191,6 @@
 				  }
 		SQL*************************************************************************************************************
 		alter table cajas add column retiros double default null;
-
 *********************************************************************************************************************************En Produccion
 
 
@@ -1266,6 +1265,7 @@
 
 
 
+<<<<<<< HEAD
 ****************************************************************************************************Tipo de pago en consignacion
 	Descripcion: Se debe añadir el tipo de pago en la consignacion
 ******************************************************************************************************************************** Por pase a produccion
@@ -1275,6 +1275,1018 @@
 *******************************************************************************************Servicio de gastosXMes y GanaciasXMes
 	Descripcion: Se realizan servicios para mostrar ganancias y gastos
 ******************************************************************************************************************************** Por pase a produccion
+=======
+****************************************************************************************************************Modulo de Perdidas
+	Descripcion: se necesita un modulo para el regstro de todas las perdidas del sistema
+	Campos de la entidad:
+		Id
+		Fecha de creacion
+		usuario
+		producto
+		tipo
+		precio
+		cantidad
+		monto
+		descripcion
+
+	Modificacion(Back)_______________________________________________________________________________________________________
+		* Se crea entidad Perdida en el backend
+			@Table(name="perdidas")
+			@Entity
+			public class Perdida implements Serializable{
+
+				
+				@Id
+				@GeneratedValue(strategy = GenerationType.IDENTITY)
+				private Long id;
+				
+				@Column(name = "create_at")
+				@Temporal(TemporalType.TIMESTAMP)
+				private Date createAt;
+				
+				@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+				@JoinColumn(name = "user")
+				private String user;
+				
+				@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+				@OneToOne
+				@JoinColumn(name="producto_id")
+				private Producto producto;
+				
+				private String tipo;
+				
+				private Double cantidad;
+				
+				private Double precio;
+				
+				private Double monto;
+				
+				private String Descripcion;
+				
+				// Se le añade el cascade para que se elimine en cascada cuando sea eliminada la
+				// entidad
+				@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+				@ManyToMany(fetch = FetchType.LAZY)
+				@JoinTable(name = "itemsperdida_itemsinventario", joinColumns = @JoinColumn(name = "itemperdida_id"), inverseJoinColumns = @JoinColumn(name = "iteminventario_id"),
+						// Se configura para que exista una key usuario rol igual
+						uniqueConstraints = { @UniqueConstraint(columnNames = { "itemperdida_id", "iteminventario_id" }) })
+				private List<ItemInventario> items_inventario;
+				
+				@PrePersist
+				public void prePersistFecha() {
+					this.createAt = new Date();
+				}	
+				public List<ItemInventario> getItems_inventario() {
+					return items_inventario;
+				}
+				public void setItems_inventario(List<ItemInventario> items_inventario) {
+					this.items_inventario = items_inventario;
+				}
+				public Long getId() {
+					return id;
+				}
+				public void setId(Long id) {
+					this.id = id;
+				}
+				public Date getCreateAt() {
+					return createAt;
+				}
+				public void setCreateAt(Date createAt) {
+					this.createAt = createAt;
+				}
+				public String getUser() {
+					return user;
+				}
+				public void setUser(String user) {
+					this.user = user;
+				}
+				public Producto getProducto() {
+					return producto;
+				}
+				public void setProducto(Producto producto) {
+					this.producto = producto;
+				}
+				public String getTipo() {
+					return tipo;
+				}
+				public void setTipo(String tipo) {
+					this.tipo = tipo;
+				}
+				public Double getCantidad() {
+					return cantidad;
+				}
+				public void setCantidad(Double cantidad) {
+					this.cantidad = cantidad;
+				}
+				public Double getPrecio() {
+					return precio;
+				}
+				public void setPrecio(Double precio) {
+					this.precio = precio;
+				}
+				public Double getMonto() {
+					return monto;
+				}
+				public void setMonto(Double monto) {
+					this.monto = monto;
+				}
+				public String getDescripcion() {
+					return Descripcion;
+				}
+				public void setDescripcion(String descripcion) {
+					Descripcion = descripcion;
+				}
+
+
+
+				@Override
+				public String toString() {
+					return "Perdida [id=" + id + ", createAt=" + createAt + ", user=" + user + ", producto=" + producto + ", tipo="
+							+ tipo + ", cantidad=" + cantidad + ", precio=" + precio + ", monto=" + monto + ", Descripcion="
+							+ Descripcion + ", items_inventario=" + items_inventario + "]";
+				}
+
+
+
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1371542177788588449L;
+
+			}
+		* Se crea tabla de base de datos perdidas
+			CREATE TABLE `perdidas` (
+			  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+			  `create_at` date NOT NULL,
+			  `user` varchar(50)  NOT NULL,
+			  `producto_id` bigint(20) DEFAULT NULL,
+			  `tipo` enum('Vencido','Extraviado','Deteriorado') NOT NULL,
+			  `cantidad` double DEFAULT NULL,
+			  `precio` double DEFAULT NULL,
+			  `monto` double DEFAULT NULL,
+			  `descripcion` varchar(255) DEFAULT NULL,
+			  `iteminventario_id` bigint(20) DEFAULT NULL,
+			  `cantinv` double DEFAULT NULL,
+			  PRIMARY KEY (`id`),
+			  UNIQUE KEY `id_UNIQUE` (`id`),
+			  KEY `FKproducto` (`producto_id`),
+			  KEY `FKiteminventarioperdida` (`iteminventario_id`),
+			  CONSTRAINT `FKiteminventariosperd` FOREIGN KEY (`iteminventario_id`) REFERENCES `inventarios_items` (`id`),
+			  CONSTRAINT `FKproductosperd` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`)
+			) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=utf8;
+
+
+			CREATE TABLE `itemsperdida_itemsinventario` (
+			  `itemperdida_id` bigint(20) NOT NULL,
+			  `iteminventario_id` bigint(20) NOT NULL,
+			  UNIQUE KEY `UKitems` (`itemperdida_id`,`iteminventario_id`),
+			  KEY `FKiteminventario` (`iteminventario_id`),
+			  CONSTRAINT `FKitemsperdidas` FOREIGN KEY (`itemperdida_id`) REFERENCES `perdidas` (`id`),
+			  CONSTRAINT `FKitemsinventariosperdida` FOREIGN KEY (`iteminventario_id`) REFERENCES `inventarios_items` (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		* Se crea repositorio
+			@Repository
+			public interface IPerdidaRepository extends JpaRepository<Perdida, Long> {
+
+			}
+		* Se crea Interface IPersidaService
+			public interface IPerdidaService {
+
+				List<Perdida> findAll();
+				Page<Perdida> finAll(Pageable pagina);
+				Perdida findById(Long idPerdida);
+				Perdida savePerdida(Perdida perdida);
+				void deletePerdida(Long idPerdda);
+				
+			}
+		* Se crea la clase de servicio
+			@Service
+			public class PerdidaServiceImpl implements IPerdidaService {
+				
+				@Autowired
+				private IPerdidaRepository perdidasRepo;
+				
+				@Autowired
+				private IItemInventarioService itemInvServ;
+				
+				@Autowired
+				private IProductoRepository productoRepo;
+
+				@Override
+				@Transactional(readOnly = true)
+				public List<Perdida> findAll() {
+					return perdidasRepo.findAll();
+				}
+
+				@Override
+				@Transactional(readOnly = true)
+				public Page<Perdida> finAll(Pageable pagina) {
+					return perdidasRepo.findByOrderByIdDesc(pagina);
+				}
+
+				@Override
+				@Transactional(readOnly = true)
+				public Perdida findById(Long idPerdida) {
+					return perdidasRepo.findById(idPerdida).orElse(null);
+				}
+
+				@Override
+				@Transactional
+				public Perdida savePerdida(Perdida perdida) {
+					//Se recuperan los inventarios activos
+					List<ItemInventario> items = itemInvServ.getInventarios(perdida.getProducto().getId(), "Activo");
+					Double cantidad = BigDecimal.valueOf(perdida.getCantidad()).setScale(3, RoundingMode.HALF_UP).doubleValue();
+					List<ItemInventario> inventAfect = new ArrayList<>();
+					Double existenciaProd = perdida.getProducto().getExistencia();
+					perdida.getProducto().setExistencia(existenciaProd-cantidad);
+					//Se recorren los inventarios activos
+					for (ItemInventario itemInv : items) {
+						if (cantidad > 0) {
+							Double existencia =  BigDecimal.valueOf(itemInv.getExistencia()).setScale(3, RoundingMode.HALF_UP).doubleValue();
+							//Se valida si la existencia es menor o igual
+							if(cantidad <= existencia) {
+								//se disminuye la existencia
+								itemInv.setExistencia(BigDecimal.valueOf(existencia-cantidad).setScale(3, RoundingMode.HALF_UP).doubleValue());
+								cantidad = 0D;
+							}else {
+								//Se setea a cero la existencia del inventario
+								itemInv.setExistencia(0D);
+								//Se disminuye la cantidad para que pueda ser descontada en el siguiente inventario
+								cantidad -= existencia;
+							}
+							if(itemInv.getExistencia() == 0) {
+								itemInv.setEstado("Inactivo");	
+								perdida.setItem_inventario(itemInv);
+								perdida.setCantinv(existencia);
+							}
+							itemInvServ.saveItemInventario(itemInv);	
+							inventAfect.add(itemInv);
+						}
+					}
+					productoRepo.save(perdida.getProducto());
+					perdida.setItems_inventario(inventAfect);
+					return perdidasRepo.save(perdida);
+				}
+
+				@Override
+				@Transactional
+				public void deletePerdida(Long idPerdida) {
+					Optional<Perdida> opt = perdidasRepo.findById(idPerdida);
+					Perdida perdida = null;
+					if (opt.isPresent()) {
+						perdida = opt.get();
+						//Se obtiene la existencia del producto y se repone
+						Double cantProd = perdida.getProducto().getExistencia();
+						perdida.getProducto().setExistencia(cantProd+perdida.getCantidad());
+						productoRepo.save(perdida.getProducto());
+						//Se obtiene la cantidad a reponer
+						Double cantidad = perdida.getCantidad();
+						Long idInvInactivo = 0L;
+						//Se valida si el item inactivo un inventario
+						if(perdida.getItem_inventario() != null) {	
+							//Activo el inventario y repongo la existencia
+							ItemInventario invInactivo = itemInvServ.getItemInventario(perdida.getItem_inventario().getId());
+							idInvInactivo = invInactivo.getId();
+							invInactivo.setEstado("Activo");
+							invInactivo.setExistencia(perdida.getCantinv());
+							cantidad -= perdida.getCantinv();
+							itemInvServ.saveItemInventario(invInactivo);
+						}
+						//Recorro los inventarios activos
+						for (ItemInventario itemInv : perdida.getItems_inventario()) {		
+							if (idInvInactivo != itemInv.getId()) {
+								//se aumenta la existencia
+								itemInv.setExistencia(itemInv.getExistencia()+cantidad);
+								itemInv.setEstado("Activo");
+								cantidad -= cantidad;
+								itemInvServ.saveItemInventario(itemInv);
+							}										
+						}	
+					}	
+					
+					perdidasRepo.deleteById(idPerdida);
+				}
+			}
+		* Se crea controlador
+			@RestController
+			@RequestMapping("/api")
+			@CrossOrigin(origins = {"http://localhost:4200","*"})
+			public class PerdidaRestController {
+				
+				@Autowired
+				private IPerdidaService perdidaService;
+				
+
+
+				@GetMapping("/perdida")
+				public List<Perdida> getPerdidas(){
+					return perdidaService.findAll();
+				}
+				
+				@Secured({"ROLE_ADMIN","ROLE_USER"})
+				@GetMapping("/perdida/page/{page}")
+				public Page<Perdida> cajaPage(@PathVariable Integer page){
+					Pageable pagina = PageRequest.of(page, 5);
+					return perdidaService.finAll(pagina);
+				}
+				
+				//Se recupera perdida por id
+				@Secured({"ROLE_ADMIN","ROLE_USER"})
+				@GetMapping("/perdida/{id}")
+				public ResponseEntity<?> showPerdida(@PathVariable("id") Long idPerdida){
+					Perdida perdida = null;
+					Map<String, Object> response = new HashMap<>();
+					try {
+						//Se recupera la perdida de la clase de servicio
+						perdida = perdidaService.findById(idPerdida);
+					} catch (DataAccessException e) {
+						response.put("mensaje", "Error al realizar la consulta en la base de datos.");
+						response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+						//Se envia error a la vista
+						return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+					}
+					//Se valida si la caja esta en null
+					if(perdida == null) {
+						response.put("mensaje", "La perdida Id: ".concat(idPerdida.toString())
+								.concat(" no existe en la base de datos."));
+						return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NO_CONTENT);
+					}
+					return new ResponseEntity<Perdida>(perdida, HttpStatus.OK);
+				}
+				
+				//Metodo para la creacion de caja
+				@Secured({"ROLE_ADMIN"})
+				@PostMapping("/perdida")
+				public ResponseEntity<?> savePerdida(@Valid @RequestBody Perdida perdida, BindingResult result){
+					Perdida perdidaNew = null;
+					Map<String, Object> response = new HashMap<>();
+					if(result.hasErrors()) {
+						List<String> errores = result.getFieldErrors()
+							//Se convierte en stream
+							.stream()
+							//Cada error se convierte en un string
+							.map(error -> "El campo '"+error.getField()+"' "+error.getDefaultMessage())
+							//Se convierte en una lista
+							.collect(Collectors.toList());
+						response.put("errores", errores);
+						return new ResponseEntity<Map<String, Object>>(response,HttpStatus.BAD_REQUEST);
+					}
+					
+					try {
+						perdidaNew = perdidaService.savePerdida(perdida);
+					} catch (DataAccessException e) {
+						response.put("mensaje", "Error al insertar la Perdida.");
+						response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+						return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+					}
+					response.put("mensaje","La perdida se ha registrado.");
+					response.put("perdida", perdidaNew);
+					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+				}
+				
+				
+				
+				//Metodo para modificar Perdida
+				@Secured("ROLE_ADMIN")
+				@PutMapping("/perdida/{id}")
+				public ResponseEntity<?> updatePerdida(@Valid @RequestBody Perdida perdida,
+						BindingResult result,
+						@PathVariable("id") Long idPerdida){
+					Perdida perdidaUpd= null;
+					Map<String, Object> response = new HashMap<>();
+					//Se validan errorres que se reciben del request
+					if(result.hasErrors()) {
+						List<String> errores = result.getFieldErrors()
+								.stream().map(err->"El campo "+err.getField()+" "+err.getDefaultMessage())
+								.collect(Collectors.toList());
+						response.put("errores", errores);
+						return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+					}
+					Perdida perdidaAct = perdidaService.findById(idPerdida);
+					//Se valida si existe
+					if(perdidaAct == null) {
+						response.put("mensaje", "La perdida ID: ".concat(idPerdida.toString()).concat(" no existe en la Base de datos."));
+						return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+					}
+					try {
+						//Se stean modificaciones
+						
+						//Pendiente
+						
+						//Se guarda en base de datos
+						perdidaUpd = perdidaService.savePerdida(perdidaAct);
+					} catch (DataAccessException e) {
+						response.put("mensaje", "Error al modificar La perdida con Id: ".concat(idPerdida.toString()).concat(" en la base de datos."));
+						response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+						return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+					}
+					response.put("mensaje", "La perdida se modifico con exito.");
+					response.put("perdida", perdidaUpd);
+					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+				}
+				
+				//Metodo para eliminar perdida
+				@Secured({"ROLE_ADMIN"})
+				@DeleteMapping("/perdida/{id}")
+				public ResponseEntity<?> deletePerdida(@PathVariable("id") Long idPerdida){
+					Map<String, Object> response = new HashMap<>();
+					try {
+						perdidaService.deletePerdida(idPerdida);
+					} catch (DataAccessException e) {
+						response.put("mensaje", "Error al eliminar la perdida ID: "
+								.concat(idPerdida.toString())
+								.concat(" No existe en la base de datos."));
+						response.put("error", e.getMessage().concat(": ")
+								.concat(e.getMostSpecificCause().getMessage()));
+						return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+					}
+					response.put("mensaje", "La perdida ha sido eliminada con exito.");
+					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+				}
+
+			}
+	Modificacion(Front)_______________________________________________________________________________________________________
+		* Se crea foder --> Perdidas 
+		* Se crea componente -- ng g  c Perdidas/perdidas --skipTests -is
+			*Se modifica perdidas.component.ts	
+				@Component({
+				  selector: 'app-perdidas',
+				  templateUrl: './perdidas.component.html',
+				  styles: [
+				  ]
+				})
+				export class PerdidasComponent implements OnInit {
+
+				  perdidas: Perdida[];
+				  //Atributo para la paginacion
+				  paginador: any;
+
+				  constructor( private ActivatedRoute: ActivatedRoute,
+				                private router: Router,
+				                public authService: AuthService,
+				                private perdidasService: PerdidasService) { }
+
+				  ngOnInit(): void {
+				    this.ActivatedRoute.paramMap.subscribe( params => {
+				      //Se agrega atributo que recupera la pagina dinamicamente
+				      let pagina = +params.get('page');
+				      if(!pagina){
+				        pagina = 0;
+				      }
+				      this.perdidasService.getPerdidas(pagina).subscribe(
+				        response => {
+				          this.perdidas = (response.content as Perdida[]);
+				          console.log(this.perdidas);
+				          //Se da valor al paginador
+				          this.paginador = response;
+				        }
+				      )
+				    })
+				  }
+
+				  delete(perdida: Perdida): void{
+				    const swalWithBootstrapButtons = Swal.mixin({
+				      customClass: {
+				        confirmButton: 'btn btn-success',
+				        cancelButton: 'btn btn-danger'
+				      },
+				      buttonsStyling: false
+				    })
+
+				    swalWithBootstrapButtons.fire({
+				      title: 'Esta usted seguro?',
+				      text: `Desea eliminar la perdida ${perdida.id}?`,
+				      icon: 'warning',
+				      showCancelButton: true,
+				      confirmButtonText: 'Si, eliminar!',
+				      cancelButtonText: 'No, cancelar!',
+				      reverseButtons: true
+				    }).then((result) => {
+				      if (result.value) {
+				        this.perdidasService.delete(perdida.id).subscribe(
+				          response => {
+				            this.perdidas = this.perdidas.filter(item => item !== perdida);
+				            swalWithBootstrapButtons.fire(
+				              'Perdida Eliminada!',
+				              `Perdida ${perdida.id} eliminada con exito.`,
+				              'success'
+				            )
+				          }
+				        )
+				      } else if (
+				        /* Read more about handling dismissals below */
+				        result.dismiss === Swal.DismissReason.cancel
+				      ) {
+				        swalWithBootstrapButtons.fire(
+				          'Cancelado',
+				          'La opcion de eliminar ha sido cancelada.',
+				          'error'
+				        )
+				      }
+				    })
+				  }
+
+				}
+			*Se modifica perdidas.component.html
+				<div class="main-content">
+				    <div class="container-fluid">
+				        <div class="card-body text-primary">
+				            <h3 class="card-title">Listado de Perdidas</h3>
+				            <div class="my-2 text-left">
+				                <!--[routerLink] Nos permite crear rutas nternas del proyecto-->
+				                <button *ngIf="authService.hasRole('ROLE_ADMIN')" class="btn btn-rounded btn-success" type="buttom" [routerLink]="['/perdidas/form']">Crear Perdida</button>
+				            </div>
+				            <!-- Se crea div informativo en caso de no haber clientes en la lista -->
+				            <div class="alert alert-info" *ngIf="perdidas?.length == 0">
+				                No hay registros en la Base de Datos.
+				            </div>
+				            <div class="table-responsive">
+				                <!-- Se agrega directiva ngIf para validar si la lista de clientes esta vacia -->
+				                <table class="table table-striped" *ngIf="perdidas?.length>0">
+				                    <thead>
+				                        <tr>
+				                            <th>Id</th>
+				                            <th>fecha</th>
+				                            <th>Usuario</th>
+				                            <th>Producto</th>
+				                            <th>tipo</th>
+				                            <th>Monto</th>
+				                            <th *ngIf="authService.hasRole('ROLE_ADMIN')">Detalle</th>
+				                            <th *ngIf="authService.hasRole('ROLE_ADMIN')">eliminar</th>
+				                        </tr>
+				                    </thead>
+				                    <tbody>
+				                        <!--Se añade condicional *ngFor-->
+				                        <tr *ngFor="let perdida of perdidas">
+				                            <td>{{perdida.id}}</td>
+				                            <td>{{perdida.createAt | date:'EEEE dd, MMMM yyyy'}}</td>
+				                            <td>{{perdida.user.username}}</td>
+				                            <td>{{perdida.producto.nombre | titlecase}}</td>
+				                            <td>{{perdida.tipo}}</td>
+				                            <td>{{perdida.monto | number:'.1-2'}}</td>
+				                            <td *ngIf="authService.hasRole('ROLE_ADMIN')">
+				                                <button class="btn btn-success btn-sm" type="button" [routerLink]="['/perdida', perdida.id]">Ver</button>
+				                            </td>
+				                            <td *ngIf="authService.hasRole('ROLE_ADMIN')">
+				                                <button class="btn btn-danger btn-sm" type="button" name="eliminar" (click)="delete(perdida)">Eliminar</button>
+				                            </td>
+				                        </tr>
+				                    </tbody>
+				                </table>
+				                <!-- Paginacion -->
+				                <paginadorinv-nav *ngIf="paginador" [paginador]="paginador"></paginadorinv-nav>
+				            </div>
+
+				        </div>
+		* Se crea clase de servicio --> ng g s Perdidas/perdidas --skipTests
+			@Injectable({
+			  providedIn: 'root'
+			})
+			export class PerdidasService {
+
+			  private urlEndPoint = 'http://localhost:8080/api/perdida';
+			  // private urlEndPoint: string ='http://66.228.61.76/springAngular/api/perdida';
+			  
+			  constructor( private httpClient: HttpClient,
+			                private router: Router) {  }
+
+			  getPerdidas(page: number): Observable<any>{
+			    return this.httpClient.get(this.urlEndPoint + '/page/' +page).pipe(
+			      map( (response: any) =>{
+			        response.content as Perdida[];
+			        return response;
+			      })
+			    );
+			  }  
+
+
+			  createPerdida(perdida: Perdida, user: string): Observable<any>{
+			    return this.httpClient.post<any>(this.urlEndPoint + '?user=' + user, perdida).pipe(
+			      // Se agrega el operador catchError, intercepta en caso de existir error
+			      catchError(e => {
+			        // Manejo de validacion que viene en el response del backend
+			        if ( e.status === 400){
+			          return throwError(e);
+			        }
+			        // Se muestra por consola el error
+			        if (e.error.mensaje){
+			          console.error(e.error.mensaje);
+			        }
+			        return throwError(e);
+			      })
+			    );
+			  }
+
+			  getPerdida(id: number): Observable<Perdida>{
+			    return this.httpClient.get<Perdida>(`${this.urlEndPoint}/${id}`).pipe(
+			      catchError(e => {
+			        if (e.status === 401 && e.error.mensaje){
+			          this.router.navigate(['/perdidas']);
+			          console.error(e.error.mensaje);
+			        }
+			        return throwError(e);
+			      })
+			    );
+			  }
+
+
+			  // Metodo de modificacion del inventario
+			  update(perdida: Perdida): Observable<Perdida>{
+			    return this.httpClient.put(`${this.urlEndPoint}/${perdida.id}`, perdida).pipe(
+			      map((response: any) => response.perdida as Perdida),
+			      catchError( e => {
+			        if (e.status === 400){
+			          return throwError(e);
+			        }
+			        if (e.error.mensaje){
+			          console.error(e.error.mensaje);
+			        }
+			        return throwError(e);
+			      })
+			    );
+			  }
+
+			  // Metodo delete de Inventario
+			  delete(id: number): Observable<Perdida>{
+			    return this.httpClient.delete<Perdida>(`${this.urlEndPoint}/${id}`).pipe(
+			      catchError( e => {
+			        if (e.error.mensaje){
+			          console.error(e.error.mensaje);
+			        }
+			        return throwError(e);
+			      })
+			    );
+			  }
+			}
+		* Se crea clase Perdida --> ng g class Perdidas/perdida --skipTests
+			export class Perdida {
+			    id: number;
+			    createAt:string;
+			    user: Usuario;
+			    producto: Producto;
+			    tipo: string;
+			    cantidad: number;
+			    precio: number;
+			    monto: number;
+			    descripcion: number;
+			}
+		* Se modifica sidebar.component.ts
+			export const ROUTES: RouteInfo[] = [
+			    { path: '/clientes', title: 'Usuarios',  icon: 'flutter_dash', class: '' },
+			    { path: '/productos', title: 'Productos',  icon: 'bubble_chart', class: '' },
+			    { path: '/gastos', title: 'Gastos',  icon: 'paid', class: '' },
+			    { path: '/cajas', title: 'Cajas',  icon: 'savings', class: '' },
+			    { path: '/inventarios', title: 'Inventarios',  icon: 'list_alt', class: '' },
+			    { path: '/consignacion', title: 'Consignacion',  icon: 'mediation', class: '' },
+			    { path: '/perdidas', title: 'Perdidas',  icon: 'mediation', class: '' },
+			 /*   { path: '/dashboard', title: 'Dashboard',  icon: 'dashboard', class: '' },
+			    { path: '/user-profile', title: 'User Profile',  icon:'person', class: '' },
+			    { path: '/table-list', title: 'Table List',  icon:'content_paste', class: '' },
+			    { path: '/typography', title: 'Typography',  icon:'library_books', class: '' },
+			    { path: '/icons', title: 'Icons',  icon:'bubble_chart', class: '' },
+			    { path: '/maps', title: 'Maps',  icon:'location_on', class: '' },
+			    { path: '/notifications', title: 'Notifications',  icon:'notifications', class: '' },
+			    { path: '/upgrade', title: 'Upgrade to PRO',  icon:'unarchive', class: 'active-pro' }*/
+			];
+
+			export const ROUTESUSER: RouteInfo[] = [
+			  { path: '/clientes', title: 'Usuarios',  icon: 'flutter_dash', class: '' },
+			  { path: '/productos', title: 'Productos',  icon: 'bubble_chart', class: '' },
+			  { path: '/cajas', title: 'Cajas',  icon: 'savings', class: '' },
+			  { path: '/inventarios', title: 'Inventarios',  icon: 'list_alt', class: '' },
+			  { path: '/consignacion', title: 'Consignacion',  icon: 'mediation', class: '' },
+			  { path: '/perdidas', title: 'Perdidas',  icon: 'mediation', class: '' },
+			/*   { path: '/dashboard', title: 'Dashboard',  icon: 'dashboard', class: '' },
+			  { path: '/user-profile', title: 'User Profile',  icon:'person', class: '' },
+			  { path: '/table-list', title: 'Table List',  icon:'content_paste', class: '' },
+			  { path: '/typography', title: 'Typography',  icon:'library_books', class: '' },
+			  { path: '/icons', title: 'Icons',  icon:'bubble_chart', class: '' },
+			  { path: '/maps', title: 'Maps',  icon:'location_on', class: '' },
+			  { path: '/notifications', title: 'Notifications',  icon:'notifications', class: '' },
+			  { path: '/upgrade', title: 'Upgrade to PRO',  icon:'unarchive', class: 'active-pro' }*/
+			];
+		* Se modifica admin-layout.routing.ts, se agregan rutas
+			{ path: 'perdidas',               component: PerdidasComponent, },
+			{ path: 'perdidas/page/:page',    component: PerdidasComponent, canActivate: [AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
+		* Se crea componente --> ng g c Perdidas/formPerdidas --skipTests -is
+********************************************************************************************************************************** En produccion doc imcompleta
+
+
+Modulo de comisiones**************************************************************************************************************
+	SQL____________________________________________________________________________________________________________________
+	*Modificacion tabla facturas
+		ALTER TABLE `db_springboot_backend`.`facturas` 
+		ADD COLUMN `montocomision` DOUBLE NULL AFTER `cliente_id`;
+
+		ALTER TABLE `db_springboot_backend`.`facturas` 
+		ADD COLUMN `pedidosya` DOUBLE NULL AFTER `montocomision`,
+		ADD COLUMN `puntoventa` DOUBLE NULL AFTER `pedidosya`,
+
+		ALTER TABLE `db_springboot_backend`.`facturas` 
+		ADD COLUMN `comision_id` BIGINT NULL AFTER `puntoventa`;
+
+		ALTER TABLE `db_springboot_backend`.`comisiones` 
+		ADD COLUMN `tipo` VARCHAR(60) NULL AFTER `comision`,
+		ADD COLUMN `code` VARCHAR(45) NULL AFTER `tipo`;
+
+		ALTER TABLE `db_springboot_backend`.`facturas` 
+		ADD INDEX `FKcomision_idx` (`comision_id` ASC) VISIBLE;
+		;
+		ALTER TABLE `db_springboot_backend`.`facturas` 
+		ADD CONSTRAINT `FKcomision`
+		  FOREIGN KEY (`comision_id`)
+		  REFERENCES `db_springboot_backend`.`comisiones` (`id`)
+		  ON DELETE NO ACTION
+		  ON UPDATE NO ACTION;
+
+		ALTER TABLE `db_springboot_backend`.`comisiones` 
+		DROP FOREIGN KEY `FKproductocomisiones`;
+		ALTER TABLE `db_springboot_backend`.`comisiones` 
+		CHANGE COLUMN `producto_id` `producto_id` BIGINT NULL ;
+		ALTER TABLE `db_springboot_backend`.`comisiones` 
+		ADD CONSTRAINT `FKproductocomisiones`
+		  FOREIGN KEY (`producto_id`)
+		  REFERENCES `db_springboot_backend`.`productos` (`id`);
+
+		ALTER TABLE `db_springboot_backend`.`comisiones` 
+		CHANGE COLUMN `comision` `comision` DOUBLE NULL ;
+
+		ALTER TABLE `db_springboot_backend`.`comisiones` 
+		CHANGE COLUMN `producto_id` `producto_id` BIGINT(20) NULL DEFAULT NULL ;
+
+
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('3', 'Efectivo PY', 'PYE');
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('4', 'Debito PY', 'PYD');
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('5', 'Credito PY', 'PYC');
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('6', 'Debito MP', 'MPD');
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('7', 'Credito MP', 'MPC');
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('8', 'Debito PV', 'PVD');
+		INSERT INTO `db_springboot_backend`.`comisiones` (`id`, `tipo`, `code`) VALUES ('9', 'Credito PV', 'PVC');
+
+		ALTER TABLE `db_springboot_backend`.`cajachica` 
+		ADD COLUMN `saldopy` DOUBLE NULL AFTER `saldoefectivo`,
+		ADD COLUMN `saldopv` DOUBLE NULL AFTER `caja_id`;
+
+
+		ALTER TABLE `db_springboot_backend`.`cajachica` 
+		CHANGE COLUMN `saldopy` `saldopy` DOUBLE NULL DEFAULT NULL AFTER `saldomp`,
+		CHANGE COLUMN `saldopv` `saldopv` DOUBLE NULL DEFAULT NULL AFTER `saldopy`;
+
+		ALTER TABLE `db_springboot_backend`.`cajas` 
+		ADD COLUMN `pedidosya` DOUBLE NULL AFTER `mercadopago`,
+		ADD COLUMN `puntoventa` DOUBLE NULL AFTER `pedidosya`
+
+		UPDATE `db_springboot_backend`.`cajachica` SET `saldopy` = '0', `saldopv` = '0' WHERE (`id` = '8300');
+
+		ALTER TABLE `db_springboot_backend`.`cajachica` 
+		ADD COLUMN `transferencia` BIT(1) NULL DEFAULT NULL AFTER `caja_id`;
+
+		ALTER TABLE `db_springboot_backend`.`cajachica` 
+		CHANGE COLUMN `transferencia` `transferencia` BIT(1) NULL DEFAULT 0 ;
+
+
+		Luego del Primer pase***********************************************
+		ALTER TABLE `db_springboot_backend`.`facturas` 
+		ADD COLUMN `pedidosyaefectivo` DOUBLE NULL DEFAULT NULL AFTER `montocomision`;
+
+		ALTER TABLE `db_springboot_backend`.`cajas` 
+		ADD COLUMN `pedidosyaefectivo` DOUBLE NULL DEFAULT 0 AFTER `pedidosya`;
+
+		ALTER TABLE `db_springboot_backend`.`cajachica` 
+		ADD COLUMN `saldoefectivopy` DOUBLE NULL DEFAULT NULL AFTER `saldopy`;
+
+		ALTER TABLE `db_springboot_backend`.`cajas` 
+		CHANGE COLUMN `pedidosyaefectivo` `pedidosyaefectivo` DOUBLE NULL DEFAULT NULL ;
+
+
+
+		Modificaciones de EntityCommon
+			ALTER TABLE `db_springboot_backend`.`cajachica` 
+			ADD COLUMN `user` VARCHAR(45) NULL DEFAULT NULL AFTER `id`,
+			ADD COLUMN `create_at` TIMESTAMP NULL DEFAULT NULL AFTER `user`,
+			ADD COLUMN `update_at` TIMESTAMP NULL DEFAULT NULL AFTER `create_at`;
+
+			ALTER TABLE `db_springboot_backend`.`cajachica` 
+			DROP COLUMN `fecha`;
+
+			ALTER TABLE `db_springboot_backend`.`facturas` 
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			ADD COLUMN `update_at` TIMESTAMP NULL AFTER `user`;
+
+			ALTER TABLE `db_springboot_backend`.`facturas` 
+			CHANGE COLUMN `create_at` `create_at` TIMESTAMP NULL DEFAULT NULL ;
+
+			ALTER TABLE `db_springboot_backend`.`facturas` 
+			CHANGE COLUMN `create_at` `create_at` TIMESTAMP NULL DEFAULT NULL ;
+
+			ALTER TABLE `db_springboot_backend`.`facturas` 
+			CHANGE COLUMN `create_at` `create_at` TIMESTAMP NULL DEFAULT NULL AFTER `user`;
+
+
+			ALTER TABLE `db_springboot_backend`.`cajas` 
+			DROP COLUMN `fechamod`,
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			ADD COLUMN `create_at` TIMESTAMP NULL AFTER `user`,
+			ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`;
+
+
+			ALTER TABLE `db_springboot_backend`.`cajas` 
+			CHANGE COLUMN `fechaopen` `fechaopen` TIMESTAMP NOT NULL ,
+			CHANGE COLUMN `fechaclose` `fechaclose` TIMESTAMP NULL DEFAULT NULL ;
+
+
+			ALTER TABLE `db_springboot_backend`.`gastos` 
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			ADD COLUMN `create_at` TIMESTAMP NULL AFTER `user`,
+			ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`;
+
+			ALTER TABLE `db_springboot_backend`.`inventarios` 
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			CHANGE COLUMN `fechacreate` `create_at` TIMESTAMP NOT NULL ,
+			CHANGE COLUMN `fechamod` `update_at` TIMESTAMP NULL DEFAULT NULL ;
+
+			ALTER TABLE `db_springboot_backend`.`facturas_items` 
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			ADD COLUMN `create_at` TIMESTAMP NULL AFTER `user`,
+			ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`;
+
+			ALTER TABLE `db_springboot_backend`.`inventarios_items` 
+			DROP COLUMN `fechamod`,
+			DROP COLUMN `fechacreate`,
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			ADD COLUMN `create_at` TIMESTAMP NULL AFTER `user`,
+			ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`;
+
+			ALTER TABLE `db_springboot_backend`.`perdidas` 
+			ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`,
+			CHANGE COLUMN `user` `user` VARCHAR(50) NOT NULL AFTER `id`,
+			CHANGE COLUMN `create_at` `create_at` TIMESTAMP NOT NULL ;
+
+			ALTER TABLE `db_springboot_backend`.`productos` 
+			ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+			CHANGE COLUMN `fechamod` `update_at` TIMESTAMP NULL DEFAULT NULL AFTER `create_at`;
+
+
+
+
+	Backend________________________________________________________________________________________________________________
+	*Facturas.java, se crea atributo comision_mp con get y set
+		private Double comision_mp;
+	*facturaServiceImpl.java
+		*Se crea metodo que hace el calculo de la comision de MercadoPago
+			//Comision mercadopago
+			private Factura comisionMP(Factura factura) {
+				Double mercadoPago = factura.getMercadopago();
+				Double comision_mp = (mercadoPago * 5)/100;
+				factura.setComision_mp(comision_mp);
+				factura.setTotal(factura.getTotal()+comision_mp);
+				return factura;
+			}
+		*Se modifica saveFactura(), se valida si hay mercadoPago y si es asi se calcula y se setea a la factura
+			public Factura saveFactura(Factura factura) {
+				if( factura.getMercadopago() != null ) comisionMP(factura);
+	FrondEnd______________________________________________________________________________________________________________
+		*Se modifica detalle-factura.component.html, se agrega visualizacion del impuesto
+			<h2>Comision MP:<span class="badge badge-secondary">{{factura.comision_mp}}</span></h2>
+		* Se modifica facturas.component.html, Se agrega visualizacion de la comision y se agrega en los calculos de efectivo y total
+			<h2>Total Efectivo:<span class="badge badge-secondary">{{(factura.getTotalFactura() + factura.comision_mp - factura.mercadopago) | number}}</span></h2>
+
+			<h2 *ngIf="factura.mercadopago > 0">Comision MP:<span class="badge badge-info">{{getComisMp() | number}}</span></h2>
+			<h2>Total Factura:<span class="badge badge-secondary">{{factura.total + factura.comision_mp | number}}</span></h2>
+		* Se mdifica facturas.component.ts
+			* Se agrega deteccion de cambios por medio de ChangeDetectorRef
+				 constructor(private clienteService: ClienteService,
+				               private facturasService: FacturasService,
+				               private ActivatedRoute: ActivatedRoute,
+								private router:Router
+								private router:Router,
+					 			private cdref: ChangeDetectorRef
+				             ) { }
+
+				ngAfterContentChecked() {
+					 this.cdref.detectChanges();
+				}
+			* Se crea metodo para calculo de comision
+				+  getComisMp():number{
+				+    this.factura.comision_mp = (this.factura.mercadopago*5)/100;
+				+    return this.factura.comision_mp;
+				+  }
+		* Se modifica factura.ts, se agrega atributo comision_mp
+			 comision_mp: number = 0;
+********************************************************************************************************************************** Por Pase a produccion
+
+
+
+Excepciones***********************************************************************************************************************
+	Backend________________________________________________________________________________________________________________
+	* ProductoController.java, se agrega endpoint para pruebas
+		+       @Secured({"ROLE_ADMIN", "ROLE_USER"})
+		+       @PostMapping("/productoPrueba")
+		+       public ResponseEntity<Producto> saveProducto(@Valid @RequestBody Producto producto){
+		+               return new ResponseEntity<Producto>(productoServ.saveProducto(producto), HttpStatus.OK);
+		+       }
+	* Producto.java, se le agrega anotacion NotBlank al nombre
+		+       @NotBlank
+        private String nombre;
+    * Se crea paquete package com.eareiza.springAngular.excepciones;
+    * Se crea clase ErrorInfo.java
+        import com.fasterxml.jackson.annotation.JsonProperty;
+
+		public class ErrorInfo {
+
+		    @JsonProperty("mensaje")
+		    private String mensaje;
+		    @JsonProperty("status_code")
+		    private int codigo;
+		    @JsonProperty("uri")
+		    private String uriRequested;
+
+		    public ErrorInfo(int statusCode, String message, String uriRequested) {
+		        this.mensaje = message;
+		        this.codigo = statusCode;
+		        this.uriRequested = uriRequested;
+		    }
+
+			public String getMensaje() {
+				return mensaje;
+			}
+
+			public int getCodigo() {
+				return codigo;
+			}
+
+			public String getUriRequested() {
+				return uriRequested;
+			}
+
+		}
+	* Se crea clase RestExceptionHandler.java
+		import org.springframework.http.HttpStatus;
+		import org.springframework.http.ResponseEntity;
+		import org.springframework.validation.BindingResult;
+		import org.springframework.validation.FieldError;
+		import org.springframework.web.bind.MethodArgumentNotValidException;
+		import org.springframework.web.bind.annotation.ControllerAdvice;
+		import org.springframework.web.bind.annotation.ExceptionHandler;
+
+		import javax.servlet.http.HttpServletRequest;
+		import java.util.List;
+
+		@ControllerAdvice
+		public class RestExceptionHandler {
+
+		    @ExceptionHandler(MethodArgumentNotValidException.class)
+		    public ResponseEntity<ErrorInfo> methodArgumentNotValidException(HttpServletRequest request, MethodArgumentNotValidException e) {
+
+		        // get spring errors
+		        BindingResult result = e.getBindingResult();
+		        List<FieldError> fieldErrors = result.getFieldErrors();
+
+		        // convert errors to standard string
+		        StringBuilder errorMessage = new StringBuilder();
+		        fieldErrors.forEach(f -> errorMessage.append(f.getField() + " " + f.getDefaultMessage() +  " "));
+
+		        // return error info object with standard json
+		        ErrorInfo errorInfo = new ErrorInfo(HttpStatus.BAD_REQUEST.value(), errorMessage.toString(), request.getRequestURI());
+		        return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+
+		    }
+
+		}
+	FrontEnd_______________________________________________________________________________________________________________
+	* Se implementa PrimeNg
+		*Instalacion primeNg y primeIcons
+			npm install primeng primeicons
+		* Se modifica angular.json, se le agrega a styles estilos de primeNg
+			+                            "node_modules/@fortawesome/fontawesome-free/css/all.css",
+			+                            "node_modules/primeicons/primeicons.css",
+			+                            "node_modules/primeng/resources/themes/vela-blue/theme.css",
+			+                            "node_modules/primeng/resources/primeng.min.css"
+********************************************************************************************************************************** En Desarrollo
+
+
+
+Iconos****************************************************************************************************************************
+	https://material.io/resources/icons/?style=baseline
+	add_chart
+	trending_up
+	settings_ethernet
+	speed
+								repeat
+								price_change
+	sentiment_satisfied_alt
+	insights
+	price_check
+	auto_graph
+	insert_emoticon
+	add_reaction
+	mood
+	mood_bad
+	sentiment_very_dissatisfied
+	sentiment_neutral
+	sentiment_very_satisfied
+**********************************************************************************************************************************
+>>>>>>> 6259fd448e8df603c72425101dff0a2465152587
 
 
 
@@ -1313,6 +2325,7 @@ Querys**************************************************************************
 		 select f.fecha_fact, f.descripcion, f.monto_pesos, f.clasificacion, f.metodopago from gastos f where fecha_fact >= '2021-01-01' and fecha_fact <= '2021-01-15' and f.clasificacion = 'Gasto' INTO OUTFILE '/var/lib/mysql-files/Gastos010121_150121.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
 		 select f.fecha_fact, f.descripcion, f.monto_pesos, f.clasificacion, f.metodopago from gastos f where fecha_fact >= '2021-01-01' and fecha_fact <= '2021-01-31' and f.clasificacion = 'Gasto' INTO OUTFILE '/var/lib/mysql-files/Gastos010121_310221.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
 
+
 	****************************************************************************************************GanaciasXProducto
 		select  p.nombre as nombre,sum(fi.cantidad) as cantidad, sum(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) as ganancia,
 		 sum(((fi.precio)*fi.cantidad)) as venta
@@ -1350,18 +2363,77 @@ Querys**************************************************************************
 
 	*********************************************************************************************************GanaciaGeneral
 
-	select  sum(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) as ganancia,
-	 sum(((fi.precio)*fi.cantidad)) as venta
+		select  sum(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) as ganancia, 
+		 sum(((fi.precio)*fi.cantidad)) as venta
+		from facturas_items fi
+		inner join facturas f on f.id = fi.factura_id
+		inner join productos p on p.id = fi.producto_id
+		inner join itemsfactura_itemsinventario piv on fi.id = piv.itemfactura_id
+		inner join inventarios_items ii on ii.id = piv.iteminventario_id where f.create_at between 20210201 and 20210228;
+		order by 3  desc
+		INTO OUTFILE '/var/lib/mysql-files/GananciaXProducto01021_150221.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
+
+
+	*************************************************************************************************Ganancia por Producto
+		select  sum(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) as ganancia, sum(fi.cantidad) as cantidad,
+		 sum(((fi.precio)*fi.cantidad)) as venta
+		from facturas_items fi
+		inner join facturas f on f.id = fi.factura_id
+		inner join productos p on p.id = fi.producto_id
+		inner join itemsfactura_itemsinventario piv on fi.id = piv.itemfactura_id
+		inner join inventarios_items ii on ii.id = piv.iteminventario_id 
+	    where f.create_at between 20210301 and 20210312
+	    and p.id = 130;
+	*****************************************************************************************************Ganancia y Gastos
+    select  sum(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) as ganancia, (select sum(f.monto_pesos) from gastos f where fecha_carga >= '2021-02-01' and fecha_carga <= '2021-02-28' and f.clasificacion = 'Gasto') as gastos,
+	((sum(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision))-(select sum(f.monto_pesos) from gastos f where fecha_carga >= '2021-02-01' and fecha_carga <= '2021-02-28' and f.clasificacion = 'Gasto')) as GananciaReal,
+	sum(((fi.precio)*fi.cantidad)) as venta
 	from facturas_items fi
 	inner join facturas f on f.id = fi.factura_id
 	inner join productos p on p.id = fi.producto_id
 	inner join itemsfactura_itemsinventario piv on fi.id = piv.itemfactura_id
-	inner join inventarios_items ii on ii.id = piv.iteminventario_id where f.create_at between 20210115 and 20210131
-	order by 3  desc
-	INTO OUTFILE '/var/lib/mysql-files/GananciaXProducto01021_150221.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
+	inner join inventarios_items ii on ii.id = piv.iteminventario_id where f.create_at between 20210201 and 20210228;
+
+
+	*****************************************************************************************Usuario para coneccion linode
+		usuario: eareiza
+		pass: danger120
+********************************************************************************************************************************
+
+Complementos********************************************************************************************************************
+	*Cambiar de contraseña usuario mysql
+		update user set authentication_string=password('danger120-') where user='eareiza';
+		flush privileges;
+
+	//Crear usuario con privilegios en mysql
+		CREATE USER 'alfonso'@'localhost' IDENTIFIED BY 'danger120-';
+		GRANT ALL PRIVILEGES ON * . * TO 'alfonso'@'localhost';
+		FLUSH PRIVILEGES;
+
+	//revisar los log de catalina
+		less /opt/tomcat/logs/catalina.out
+		less /opt/apache-tomcat-8.5.54/logs/catalina.out
+
+		$ tail -f /opt/apache-tomcat-8.5.54/logs/catalina.out
 ********************************************************************************************************************************
 
 
-
-
-
+Implementaciones que faltan
+	* Implementar exceptions
+	* IMplementar log4J 
+	* Implementar en el Front la organizacion por modulos
+	* Implementar test 
+	* Implementar swagger
+	* Crear parametrizacion de comision
+	* Crear parametrizacion de cuenta
+		* Crear un entidad Cuenta
+			* Efectivo
+			* Banco
+			* Pedidos Ya
+			* Mercado Pago
+																		* add de usuario a las entidades
+																		* recuperar usuario logeado
+																		* add de fecha de modificacion 
+																		* fechas transformarlas a timestamp
+																		* Implementacion lomBok
+	* softDelete

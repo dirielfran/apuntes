@@ -1163,7 +1163,14 @@ Arquitectura y Modelos
 ***********************************************************************************************
 
 
-
+Properties del sistema*************************************************************************
+    /* Impresion de propiedades del sistema */
+    @Test
+    void inprimirSystemProperties() {
+        Properties properties = System.getProperties();
+        properties.forEach((k,v) -> System.out.println(k+":"+v));
+    }
+***********************************************************************************************
 ManejoJava
 
 Formato
