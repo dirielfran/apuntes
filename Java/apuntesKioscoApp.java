@@ -1267,8 +1267,15 @@
 
 
 ****************************************************************************************************Tipo de pago en consignacion
-	
-********************************************************************************************************************************
+	Descripcion: Se debe añadir el tipo de pago en la consignacion
+******************************************************************************************************************************** Por pase a produccion
+
+
+
+*******************************************************************************************Servicio de gastosXMes y GanaciasXMes
+	Descripcion: Se realizan servicios para mostrar ganancias y gastos
+******************************************************************************************************************************** Por pase a produccion
+
 
 
 Querys**************************************************************************************************************************
@@ -1289,9 +1296,6 @@ Querys**************************************************************************
 		group by p.id 
 		order by 3  desc
 		INTO OUTFILE '/var/lib/mysql-files/GananciaXProducto010221_310221.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
-
-
-
 	use db_springboot_backend;
 
 	select * from facturas_items where consignacion = 1;
@@ -1361,12 +1365,3 @@ Querys**************************************************************************
 
 
 
-entrevista accenture
-	apis para canales
-	proyecto de seis celulas
-
-	java 1.8 
-	microservicios spring
-	grandle
-	swagger
-	junit

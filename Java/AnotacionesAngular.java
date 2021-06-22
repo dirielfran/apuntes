@@ -3384,13 +3384,278 @@ Seccion 8: SPA-paisesApp********************************************************
 		    [(ngModel)]=termino
 		    (input)="teclaPresionada()">
 		</form>
-
+	3.- Se modifica por-pais.component.html, se añade atributo de escucha (onDebounce)
+		    <div class="col">
+		        <app-pais-input (onEnter)="buscar( $event )" (onDebounce)="sugerencias()"></app-pais-input>
+		    </div>
+	4.- Se modifica por-pais.component.ts, se crea metodo sugerencias()
+		  sugerencias(){
+		    this.hayError = false;
+		  }
 *************************************************************************************************************************************
+110.- ********************************************************************************************************************Por Capital
+	1.- Se modifica por-capital.component.html, se copia diseño del componente por-pais y se rediseña
+		<h2>Por Capital</h2>
+		<hr>
 
+		<div class="row">
+		    <div class="col">
+		        <app-pais-input (onEnter)="buscar( $event )" (onDebounce)="sugerencias( $event )" > </app-pais-input>
+		    </div>
+		</div>
+		<hr>
 
+		<div class="alert alert-danger" *ngIf="hayError">
+		    No se encontro el termino {{termino}}
+		</div>
 
+		<div class="row">
+		    <div class="col">
+		        <app-pais-tabla [paises]="paises"></app-pais-tabla>
+		    </div>
+		</div>
+	2.- Se modifica por-capital.component.ts, se copia del componente por-pais y se modifica la llamada al servicio
+		export class PorCapitalComponent implements OnInit {
 
+			  termino: string = "";
+			  hayError: boolean = false;
+			  paises: Country[] = [];
 
+			  constructor( private paisesService: PaisService ) { }
+
+			  ngOnInit(): void {
+			  }
+
+			  buscar( termino:string ){
+			    this.hayError = false;
+			    this.termino = termino;
+			    this.paisesService.buscarCapital( this.termino )
+			      .subscribe(
+			          paises => {
+			            console.log(paises);
+			            this.paises = paises;
+			          }, error => {
+			            this.paises = [];
+			            this.hayError = true;
+			          }
+			      );
+			  }
+
+			  sugerencias( termino: string ){
+			    this.hayError = false;
+			  }
+			}
+	3.- Se modifica pais.service.ts, se crea servicio para que busque las capitales
+		  buscarCapital( termino: string ):Observable<Country[]>{
+			    return this.http.get<Country[]>(`${this.urlEndPoint}/capital/${termino}`);
+			  }
+	4.- Se modifica por-capital.component.html, para que mande la propiedad placeholder
+		<div class="row">
+		    <div class="col">
+		        <app-pais-input (onEnter)="buscar( $event )" (onDebounce)="sugerencias( $event )" placeHolder="Buscar Capital..."> </app-pais-input>
+		    </div>
+		</div>
+	5.- Se modifica pais-input.component.ts, se crea atributo input
+		@Input() placeHolder: string = '';
+	6.- Se modifca pais-input.component.html, se le agrega atributo placeHolder
+		<form action="" autocomplete="off" (ngSubmit)="buscar()">
+		    <input type="text" class="form-control" name="termino" [placeholder]="placeHolder" [(ngModel)]=termino (input)="teclaPresionada()">
+		</form>
+	7.- Se modifica por-pais.component.html, se le manda el place holder al input
+		<div class="col">
+	        <app-pais-input (onEnter)="buscar( $event )" (onDebounce)="sugerencias( $event )" placeHolder="Buscar Pais..."> </app-pais-input>
+	    </div>
+*************************************************************************************************************************************
+111.- ************************************************************************************************Ver pais de forma independiente
+************************************************************************************************************************ActivatedRote
+******************************************************************************************************Desestructuracion de argumentos
+	1.- Se modifica la clase de servicio pais.service.ts, se crea metodo que recupera pais por codigo
+		  buscarPaisXCod( id: string ): Observable<Country>{
+		    return this.http.get<Country>(`${this.urlEndPoint}/alpha/${id}`);
+		  }
+	2.- Se modifica ver-pais.component.ts
+		2.1.- Se modifica constructor, se realiza la inyeccion de dependencia del servicio y el activatedRoute
+			  constructor( private activatedRoute: ActivatedRoute,
+               private paisService: PaisService) { }
+		2.2.- Se modifica el metodo ngOnInit(), para que reciba el parametro de la url y por medio de este se recupere el pais
+			  ngOnInit(): void {
+			    this.activatedRoute.params.subscribe(
+			      //Desestructuracion de argumentos
+			      ({id}) => {
+			        console.log(id);
+			        this.paisService.buscarPaisXCod(id).subscribe(
+			          pais => console.log(pais)
+			        )
+			      }
+			    )
+			  }
+*************************************************************************************************************************************
+112.- ****************************************************************************************************************RxJs -SwitchMap
+	1.- Se modifica ver-pais.component.ts, se modifica el metodo ngOnInit para utilizar el operador switchMap
+		  ngOnInit(){
+		    this.activatedRoute.params.pipe(
+		      switchMap( ({id}) => this.paisService.buscarPaisXCod( id ) )
+		    ).subscribe( resp => console.log(resp));
+		  }*
+*************************************************************************************************************************************
+113.- **************************************************************************************************Terminar la pantalla ver-pais
+*************************************************************************************************************************Operador Tap
+**************************************************************************************************************************ng-template
+	1.- Se modifica ver-pais.component.ts
+		1.1.- Se crea atributo de tipo country
+			pais!: Country;
+		1.2.- Se modifica el metodo ngOnInit, se agrega operador tap() y se modifica el subscribe para que setee la respuesta 
+		al atributo creado
+			  ngOnInit(){
+			    this.activatedRoute.params.pipe(
+			      switchMap( ({id}) => this.paisService.buscarPaisXCod( id ) ),
+			      tap( resp => console.log(resp))
+			    ).subscribe( pais => this.pais = pais);
+			  }	
+	2.- Se modifica ver-pais.component.html
+		<div *ngIf="!pais; else divPais">
+		    <div class="alert-alert-info">
+		        Espere Por favor...
+		    </div>
+		</div>
+
+		<ng-template #divPais>
+		    <div class="row">
+		        <div class="col-12">
+		            <h1>Pais: <small>{{pais.name}}</small></h1>
+		        </div>
+		    </div>
+		    <div class="row">
+		        <div class="col-4">
+		            <h3>Bandera</h3>
+		            <img [src]="pais.flag" alt="" class="img-thumbnail">
+		        </div>
+		        <div class="col">
+		            <h3>Informacion</h3>
+		            <ul class="list-group">
+		                <li class="list-group-item">
+		                    <strong>Poblacion: </strong>{{pais.population}}
+		                </li>
+		                <li class="list-group-item">
+		                    <strong>Codigo numerico: </strong>{{pais.numericCode}}
+		                </li>
+		                <li class="list-group-item">
+		                    <strong>Codigo Alpha3: </strong>{{pais.alpha3Code}}
+		                </li>
+		            </ul>
+		        </div>
+		    </div>
+		    <h3>Traducciones</h3>
+		    <div class="row">
+		        <div class="col">
+		            <span class="badge bg-primary mr-5">{{pais.translations.de}}</span>
+		            <span class="badge bg-primary mr-5">{{pais.translations.es}}</span>
+		            <span class="badge bg-primary mr-5">{{pais.translations.fr}}</span>
+		            <span class="badge bg-primary mr-5">{{pais.translations.ja}}</span>
+		            <span class="badge bg-primary mr-5">{{pais.translations.it}}</span>
+		            <span class="badge bg-primary mr-5">{{pais.translations.br}}</span>
+		            <span class="badge bg-primary mr-5">{{pais.translations.br}}</span>
+		            <span class="badge bg-primary mr-5">{{pais.translations.pt}}</span>
+		            <span class="badge bg-primary mr-5">{{pais.translations.nl}}</span>
+		            <span class="badge bg-primary mr-5">{{pais.translations.hr}}</span>
+		            <span class="badge bg-primary mr-5">{{pais.translations.fa}}</span>
+		        </div>
+		    </div>
+		    <pre class="mt-5">
+		      {{pais | json}}
+		    </pre>
+		</ng-template>
+*************************************************************************************************************************************
+Seccion 9: Segerencias y debounce****************************************************************************************************
+*************************************************************************************************************************************
+119.- **********************************************************************************************************************[ngClass]
+	1.- Se modifica por-region.component.ts
+		1.1.- Se crean los atributos de la clase
+			 regiones: string[] = ['africa', 'americas', 'asia', 'aurope', 'oceania'];
+  			regionSeleccionada: string = '';
+  		1.2.- Se crea el metodo  activarRegion
+			  activarRegion( region: string){
+			    this.regionSeleccionada =  region;
+
+			    //TODO: Servicio de regiones
+			  }
+		1.3.- Se modifica el decorador para darle una caracteristica de style al btn-outline-secondary
+			@Component({
+			  selector: 'app-por-region',
+			  templateUrl: './por-region.component.html',
+			  styles: [`
+			    button{
+			      margin-right: 5px;
+			    }
+			  `
+			  ]
+			})
+	2.- Se modifica por-region.component.html, se crea el diseña
+		<h3>Buscar por Region: <small>{{regionSeleccionada | titlecase}}</small></h3>
+		<hr>
+		<h5>Seleccionar Region:</h5>
+		<div class="row">
+		    <div class="col">
+		        <!-- Se maneja la clase btn-primary la cual se activa si se cumple condicion -->
+		        <!-- <button class="btn btn-outline-primary" *ngFor="let region of regiones" (click)="activarRegion(region)" [class.btn-primary]="region === regionSeleccionada"> -->
+		        <!-- Se evalua que clase se activara segun se clumplan condiciones -->
+		        <button class="btn btn-outline-primary" *ngFor="let region of regiones" (click)="activarRegion(region)" [ngClass]="{ 'btn-primary': regionSeleccionada === region, 'btn.outline.primary': regionSeleccionada !== region}">
+		          {{region}}
+		    </button>
+		    </div>
+		</div>
+	3.- Se realizan las modificaciones para trabajar con la directiva [ngClass]
+		1.- Se modifica por-region.component.ts, se crea metodo encargado de setear la propiedad css
+			  activarCSS( region: string ): string{
+			    return ( region === this.regionSeleccionada ) ? 'btn-primary' : 'btn-outline-primary';
+			  }
+		2.- Se modifica por-region.component.html, se trabaja la directiva [ngClass] en el button
+			<button class="btn btn-outline-primary" *ngFor="let region of regiones" (click)="activarRegion(region)" [ngClass]="activarCSS( region)">
+*************************************************************************************************************************************
+121.- ******************************************************************************************************Mostrar Paises por Region
+	1.- Se modifica pais.service.ts, se crea metodo que busque los paises por region
+		  buscarPaisXRegion( region: string ): Observable<Country[]>{
+		    return this.http.get<Country[]>(`${this.urlEndPoint}/region/${region}`);
+		  }
+	2.- Se modifica por-region.component.ts
+		2.0.- Se realiza inyeccion de dependencia del servicio
+		2.1.- Se agrega atributo paises 
+			paises: Country[]=[];
+		2.2.- Se modifi metodo activarRegion() para que llame a la clase de servicio y llene el array creado de paises
+
+		activarRegion( region: string){
+		    this.regionSeleccionada =  region;
+
+		    this.paisService.buscarPaisXRegion(region).subscribe(
+		      paises => { this.paises = paises }
+		    );
+		  }
+	3.- Se modifica por-region.component.html, se renderizan los paises por region
+		<div class="row">
+		    <div class="col">
+		        <app-pais-tabla [paises]="paises"></app-pais-tabla>
+		    </div>
+		</div>
+*************************************************************************************************************************************
+122.- **************************************************************************************************Optimizar las peticiones Http
+***************************************************************************************************************************HttpParams
+	1.- Se modifica pais.service.ts, se crea getter para los parametro Http 
+		  get httpParams(){
+		    return new HttpParams().set('fields','name;capital;alpha2Code;flag;population')
+		  }
+	2.- Se envian los parametros a buscar en la consulta en cada peticion
+		  buscarPais( termino: string):Observable<Country[]>{
+		    return this.http.get<Country[]>(`${this.urlEndPoint}/name/${termino}`, {params: this.httpParams});
+		  }
+
+		  buscarCapital( termino: string ):Observable<Country[]>{
+		    return this.http.get<Country[]>(`${this.urlEndPoint}/capital/${termino}`, {params: this.httpParams});
+		  }
+
+		  buscarPaisXRegion( region: string ): Observable<Country[]>{
+		    return this.http.get<Country[]>(`${this.urlEndPoint}/region/${region}`, {params: this.httpParams});
+		  }
+*************************************************************************************************************************************
 
 
 
@@ -3483,6 +3748,23 @@ Complementarios*****************************************************************
 		Cuando se aplica a un elemento en una plantilla, convierte ese elemento en un enlace que inicia la navegación 
 		a una ruta. La navegación abre uno o más componentes enrutados en una o más ubicaciones 
 		de la página.<router-outlet>
+	************************************************************************************************************************
+	RxJs********************************************************************************************************************
+		Los operadores son el corazón de RxJs y se encuentran fuertemente influenciados por algunas características de la 
+		programación funcional. RxJs posee cientos de operadores y que nos permitirán realizar casi cualquier cosa. 
+		Filtrado de datos, transformaciones e incluso uniones entre varios streams.
+
+		Los operadores de RxJs son funciones que pueden ser encadenadas en lo que llamamos la cadena o pipeline de 
+		operadores y que se sitúan entre medias del Observable (productor de la información) y el Observer (consumidor 
+		de la misma) con el objetivo de filtrar, transformar o combinar los valores del Observable/Observables.
+
+		RxJs -SwitchMap************************************************************************************************
+			Es un operador que recibe un Observable y devuelve un observable.
+		***************************************************************************************************************
+		RxJs - Tap*****************************************************************************************************
+			Realizará un efecto secundario por cada emisión en la fuente Observable, pero devolverá un Observable que 
+			sea idéntico a la fuente.
+		***************************************************************************************************************
 	************************************************************************************************************************
 ********************************************************************************************************************************
 

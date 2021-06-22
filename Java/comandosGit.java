@@ -465,7 +465,7 @@ Remotos
 	añadir repositorios remotos. Ahora veremos explícitamente cómo hacerlo. Para 
 	añadir un remoto nuevo y asociarlo a un nombre que puedas referenciar fácilmente, 
 	ejecuta git remote add [nombre] [url]:
-		$ git remote add pb https://github.com/paulboone/ticgit
+		$   https://github.com/paulboone/ticgit
 *********************************************************************************
 
 *********************************************************Traer y Combinar Remotos --> $ git fetch [remote-name]
