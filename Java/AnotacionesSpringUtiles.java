@@ -153,7 +153,7 @@
 
 
 *************************************************************Objeto tinymcs para editor de texto
-27.5.- Se agrega codigo javaScript para utilizar plugin tinymcs para crear editor de texto		
+	27.5.- Se agrega codigo javaScript para utilizar plugin tinymcs para crear editor de texto		
 	<script src="${urlPublic}/tinymce/tinymce.min.js"></script>
 	<script>
   		tinymce.init({
@@ -168,3 +168,127 @@
       <label for="detalle">Detalles</label>             
       <textarea class="form-control" name="detalle" id="detalle" rows="10"></textarea>
     </div>  
+************************************************************************************************
+
+
+Api Rest  https://howtodoinjava.com/spring-boot2/resttemplate/spring-restful-client-resttemplate-example/
+
+*********************************************************Spring RestTemplate - Ejemplo HTTP GET
+	--> https://howtodoinjava.com/spring-boot2/resttemplate/spring-restful-client-resttemplate-example/
+	Los métodos disponibles son:
+
+		getForObject (url, classType) : recupera una representación haciendo un GET en la URL. 
+			La respuesta (si la hay) se desordena al tipo de clase dado y se devuelve.
+		getForEntity (url, responseType) : recupere una representación como ResponseEntity haciendo 
+			un GET en la URL.
+		exchange (requestEntity, responseType) : ejecuta lo especificado RequestEntityy devuelve 
+			la respuesta como ResponseEntity .
+		execute (url, httpMethod, requestCallback, responseExtractor) : ejecuta httpMethod en la 
+			plantilla de URI dada, prepara la solicitud con RequestCallback y lee la respuesta 
+			con ResponseExtractor .
+
+
+	private static void getEmployees(){
+	    final String uri = "http://localhost:8080/springrestexample/employees";
+	    RestTemplate restTemplate = new RestTemplate();
+	     
+	    EmployeeListVO result = restTemplate.getForObject(uri, EmployeeListVO.class);
+	     
+	    //Use the response
+	}
+
+
+	private static void getEmployees(){
+	    final String uri = "http://localhost:8080/springrestexample/employees";
+	    RestTemplate restTemplate = new RestTemplate();
+	 
+	    ResponseEntity<EmployeeListVO> response = restTemplate.getForEntity(uri, EmployeeListVO.class);
+	 
+	    //Use the response.getBody()
+	}
+************************************************************************************************
+
+
+***************************************************Envío de encabezados HTTP usando RestTemplate
+	private static void getEmployees(){
+	    final String uri = "http://localhost:8080/springrestexample/employees";
+	    RestTemplate restTemplate = new RestTemplate();
+	     
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+	    headers.set("X-COM-PERSIST", "NO");
+	    headers.set("X-COM-LOCATION", "USA");
+	 
+	    HttpEntity<String> entity = new HttpEntity<String>(headers);
+	     
+	    ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+	     
+	    //Use the response.getBody()
+	}
+************************************************************************************************
+
+
+**************************************************Envío de parámetros de URL usando RestTemplate
+	private static void getEmployeeById(){
+	    final String uri = "http://localhost:8080/springrestexample/employees/{id}";
+	    RestTemplate restTemplate = new RestTemplate();
+	     
+	    Map<String, String> params = new HashMap<String, String>();
+	    params.put("id", "1");
+	     
+	    EmployeeVO result = restTemplate.getForObject(uri, EmployeeVO.class, params);
+	     
+	    //Use the result
+	}	
+************************************************************************************************
+
+
+******************************************************** Spring RestTemplate - Ejemplo HTTP POST
+	Los métodos disponibles son:
+
+		postForObject (url, request, classType) : envía el objeto dado a la URL y devuelve la 
+			representación que se encuentra en la respuesta como tipo de clase determinado.
+		postForEntity (url, request, responseType) : envía el objeto dado a la URL y devuelve 
+			la respuesta como ResponseEntity .
+		postForLocation (url, request, responseType) : envía el objeto dado a la URL y devuelve 
+			el valor del Locationencabezado.
+		exchange (url, requestEntity, responseType)
+		ejecutar (url, httpMethod, requestCallback, responseExtractor) 
+
+	private static void createEmployee(){
+	    final String uri = "http://localhost:8080/springrestexample/employees";
+	    RestTemplate restTemplate = new RestTemplate();
+	 
+	    EmployeeVO newEmployee = new EmployeeVO(-1, "Adam", "Gilly", "test@email.com");
+	     
+	    EmployeeVO result = restTemplate.postForObject( uri, newEmployee, EmployeeVO.class);
+	 
+	    System.out.println(result);
+	} 
+************************************************************************************************
+
+************************************************************************************Consumir PUT
+	private static void updateEmployee(){
+	    final String uri = "http://localhost:8080/springrestexample/employees/{id}";
+	    RestTemplate restTemplate = new RestTemplate();
+	     
+	    Map<String, String> params = new HashMap<String, String>();
+	    params.put("id", "2");
+	     
+	    EmployeeVO updatedEmployee = new EmployeeVO(2, "New Name", "Gilly", "test@email.com");
+	     
+	    restTemplate.put ( uri, updatedEmployee, params );
+	}
+************************************************************************************************
+
+*********************************************************************************Consumir DELETE
+	private static void deleteEmployee(){
+	    final String uri = "http://localhost:8080/springrestexample/employees/{id}";
+	    RestTemplate restTemplate = new RestTemplate();
+	     
+	    Map<String, String> params = new HashMap<String, String>();
+	    params.put("id", "2");
+	     
+	    restTemplate.delete ( uri,  params );
+	}
+************************************************************************************************

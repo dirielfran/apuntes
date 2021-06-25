@@ -8514,7 +8514,205 @@ Seccion 22: Grafica es Angular**************************************************
 		  }
 
 		}
+************************************************************************************************************************************
+385. *************************************************************************************************************Pantalla protegida
+	1.- Se modifica dashboard.component.ts, se agrega navegacion en caso de logout 
+		1.1.- Se crea metodo logout() 
+			  logout(){
+			    this.router.navigateByUrl('/auth');
+			  }
+		1.2.- Se modifica decorator de css para que todo el contenido del compnente tenga un margen   
+			@Component({
+			  selector: 'app-dashboard',
+			  templateUrl: './dashboard.component.html',
+			  styles: [
+			    `
+			    * {
+			      margin: 15px;
+			    }
+			    `
+			  ]
+			})
+			export class DashboardComponent implements OnInit {...}   
 
+	2.- Se modifica dashboard.component.html, se renderiza vista   
+		<h1>Dashborad</h1>
+		<hr>
+
+		<p>
+		    Esta pagin solo fnciona si estas autenticado
+		</p>
+
+		<h4>User Info</h4>
+		<pre>...</pre>
+
+		<button (click)="logout()">
+		    Logout
+		</button>   
+	3.- Se modifica register.component.ts, se agrega navegacion a dashboard   
+		constructor( private formBuilder: FormBuilder, 
+        private router: Router) { }
+
+		  register(){
+		    console.log(this.myForm.valid);
+		    this.router.navigateByUrl('/dashboard');
+		  }
+
+	4.- Se modifica login.component.ts, se agrega navegacion a componente dashboard   
+
+		  constructor( private formBuilder: FormBuilder,
+		                private router: Router) { }
+
+		  ngOnInit(): void {
+		  }
+
+		  login(){
+		    console.log(this.myForm.valid);
+		    this.router.navigateByUrl('/dashboard');
+		  }
+************************************************************************************************************************************
+386. *************************************************************************************************Login de usuario desde Angular
+	1.- Se modifica app.module.ts, se importa HttpClientModule   
+		@NgModule({
+		  declarations: [
+		    AppComponent
+		  ],
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule,
+		    HttpClientModule
+		  ],
+		  providers: [],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+
+	2.- Se modifica environment.ts, se agrega variable de entorno 
+		export const environment = {
+		  production: false,
+		  baseUrl: 'http://localhost:4000/api'
+		};
+	3.- Se crea clase de servicio --> 	ng g s auth/services/auth --skip-tests
+	4.- Se modifica auth.service.ts, se crea servicio de login 
+		@Injectable({
+		  providedIn: 'root'
+		})
+		export class AuthService {
+
+		  private baseUrl: String = environment.baseUrl
+
+		  constructor( private http: HttpClient) { }
+
+		  login( email: string, password: string ): Observable<AuthResponse>{
+		    const url =`${this.baseUrl}/auth`
+		    const body = { email, password };
+		    return this.http.post<AuthResponse>(url, body);
+		  }
+		}
+	5.- Se crea interface auth/interfaces/interface.ts 
+		export interface AuthResponse {
+		    "ok": boolean,
+		    "uid"?: string,
+		    "name"?: string,
+		    "msg"?: string,
+		    "jwt"?: string
+		}
+	6.- Se modifica login.component.ts, se modifica metodo de login para ejecutar el servicio 
+		  constructor( private formBuilder: FormBuilder,
+                private router: Router,
+                private authServices: AuthService) { }
+
+		  ngOnInit(): void {
+		  }
+
+		  login(){
+		    console.log(this.myForm.valid);
+		    const { email, password } = this.myForm.value;
+		    this.authServices.login( email, password ).subscribe(
+		      res => console.log(res)
+		    );
+
+		    //this.router.navigateByUrl('/dashboard');
+		  }
+************************************************************************************************************************************
+387. *******************************************************************************************Almacenar la información del usuario
+	1.- Se modifica interface.ts, se crea y exporta interface Usuario
+		export interface Usuario{
+		    uid: String, 
+		    name: String 
+		}
+	2.- Se modifica auth.service.ts, se atributo usuario y se llena cn la respuesta del servicio login 
+		2.1.- Se crea atributo auaurio con su get 
+			 private _usuario!: Usuario;
+  
+			  get usuario(){
+			    return {...this._usuario};
+			  }
+		2.2.- Se modifica metodo login para que valide respuesta y si es afirmativa cargue la informacion de usuario 
+			login( email: string, password: string ): Observable<boolean>{
+		    const url =`${this.baseUrl}/auth`
+		    const body = { email, password };
+		    return this.http.post<AuthResponse>(url, body)
+		      .pipe(
+		        tap( resp => {
+		            if(resp.ok){
+		              this._usuario = {
+		                name: resp.name!,
+		                uid: resp.uid!
+		              }
+		            }
+		          }),
+		        map( resp => resp.ok ),
+		        catchError( err => of(false))
+		      );
+		  }
+	3.- Se modifica metodo login(), si respuesta del servicio es ok redirecciona al dashboard  
+		login(){
+		    const { email, password } = this.myForm.value;
+		    this.authServices.login( email, password ).subscribe(
+		      ok => {
+		        if(ok){
+		          this.router.navigateByUrl('/dashboard')
+		        }else{
+		          //TODO mostrar mensaje de error 
+		        }
+		      }
+		    );
+
+		  }
+	4.- Se modifica dashboard.component.ts, se carga el usuario del servicio 
+		  get usuario(){
+		    return this.authService.usuario;
+		  }
+
+		  constructor( private router: Router, 
+		                private authService: AuthService) { }
+
+	5.- Se modifica dashboard.component.html, se renderiza info del usuario 
+		<pre>{{ usuario | json }}</pre>
+************************************************************************************************************************************
+388. *****************************************************************************************************Mensajes de error visuales
+	referencia --> switAlert2 --> https://sweetalert2.github.io/
+	1.- Se instala SwuitAler 
+		npm install sweetalert2
+	2.- Se modifica login.component.ts 
+		2.1.- Importa switAlert2 
+			import swal from 'sweetalert2';
+		2.2.- Se modifica el metodo login en caso de error 
+			  login(){
+		    console.log(this.myForm.valid);
+		    const { email, password } = this.myForm.value;
+		    this.authServices.login( email, password ).subscribe(
+		      ok => {
+		        if(ok === true){
+		          this.router.navigateByUrl('/dashboard');
+		        }else{
+		          swal.fire('Error', ok,  'error')
+		        }
+		      }
+		    );
+
+		  }
 ************************************************************************************************************************************
 ************************************************************ Fin Seccion ***********************************************************
 
@@ -8743,6 +8941,10 @@ Complementarios*****************************************************************
 		.spacer{
 		    flex: 1 1 auto;
 		}
+		/*Margen de 15px para todo el contenido*/
+		    *{
+			      margin: 15 px;
+			    }
 	************************************************************************************************************************
 	Temas de AngularMaterial************************************************************************************************
 		deeppurple-amber.css

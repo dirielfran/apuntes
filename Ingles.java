@@ -76,3 +76,7 @@ are you tired ?
 what´s your id card on the work?
 
 thats great.
+
+
+A LIKE SWIMMING IN THE BEACH
+A LOVE CAMPING 
