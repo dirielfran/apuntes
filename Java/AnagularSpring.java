@@ -1001,6 +1001,15 @@ Seccion 5: CRUD con Spring API REST*********************************************
   			<td>
                 <button class="btn btn-primary" type="button" name="button" [routerLink]="['./clientes/form', cliente.id]">Editar</button>
             </td>
+
+
+
+
+
+
+
+
+
 54.- **************************************************************************Update en el cliente.service.ts y en form.component.ts
 	1.- Se modifica cliente.servises.ts, se crea metodo update() para modificacion de cliente
 		//Metodo de modificacion del cliente
@@ -1109,6 +1118,7 @@ Seccion 5: CRUD con Spring API REST*********************************************
     	), se quitan todos los import y se corre la aplicacion
     3.- Se añaden los insert al archivo import.sql
 Seccion 6: Manejo de errores en String(Backend)**************************************************************************************
+
 59.- ******************************************************************************************Manejo de errores metodo showCliente()
 	1.- Se modifica ClienteRestController.java, Se agrega objeto ResponseEntity para el manejo de errores
 		@GetMapping("/clientes/{id}")

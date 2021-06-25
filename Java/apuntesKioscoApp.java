@@ -1265,6 +1265,17 @@
 
 
 
+<<<<<<< HEAD
+****************************************************************************************************Tipo de pago en consignacion
+	Descripcion: Se debe añadir el tipo de pago en la consignacion
+******************************************************************************************************************************** Por pase a produccion
+
+
+
+*******************************************************************************************Servicio de gastosXMes y GanaciasXMes
+	Descripcion: Se realizan servicios para mostrar ganancias y gastos
+******************************************************************************************************************************** Por pase a produccion
+=======
 ****************************************************************************************************************Modulo de Perdidas
 	Descripcion: se necesita un modulo para el regstro de todas las perdidas del sistema
 	Campos de la entidad:
@@ -2275,6 +2286,7 @@ Iconos**************************************************************************
 	sentiment_neutral
 	sentiment_very_satisfied
 **********************************************************************************************************************************
+>>>>>>> 6259fd448e8df603c72425101dff0a2465152587
 
 
 
@@ -2296,9 +2308,6 @@ Querys**************************************************************************
 		group by p.id 
 		order by 3  desc
 		INTO OUTFILE '/var/lib/mysql-files/GananciaXProducto010221_310221.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';
-
-
-
 	use db_springboot_backend;
 
 	select * from facturas_items where consignacion = 1;
