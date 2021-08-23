@@ -1264,18 +1264,17 @@
 ********************************************************************************************************************************En Produccion
 
 
-
-<<<<<<< HEAD
 ****************************************************************************************************Tipo de pago en consignacion
 	Descripcion: Se debe añadir el tipo de pago en la consignacion
-******************************************************************************************************************************** Por pase a produccion
+******************************************************************************************************************************** En Produccion
 
 
 
 *******************************************************************************************Servicio de gastosXMes y GanaciasXMes
 	Descripcion: Se realizan servicios para mostrar ganancias y gastos
-******************************************************************************************************************************** Por pase a produccion
-=======
+******************************************************************************************************************************** En Produccion
+
+
 ****************************************************************************************************************Modulo de Perdidas
 	Descripcion: se necesita un modulo para el regstro de todas las perdidas del sistema
 	Campos de la entidad:
@@ -2173,8 +2172,22 @@ Modulo de comisiones************************************************************
 				+  }
 		* Se modifica factura.ts, se agrega atributo comision_mp
 			 comision_mp: number = 0;
-********************************************************************************************************************************** Por Pase a produccion
+********************************************************************************************************************************** En produccion
 
+
+******************************************************************************************************************Factura al costo
+	*SQL 
+		ALTER TABLE `db_springboot_backend`.`facturas` 
+		ADD COLUMN `costo` TINYINT NOT NULL AFTER `comision_id`;
+
+
+		ALTER TABLE `db_springboot_backend`.`facturas_items` 
+		ADD COLUMN `total` DOUBLE NOT NULL AFTER `precio`,
+		CHANGE COLUMN `producto_id` `producto_id` BIGINT NULL DEFAULT NULL AFTER `update_at`,
+		CHANGE COLUMN `precio` `precio` DOUBLE NOT NULL AFTER `cantidad`;
+
+		npm install primeflex --save
+********************************************************************************************************************************** En produccion
 
 
 Excepciones***********************************************************************************************************************
@@ -2262,9 +2275,52 @@ Excepciones*********************************************************************
 			+                            "node_modules/primeicons/primeicons.css",
 			+                            "node_modules/primeng/resources/themes/vela-blue/theme.css",
 			+                            "node_modules/primeng/resources/primeng.min.css"
-********************************************************************************************************************************** En Desarrollo
+********************************************************************************************************************************** En Produccion
 
 
+CodigoBarra***********************************************************************************************************************
+	* Se debe crear campo codigo varchar(45) en tabla de productos
+********************************************************************************************************************************** En Produccion
+
+
+Clasificacion de Productos********************************************************************************************************
+	* ALTER TABLE productos ADD clasificacion enum('VZLA', 'KCO');
+
+	*ALTER TABLE `db_springboot_backend`.`productos` 
+		CHANGE COLUMN `clasificacion` `clasificacion` ENUM('VZLA', 'KCO') NULL DEFAULT NULL ;
+**********************************************************************************************************************************En Desarrollo
+
+
+Proveedor*************************************************************************************************************************
+		ALTER TABLE `db_springboot_backend`.`productos` 
+			ADD COLUMN `proveedor_id` BIGINT NULL AFTER `clasificacion`;
+
+		CREATE TABLE `proveedores` (
+		  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+		  `user` varchar(45) DEFAULT NULL,
+		  `create_at` timestamp NULL DEFAULT NULL,
+		  `update_at` timestamp NULL DEFAULT NULL,
+		  `name` varchar(200) DEFAULT NULL,
+		  `descripcion` varchar(255) DEFAULT NULL,
+		  `email` varchar(100) DEFAULT NULL,
+		  `deleted` TINYINT DEFAULT 0,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB AUTO_INCREMENT=14922 DEFAULT CHARSET=utf8;
+
+
+		ALTER TABLE `db_springboot_backend`.`productos` 
+			ADD INDEX `FKProveedor_idx` (`proveedor_id` ASC);
+			;
+			ALTER TABLE `db_springboot_backend`.`productos` 
+			ADD CONSTRAINT `FKProveedor`
+			  FOREIGN KEY (`proveedor_id`)
+			  REFERENCES `db_springboot_backend`.`proveedores` (`id`)
+			  ON DELETE RESTRICT
+			  ON UPDATE RESTRICT;
+
+		ALTER TABLE `db_springboot_backend`.`proveedores` 
+		ADD COLUMN `movil` VARCHAR(45) NULL AFTER `deleted`;
+**********************************************************************************************************************************
 
 Iconos****************************************************************************************************************************
 	https://material.io/resources/icons/?style=baseline
@@ -2286,7 +2342,7 @@ Iconos**************************************************************************
 	sentiment_neutral
 	sentiment_very_satisfied
 **********************************************************************************************************************************
->>>>>>> 6259fd448e8df603c72425101dff0a2465152587
+
 
 
 
@@ -2415,6 +2471,29 @@ Complementos********************************************************************
 		less /opt/apache-tomcat-8.5.54/logs/catalina.out
 
 		$ tail -f /opt/apache-tomcat-8.5.54/logs/catalina.out
+
+
+		*Puesta en produccion 
+			*Front  
+				* Se realiza backup
+					*Ingreso a servidor FileZilla --> /opt/apache-tomcat-8.5.54/webapps
+						Ip: 66.228.61.76 
+						User: root 
+						Pass: Danger120- 
+						Puerto: 22 
+					*Se copia Folder Kiosco
+					* Se compila aplicacion --> ng build --prod
+					* Dentro del dist creado se modifica el index.html 
+						<base href="/kiosco/">
+					* Se sube el contenido del folder dist al folder de kiosco del servidor  
+			* Backend 
+				* Se realiza backup del back 
+				* Se compila aplicacion -->		mvn clean package -Dmaven.test.skip=true 
+				* Se accede al manager del tomcat 66.228.61.76/manager 
+					user: eareiza
+					pass: Danger120- 
+				* se repliega la aplicacion 
+				* Se despliega la aplicacion subiendo el archivo .war 
 ********************************************************************************************************************************
 
 

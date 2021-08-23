@@ -573,6 +573,17 @@ Trabajando con branch***********************************************************
     interactive = always
 ********************************************************************************
 
+****************************************************************deshacer cambios git checkout -- .
+********************************************************************************
+
+*********************************************release a produccio y manejo de tag
+	Cuando se realaliza un release a produccion 
+		git tag -a v1.0.0 -m "Diseño"
+		git tag 
+		git push --tag  
+********************************************************************************
+
+
 git push -u origin master
 git add: agrega un ar
 //configurar usuario

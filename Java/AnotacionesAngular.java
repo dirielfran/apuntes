@@ -6,6 +6,7 @@ ng generate component directivas    --> crea un componente
 ng g c components/heroeTarjeta --skipTests=true  --> Creacion de componente sin el archivo de prueba
 ng g c clientes/form --flat 		--> Crea componente con el -- flat se le indica que no cree folder
 ng generate service cliente         --> Se crea clase de servicio
+ng g s services/user --dry-run  	--> hace una simulacion de creacion de archivo 
 ng g m miModulo						--> Genera un modulo propio
 ng g m template --routing 			--> Genera modulo con su routing
 ng g g usuarios/guard/auth  		--> genera guard en ruta especificada
@@ -34,16 +35,19 @@ paramMap(Interface)					--> Un mapa que proporciona acceso a los parámetros obl
 [(ngModel)]							--> Directiva que va a poblar desde el form a un atributo de la clase y a los atributos de este 
 										(Binding) ESTA MAPEADO AL ATRIBUTO AL FORMULARIO.
 										<input type="text" class="form-control" [(ngModel)]="cliente.apellido" name="apellido">
+(ngModelChange) 		--> ngModelChange is the @output property of ngModel directive. and it’s specific to Angular framework.
+												Where as (change) event is classic HTML DOM event, independent of Angular framework triggered when a 
+												change happened in input element.
 (ngSubmit)							--> <!--(ngSubmit) invoca un metodo de la clase-->
-    <form (ngSubmit) ="create()">
+    												<form (ngSubmit) ="create()">
 [routerLink]						-->	<!--[routerLink] Nos permite crear rutas internas del proyecto-->
 		            						<button class="btn btn-rounded btn-primary" type="buttom" [routerLink]="['/clientes/form']">Crear Cliente</button>
 [routerLinkActiveOptions]			--> Se le indica que este activo siempre y cuando el path sea exactamente igual
-										[routerLinkActiveOptions]="{exact:true}"
+																	[routerLinkActiveOptions]="{exact:true}"
 [ngClass]							--> Adds and removes CSS classes on an HTML element.
-										<li class="page-item" *ngFor="let pagina of paginas" [ngClass]="pagina-1 == paginador.number?'disabled':''">
+													<li class="page-item" *ngFor="let pagina of paginas" [ngClass]="pagina-1 == paginador.number?'disabled':''">
 [ngValue]							--> [ngValue] permite enlazar un objeto complejo. De esta manera al seleccionar el nombre de la ciudad 
-										desplegaremos el objeto entero. 
+														desplegaremos el objeto entero. 
 <ng-template>						-->	<!--Se agrega directiva ngIf, si no existe cliente coloca boton crear en caso contrario se utiliza template-->
                     						<button class="btn btn-primary" role="button" (click)='create()' *ngIf="!cliente.id else elseBlock">Crear</button>
 
@@ -67,6 +71,13 @@ funcion atob(JavaScript) 			-->Decodificar base64 en JavaScript
 Almacenar en el sessioStorage 		-->sessionStorage.setItem('usuarios', JSON.stringify(this._usuario));
 Convertir un objeto en json 		-->JSON.stringify(this._usuario)
 cambio de puerto 					--> ng serve --port 4401 
+
+Diferentes formas de path en el RouterModule:
+  //{ path: 'path/:routeParam', component: MyComponent },
+  //{ path: 'staticPath', component: ... },
+  //{ path: '**', component: ... },
+  //{ path: 'oldPath', redirectTo: '/staticPath' },
+  //{ path: ..., component: ..., data: { message: 'Custom' }
 
 
 ************************************************************Angular Fit***************************************************************
@@ -7666,7 +7677,7 @@ Seccion 22: Grafica es Angular**************************************************
 ************************************************************************************************************************************
 358. ***************************************************************************************Instalaciones necesarias para el backend
 	1.- Se realizan instalaciones 
-		npm i bcriptjs cors dotenv express express-validator jsonwebtoken mongoose
+		npm i cors dotenv express express-validator jsonwebtoken mongoose
 		encriptacion de contraseñas 				--> bcriptjs 
 		manejos de cors 							--> cors 
 		configuracion de variables de entorno 		--> dotenv 
@@ -7722,7 +7733,7 @@ Seccion 22: Grafica es Angular**************************************************
 ************************************************************************************************************************************
 360. ******************************************************************************************Crear las rutas de nuestra aplicación
 	1.- Se crea folder en rais --> ruta --> auth.js 
-	2.- Se modifica auth.js, se crea connstructo
+	2.- Se modifica auth.js, se crea constructor
 		//Se desestructura para obtener Router
 		const { Router }= require('express');
 
@@ -7794,7 +7805,7 @@ Seccion 22: Grafica es Angular**************************************************
 		    crearLogin,
 		    validarToken
 		}
-	3.- Se modifica auth.js, se cortan los callbacks y se reemplazan por el llamado de constantes importadas de auth.controller.js, 
+	3.- Se modifica auth.js en folder routes, se cortan los callbacks y se reemplazan por el llamado de constantes importadas de auth.controller.js, 
 		se prueban las rutas por postman
 
 		//controlador
@@ -7908,7 +7919,7 @@ Seccion 22: Grafica es Angular**************************************************
 		    check('pass', 'El campo pass es obligatorio y debe ser robusta').isStrongPassword(),
 		    check('email', 'El campo email es obligatorio y debe tener el formato de email').isEmail(),
 		 ] ,crearUsuario)
-	2.- Se modifica auth.controller.js, se modifica crearLogin, se agrega manejo de errores si viene en el reqest 
+	2.- Se modifica auth.controller.js, se modifica crearLogin, se agrega manejo de errores si viene en el request 
 		const crearUsuario = (req, res = response ) => {
 		    const errors = validationResult( req );
 		    if( !errors.isEmpty() ){
@@ -8107,7 +8118,7 @@ Seccion 22: Grafica es Angular**************************************************
 		PORT=4000
 		BD_CNN=mongodb+srv://eareiza:UnCBCqbB4ClLqMtf@clustertutoangular.ljd5e.mongodb.net/myAngular
 		SECRET_JWT_SEED=3ST0D3B3S3RS3CR370
-	2.- Se crea archivo pra la creacion de token raiz --> helpers --> jwt.js  
+	2.- Se crea archivo para la creacion de token raiz --> helpers --> jwt.js  
 		 const jwt = require('jsonwebtoken');
 
 		const generarJWT = (uid, name) => {
@@ -8316,7 +8327,7 @@ Seccion 22: Grafica es Angular**************************************************
 				--> interfaces
 		protected 
 		guards
-	2.-Se creanmodulos  
+	2.-Se crean modulos  
 		ng g m protected --routing
 		ng g m auth --routing
 	3.-Se crean componentes 
@@ -8324,7 +8335,7 @@ Seccion 22: Grafica es Angular**************************************************
 		ng g c auth/pages/register --skipTests -is
 		ng g c auth/pages/main --skipTests -is
 		ng g c protected/dashboard --skipTests -is
-	4.- Se copian los archivos font y mages en assets --> carpeta de  recursos del tuto
+	4.- Se copian los archivos font y images en assets --> carpeta de  recursos del tuto
 	5.- Se copia contenido de login.css en style.css del proyecto --> recursos del tuto   
 ************************************************************************************************************************************
 383. ***************************************************************************************************************Rutas y LazyLoad
@@ -8484,7 +8495,7 @@ Seccion 22: Grafica es Angular**************************************************
 		  }
 
 		}
-	6.- Se modifica register.component.html 
+	6.- Se modifica register.component.ts 
 		import { Component, OnInit } from '@angular/core';
 		import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -8816,13 +8827,1959 @@ Seccion 22: Grafica es Angular**************************************************
 		    this.authService.logout();
 		  }
 ************************************************************************************************************************************
-392. ****************************************************************************************************Tarea: Registro de usuarios
-
+392. ****************************************************************************************************Tarea: Registro de usuarios	
 ************************************************************************************************************************************
-************************************************************ Fin Seccion ***********************************************************
+******************************************************* Fin Seccion ****************************************************************
+***********************************Sección 26: Desplegar backend y frontend a produccion********************************************
+401. ****************************************************************************************Desplegar aplicación de Angular en Node
+	1.- Se compila la aplicacion del front --> ng build --prod
+	2.- Se copian todos los archivos creados de la carpeta dist/AuthApp
+	3.- Nos ubicamos en la carpeta publica del backend y se borran los archivos index y style, se copian los archivos generados
+	4.- Se prueban en el navegador --> localhost:4000/ , se debe rederizar el login 
+	5.- En el front se modifica app-routing.module.ts, se le agrega hash al route 
+		@NgModule({
+		  imports: [RouterModule.forRoot(routes, {
+		    useHash: true
+		  })],
+		  exports: [RouterModule]
+		})
+		export class AppRoutingModule { }
+
+		Nota: Añadimos el literal {useHash: true} esto añadirá un # a la ruta, que es un viejo truco de los navegadores para evitar 
+		que el navegador recargue la pagina.
+	6.- Se compila la aplicacion del front --> ng build --prod
+	7.- Se copian todos los archivos creados de la carpeta dist/AuthApp
+	8.- Nos ubicamos en la carpeta public del backend y se borran los archivos, se copian los archivos generados
+	9.- Se prueban en el navegador --> localhost:4000/ , se debe rederizar con el path --> http://localhost:4000/#/dashboard
+************************************************************************************************************************************
+402. Desplegar aplicación de Node a Heroku******************************************************************************************
+	
+************************************************************************************************************************************
+******************************************************* Fin Seccion ****************************************************************
 
 
 
+
+
+
+
+
+
+****************************************************Angular Fit Avanzado**************************************************************
+**************************************************************************************************************************************
+**************************************************************************************************************************************
+*********************************Sección 2: Dominando la creación automática del Angular CLI******************************************
+7. *****************************************************************************************************Uso de la ayuda del AngularCLI
+	*ng help --> ayuda
+	1.- Se crea la aplicacion --> ng new clitest
+	Referencia --> https://angular.io/cli
+**************************************************************************************************************************************
+8. ********************************************************************************************Control de la generación de componentes
+	* ng g c --help --> para solicitar ayuda
+	1.- Se genera componente home
+		ng g c pages/home -is  --> -is para no crear archivo css 
+	2.- Se crea componente about 
+		ng g c pages/about/about --flat --skip-test
+	3.- Se crea componente contact 
+		ng g c pages/contact/contact --flat -is --skip-tests
+	4.- Se modifica app.component.ts 
+		<app-home></app-home>
+		<app-contact></app-contact>
+**************************************************************************************************************************************
+9. **********************************************************************************************************Paths, servicios y guards
+	* ng g s --help --> solicitar ayuda 
+	1.- Se genera servicio AuthService
+		ng g s services/auth --skip-test 
+	2.- Se modifica auth.service.ts, se modifica constructor con console.log 
+		  constructor() {
+		    console.log('Hola desde el servicio auth')
+		   }
+	3.- Se modifica home.component.ts, se realiza la injeccion de dependencia del servicio
+		  constructor( private authService: AuthService) { }
+	Nota: se debe probar e inspeccionar en el navegador el mensaje del servicio 
+	4.- Se genera servicio user 
+		ng g s services/user --dry-run  --> hace una simulacion de creacion de archivo 
+		ng g s services/user --skip-tests
+	5.- Generacion de guard 
+		ng g --help  --> para solicitar ayuda 
+		ng g guard guard/auth --skip-tests
+**************************************************************************************************************************************
+**************************************************************************************************************************************
+********************************************************Fin Seccion*******************************************************************
+****************************************Sección 3: Estructuración de nuestro proyecto*************************************************
+15. *****************************************************************************************************Inicio de proyecto - AdminPro
+	1.- Se descarga material  
+	2.- Se accede a link de tempates --> https://www.wrappixel.com/templates/category/dashboard-templates/
+	3.- Se crea proyecto -->  ng new adminpro
+**************************************************************************************************************************************
+17. ***********************************************************************Primeros componentes e inicio de la estructura del proyecto
+	1.- Se genera componente login --> ng g c auth/login --skip-tests
+	2.- Se genera componente register --> ng g c auth/register --skip-tests
+	3.- Se genera componente nopagesfound --> ng g c pages/nopagesfound --skip-tests
+	4.- Se genera componente dashboard --> ng g c pages/dashboard --skip-tests
+	5.- Se genera componente breadcrumbs --> ng g c shared/breadcrumbs --skip-tests
+	6.- Se genera componente sidebar --> ng g c shared/sidebar --skip-tests
+	7.- Se genera componente header --> ng g c shared/header --skip-tests
+**************************************************************************************************************************************
+18. *****************************************************************************************Agregar las librerías externas necesarias
+	1.- Se copian las siguientes carpetas del material de la seccion a la carpeta assets del proyecto 
+		css, images, js, plugins 
+	2.- Se realiza el import de la librerias
+		2.1.- Se abre el archivo pages-blanck del material de la seccion  
+		2.2.- Se modifica el index.html del proyecto con las importaciones copiadas del archivo pages-blank.html 
+			<!doctype html>
+				<html lang="en">
+				<head>
+				  <meta charset="utf-8">
+				  <title>Adminpro</title>
+				  <base href="/">
+				  <meta name="viewport" content="width=device-width, initial-scale=1">
+				  <!-- Favicon icon -->
+				  <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/favicon.png">
+				  <!-- Bootstrap Core CSS -->
+				  <link href="./assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+				  <!-- Custom CSS -->
+				  <link href="./assets/css/style.css" rel="stylesheet">
+				  <!-- You can change the theme colors from here -->
+				  <link href="./assets/css/colors/default-dark.css" id="theme" rel="stylesheet">
+				</head>
+				<body>
+				  <app-root></app-root>
+
+
+				      <!-- ============================================================== -->
+				    <!-- All Jquery -->
+				    <!-- ============================================================== -->
+				    <script src="./assets/plugins/jquery/jquery.min.js"></script>
+				    <!-- Bootstrap tether Core JavaScript -->
+				    <script src="./assets/plugins/bootstrap/js/popper.min.js"></script>
+				    <script src="./assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+				    <!-- slimscrollbar scrollbar JavaScript -->
+				    <script src="./assets/js/perfect-scrollbar.jquery.min.js"></script>
+				    <!--Wave Effects -->
+				    <script src="./assets/js/waves.js"></script>
+				    <!--Menu sidebar -->
+				    <script src="./assets/js/sidebarmenu.js"></script>
+				    <!--stickey kit -->
+				    <script src="./assets/plugins/sticky-kit-master/dist/sticky-kit.min.js"></script>
+				    <script src="./assets/plugins/sparkline/jquery.sparkline.min.js"></script>
+				    <!--Custom JavaScript -->
+				    <script src="./assets/js/custom.min.js"></script>
+				    <!-- ============================================================== -->
+				    <!-- Style switcher -->
+				    <!-- ============================================================== -->
+				    <script src="./assets/plugins/styleswitcher/jQuery.style.switcher.js"></script>
+				</body>
+			</html>
+**************************************************************************************************************************************
+19. ******************************************************************************Header, SiderBar, Breadcrumbs y contenedor principal
+	1.- Se modifica el index.html, se le agrega clase al body y preloader del archivo pages-banck 
+		<!doctype html>
+		<html lang="en">
+		<head>
+		  <meta charset="utf-8">
+		  <title>Adminpro</title>
+		  <base href="/">
+		  <meta name="viewport" content="width=device-width, initial-scale=1">
+		  <!-- Favicon icon -->
+		  <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/favicon.png">
+		  <!-- Bootstrap Core CSS -->
+		  <link href="./assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		  <!-- Custom CSS -->
+		  <link href="./assets/css/style.css" rel="stylesheet">
+		  <!-- You can change the theme colors from here -->
+		  <link href="./assets/css/colors/default-dark.css" id="theme" rel="stylesheet">
+		</head>
+		<body class="fix-header card-no-border fix-sidebar">
+		  <!-- ============================================================== -->
+		  <!-- Preloader - style you can find in spinners.css -->
+		  <!-- ============================================================== -->
+		  <div class="preloader">
+		      <div class="loader">
+		          <div class="loader__figure"></div>
+		          <p class="loader__label">Admin Pro</p>
+		      </div>
+		  </div>
+
+
+		  <app-root></app-root>
+
+
+		      <!-- ============================================================== -->
+		    <!-- All Jquery -->
+		    <!-- ============================================================== -->
+		    <script src="./assets/plugins/jquery/jquery.min.js"></script>
+		    <!-- Bootstrap tether Core JavaScript -->
+		    <script src="./assets/plugins/bootstrap/js/popper.min.js"></script>
+		    <script src="./assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+		    <!-- slimscrollbar scrollbar JavaScript -->
+		    <script src="./assets/js/perfect-scrollbar.jquery.min.js"></script>
+		    <!--Wave Effects -->
+		    <script src="./assets/js/waves.js"></script>
+		    <!--Menu sidebar -->
+		    <script src="./assets/js/sidebarmenu.js"></script>
+		    <!--stickey kit -->
+		    <script src="./assets/plugins/sticky-kit-master/dist/sticky-kit.min.js"></script>
+		    <script src="./assets/plugins/sparkline/jquery.sparkline.min.js"></script>
+		    <!--Custom JavaScript -->
+		    <script src="./assets/js/custom.min.js"></script>
+		    <!-- ============================================================== -->
+		    <!-- Style switcher -->
+		    <!-- ============================================================== -->
+		    <script src="./assets/plugins/styleswitcher/jQuery.style.switcher.js"></script>
+		</body>
+		</html>
+	2.- Se copia header del archivo pages-bank.html, se copia en header.component.html y se corrigen la ruta de los assets 
+		  <!-- ============================================================== -->
+		  <!-- Topbar header - style you can find in pages.scss -->
+		  <!-- ============================================================== -->
+		  <header class="topbar">
+		    <nav class="navbar top-navbar navbar-expand-md navbar-light">
+		        <!-- ============================================================== -->
+		        <!-- Logo -->
+		        <!-- ============================================================== -->
+		        <div class="navbar-header">
+		            <a class="navbar-brand" href="index.html">
+		                <!-- Logo icon --><b>
+		                    <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
+		                    <!-- Dark Logo icon -->
+		                    <img src="./assets/images/logo-icon.png" alt="homepage" class="dark-logo" />
+		                    <!-- Light Logo icon -->
+		                    /*<img src="./assets/images/logo-light-icon.png" alt="homepage" class="light-logo" />
+		                </b>
+		                <!--End Logo icon -->
+		                <!-- Logo text --><span>
+		                  <!-- dark Logo text -->
+		                  <img src="./assets/images/logo-text.png" alt="homepage" class="dark-logo" />
+		                  <!-- Light Logo text -->
+		                  <img src="./assets/images/logo-light-text.png" class="light-logo" alt="homepage" /></span> </a>
+		        </div>
+		        <!-- ============================================================== -->
+		        <!-- End Logo -->
+		        <!-- ============================================================== -->
+		        <div class="navbar-collapse">
+		            <!-- ============================================================== -->
+		            <!-- toggle and nav items -->
+		            <!-- ============================================================== -->
+		            <ul class="navbar-nav mr-auto">
+		                <!-- This is  -->
+		                <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+		                <li class="nav-item"> <a class="nav-link sidebartoggler hidden-sm-down waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+		                <li class="nav-item hidden-sm-down"></li>
+		            </ul>
+		            <!-- ============================================================== -->
+		            <!-- User profile and search -->
+		            <!-- ============================================================== -->
+		            <ul class="navbar-nav my-lg-0">
+		                <!-- ============================================================== -->
+		                <!-- Search -->
+		                <!-- ============================================================== -->
+		                <li class="nav-item hidden-xs-down search-box"> <a class="nav-link hidden-sm-down waves-effect waves-dark" href="javascript:void(0)"><i class="ti-search"></i></a>
+		                    <form class="app-search">
+		                        <input type="text" class="form-control" placeholder="Search & enter"> <a class="srh-btn"><i class="ti-close"></i></a> </form>
+		                </li>
+		                <!-- ============================================================== -->
+		                <!-- Comment -->
+		                <!-- ============================================================== -->
+		                <li class="nav-item dropdown">
+		                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-message"></i>
+		                        <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
+		                    </a>
+		                    <div class="dropdown-menu dropdown-menu-right mailbox animated bounceInDown">
+		                        <ul>
+		                            <li>
+		                                <div class="drop-title">Notifications</div>
+		                            </li>
+		                            <li>
+		                                <div class="message-center">
+		                                    <!-- Message -->
+		                                    <a href="#">
+		                                        <div class="btn btn-danger btn-circle"><i class="fa fa-link"></i></div>
+		                                        <div class="mail-contnet">
+		                                            <h5>Luanch Admin</h5> <span class="mail-desc">Just see the my new admin!</span> <span class="time">9:30 AM</span> </div>
+		                                    </a>
+		                                    <!-- Message -->
+		                                    <a href="#">
+		                                        <div class="btn btn-success btn-circle"><i class="ti-calendar"></i></div>
+		                                        <div class="mail-contnet">
+		                                            <h5>Event today</h5> <span class="mail-desc">Just a reminder that you have event</span> <span class="time">9:10 AM</span> </div>
+		                                    </a>
+		                                    <!-- Message -->
+		                                    <a href="#">
+		                                        <div class="btn btn-info btn-circle"><i class="ti-settings"></i></div>
+		                                        <div class="mail-contnet">
+		                                            <h5>Settings</h5> <span class="mail-desc">You can customize this template as you want</span> <span class="time">9:08 AM</span> </div>
+		                                    </a>
+		                                    <!-- Message -->
+		                                    <a href="#">
+		                                        <div class="btn btn-primary btn-circle"><i class="ti-user"></i></div>
+		                                        <div class="mail-contnet">
+		                                            <h5>Pavan kumar</h5> <span class="mail-desc">Just see the my admin!</span> <span class="time">9:02 AM</span> </div>
+		                                    </a>
+		                                </div>
+		                            </li>
+		                            <li>
+		                                <a class="nav-link text-center" href="javascript:void(0);"> <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i> </a>
+		                            </li>
+		                        </ul>
+		                    </div>
+		                </li>
+		                <!-- ============================================================== -->
+		                <!-- End Comment -->
+		                <!-- ============================================================== -->
+		                <!-- ============================================================== -->
+		                <!-- Messages -->
+		                <!-- ============================================================== -->
+		                <li class="nav-item dropdown">
+		                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" id="2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-email"></i>
+		                        <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
+		                    </a>
+		                    <div class="dropdown-menu mailbox dropdown-menu-right animated bounceInDown" aria-labelledby="2">
+		                        <ul>
+		                            <li>
+		                                <div class="drop-title">You have 4 new messages</div>
+		                            </li>
+		                            <li>
+		                                <div class="message-center">
+		                                    <!-- Message -->
+		                                    <a href="#">
+		                                        <div class="user-img"> <img src="./assets/images/users/1.jpg" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div>
+		                                        <div class="mail-contnet">
+		                                            <h5>Pavan kumar</h5> <span class="mail-desc">Just see the my admin!</span> <span class="time">9:30 AM</span> </div>
+		                                    </a>
+		                                    <!-- Message -->
+		                                    <a href="#">
+		                                        <div class="user-img"> <img src="./assets/images/users/2.jpg" alt="user" class="img-circle"> <span class="profile-status busy pull-right"></span> </div>
+		                                        <div class="mail-contnet">
+		                                            <h5>Sonu Nigam</h5> <span class="mail-desc">I've sung a song! See you at</span> <span class="time">9:10 AM</span> </div>
+		                                    </a>
+		                                    <!-- Message -->
+		                                    <a href="#">
+		                                        <div class="user-img"> <img src="./assets/images/users/3.jpg" alt="user" class="img-circle"> <span class="profile-status away pull-right"></span> </div>
+		                                        <div class="mail-contnet">
+		                                            <h5>Arijit Sinh</h5> <span class="mail-desc">I am a singer!</span> <span class="time">9:08 AM</span> </div>
+		                                    </a>
+		                                    <!-- Message -->
+		                                    <a href="#">
+		                                        <div class="user-img"> <img src="./assets/images/users/4.jpg" alt="user" class="img-circle"> <span class="profile-status offline pull-right"></span> </div>
+		                                        <div class="mail-contnet">
+		                                            <h5>Pavan kumar</h5> <span class="mail-desc">Just see the my admin!</span> <span class="time">9:02 AM</span> </div>
+		                                    </a>
+		                                </div>
+		                            </li>
+		                            <li>
+		                                <a class="nav-link text-center" href="javascript:void(0);"> <strong>See all e-Mails</strong> <i class="fa fa-angle-right"></i> </a>
+		                            </li>
+		                        </ul>
+		                    </div>
+		                </li>
+		                <!-- ============================================================== -->
+		                <!-- End Messages -->
+		                <!-- ============================================================== -->
+		                <!-- ============================================================== -->
+		                <!-- mega menu -->
+		                <!-- ============================================================== -->
+		                <li class="nav-item dropdown mega-dropdown"> <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="mdi mdi-view-grid"></i></a>
+		                    <div class="dropdown-menu animated bounceInDown">
+		                        <ul class="mega-dropdown-menu row">
+		                            <li class="col-lg-3 col-xlg-2 m-b-30">
+		                                <h4 class="m-b-20">CAROUSEL</h4>
+		                                <!-- CAROUSEL -->
+		                                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+		                                    <div class="carousel-inner" role="listbox">
+		                                        <div class="carousel-item active">
+		                                            <div class="container"> <img class="d-block img-fluid" src="./assets/images/big/img1.jpg" alt="First slide"></div>
+		                                        </div>
+		                                        <div class="carousel-item">
+		                                            <div class="container"><img class="d-block img-fluid" src="./assets/images/big/img2.jpg" alt="Second slide"></div>
+		                                        </div>
+		                                        <div class="carousel-item">
+		                                            <div class="container"><img class="d-block img-fluid" src="./assets/images/big/img3.jpg" alt="Third slide"></div>
+		                                        </div>
+		                                    </div>
+		                                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev"> <span class="carousel-control-prev-icon" aria-hidden="true"></span> <span class="sr-only">Previous</span> </a>
+		                                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next"> <span class="carousel-control-next-icon" aria-hidden="true"></span> <span class="sr-only">Next</span> </a>
+		                                </div>
+		                                <!-- End CAROUSEL -->
+		                            </li>
+		                            <li class="col-lg-3 m-b-30">
+		                                <h4 class="m-b-20">ACCORDION</h4>
+		                                <!-- Accordian -->
+		                                <div id="accordion" class="nav-accordion" role="tablist" aria-multiselectable="true">
+		                                    <div class="card">
+		                                        <div class="card-header" role="tab" id="headingOne">
+		                                            <h5 class="mb-0">
+		                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+		                                          Collapsible Group Item #1
+		                                        </a>
+		                                            </h5>
+		                                        </div>
+		                                        <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
+		                                            <div class="card-body"> Anim pariatur cliche reprehenderit, enim eiusmod high. </div>
+		                                        </div>
+		                                    </div>
+		                                    <div class="card">
+		                                        <div class="card-header" role="tab" id="headingTwo">
+		                                            <h5 class="mb-0">
+		                                                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+		                                          Collapsible Group Item #2
+		                                        </a>
+		                                            </h5>
+		                                        </div>
+		                                        <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+		                                            <div class="card-body"> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. </div>
+		                                        </div>
+		                                    </div>
+		                                    <div class="card">
+		                                        <div class="card-header" role="tab" id="headingThree">
+		                                            <h5 class="mb-0">
+		                                                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+		                                          Collapsible Group Item #3
+		                                        </a>
+		                                            </h5>
+		                                        </div>
+		                                        <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
+		                                            <div class="card-body"> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. </div>
+		                                        </div>
+		                                    </div>
+		                                </div>
+		                            </li>
+		                            <li class="col-lg-3  m-b-30">
+		                                <h4 class="m-b-20">CONTACT US</h4>
+		                                <!-- Contact -->
+		                                <form>
+		                                    <div class="form-group">
+		                                        <input type="text" class="form-control" id="exampleInputname1" placeholder="Enter Name"> </div>
+		                                    <div class="form-group">
+		                                        <input type="email" class="form-control" placeholder="Enter email"> </div>
+		                                    <div class="form-group">
+		                                        <textarea class="form-control" id="exampleTextarea" rows="3" placeholder="Message"></textarea>
+		                                    </div>
+		                                    <button type="submit" class="btn btn-info">Submit</button>
+		                                </form>
+		                            </li>
+		                            <li class="col-lg-3 col-xlg-4 m-b-30">
+		                                <h4 class="m-b-20">List style</h4>
+		                                <!-- List style -->
+		                                <ul class="list-style-none">
+		                                    <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> You can give link</a></li>
+		                                    <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> Give link</a></li>
+		                                    <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> Another Give link</a></li>
+		                                    <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> Forth link</a></li>
+		                                    <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> Another fifth link</a></li>
+		                                </ul>
+		                            </li>
+		                        </ul>
+		                    </div>
+		                </li>
+		                <!-- ============================================================== -->
+		                <!-- End mega menu -->
+		                <!-- ============================================================== -->
+		                <!-- ============================================================== -->
+		                <!-- Language -->
+		                <!-- ============================================================== -->
+		                <li class="nav-item dropdown">
+		                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="flag-icon flag-icon-us"></i></a>
+		                    <div class="dropdown-menu dropdown-menu-right animated bounceInDown"> <a class="dropdown-item" href="#"><i class="flag-icon flag-icon-in"></i> India</a> <a class="dropdown-item" href="#"><i class="flag-icon flag-icon-fr"></i> French</a> <a class="dropdown-item" href="#"><i class="flag-icon flag-icon-cn"></i> China</a>                                <a class="dropdown-item" href="#"><i class="flag-icon flag-icon-de"></i> Dutch</a> </div>
+		                </li>
+		                <!-- ============================================================== -->
+		                <!-- Profile -->
+		                <!-- ============================================================== -->
+		                <li class="nav-item dropdown">
+		                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="./assets/images/users/1.jpg" alt="user" class="profile-pic" /></a>
+		                    <div class="dropdown-menu dropdown-menu-right animated flipInY">
+		                        <ul class="dropdown-user">
+		                            <li>
+		                                <div class="dw-user-box">
+		                                    <div class="u-img"><img src="./assets/images/users/1.jpg" alt="user"></div>
+		                                    <div class="u-text">
+		                                        <h4>Steave Jobs</h4>
+		                                        <p class="text-muted">varun@gmail.com</p><a href="pages-profile.html" class="btn btn-rounded btn-danger btn-sm">View Profile</a></div>
+		                                </div>
+		                            </li>
+		                            <li role="separator" class="divider"></li>
+		                            <li><a href="#"><i class="ti-user"></i> My Profile</a></li>
+		                            <li><a href="#"><i class="ti-wallet"></i> My Balance</a></li>
+		                            <li><a href="#"><i class="ti-email"></i> Inbox</a></li>
+		                            <li role="separator" class="divider"></li>
+		                            <li><a href="#"><i class="ti-settings"></i> Account Setting</a></li>
+		                            <li role="separator" class="divider"></li>
+		                            <li><a href="#"><i class="fa fa-power-off"></i> Logout</a></li>
+		                        </ul>
+		                    </div>
+		                </li>
+		            </ul>
+		        </div>
+		    </nav>
+		</header>
+		<!-- ============================================================== -->
+		<!-- End Topbar header -->
+		<!-- ============================================================== -->*/
+	3.- Se copia sidebar del archivo pages-bank.html, se copia en sidebar.component.html y se corrigen la ruta de los assets
+		<!-- ============================================================== -->
+		  <!-- Left Sidebar - style you can find in sidebar.scss  -->
+		  <!-- ============================================================== -->
+		  /*<aside class="left-sidebar">
+		    <!-- Sidebar scroll-->
+		    <div class="scroll-sidebar">
+		        <!-- Sidebar navigation-->
+		        <nav class="sidebar-nav">
+		            <ul id="sidebarnav">
+		                <li class="user-profile">
+		                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><img src="./assets/images/users/profile.png" alt="user" /><span class="hide-menu">Steave Jobs </span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="javascript:void()">My Profile </a></li>
+		                        <li><a href="javascript:void()">My Balance</a></li>
+		                        <li><a href="javascript:void()">Inbox</a></li>
+		                        <li><a href="javascript:void()">Account Setting</a></li>
+		                        <li><a href="javascript:void()">Logout</a></li>
+		                    </ul>
+		                </li>
+		                <li class="nav-devider"></li>
+		                <li class="nav-small-cap">PERSONAL</li>
+		                <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-gauge"></i><span class="hide-menu">Dashboard <span class="label label-rouded label-themecolor pull-right">4</span></span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="index.html">Minimal </a></li>
+		                        <li><a href="index2.html">Analytical</a></li>
+		                        <li><a href="index3.html">Demographical</a></li>
+		                        <li><a href="index4.html">Modern</a></li>
+		                    </ul>
+		                </li>
+		                <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-bullseye"></i><span class="hide-menu">Apps</span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="app-calendar.html">Calendar</a></li>
+		                        <li><a href="app-chat.html">Chat app</a></li>
+		                        <li><a href="app-ticket.html">Support Ticket</a></li>
+		                        <li><a href="app-contact.html">Contact / Employee</a></li>
+		                        <li><a href="app-contact2.html">Contact Grid</a></li>
+		                        <li><a href="app-contact-detail.html">Contact Detail</a></li>
+		                    </ul>
+		                </li>
+		                <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-email"></i><span class="hide-menu">Inbox</span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="app-email.html">Mailbox</a></li>
+		                        <li><a href="app-email-detail.html">Mailbox Detail</a></li>
+		                        <li><a href="app-compose.html">Compose Mail</a></li>
+		                    </ul>
+		                </li>
+		                <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-chart-bubble"></i><span class="hide-menu">Ui Elements <span class="label label-rouded label-danger pull-right">25</span></span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="ui-cards.html">Cards</a></li>
+		                        <li><a href="ui-user-card.html">User Cards</a></li>
+		                        <li><a href="ui-buttons.html">Buttons</a></li>
+		                        <li><a href="ui-modals.html">Modals</a></li>
+		                        <li><a href="ui-tab.html">Tab</a></li>
+		                        <li><a href="ui-tooltip-popover.html">Tooltip &amp; Popover</a></li>
+		                        <li><a href="ui-tooltip-stylish.html">Tooltip stylish</a></li>
+		                        <li><a href="ui-sweetalert.html">Sweet Alert</a></li>
+		                        <li><a href="ui-notification.html">Notification</a></li>
+		                        <li><a href="ui-progressbar.html">Progressbar</a></li>
+		                        <li><a href="ui-nestable.html">Nestable</a></li>
+		                        <li><a href="ui-range-slider.html">Range slider</a></li>
+		                        <li><a href="ui-timeline.html">Timeline</a></li>
+		                        <li><a href="ui-typography.html">Typography</a></li>
+		                        <li><a href="ui-horizontal-timeline.html">Horizontal Timeline</a></li>
+		                        <li><a href="ui-session-timeout.html">Session Timeout</a></li>
+		                        <li><a href="ui-session-ideal-timeout.html">Session Ideal Timeout</a></li>
+		                        <li><a href="ui-bootstrap.html">Bootstrap Ui</a></li>
+		                        <li><a href="ui-breadcrumb.html">Breadcrumb</a></li>
+		                        <li><a href="ui-bootstrap-switch.html">Bootstrap Switch</a></li>
+		                        <li><a href="ui-list-media.html">List Media</a></li>
+		                        <li><a href="ui-ribbons.html">Ribbons</a></li>
+		                        <li><a href="ui-grid.html">Grid</a></li>
+		                        <li><a href="ui-carousel.html">Carousel</a></li>
+		                        <li><a href="ui-date-paginator.html">Date-paginator</a></li>
+		                        <li><a href="ui-dragable-portlet.html">Dragable Portlet</a></li>
+		                    </ul>
+		                </li>
+		                <li class="nav-small-cap">FORMS, TABLE &amp; WIDGETS</li>
+		                <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-file"></i><span class="hide-menu">Forms</span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="form-basic.html">Basic Forms</a></li>
+		                        <li><a href="form-layout.html">Form Layouts</a></li>
+		                        <li><a href="form-addons.html">Form Addons</a></li>
+		                        <li><a href="form-material.html">Form Material</a></li>
+		                        <li><a href="form-float-input.html">Floating Lable</a></li>
+		                        <li><a href="form-pickers.html">Form Pickers</a></li>
+		                        <li><a href="form-upload.html">File Upload</a></li>
+		                        <li><a href="form-mask.html">Form Mask</a></li>
+		                        <li><a href="form-validation.html">Form Validation</a></li>
+		                        <li><a href="form-dropzone.html">File Dropzone</a></li>
+		                        <li><a href="form-icheck.html">Icheck control</a></li>
+		                        <li><a href="form-img-cropper.html">Image Cropper</a></li>
+		                        <li><a href="form-bootstrapwysihtml5.html">HTML5 Editor</a></li>
+		                        <li><a href="form-typehead.html">Form Typehead</a></li>
+		                        <li><a href="form-wizard.html">Form Wizard</a></li>
+		                        <li><a href="form-xeditable.html">Xeditable Editor</a></li>
+		                        <li><a href="form-summernote.html">Summernote Editor</a></li>
+		                        <li><a href="form-tinymce.html">Tinymce Editor</a></li>
+		                    </ul>
+		                </li>
+		                <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-table"></i><span class="hide-menu">Tables</span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="table-basic.html">Basic Tables</a></li>
+		                        <li><a href="table-layout.html">Table Layouts</a></li>
+		                        <li><a href="table-data-table.html">Data Tables</a></li>
+		                        <li><a href="table-footable.html">Footable</a></li>
+		                        <li><a href="table-jsgrid.html">Js Grid Table</a></li>
+		                        <li><a href="table-responsive.html">Responsive Table</a></li>
+		                        <li><a href="table-bootstrap.html">Bootstrap Tables</a></li>
+		                        <li><a href="table-editable-table.html">Editable Table</a></li>
+		                    </ul>
+		                </li>
+		                <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-widgets"></i><span class="hide-menu">Widgets</span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="widget-data.html">Data Widgets</a></li>
+		                        <li><a href="widget-apps.html">Apps Widgets</a></li>
+		                        <li><a href="widget-charts.html">Charts Widgets</a></li>
+
+		                    </ul>
+		                </li>
+		                <li class="nav-small-cap">EXTRA COMPONENTS</li>
+		                <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-book-multiple"></i><span class="hide-menu">Page Layout</span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="layout-single-column.html">1 Column</a></li>
+		                        <li><a href="layout-fix-header.html">Fix header</a></li>
+		                        <li><a href="layout-fix-sidebar.html">Fix sidebar</a></li>
+		                        <li><a href="layout-fix-header-sidebar.html">Fixe header &amp; Sidebar</a></li>
+		                        <li><a href="layout-boxed.html">Boxed Layout</a></li>
+		                        <li><a href="layout-logo-center.html">Logo in Center</a></li>
+		                    </ul>
+		                </li>
+		                <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-book-open-variant"></i><span class="hide-menu">Sample Pages <span class="label label-rouded label-success pull-right">25</span></span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="starter-kit.html">Starter Kit</a></li>
+		                        <li><a href="pages-blank.html">Blank page</a></li>
+		                        <li><a href="#" class="has-arrow">Authentication <span class="label label-rounded label-success pull-right">6</span></a>
+		                            <ul aria-expanded="false" class="collapse">
+		                                <li><a href="pages-login.html">Login 1</a></li>
+		                                <li><a href="pages-login-2.html">Login 2</a></li>
+		                                <li><a href="pages-register.html">Register</a></li>
+		                                <li><a href="pages-register2.html">Register 2</a></li>
+		                                <li><a href="pages-lockscreen.html">Lockscreen</a></li>
+		                                <li><a href="pages-recover-password.html">Recover password</a></li>
+		                            </ul>
+		                        </li>
+		                        <li><a href="pages-profile.html">Profile page</a></li>
+		                        <li><a href="pages-animation.html">Animation</a></li>
+		                        <li><a href="pages-fix-innersidebar.html">Sticky Left sidebar</a></li>
+		                        <li><a href="pages-fix-inner-right-sidebar.html">Sticky Right sidebar</a></li>
+		                        <li><a href="pages-invoice.html">Invoice</a></li>
+		                        <li><a href="pages-treeview.html">Treeview</a></li>
+		                        <li><a href="pages-utility-classes.html">Helper Classes</a></li>
+		                        <li><a href="pages-search-result.html">Search result</a></li>
+		                        <li><a href="pages-scroll.html">Scrollbar</a></li>
+		                        <li><a href="pages-pricing.html">Pricing</a></li>
+		                        <li><a href="pages-lightbox-popup.html">Lighbox popup</a></li>
+		                        <li><a href="pages-gallery.html">Gallery</a></li>
+		                        <li><a href="pages-faq.html">Faqs</a></li>
+		                        <li><a href="#" class="has-arrow">Error Pages</a>
+		                            <ul aria-expanded="false" class="collapse">
+		                                <li><a href="pages-error-400.html">400</a></li>
+		                                <li><a href="pages-error-403.html">403</a></li>
+		                                <li><a href="pages-error-404.html">404</a></li>
+		                                <li><a href="pages-error-500.html">500</a></li>
+		                                <li><a href="pages-error-503.html">503</a></li>
+		                            </ul>
+		                        </li>
+		                    </ul>
+		                </li>
+		                <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-file-chart"></i><span class="hide-menu">Charts</span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="chart-morris.html">Morris Chart</a></li>
+		                        <li><a href="chart-chartist.html">Chartis Chart</a></li>
+		                        <li><a href="chart-echart.html">Echarts</a></li>
+		                        <li><a href="chart-flot.html">Flot Chart</a></li>
+		                        <li><a href="chart-knob.html">Knob Chart</a></li>
+		                        <li><a href="chart-chart-js.html">Chartjs</a></li>
+		                        <li><a href="chart-sparkline.html">Sparkline Chart</a></li>
+		                        <li><a href="chart-extra-chart.html">Extra chart</a></li>
+		                        <li><a href="chart-peity.html">Peity Charts</a></li>
+		                    </ul>
+		                </li>
+		                <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-brush"></i><span class="hide-menu">Icons</span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="icon-material.html">Material Icons</a></li>
+		                        <li><a href="icon-fontawesome.html">Fontawesome Icons</a></li>
+		                        <li><a href="icon-themify.html">Themify Icons</a></li>
+		                        <li><a href="icon-linea.html">Linea Icons</a></li>
+		                        <li><a href="icon-weather.html">Weather Icons</a></li>
+		                        <li><a href="icon-simple-lineicon.html">Simple Lineicons</a></li>
+		                        <li><a href="icon-flag.html">Flag Icons</a></li>
+		                    </ul>
+		                </li>
+		                <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-map-marker"></i><span class="hide-menu">Maps</span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="map-google.html">Google Maps</a></li>
+		                        <li><a href="map-vector.html">Vector Maps</a></li>
+		                    </ul>
+		                </li>
+		                <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-arrange-send-backward"></i><span class="hide-menu">Multi level dd</span></a>
+		                    <ul aria-expanded="false" class="collapse">
+		                        <li><a href="#">item 1.1</a></li>
+		                        <li><a href="#">item 1.2</a></li>
+		                        <li> <a class="has-arrow" href="#" aria-expanded="false">Menu 1.3</a>
+		                            <ul aria-expanded="false" class="collapse">
+		                                <li><a href="#">item 1.3.1</a></li>
+		                                <li><a href="#">item 1.3.2</a></li>
+		                                <li><a href="#">item 1.3.3</a></li>
+		                                <li><a href="#">item 1.3.4</a></li>
+		                            </ul>
+		                        </li>
+		                        <li><a href="#">item 1.4</a></li>
+		                    </ul>
+		                </li>
+		            </ul>
+		        </nav>
+		        <!-- End Sidebar navigation -->
+		    </div>
+		    <!-- End Sidebar scroll-->
+		</aside>*/
+
+
+		<!-- ============================================================== -->
+		<!-- End Left Sidebar - style you can find in sidebar.scss  -->
+		<!-- ============================================================== -->
+	4.- Se genera componente footer --> ng g c shared/footer --skip-tests
+		<!-- ============================================================== -->
+		<!-- footer -->
+		<!-- ============================================================== -->
+		<footer class="footer">
+		    © 2021 Admin Pro by wrappixel.com
+		</footer>
+		<!-- ============================================================== -->
+		<!-- End footer -->
+		<!-- ============================================================== -->
+	5.- Se copia breadcrumb del archivo pages-bank.html, se copia en breadcrumbs.component.html y se corrigen la ruta de los assets
+		<!-- ============================================================== -->
+		<!-- Bread crumb and right sidebar toggle -->
+		<!-- ============================================================== -->
+		<div class="row page-titles">
+		  <div class="col-md-5 align-self-center">
+		      <h3 class="text-themecolor">Blank Page</h3>
+		  </div>
+
+		  <div class="col-md-7 align-self-center">
+		      <ol class="breadcrumb">
+		          <li class="breadcrumb-item">
+		              <a href="javascript:void(0)">Home</a>
+		          </li>
+		          <li class="breadcrumb-item">pages</li>
+		          <li class="breadcrumb-item active">Blank Page</li>
+		      </ol>
+		  </div>
+		  <div>
+		      <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+		  </div>
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Bread crumb and right sidebar toggle -->
+		<!-- ============================================================== --> 
+	6.- Se modifica app.component.html, se incluyen los componentes 
+		<div id="main-wrapper">
+		  <app-header></app-header>
+		  <app-sidebar></app-sidebar>
+		  <div class="page-wrapper">
+		    <div class="container-fluid">
+		      <!-- Bread crumb and right sidebar toggle -->
+		      <app-breadcrumbs></app-breadcrumbs>
+		      <!-- Sistema de rutas  -->
+
+		      <!-- ============================================================== -->
+		      <!-- Start Page Content -->
+		      <!-- ============================================================== -->
+		      <div class="row">
+		        <div class="col-12">
+		            <div class="card">
+		                <div class="card-body">
+		                    This is some text within a card block.
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		    <!-- ============================================================== -->
+		    <!-- End PAge Content -->
+		    <!-- ============================================================== -->
+
+		    <!-- Footer -->
+		    <app-footer></app-footer>
+		    </div>
+		  </div>
+		</div> +
+**************************************************************************************************************************************
+20. ***********************************************************************************************Implementando las rutas principales
+	1.- Se genera modulo de routing --> ng g m appRouting --flat
+	2.- Se crean componentes de paginas progress y grafica1 
+		ng g c pages/grafica1 -is --skip-te
+		ng g c pages/progress -is --skip-te
+	3.- Se modifica app-routing.module.ts, se crean las rutas y se importan  
+		3.1.- Se exporta RouterModule 
+			3.1.- Se importa la libreria 
+				import { RouterModule, Routes } from '@angular/router'
+			3.2.- Se exporta el RouterModule   
+				exports: [ RouterModule ]
+		3.2.- Se crean las rutas en una constante y se importan
+			3.2.1.- Se crean las rutas      
+				const routes: Routes = [
+				  { path: 'dashboard', component: DashboardComponent },
+				  { path: 'login', component: LoginComponent },
+				  { path: 'register', component: RegisterComponent },
+				  { path: 'progress', component: ProgressComponent },
+				  { path: 'grafica1', component: Grafica1Component },
+				  { path: '', redirectTo: 'dashboard', pathMatch:'full' },
+				  { path: '**', component: NopagesfoundComponent },
+				]
+			3.2.2.- Se importan las rutas creadas   
+				@NgModule({
+				  declarations: [],
+				  imports: [ RouterModule.forRoot(routes) ],
+				  exports: [ RouterModule ]
+				})
+				export class AppRoutingModule { }
+	4.- Se modifica app.module.ts, se importa el modulo de rutas AppRoutingModule 
+		@NgModule({
+		  declarations: [
+		    AppComponent,
+		    LoginComponent,
+		    RegisterComponent,
+		    NopagesfoundComponent,
+		    DashboardComponent,
+		    BreadcrumbsComponent,
+		    SidebarComponent,
+		    HeaderComponent,
+		    FooterComponent,
+		    ProgressComponent,
+		    Grafica1Component
+		  ],
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule
+		  ],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+	5.- Se modifica app.component.html, se agrega componente router-oulet 
+		  <!-- ============================================================== -->
+	      <!-- Start Page Content -->
+	      <!-- ============================================================== -->
+	      <div class="row">
+	        <div class="col-12">
+	            <div class="card">
+	                <div class="card-body">
+	                    <router-outlet></router-outlet>
+	                </div>
+	            </div>
+	        </div>
+	      </div>
+	      <!-- ============================================================== -->
+	      <!-- End PAge Content -->
+	      <!-- ============================================================== -->
+**************************************************************************************************************************************
+21. *****************************************************************************************************Implementar rutas secundarias
+	1.- Se modifica app.component.html, se corta todo el contenido y se agrega router-outlet   
+		<router-outlet></router-outlet>
+	2.- Se crea componente pages  
+		ng g c pages/pages --flat --skip-tests -is
+	3.- Se modifica pages.component.html, se pega todo el contenido cortado de app.component.html 
+		<div id="main-wrapper">
+		  <app-header></app-header>
+		  <app-sidebar></app-sidebar>
+		  <div class="page-wrapper">
+		    <div class="container-fluid">
+		      <!-- Bread crumb and right sidebar toggle -->
+		      <app-breadcrumbs></app-breadcrumbs>
+		      <!-- Sistema de rutas  -->
+
+		      <!-- ============================================================== -->
+		      <!-- Start Page Content -->
+		      <!-- ============================================================== -->
+		      <div class="row">
+		        <div class="col-12">
+		            <div class="card">
+		                <div class="card-body">
+		                    <router-outlet></router-outlet>
+		                </div>
+		            </div>
+		        </div>
+		      </div>
+		      <!-- ============================================================== -->
+		      <!-- End PAge Content -->
+		      <!-- ============================================================== -->
+
+		    <!-- Footer -->
+		    <app-footer></app-footer>
+		    </div>
+		  </div>
+		</div>
+	4.- Se modifica app-routing.module.ts, se crean rutas hijas 
+		const routes: Routes = [
+		  {
+		    path      : '',
+		    component : PagesComponent,
+		    children  : [
+		      { path: 'dashboard', component: DashboardComponent },
+		      { path: 'progress', component: ProgressComponent },
+		      { path: 'grafica1', component: Grafica1Component },
+		      { path: '', redirectTo: 'dashboard', pathMatch:'full' }
+		    ]
+		  },
+		  { path: 'login', component: LoginComponent },
+		  { path: 'register', component: RegisterComponent },
+		  { path: '**', component: NopagesfoundComponent },
+		]
+	5.- Se levanta la aplicacion con --> ng serve -o, y se prueban las diferentes rutas en el explorador  
+		http://localhost:4200/dashboard15  	--> pagina de notfound 
+		http://localhost:4200/dashboard    	--> pagina de dashboard con sidebar 
+		http://localhost:4200/login  		--> pagina de login sin sidebar 
+**************************************************************************************************************************************
+22. ***************************************************************************************************Separando el login del template
+	1.- Se modifica el archivo login.component.html 
+		1.1.- Se abre el archivo pages-login-2.html de el material de la seccion, se ubica la seccion de Main Wrapper y se pega en 
+		login.component.html 
+			/*<!-- ============================================================== -->
+			  <!-- Main wrapper - style you can find in pages.scss -->
+			  <!-- ============================================================== -->
+			  <section id="wrapper" class="login-register login-sidebar" style="background-image:url(../assets/images/background/login-register.jpg);">
+			    <div class="login-box card">
+			        <div class="card-body">
+			            <form class="form-horizontal form-material" id="loginform" action="index.html">
+			                <a href="javascript:void(0)" class="text-center db"><img src="../assets/images/logo-icon.png" alt="Home" /><br/><img src="../assets/images/logo-text.png" alt="Home" /></a>
+			                <div class="form-group m-t-40">
+			                    <div class="col-xs-12">
+			                        <input class="form-control" type="text" required="" placeholder="Username">
+			                    </div>
+			                </div>
+			                <div class="form-group">
+			                    <div class="col-xs-12">
+			                        <input class="form-control" type="password" required="" placeholder="Password">
+			                    </div>
+			                </div>
+			                <div class="form-group row">
+			                    <div class="col-md-12">
+			                        <div class="checkbox checkbox-primary pull-left p-t-0">
+			                            <input id="checkbox-signup" type="checkbox" class="filled-in chk-col-light-blue">
+			                            <label for="checkbox-signup"> Remember me </label>
+			                        </div>
+			                        <a href="javascript:void(0)" id="to-recover" class="text-dark pull-right"><i class="fa fa-lock m-r-5"></i> Forgot pwd?</a> </div>
+			                </div>
+			                <div class="form-group text-center m-t-20">
+			                    <div class="col-xs-12">
+			                        <button class="btn btn-info btn-lg btn-block text-uppercase btn-rounded" type="submit">Log In</button>
+			                    </div>
+			                </div>
+			                <div class="row">
+			                    <div class="col-xs-12 col-sm-12 col-md-12 m-t-10 text-center">
+			                        <div class="social"><a href="javascript:void(0)" class="btn  btn-facebook" data-toggle="tooltip" title="Login with Facebook"> <i aria-hidden="true" class="fa fa-facebook"></i> </a> <a href="javascript:void(0)" class="btn btn-googleplus" data-toggle="tooltip" title="Login with Google"> <i aria-hidden="true" class="fa fa-google-plus"></i> </a> </div>
+			                    </div>
+			                </div>
+			                <div class="form-group m-b-0">
+			                    <div class="col-sm-12 text-center">
+			                        Don't have an account? <a href="pages-register2.html" class="text-primary m-l-5"><b>Sign Up</b></a>
+			                    </div>
+			                </div>
+			            </form>
+			            <form class="form-horizontal" id="recoverform" action="index.html">
+			                <div class="form-group ">
+			                    <div class="col-xs-12">
+			                        <h3>Recover Password</h3>
+			                        <p class="text-muted">Enter your Email and instructions will be sent to you! </p>
+			                    </div>
+			                </div>
+			                <div class="form-group ">
+			                    <div class="col-xs-12">
+			                        <input class="form-control" type="text" required="" placeholder="Email">
+			                    </div>
+			                </div>
+			                <div class="form-group text-center m-t-20">
+			                    <div class="col-xs-12">
+			                        <button class="btn btn-primary btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Reset</button>
+			                    </div>
+			                </div>
+			            </form>
+			        </div>
+			    </div>
+			</section>
+			<!-- ============================================================== -->
+			<!-- End Wrapper -->
+			<!-- ============================================================== -->*/
+	2.- Se modifica el archivo login.component.css, se copia el contenido del archivo login-register-lock.css del material de 
+	la seccion y se pega  
+		/*
+		Template Name: Admin pro Admin
+		Author: Wrappixel
+		Email: niravjoshi87@gmail.com
+		File: scss
+		*/
+		/*
+		Template Name: Admin Pro Admin
+		Author: Wrappixel
+		Email: niravjoshi87@gmail.com
+		File: scss
+		*/
+		/*Theme Colors*/
+		/*bootstrap Color*/
+		/*Light colors*/
+		/*Normal Color*/
+		/*Extra Variable*/
+		/*******************
+		Login register and recover password Page
+		******************/
+		.login-register {
+		  background-size: cover;
+		  background-repeat: no-repeat;
+		  background-position: center center;
+		  height: 100%;
+		  width: 100%;
+		  padding: 10% 0;
+		  position: fixed; }
+
+		.login-box {
+		  width: 400px;
+		  margin: 0 auto; }
+		  .login-box .footer {
+		    width: 100%;
+		    left: 0px;
+		    right: 0px; }
+		  .login-box .social {
+		    display: block;
+		    margin-bottom: 30px; }
+
+		#recoverform {
+		  display: none; }
+
+		.login-sidebar {
+		  padding: 0px;
+		  margin-top: 0px; }
+		  .login-sidebar .login-box {
+		    right: 0px;
+		    position: absolute;
+		    height: 100%; } +
+**************************************************************************************************************************************
+23. *********************************************************************************************Tarea práctica #2 - Register template
+	Basado en la clase anterior se debe modificar el componente de registro, basado en el archivo pages-register.html que se facilito 
+	como material en el curso   + +
+**************************************************************************************************************************************
+26. ************************************************************************************************************************Página 404
+	Basado en la clase anterior se debe modificar el componente de NopagesfoundComponent , basado en el archivo pages-error-404.html 
+	que se facilito como material en el curso    +
+**************************************************************************************************************************************
+27. *********************************************************************************************Respaldo de nuestro trabajo en GitHub
+	1.- Se inicializa git --> git init 
+	2.- Se preparan los cambios --> git add . 
+	3.- Se commitean los cambios --> git commit -m "Finaliza seccion 3 Diseño"
+	Nota: utile si deseas deshacer los cambios hasta el ultimo commit realizado --> git checkout -- .  
+	4.- Crear un proyecto en git hub 
+	5.- git remote add origin https://github.com/dirielfran/admPro.git
+	6.- git push -u origin main
+
+	Cuando se realaliza un release a produccion 
+		git tag -a v1.0.0 -m "Diseño"
+		git tag 
+		git push --tag 
+**************************************************************************************************************************************
+********************************************************Fin Seccion*******************************************************************
+*****************************************************Sección 4: Módulos***************************************************************
+32. *****************************************************************************************************Creando nuestro primer módulo
+	1.- Se crea modulo 	--> ng g m pages/pages --flat
+						--> ng g m shared/shared --flat
+	2.- Se modifica app.module.ts, se cortan los componentes para pasar a los modulos 
+		@NgModule({
+		  declarations: [
+		    AppComponent,
+		    LoginComponent,
+		    RegisterComponent,
+		    NopagesfoundComponent,
+		  ],
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule,
+		    PagesModule
+		  ],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+	3.- Se modifica pages.module.ts, se copial los componentes, se importan y se exportan: dashboard, progress, grafica1, Pages, 
+		se importan los modulos sharedModule y RouterModule
+		@NgModule({
+		  declarations: [
+		    DashboardComponent,
+		    ProgressComponent,
+		    Grafica1Component,
+		    PagesComponent
+		  ],
+		  exports: [
+		    DashboardComponent,
+		    ProgressComponent,
+		    Grafica1Component,
+		    PagesComponent
+		  ],
+		  imports: [
+		    CommonModule,
+		    RouterModule,
+		    SharedModule
+		  ]
+		})
+		export class PagesModule { }
+	4.- Se modifica shared.module.ts, se copial los componentes, se importan y se exportan: Breadcrumbs,Sidebar,Header,Footer	
+		@NgModule({
+		  declarations: [
+		    BreadcrumbsComponent,
+		    SidebarComponent,
+		    HeaderComponent,
+		    FooterComponent
+		  ],
+		  exports:[
+		    BreadcrumbsComponent,
+		    SidebarComponent,
+		    HeaderComponent,
+		    FooterComponent
+		  ],
+		  imports: [
+		    CommonModule
+		  ]
+		})
+		export class SharedModule { }
+**************************************************************************************************************************************
+33. ***************************************************************************Tarea práctica #3 - Creación de un módulo personalizado
+	1.- Se crea modulo para auth --> ng g m auth/auth --flat 
+	2.- Se modifica app.module.ts, se cortan los componentes login,register, se importa AuthModule 
+		@NgModule({
+		  declarations: [
+		    AppComponent,
+		    NopagesfoundComponent,
+		  ],
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule,
+		    PagesModule,
+		    AuthModule
+		  ],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+	3.- Se copian, se importan y se exportan los componentes login y register 
+		@NgModule({
+		  declarations: [
+		    LoginComponent,
+		    RegisterComponent,
+		  ],
+		  exports:[
+		    LoginComponent,
+		    RegisterComponent,
+		  ],
+		  imports: [
+		    CommonModule
+		  ]
+		})
+		export class AuthModule { }
+**************************************************************************************************************************************
+35. *********************************************************************************************************Rutas hijas - ForChild( )
+	1.- Se crea un archivo para las rutas de forma manual --> pages-routing.module.ts  
+		1.1.- Se utiliza el shortcust ng-router para crear el modulo 
+		1.2.- Se modifica 
+			const routes: Routes = [
+			  {
+			    path      : '',
+			    component : PagesComponent,
+			    children  : [
+			      { path: 'dashboard', component: DashboardComponent },
+			      { path: 'progress', component: ProgressComponent },
+			      { path: 'grafica1', component: Grafica1Component },
+			      { path: '', redirectTo: 'dashboard', pathMatch:'full' }
+			    ]
+			  },
+
+			  //{ path: 'path/:routeParam', component: MyComponent },
+			  //{ path: 'staticPath', component: ... },
+			  //{ path: '**', component: ... },
+			  //{ path: 'oldPath', redirectTo: '/staticPath' },
+			  //{ path: ..., component: ..., data: { message: 'Custom' }
+			];
+
+			@NgModule({
+			  imports: [RouterModule.forChild(routes)],
+			  exports: [RouterModule]
+			})
+			export class PagesRoutingModule {}
+	2.- Se modifica app-routing.module.ts, se eliminan las rutas PagesComponent y se importa PagesRoutingModule 
+		const routes: Routes = [
+		  { path: 'login', component: LoginComponent },
+		  { path: 'register', component: RegisterComponent },
+		  { path: '**', component: NopagesfoundComponent },
+		]
+
+		@NgModule({
+		  declarations: [],
+		  imports: [ RouterModule.forRoot(routes), PagesRoutingModule ],
+		  exports: [ RouterModule ]
+		})
+		export class AppRoutingModule { }
+**************************************************************************************************************************************
+36. *****************************************************************************************************************AuthRoutingModule
+	Tarea: Se debe crear el AuthRoutingModule e importarlo en el app.routing.module.ts 
+	1.- Se crea modulo de routing --> auth.routing.ts
+		1.1.- Se ejecuta ng-router
+		1.2.- Se modifica  
+			const routes: Routes = [
+			  { path: 'login', component: LoginComponent },
+			  { path: 'register', component: RegisterComponent },
+			  //{ path: 'path/:routeParam', component: MyComponent },
+			  //{ path: 'staticPath', component: ... },
+			  //{ path: '**', component: ... },
+			  //{ path: 'oldPath', redirectTo: '/staticPath' },
+			  //{ path: ..., component: ..., data: { message: 'Custom' }
+			];
+
+			@NgModule({
+			  imports: [RouterModule.forChild(routes)],
+			  exports: [RouterModule]
+			})
+			export class AuthRoutingModule {} 
+	2.- Se modifica app-routing.morule.ts, se eliminan las rutas a login y register y se importa el nuevo modulo de rutas  
+		const routes: Routes = [
+		  { path: '**', component: NopagesfoundComponent },
+		]
+
+		@NgModule({
+		  declarations: [],
+		  imports: [
+		    RouterModule.forRoot(routes),
+		    PagesRoutingModule,
+		    AuthRoutingModule
+		  ],
+		  exports: [ RouterModule ]
+		})
+		export class AppRoutingModule { }
+**************************************************************************************************************************************
+37. ***************************************************************************Colocando nuestras rutas a partir de un path específico
+	1.- Se modifica app-routing.module.ts, se agrega path a la constantes de rutas 
+		const routes: Routes = [
+		  { path: '', redirectTo:'dashboard', pathMatch: 'full'},
+		  { path: '**', component: NopagesfoundComponent },
+		]
+	2.- Se modifica pages-routing.module.ts, se agrega path raiz 
+		const routes: Routes = [
+		  {
+		    path      : 'dashboard',
+		    component : PagesComponent,
+		    children  : [
+		      { path: '', component: DashboardComponent },
+		      { path: 'progress', component: ProgressComponent },
+		      { path: 'grafica1', component: Grafica1Component },
+		      { path: '', redirectTo: 'dashboard', pathMatch:'full' }
+		    ]
+		  },
+**************************************************************************************************************************************
+38. ************************************************************************Guardar los cambios en GitHub y crear un TAG de producción
+	1.- Se preparan los cambios --> git add . 
+	2.- Se guardan los cambios en el local --> git commit -m "Fin seccion 4"
+	3.- Se suben los cambios al remoto --> git push 
+	4.- Se observan los tags --> git tag 
+	5.- Se crea un nuevo release --> git tag -a v1.1.0 -m "Rutas listas" 
+	6.- Se sube el release --> git push --tags
+**************************************************************************************************************************************
+******************************************************* Fin Seccion ******************************************************************
+********************************************** Sección 6: @inputs y @Outputs *********************************************************
+46. ************************************************************************************************Nuestro componente del ProgressBar
+	1.- Se modifica pages.component.html, se corta el card de contenido  
+		<div id="main-wrapper">
+		  <app-header></app-header>
+		  <app-sidebar></app-sidebar>
+		  <div class="page-wrapper">
+		    <div class="container-fluid">
+		      <!-- Bread crumb and right sidebar toggle -->
+		      <app-breadcrumbs></app-breadcrumbs>
+		      <!-- Sistema de rutas  -->
+		      <router-outlet></router-outlet>
+		      <!-- Footer -->
+		      <app-footer></app-footer>
+		    </div>
+		  </div>
+		</div>
+	2.- Se modifica progress.component.ts, se renderiza vista 
+		<!-- ============================================================== -->
+		<!-- Start Page Content -->
+		<!-- ============================================================== -->
+		<div class="row">
+		  <div class="col-12">
+		      <div class="card">
+		          <div class="card-body">
+		              <h4 class="card-title">Striped Progress bar </h4>
+		              <div class="progress m-t-20">
+		                  <div class="progress-bar bg-primary progress-bar-striped active"
+		                  style="width: 85%; height:10px;" role="progressbar">
+		                      <span class="sr-only">85% Complete (success)</span>
+		                  </div>
+		              </div>
+
+		          </div>
+		      </div>
+		  </div>
+		</div>
+		<div class="row">
+		  <div class="col-6">
+		    <div class="card">
+		      <div class="card-body">
+		        <div class="input-group">
+		          <span class="input-group-btn">
+		            <button class="btn btn-primary" type="button"><i class="fa fa-minus"></i></button>
+		          </span>
+		          <input type="text" class="form-control" placeholder="Product name">
+		          <span class="input-group-btn">
+		            <button class="btn btn-primary" type="button"><i class="fa fa-plus"></i></button>
+		          </span>
+		      </div>
+		      </div>
+		    </div>
+		  </div>
+		  <div class="col-6">
+		    <div class="card">
+		      <div class="card-body">
+		          2
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<!-- ============================================================== -->
+		<!-- End PAge Content -->
+		<!-- ============================================================== -->
+	3.- Se crea de forma manual el archivo progress.component.css 
+	4.- Se modifica progress.component.ts, se le agrega al decorador la url del css creado 
+		@Component({
+		  selector: 'app-progress',
+		  templateUrl: './progress.component.html',
+		  styleUrls: [ './progress.component.css']
+		})
+		export class ProgressComponent implements OnInit {
+	5.- Se copia estilo del archivo \main\css\pages\progressbar-page.css y se copia en el elemento css creado 
+		/*
+		Template Name: Admin pro Admin
+		Author: Wrappixel
+		Email: niravjoshi87@gmail.com
+		File: scss
+		*/
+		/*
+		Template Name: Admin Pro Admin
+		Author: Wrappixel
+		Email: niravjoshi87@gmail.com
+		File: scss
+		*/
+		/*Theme Colors*/
+		/*bootstrap Color*/
+		/*Light colors*/
+		/*Normal Color*/
+		/*Extra Variable*/
+		/*******************
+		Progress bar
+		******************/
+		.progress.active .progress-bar,
+		.progress-bar.active {
+		  -webkit-animation: progress-bar-stripes 2s linear infinite;
+		  -o-animation: progress-bar-stripes 2s linear infinite;
+		  animation: progress-bar-stripes 2s linear infinite; }
+
+		.progress-vertical {
+		  min-height: 250px;
+		  height: 250px;
+		  position: relative;
+		  display: inline-block;
+		  margin-bottom: 0;
+		  margin-right: 20px; }
+
+		.progress-vertical-bottom {
+		  min-height: 250px;
+		  height: 250px;
+		  position: relative;
+		  display: inline-block;
+		  margin-bottom: 0;
+		  margin-right: 20px;
+		  -webkit-transform: rotate(180deg);
+		  -ms-transform: rotate(180deg);
+		  transform: rotate(180deg); }
+
+		.progress-animated {
+		  -webkit-animation-duration: 5s;
+		  -webkit-animation-name: myanimation;
+		  -webkit-transition: 5s all;
+		  animation-duration: 5s;
+		  animation-name: myanimation;
+		  -o-transition: 5s all;
+		  transition: 5s all; }
+
+		@-webkit-keyframes myanimation {
+		  from {
+		    width: 0; } }
+
+		@keyframes myanimation {
+		  from {
+		    width: 0; } }+
+**************************************************************************************************************************************
+47. ***************************************************************************************************Uso de atributos personalizados
+	1.- Se modifica progress.component.html
+		1.1.- Se crea variable para manipular porcentaje del progress 
+	  		progress: number = 40;
+	  	1.2.- Se crea get para obtener porcentge del progress 
+		  get getPorcentaje(){
+		    return `${this.progress}%`;
+		  }
+		1.3.- Se crea metodo para aumento o disminucion del progress 
+		  cambiarPorcentaje( valor: number ){
+		    if( this.progress >= 100 && valor >= 0 ){
+		      return this.progress = 100;
+		    }
+		    if( this.progress <= 0 && valor < 0 ){
+		      return this.progress = 0;
+		    }
+		    return this.progress = this.progress + valor;
+		  }
+	2.- Se modifica progress.component.html 
+		2.1.- Se modifica el elemento del progress, para pasar estilo por directiva y obtener el porcentaje del componente 
+		    <div class="progress m-t-20">
+              <div class="progress-bar bg-primary progress-bar-striped active"
+              style="height:10px;" [style.width]="getPorcentaje" role="progressbar">
+                  <span class="sr-only">85% Complete (success)</span>
+              </div>
+          </div>
+        2.2.- Se modifican los botones para que llamen al metodo cambiarPorcentaje() 
+        	<span class="input-group-btn">
+            <button class="btn btn-primary" type="button" (click)="cambiarPorcentaje(-5)"><i class="fa fa-minus"></i></button>
+          </span>
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button" (click)="cambiarPorcentaje(5)"><i class="fa fa-plus"></i></button>
+          </span>
+        2.3.- Se modifica el imput para el databinding con progress 
+          <input type="text" class="form-control" placeholder="Porcentaje" [(ngModel)]="progress">
+        2.4.- Se importa el modulo FormsModule 
+        	import { FormsModule } from '@angular/forms';
+
+
+    	  imports: [
+		    CommonModule,
+		    RouterModule,
+		    SharedModule,
+		    FormsModule
+		  ]
+**************************************************************************************************************************************
+48. ****************************************************************************************************Crear componente incrementador
+	1.- Se crea folder en la raiz /components
+	2.- Se crea un modulo components --> components/components --flat 
+	3.- Se crea componente --> ng g c components/incrementador --skip-tests
+	4.- Se modifica components.module.ts, se exporta IncrementComponents y se importa FormsModule
+		@NgModule({
+		  declarations: [
+		    IncrementadorComponent
+		  ],
+		  exports:[
+		    IncrementadorComponent
+		  ],
+		  imports: [
+		    CommonModule,
+		    FormsModule
+		  ]
+		})
+		export class ComponentsModule { }
+	5.- Se modifica app.module.ts, se importa ComponentModule 
+		@NgModule({
+		  declarations: [
+		    AppComponent,
+		    NopagesfoundComponent,
+		  ],
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule,
+		    PagesModule,
+		    AuthModule,
+		    ComponentsModule
+		  ],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+	6.- Se modifica progress.component.html, se corta el elemento input de incremento y se coloca el elemeto app-incrementador
+		<div class="row">
+		  <div class="col-6">
+		    <div class="card">
+		      <div class="card-body">
+		        <app-incrementador></app-incrementador>
+		      </div>
+		    </div>
+		  </div>
+		  <div class="col-6">
+		    <div class="card">
+		      <div class="card-body">
+		        <app-incrementador></app-incrementador>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+	7.- Se modifica incrementador.component.html, se copia el elemento input cortado de progress.component.html
+		<div class="input-group">
+		  <span class="input-group-btn">
+		    <button class="btn btn-primary" type="button" (click)="cambiarPorcentaje(-5)"><i class="fa fa-minus"></i></button>
+		  </span>
+		  <input type="text" class="form-control" placeholder="Porcentaje" [(ngModel)]="progress">
+		  <span class="input-group-btn">
+		    <button class="btn btn-primary" type="button" (click)="cambiarPorcentaje(5)"><i class="fa fa-plus"></i></button>
+		  </span>
+		</div>
+	8.- Se modifica progress.component.ts, se corta todo el contenido de la clase de
+		@Component({
+		 
+
+	9.- Se modifica incrementador.component.ts, se copia todo lo cortado en ProgressComponent
+		@Component({
+		  selector: 'app-incrementador',
+		  templateUrl: './incrementador.component.html',
+		  styleUrls: ['./incrementador.component.css']
+		})
+		export class IncrementadorComponent implements OnInit {
+
+		  progress: number = 40;
+
+		  constructor() { }
+
+		  ngOnInit(): void {
+		  }
+
+		  get getPorcentaje(){
+		    return `${this.progress}%`;
+		  }
+
+		  cambiarPorcentaje( valor: number ){
+		    if( this.progress >= 100 && valor >= 0 ){
+		      return this.progress = 100;
+		    }
+		    if( this.progress <= 0 && valor < 0 ){
+		      return this.progress = 0;
+		    }
+		    return this.progress = this.progress + valor;
+		  }
+
+
+		}
+	10.- Se modifica pages.module.ts, se importa ComponenstModule  
+		@NgModule({
+		  declarations: [
+		    DashboardComponent,
+		    ProgressComponent,
+		    Grafica1Component,
+		    PagesComponent
+		  ],
+		  exports: [
+		    DashboardComponent,
+		    ProgressComponent,
+		    Grafica1Component,
+		    PagesComponent
+		  ],
+		  imports: [
+		    CommonModule,
+		    RouterModule,
+		    SharedModule,
+		    FormsModule,
+		    ComponentsModule
+		  ]
+		})
+		export class PagesModule { }
+**************************************************************************************************************************************
+49. *************************************************************************************************@Input - Componente incrementador
+	1.- Se modifica incrementador.component.ts, se agrega @input() a la variables progress 
+		@Input() progress: number = 40; 
+	2.- Se modifica progress.component.html, se agrega propiedad del elemento IncrementadorComponent  
+		<div class="row">
+		  <div class="col-6">
+		    <div class="card">
+		      <div class="card-body">
+		        <app-incrementador [progress]="15"></app-incrementador>
+		      </div>
+		    </div>
+		  </div>
+		  <div class="col-6">
+		    <div class="card">
+		      <div class="card-body">
+		        <app-incrementador [progress]="80"></app-incrementador>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+**************************************************************************************************************************************
+50. ************************************************************************************************@Output - Componente incrementador
+	1.- Se modifica componente hijo incrementador.component.ts, se agrega @OutPut() para poder emitir valor al componente padre  
+		1.1.- Se crea atributo de tipo EventEmitter 
+			@Output() valorSalida: EventEmitter<number> = new EventEmitter();
+		1.2.- Se modifica el metodo cambiarPorcentaje(), para que emita por medio del evento el valor del imput 
+			cambiarPorcentaje( valor: number ){
+		    if( this.progress >= 100 && valor >= 0 ){
+		      this.valorSalida.emit(100);
+		      return this.progress = 100;
+		    }
+		    if( this.progress <= 0 && valor < 0 ){
+		      this.valorSalida.emit(0);
+		      return this.progress = 0;
+		    }
+		    this.valorSalida.emit(this.progress + valor);
+		    return this.progress = this.progress + valor;
+		  }
+	2.- Se modifica progress.component.ts 
+		2.1.- Se crean atributos progreso1 y progreso2 
+		  progreso1: number = 15;
+			progreso2: number = 40;
+		2.2.- Se crean getter para recuperar valor de progreso en cada componente 
+		  get getProgress1(){
+		    return `${this.progreso1}%`
+		  }
+
+		  get getProgress2(){
+		    return `${this.progreso2}%`
+		  }
+	3.- Se modifica progress.component.html 
+		3.1.- Se modifica componente agregando atributo de estilo [style.width]
+				<div class="progress m-t-20">
+			      <div class="progress-bar bg-primary progress-bar-striped active"
+			      style="height:10px;" [style.width]="getProgress1"  role="progressbar">
+			          <span class="sr-only">85% Complete (success)</span>
+			      </div>
+			  </div>
+			  <div class="progress m-t-20">
+			      <div class="progress-bar bg-info progress-bar-striped active"
+			      style="height:10px;" [style.width]="getProgress2" role="progressbar">
+			          <span class="sr-only">85% Complete (success)</span>
+			      </div>
+			  </div>
+		3.2.- Se modifica componente de incrementador, se le agrega evento emiter (valorSalida) y el @Input() [progress] 
+			<app-incrementador (valorSalida)="progreso1 = $event" [progress]="progreso1"></app-incrementador>
+
+			<app-incrementador (valorSalida)="progreso2 = $event" [progress]="progreso2"></app-incrementador>+
+**************************************************************************************************************************************
+51. *****************************************************************************************Color de los botones de forma condicional
+	1.- Se modifica incrementador.component.html, se le agrega directiva --> [ngClass]="valorClase" y se le elimina la clase 
+		como atributo
+		<div class="input-group">
+		  <span class="input-group-btn">
+		    <button [ngClass]="valorClase" type="button" (click)="cambiarPorcentaje(-5)"><i class="fa fa-minus"></i></button>
+		  </span>
+		  <input type="text" class="form-control" placeholder="Porcentaje" [(ngModel)]="progress">
+		  <span class="input-group-btn">
+		    <button [ngClass]="valorClase" type="button" (click)="cambiarPorcentaje(5)"><i class="fa fa-plus"></i></button>
+		  </span>
+		</div>
+	2.- Se modifica incrementador.component.ts
+		2.1.- Se crea atributo @Input 
+			  @Input() valorClase: string = 'btn-info';
+		2.2.- Se modifica metodo ngOnInit() 
+			  ngOnInit(): void {
+			    this.valorClase = `btn ${ this.valorClase }`
+			  }
+	3.- S modifica progress.component.html, se modifica el componente incrementador para pasarle la clase que utilizaran los botones 
+		 <app-incrementador (valorSalida)="progreso1 = $event" [progress]="progreso1" [valorClase]="'btn-primary'"></app-incrementador>
+
+		 <app-incrementador (valorSalida)="progreso2 = $event" [progress]="progreso2" [valorClase]="'btn-danger'"></app-incrementador>+
+**************************************************************************************************************************************
+52. *********************************************************************************Pulir detalles de nuestro incrementador component
+***********************************************************************************************************************(ngModelChange)
+*****************************************************************************************************************************[ngClass]
+	1.- Se modifica incrementador.component.html, se le agrega directiva [ngClass] y evento (ngModelChange) al input  
+		<div class="input-group">
+		  <span class="input-group-btn">
+		    <button [ngClass]="valorClase" type="button" (click)="cambiarPorcentaje(-5)"><i class="fa fa-minus"></i></button>
+		  </span>
+		  <input (ngModelChange)="onChange( $event )"
+		          type="number"
+		          class="form-control"
+		          placeholder="Porcentaje"
+		          [(ngModel)]="progress"
+		          [ngClass]="{'is-invalid': progress > 100 ||  progress < 0 }">
+		  <span class="input-group-btn">
+		    <button [ngClass]="valorClase" type="button" (click)="cambiarPorcentaje(5)"><i class="fa fa-plus"></i></button>
+		  </span>
+		</div>
+	2.- Se modifica incrementador.component.ts, se crea metodo onChange() que validra que el numero no sea mayor a 100 o menosr a 0 
+		  onChange( newValor:  number){
+		    if(newValor > 100){
+		      this.progress = 100;
+		    }else if(newValor < 0 ){
+		      this.progress = 0;
+		    }else{
+		      this.progress = newValor;
+		    }
+		    this.valorSalida.emit(this.progress);
+		  }
+**************************************************************************************************************************************
+54. ***************************************************************************************************************Gráficas en Angular
+	Referencia --> https://valor-software.com/ng2-charts/#/GeneralInfo
+	1.- Se realiza instalacion de ng2-chart --> npm install --save ng2-charts
+	2.- Instalacion de chart.js --> npm install --save chart.js
+	Nota: Al instalar las versiones del punto 1 y 2 se me genera error, por lo que debi desintalar y volver a instalar con una version 
+				determinada 
+
+					npm uninstall ng2-charts
+					npm uninstall chart.js
+
+				Luego simplemente instala las siguientes versiones:
+
+					npm install --save ng2-charts@2.3.0
+					npm install --save chart.js@2.9.3
+	3.- Se modifica pages.module.ts, se importa ChartsModule 
+		  imports: [
+			    CommonModule,
+			    RouterModule,
+			    SharedModule,
+			    FormsModule,
+			    ComponentsModule,
+			    ChartsModule
+			  ]
+			})
+			export class PagesModule { }
+	4.- Se modifica grafica1.component.html, se renderiza grafica de torta, segun pagina de referencia ng2chart 
+		<div class="row">
+		  <div class="col-6">
+		    <div class="card">
+		      <div class="card-body">
+		        <div style="display: block">
+		          <canvas baseChart
+		            [data]="doughnutChartData"
+		            [labels]="doughnutChartLabels"
+		            [colors]="colors"
+		            [chartType]="doughnutChartType">
+		          </canvas>
+		        </div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+	5.- Se modifica grafica1.component.ts, se agrega datos para los graficos, segun pagina de referencia ng2chart  
+		5.1.- Se importan las librerias 
+			import { ChartType } from 'chart.js';
+			import { MultiDataSet, Label, Color } from 'ng2-charts';}
+		5.2.- Se crean los atributos para los graficos
+		  // Doughnut
+		  public doughnutChartLabels: Label[] = ['Download Sales', 'In-Store Sales', 'Mail-Order Sales'];
+		  public doughnutChartData: MultiDataSet = [
+		    [350, 450, 100],
+		  ];
+		  public doughnutChartType: ChartType = 'doughnut';
+
+		  public colors: Color[] = [
+		    { backgroundColor: [ '#00ff40', '#00ffff' , '#8080ff']}
+		  ]
+
+		5.3.- Se crean metodo para los eventos hover y click 
+
+		  // events
+		  public chartClicked({ event, active }: { event: MouseEvent, active: {}[] }): void {
+		    console.log(event, active);
+		  }
+
+		  public chartHovered({ event, active }: { event: MouseEvent, active: {}[] }): void {
+		    console.log(event, active);
+		  }+
+**************************************************************************************************************************************
+55. *********************************************************************************************************Tarea de Inputs y Outputs
+	1.- Se crea componente de grafica dona para reutilizar 
+		ng g c components/dona --skip-tests
+	2.- Se modifica grafica1.component.html, se corta div de la grafica de dona y inserta componente app-dona creado 
+		<div class="row">
+		  <div class="col-6">
+		    <app-dona></app-dona>
+		  </div>
+		  <div class="col-6">
+		    <app-dona></app-dona>
+		  </div>
+		</div>
+		<div class="row">
+		  <div class="col-6">
+		    <app-dona></app-dona>
+		  </div>
+		  <div class="col-6">
+		    <app-dona></app-dona>
+		  </div>
+		</div>
+	3.- Se modifica dona.component.html y se pega div de la grafica de dona
+		<div class="card">
+		  <div class="card-body">
+		    <div style="display: block">
+		      <canvas baseChart
+		        [data]="doughnutChartData"
+		        [labels]="doughnutChartLabels"
+		        [colors]="colors"
+		        [chartType]="doughnutChartType">
+		      </canvas>
+		    </div>
+		  </div>
+		</div>
+	4.- Se modifica grafica1.component.ts, se corta contenido de la grafica y se deja solo el constructor y el OnInit 
+		@Component({
+		  selector: 'app-grafica1',
+		  templateUrl: './grafica1.component.html',
+		  styles: [
+		  ]
+		})
+		export class Grafica1Component implements OnInit {
+
+		  constructor() { }
+
+		  ngOnInit(): void {
+		  }
+
+		}
+	5.- Se modifica dona.component.ts, se pega el contenido de datos y metodos de la dona  
+		@Component({
+		  selector: 'app-dona',
+		  templateUrl: './dona.component.html',
+		  styleUrls: ['./dona.component.css']
+		})
+		export class DonaComponent implements OnInit {
+
+
+		  // Doughnut
+		  public doughnutChartLabels: Label[] = ['Download Sales', 'In-Store Sales', 'Mail-Order Sales'];
+		  public doughnutChartData: MultiDataSet = [
+		    [350, 450, 100],
+		  ];
+		  public doughnutChartType: ChartType = 'doughnut';
+
+		  public colors: Color[] = [
+		    { backgroundColor: [ '#00ff40', '#00ffff' , '#8080ff']}
+		  ]
+
+		  constructor() { }
+
+		  ngOnInit(): void {
+		  }
+
+		  // events
+		  public chartClicked({ event, active }: { event: MouseEvent, active: {}[] }): void {
+		    console.log(event, active);
+		  }
+
+		  public chartHovered({ event, active }: { event: MouseEvent, active: {}[] }): void {
+		    console.log(event, active);
+		  }
+
+		}
+	6.- Se modifica pages.module.ts, se elimana la importacion de ChartsModule
+		@NgModule({
+		  declarations: [
+		    DashboardComponent,
+		    ProgressComponent,
+		    Grafica1Component,
+		    PagesComponent
+		  ],
+		  exports: [
+		    DashboardComponent,
+		    ProgressComponent,
+		    Grafica1Component,
+		    PagesComponent
+		  ],
+		  imports: [
+		    CommonModule,
+		    RouterModule,
+		    SharedModule,
+		    FormsModule,
+		    ComponentsModule,
+
+		  ]
+		})
+		export class PagesModule { }
+	7.- Se modifica ComponentsModule, se agrega la importacion de ChartsModule y se importa y exporta D
+
+		@NgModule({
+		  declarations: [
+		    IncrementadorComponent,
+		    DonaComponent
+		  ],
+		  exports:[
+		    IncrementadorComponent,
+		    DonaComponent
+		  ],
+		  imports: [
+		    CommonModule,
+		    FormsModule,
+		    ChartsModule
+		  ]
+		})
+		export class ComponentsModule { }
+	8.- Se modifica dona.component.html, se le agrega titulo a la grafica 
+		<div class="card">
+		  <div class="card-body">
+		    <!-- Titulo -->
+		    <h3>{{titulo}}</h3>
+		    <div style="display: block">
+		      <canvas baseChart
+		        [data]="doughnutChartData"
+		        [labels]="doughnutChartLabels"
+		        [colors]="colors"
+		        [chartType]="doughnutChartType">
+		      </canvas>
+		    </div>
+		  </div>
+		</div>
+	9.- Se modifica dona.component.ts, se agregan @Input() a los atributos del grafico  
+		  @Input() titulo: string ='';
+		  // Doughnut
+		  // Doughnut
+		  @Input('labels') doughnutChartLabels: Label[] = [];
+		  @Input('data') doughnutChartData: MultiDataSet = [ ];
+	10.- Se modifica grafica1.component.ts, se crean los datos para los graficos 
+		  public labels1: Label[] = ['Download Sales1', 'In-Store Sales1', 'Mail-Order Sales1'];
+		  public labels2: Label[] = ['Download Sales2', 'In-Store Sales2', 'Mail-Order Sales2'];
+		  public labels3: Label[] = ['Download Sales3', 'In-Store Sales3', 'Mail-Order Sales3'];
+		  public labels4: Label[] = ['Download Sales4', 'In-Store Sales4', 'Mail-Order Sales4'];
+
+		  public data1 = [[350, 450, 100],];
+		  public data2 = [[150, 250, 400],];
+		  public data3 = [[450, 250, 500],];
+		  public data4 = [[450, 350, 300],];
+	11.- Se modifica grafica1.component.html, se agregan atributos a cada grafico  
+			<div class="row">
+			  <div class="col-6">
+			    <app-dona titulo="Sales"
+			              [labels]="labels1"
+			              [data]="data1"></app-dona>
+			  </div>
+			  <div class="col-6">
+			    <app-dona titulo="Billing"
+			              [labels]="labels2"
+			              [data]="data2"></app-dona>
+			  </div>
+			</div>
+			<div class="row">
+			  <div class="col-6">
+			    <app-dona titulo="Expenses"
+			              [labels]="labels3"
+			              [data]="data3"></app-dona>
+			  </div>
+			  <div class="col-6">
+			    <app-dona titulo="Profits"
+			              [labels]="labels4"
+			              [data]="data4"></app-dona>
+			  </div>
+			</div>+
+**************************************************************************************************************************************
+57. *******************************************************************************Guardar nuestros cambios en GitHub - Input y Output
+	1.- Se preparan los cambios --> git add .
+ 	2.- Se guardan los cambios en el local --> git commit -m FinSeccion6
+ 	3.- Se suben los cambios al remoto --> git push
+ 	4.- Se visualizan los tags --> git tag
+ 	5.- Se agrega tag --> git tag -a v1.2.0 -m"Fin Seccion 6"
+ 	6.- Se sube el tag al remoto --> git push --tags
+**************************************************************************************************************************************
+******************************************************* Fin Seccion ******************************************************************
+******************************** Sección 7: Servicios básicos, temas,rutas básicas y persistencia ************************************
+******************************************************* Fin Seccion ****************************************************************** 
+
+
+
+
+
+
+
+
+
+
+
+
+
+https://superheroapi.com/
+10226514756277459
 
 
 
@@ -9189,10 +11146,13 @@ https://apexcharts.com/angular-chart-demos/
 Seccion 1 Intro************************************************************************************************************************
 Complementarios************************************************************************************************************************
 	Versionado de herramientas
+		instalacion de npm --> npm install npm@latest -g
 		node -v 
 		npm -v 
 		tsc --version 
 		ng -v --> angular cli 
+		npm install -g typescript
+		tsc --version 		
 		npm install -g @angular/cli
 		npm install -g ionic
 
@@ -11216,6 +13176,8 @@ Seccion 8: Componentes, Directivas de atributos y ciclo de vida*****************
                 <a class="nav-link" [routerLink]="['usuario']">Usuarios</a>
             </li>
         </ul>
+
+
 
 
 

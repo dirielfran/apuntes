@@ -2303,7 +2303,7 @@ Subida de foto en el FronEnd****************************************************
 		 //{path: 'clientes/ver/:id', component: DetalleComponent}
 	2.- Se modifica clientes.component.html, se añade selector de detalle.component.ts y se realiza inyeccion de cliente
 		<detalle-cliente [cliente]="clienteSeleccionado"></detalle-cliente>
-		2.1.- Se elmina routerLing del cliente id y se agrega evento click que ejecuta metodo abrirModal()
+		2.1.- Se elmina routerLink del cliente id y se agrega evento click que ejecuta metodo abrirModal()
 			<td><button type="button" (click)="abrirModal(cliente)" class="btn btn-success btn-sm">{{cliente.id}}</button></td>
 	3.- Se modifica detalle.component.ts, se añade Imput al atributo cliente
 		3.1.- Se importa la libreria Imput de angular/core
@@ -6755,3 +6755,66 @@ docker run -t --link docker-mysql:mysql -p 8080:8080 spring-meli
 
 
 when(this.userRepository.findByUsername(TestUtil.VALID_USER_USERNAME)).thenReturn(userActive);
+
+
+
+
+
+
+
+<div class="container">
+    <!-- Tabla de productos -->
+    <div class="col-lg-12 col-md-12" >
+        <div class="card">
+            <div class="card-header card-header-info" >
+                <h4 class="card-title">Facturas</h4>
+                <p class="card-category">Compras al costo</p>
+            </div>
+            <div class="card-body table-responsive">
+                <p-table #dt [value]="facturas"   dataKey="id" styleClass="p-datatable-customers" [rowHover]="true"
+                [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" [loading]="loading"
+                [paginator]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [filterDelay]="0" *ngIf="facturas?.length > 0" [columns]="scrollableCols" [frozenColumns]="frozenCols" 
+                [scrollable]="true" scrollHeight="200px" frozenWidth="300px">
+                    <ng-template pTemplate="caption">
+                        <div class="table-header">
+                            Lista de Facturas                         
+                        </div>                        
+                    </ng-template>
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col *ngFor="let col of columns" style="width:200px">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th *ngFor="let col of columns">
+                                {{col.header}}
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-factura let-columns="columns">
+                        <tr>
+                            <td *ngFor="let col of columns">
+                                <div [ngSwitch]="col.field">
+                                    <div *ngSwitchCase="'createAt'">{{ factura[col.field] | date: 'short' }}</div>
+                                    <div *ngSwitchCase="'mercadopago'">{{ factura[col.field] | number }}</div>
+                                    <div *ngSwitchCase="'pedidosya'">{{ factura[col.field] | number }}</div>
+                                    <div *ngSwitchCase="'puntoventa'">{{ factura[col.field] | number }}</div>
+                                    <div *ngSwitchCase="'montocomision'">{{ factura[col.field] | number }}</div>
+                                    <div *ngSwitchCase="'pedidosyaefectivo'">{{ factura[col.field] | number }}</div>
+                                    <div *ngSwitchDefault>{{ factura[col.field] }}</div>
+                                </div> 
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="8">No customers found.</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>
