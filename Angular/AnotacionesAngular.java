@@ -72,13 +72,14 @@ Almacenar en el sessioStorage 		-->sessionStorage.setItem('usuarios', JSON.strin
 Convertir un objeto en json 		-->JSON.stringify(this._usuario)
 cambio de puerto 					--> ng serve --port 4401 
 
-Diferentes formas de path en el RouterModule:
+**	Diferentes formas de path en el RouterModule:
   //{ path: 'path/:routeParam', component: MyComponent },
   //{ path: 'staticPath', component: ... },
   //{ path: '**', component: ... },
   //{ path: 'oldPath', redirectTo: '/staticPath' },
   //{ path: ..., component: ..., data: { message: 'Custom' }
-
+** Atajos de angular
+	*ngclick 							--> Se agrega evento click en html 
 
 ************************************************************Angular Fit***************************************************************
 **************************************************************************************************************************************
@@ -8947,7 +8948,7 @@ Seccion 22: Grafica es Angular**************************************************
 				  <app-root></app-root>
 
 
-				      <!-- ============================================================== -->
+				    <!-- ============================================================== -->
 				    <!-- All Jquery -->
 				    <!-- ============================================================== -->
 				    <script src="./assets/plugins/jquery/jquery.min.js"></script>
@@ -8970,7 +8971,7 @@ Seccion 22: Grafica es Angular**************************************************
 				    <!-- ============================================================== -->
 				    <script src="./assets/plugins/styleswitcher/jQuery.style.switcher.js"></script>
 				</body>
-			</html>
+			</html>				   
 **************************************************************************************************************************************
 19. ******************************************************************************Header, SiderBar, Breadcrumbs y contenedor principal
 	1.- Se modifica el index.html, se le agrega clase al body y preloader del archivo pages-banck 
@@ -9605,13 +9606,13 @@ Seccion 22: Grafica es Angular**************************************************
 		    <app-footer></app-footer>
 		    </div>
 		  </div>
-		</div> +
+		</div> 
 **************************************************************************************************************************************
 20. ***********************************************************************************************Implementando las rutas principales
 	1.- Se genera modulo de routing --> ng g m appRouting --flat
 	2.- Se crean componentes de paginas progress y grafica1 
-		ng g c pages/grafica1 -is --skip-te
-		ng g c pages/progress -is --skip-te
+		ng g c pages/grafica1 -is --skip-tests
+		ng g c pages/progress -is --skip-tests
 	3.- Se modifica app-routing.module.ts, se crean las rutas y se importan  
 		3.1.- Se exporta RouterModule 
 			3.1.- Se importa la libreria 
@@ -9861,7 +9862,7 @@ Seccion 22: Grafica es Angular**************************************************
 **************************************************************************************************************************************
 26. ************************************************************************************************************************Página 404
 	Basado en la clase anterior se debe modificar el componente de NopagesfoundComponent , basado en el archivo pages-error-404.html 
-	que se facilito como material en el curso    +
+	que se facilito como material en el curso    
 **************************************************************************************************************************************
 27. *********************************************************************************************Respaldo de nuestro trabajo en GitHub
 	1.- Se inicializa git --> git init 
@@ -10764,14 +10765,1393 @@ Seccion 22: Grafica es Angular**************************************************
 **************************************************************************************************************************************
 ******************************************************* Fin Seccion ******************************************************************
 ******************************** Sección 7: Servicios básicos, temas,rutas básicas y persistencia ************************************
+62. **************************************************************************************Diseño inicial de la página account-settings
+	1.- Se crea componente -->  ng g c pages/accountSetting --skip-tests 
+	2.- Se modifica pages.module.ts, se exporta el componente creado 
+		@NgModule({
+		  declarations: [
+
+
+		    DashboardComponent,
+		    ProgressComponent,
+		    Grafica1Component,
+		    PagesComponent,
+		    AccountSettingComponent
+		  ],
+		  exports: [
+		    DashboardComponent,
+		    ProgressComponent,
+		    Grafica1Component,
+		    PagesComponent,
+		    AccountSettingComponent
+		  ],
+		  imports: [
+		    CommonModule,
+		    RouterModule,
+		    SharedModule,
+		    FormsModule,
+		    ComponentsModule,
+
+		  ]
+		})
+		export class PagesModule { }
+	3.- Se modifica pages-routing.module.ts, se agrega nueva ruta para el nuevo componente 
+	4.- Se modifica account-setting.component.html, se agrega elementos html para escoger el color 
+		<div class="row">
+		  <div class="col-5">
+		      <div class="card">
+		          <div class="card-body">
+		            <h3>Seleccione el tema</h3>
+		            <div class="r-panel-body">
+		              <ul id="themecolors" class="m-t-20">
+		                  <li><b>Con el sidebar claro</b></li>
+		                  <li><a data-theme="default" class="selector default-theme">1</a></li>
+		                  <li><a data-theme="green" class="selector green-theme">2</a></li>
+		                  <li><a data-theme="red" class="selector red-theme">3</a></li>
+		                  <li><a data-theme="blue" class="selector blue-theme">4</a></li>
+		                  <li><a data-theme="purple" class="selector purple-theme">5</a></li>
+		                  <li><a data-theme="megna" class="selector megna-theme">6</a></li>
+
+		                  <li class="d-block m-t-30"><b>Con el sidebar oscuro</b></li>
+		                  <li><a data-theme="default-dark" class="selector default-dark-theme">7</a></li>
+		                  <li><a data-theme="green-dark" class="selector green-dark-theme">8</a></li>
+		                  <li><a data-theme="red-dark" class="selector red-dark-theme">9</a></li>
+		                  <li><a data-theme="blue-dark" class="selector blue-dark-theme working">10</a></li>
+		                  <li><a data-theme="purple-dark" class="selector purple-dark-theme">11</a></li>
+		                  <li><a data-theme="megna-dark" class="selector megna-dark-theme">12</a></li>
+		              </ul>
+		            </div>
+		          </div>
+		      </div>
+		  </div>
+		</div> 
+	5.- Se modifica Style.css, se agrega stilo para cursor en clase determinada 
+		#themecolors .selector{
+		  cursor: pointer;
+		}
+**************************************************************************************************************************************
+63. ****************************************************************************************Cambiar el CSS principal de forma dinámica
+	1.- Se modifica index.html, se modifica link de thema 
+		<!-- You can change the theme colors from here -->
+    <link  id="theme" rel="stylesheet">
+  2.- Se modifica account-setting.component.html, se añade evento changeTheme() para cambio de thema en la aplicacion  
+  	<div class="row">
+		  <div class="col-5">
+		      <div class="card">
+		          <div class="card-body">
+		            <h3>Seleccione el tema</h3>
+		            <div class="r-panel-body">
+		              <ul id="themecolors" class="m-t-20">
+		                  <li><b>Con el sidebar claro</b></li>
+		                  <li><a (click)="changeTheme('default')" data-theme="default" class="selector default-theme">1</a></li>
+		                  <li><a (click)="changeTheme('green')" data-theme="green" class="selector green-theme">2</a></li>
+		                  <li><a (click)="changeTheme('red')" data-theme="red" class="selector red-theme">3</a></li>
+		                  <li><a (click)="changeTheme('blue')" data-theme="blue" class="selector blue-theme">4</a></li>
+		                  <li><a (click)="changeTheme('purple')" data-theme="purple" class="selector purple-theme">5</a></li>
+		                  <li><a (click)="changeTheme('megna')" data-theme="megna" class="selector megna-theme">6</a></li>
+
+		                  <li class="d-block m-t-30"><b>Con el sidebar oscuro</b></li>
+		                  <li><a (click)="changeTheme('default-dark')" data-theme="default-dark" class="selector default-dark-theme">7</a></li>
+		                  <li><a (click)="changeTheme('green-dark')" data-theme="green-dark" class="selector green-dark-theme">8</a></li>
+		                  <li><a (click)="changeTheme('red-dark')" data-theme="red-dark" class="selector red-dark-theme">9</a></li>
+		                  /*<li><a (click)="changeTheme('blue-dark')" data-theme="blue-dark" class="selector blue-dark-theme working">10</a></li>
+		                  <li><a (click)="changeTheme('purple-dark')" data-theme="purple-dark" class="selector purple-dark-theme">11</a></li>
+		                  <li><a (click)="changeTheme('megna-dark')" data-theme="megna-dark" class="selector megna-dark-theme">12</a></li>
+		              </ul>
+		            </div>
+		          </div>
+		      </div>
+		  </div>
+		</div>*/  
+	3.- Se modifica account-setting.component.html, se agrega dentro de la clase, variable para la referencia a objeto del documento 
+			con vainilla 
+		public urlLink = document.querySelector('#theme');
+		3.1.- Se crea metodo de cambio de tema   
+			changeTheme( theme: string ){
+		    const url = `./assets/css/colors/${ theme }.css`;
+		    this.urlLink?.setAttribute('href', url);
+		    //Se setea en el localstorage 
+		    localStorage.setItem('theme', url);
+		  }
+	4.- Se modifica pages.component.ts, se recupera del local storage el tema 
+		4.1.- Se agrega dentro de la clase, variable para la referencia a objeto del documento con vainilla 
+			public urlLink = document.querySelector('#theme');
+		4.2.- Se modifica metodo ngOnInit(), para recuperar tema del local storage y setearselo al elemento html 
+		  ngOnInit(): void {
+		    const tema: string = localStorage.getItem('theme') || './assets/css/colors/default-dark.css';
+		    this.urlLink?.setAttribute('href', tema);
+		  }
+**************************************************************************************************************************************
+64. ******************************************************************************************Agregando clases de CSS sin usar ngClass
+	1.- Se modifica account-setting.component.ts. 
+		1.1.- Se crea tributo de tipo NodeListOf<Element> de manera global para ir aldom en cada llamada
+		  public links!: NodeListOf<Element>;
+		1.2.- Se modifica metodo ngOnInit(), se capturan  elementos del dom con la clase selector y se llama al metodo 
+					checkCurrencyTheme()
+		  ngOnInit(): void {
+		    this.links =document.querySelectorAll(".selector");
+		    this.checkCurrencyTheme();
+		  }
+		1.3.- Se modifica el metodo changeTheme(), se llama al metodo checkCurrencyTheme()
+		  changeTheme( theme: string ){
+		    const url = `./assets/css/colors/${ theme }.css`;
+		    this.urlLink?.setAttribute('href', url);
+		    localStorage.setItem('theme', url);
+		    this.checkCurrencyTheme();
+		  }
+		1.4.- Se crea metodo para checkCurrencyTheme()
+				//Se recorren los objetos de DOM con clase selector
+			  checkCurrencyTheme(){
+			    this.links.forEach( elem => {
+			    	//Se borra clase de todos los elementos 
+			      elem.classList.remove('working');
+			      //se obtiene el atributo del elemento
+			      const btnTheme = elem.getAttribute('data-theme');
+			      //Se arma url del elemento 
+			      const btnThemeUrl = `./assets/css/colors/${ btnTheme }.css`;
+			      // Se obtiene url del atributo href del tema actual
+			      const currentTheme = this.urlLink?.getAttribute('href');
+			      // Se compra cada elemento con el actual, si es igual le agrega la clase working
+			      if ( btnThemeUrl === currentTheme ){
+			        elem.classList.add('working');
+			      }
+			    })
+			  }			 
+**************************************************************************************************************************************
+65. *****************************************************************************************************************Servicio Settings
+	1.- Se crea un servicio --> ng g s services/setting --skip-tests
+	2.- Se modifica pages.component.ts, se cortan los servicios 
+		@Component({
+		  selector: 'app-pages',
+		  templateUrl: './pages.component.html',
+		  styles: [
+		  ]
+		})
+		export class PagesComponent implements OnInit {
+		  constructor() { }
+
+		  ngOnInit(): void {}
+		} 
+	3.- Se modifica setting.service.ts
+		3.1.- Se crea atributo para recuperar elemento del DOM 
+			private urlLink = document.querySelector('#theme');
+		3.2.- Se modifica constructor(), se recupera tema del local storage y se setea en url de elemento html 
+			  constructor() {
+			    const tema: string = localStorage.getItem('theme') || './assets/css/colors/default-dark.css';
+			    this.urlLink?.setAttribute('href', tema);
+			  }
+		3.3.- Se copia metodo changeTheme() de account-setting.component.ts
+			  changeTheme( theme: string ){
+			    const url = `./assets/css/colors/${ theme }.css`;
+			    this.urlLink?.setAttribute('href', url);
+			    localStorage.setItem('theme', url);
+			    this.checkCurrencyTheme();
+			  }
+		3.4.- Se copia metodo checkCurrencyTheme() de account-setting.component.ts
+			  checkCurrencyTheme(){
+
+			    const links= document.querySelectorAll(".selector");
+			    links.forEach( elem => {
+			      elem.classList.remove('working');
+			      const btnTheme = elem.getAttribute('data-theme');
+			      const btnThemeUrl = `./assets/css/colors/${ btnTheme }.css`;
+			      const currentTheme = this.urlLink?.getAttribute('href');
+
+			      if ( btnThemeUrl === currentTheme ){
+			        elem.classList.add('working');
+			      }
+			    })
+			  } 
+	4.- Se modifica account-setting.component.ts, se deja lo mas limpio posible y se delega en el servicio las tareas 
+		@Component({
+		  selector: 'app-account-setting',
+		  templateUrl: './account-setting.component.html',
+		  styleUrls: ['./account-setting.component.css']
+		})
+		export class AccountSettingComponent implements OnInit {
+
+
+		  public links!: NodeListOf<Element>;
+
+		  constructor( private settingService: SettingService ) { }
+
+		  ngOnInit(): void {
+		    this.settingService.checkCurrencyTheme();
+		  }
+
+		  changeTheme( theme: string ){
+		    this.settingService.changeTheme( theme );
+		  }
+		}
+**************************************************************************************************************************************
+66. ***************************************************************************************RouterLink - Mover a una ruta en particular
+	1.- Se modifica sidebar.component.html, se agrega routerlink al componente de account-setting  
+    <li class="user-profile">
+        <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><img src="./assets/images/users/profile.png" alt="user" /><span class="hide-menu">Steave Jobs </span></a>
+        <ul aria-expanded="false" class="collapse">
+            <li><a href="javascript:void()">My Profile </a></li>
+            <li><a href="javascript:void()">My Balance</a></li>
+            <li><a href="javascript:void()">Inbox</a></li>
+            <li><a routerLink="setting">Account Setting</a></li>
+            <li><a href="javascript:void()">Logout</a></li>
+        </ul>
+    </li>
+  2.- Se modifica header.component.html, se agrega routerlink al componente de account-setting 
+    <ul class="dropdown-user">
+        <li>
+            <div class="dw-user-box">
+                <div class="u-img"><img src="./assets/images/users/1.jpg" alt="user"></div>
+                <div class="u-text">
+                    <h4>Steave Jobs</h4>
+                    <p class="text-muted">varun@gmail.com</p><a href="pages-profile.html" class="btn btn-rounded btn-danger btn-sm">View Profile</a></div>
+            </div>
+        </li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#"><i class="ti-user"></i> My Profile</a></li>
+        <li><a href="#"><i class="ti-wallet"></i> My Balance</a></li>
+        <li><a href="#"><i class="ti-email"></i> Inbox</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a routerLink="setting"><i class="ti-settings"></i> Account Setting1</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#"><i class="fa fa-power-off"></i> Logout</a></li>
+    </ul> 
+  3.- Se modifica shared.module.ts, se agrega import del RouterModule   
+  	@NgModule({
+		  declarations: [
+		    BreadcrumbsComponent,
+		    SidebarComponent,
+		    HeaderComponent,
+		    FooterComponent
+		  ],
+		  exports:[
+		    BreadcrumbsComponent,
+		    SidebarComponent,
+		    HeaderComponent,
+		    FooterComponent
+		  ],
+		  imports: [
+		    CommonModule,
+		    RouterModule
+		  ]
+		})
+		export class SharedModule { } 
+**************************************************************************************************************************************
+67. *********************************************************************************Servicio para controlar el Sidebar - Menú lateral
+	1.- Se crea servicio para el sidebar --> ng g s services/sidebar --skip-tests
+	2.- Se modifica sidebar.service.ts, se crearrglo de emnu con sus items  
+		menu: any[] = [
+	    {
+	      titulo  : 'Dashboard!',
+	      icono   : 'mdi mdi-gauge',
+	      submenu : [
+	        { titulo: 'Main', url:'/' },
+	        { titulo: 'ProgressBar', url: 'progress' },
+	        { titulo: 'Graficas', url: 'grafica1' }
+	      ]
+	    }
+	  ]; 
+	3.- Se modifica sidebar.componen.ts 
+		3.1.- Se crea arreglo para el menu 
+			itemsSidebar: any[];   
+		3.2.- Se modifica constructor(), se recupera el menu del servicio
+			  constructor( private sidebarService: SidebarService ) {
+			    this.itemsSidebar = sidebarService.menu;
+			  }
+	4.- Se modifica sidebar.component.html, se renderiza menu  
+		  	<!-- ============================================================== -->
+			  <!-- Left Sidebar - style you can find in sidebar.scss  -->
+			  <!-- ============================================================== -->
+			  <aside class="left-sidebar">
+			    <!-- Sidebar scroll-->
+			    <div class="scroll-sidebar">
+			        <!-- Sidebar navigation-->
+			        <nav class="sidebar-nav">
+			            <ul id="sidebarnav">
+			                <li class="user-profile">
+			                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><img src="./assets/images/users/profile.png" alt="user" /><span class="hide-menu">Steave Jobs </span></a>
+			                    <ul aria-expanded="false" class="collapse">
+			                        <li><a href="javascript:void()">My Profile </a></li>
+			                        <li><a href="javascript:void()">My Balance</a></li>
+			                        <li><a href="javascript:void()">Inbox</a></li>
+			                        <li><a routerLink="setting">Account Setting</a></li>
+			                        <li><a href="javascript:void()">Logout</a></li>
+			                    </ul>
+			                </li>
+			                <li class="nav-devider"></li>
+			                <li class="nav-small-cap">PERSONAL</li>
+			                <li *ngFor="let item of itemsSidebar">
+			                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+			                      <i class="mdi mdi-chart-bubble"></i>
+			                      <span class="hide-menu">
+			                        {{ item.titulo }}
+			                        <span class="label label-rouded label-danger pull-right">
+			                          {{ item.submenu.length }}
+			                        </span>
+			                      </span>
+			                    </a>
+			                    <ul aria-expanded="false" class="collapse">
+			                        <li *ngFor="let subMenu of item.submenu">
+			                          <a [routerLink]="subMenu.url">{{ subMenu.titulo }} </a>
+			                        </li>
+			                    </ul>
+			                </li>
+			            </ul>
+			        </nav>
+			        <!-- End Sidebar navigation -->
+			    </div>
+			    <!-- End Sidebar scroll-->
+			</aside>
+			<!-- ============================================================== -->
+			<!-- End Left Sidebar - style you can find in sidebar.scss  -->
+			<!-- ============================================================== -->
+**************************************************************************************************************************************
+68. ***************************************************************Uso de Scripts de archivos importados en el index.html en TypeScrip
+		1.- Se modifica header.component.ts, se agrega routerlink que dirige a login 
+		        <!-- ============================================================== -->
+            <!-- Profile -->
+            <!-- ============================================================== -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="./assets/images/users/1.jpg" alt="user" class="profile-pic" /></a>
+                <div class="dropdown-menu dropdown-menu-right animated flipInY">
+                    <ul class="dropdown-user">
+                        <li>
+                            <div class="dw-user-box">
+                                <div class="u-img"><img src="./assets/images/users/1.jpg" alt="user"></div>
+                                <div class="u-text">
+                                    <h4>Steave Jobs</h4>
+                                    <p class="text-muted">varun@gmail.com</p><a href="pages-profile.html" class="btn btn-rounded btn-danger btn-sm">View Profile</a></div>
+                            </div>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#"><i class="ti-user"></i> My Profile</a></li>
+                        <li><a href="#"><i class="ti-wallet"></i> My Balance</a></li>
+                        <li><a href="#"><i class="ti-email"></i> Inbox</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a routerLink="setting"><i class="ti-settings"></i> Account Setting1</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a routerLink="/login"><i class="fa fa-power-off"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </li>
+    2.- Se modifica sidebar.component.html, se modifica routerlink para que dirija a login 
+      <li class="user-profile">
+        <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><img src="./assets/images/users/profile.png" alt="user" /><span class="hide-menu">Steave Jobs </span></a>
+        <ul aria-expanded="false" class="collapse">
+            <li><a href="javascript:void()">My Profile </a></li>
+            <li><a href="javascript:void()">My Balance</a></li>
+            <li><a href="javascript:void()">Inbox</a></li>
+            <li><a routerLink="setting">Account Setting</a></li>
+            <li><a routerLink="/login">Logout</a></li>
+        </ul>
+    	</li>
+    3.- Se modifica login.component.html, se modifica formulario para que ejecute funcion login() con el submit del boton   
+        <form class="form-horizontal form-material"
+        id="loginform"
+        (submit)="login()">
+    4.- Se modifica login.component.ts, se crea metodo para que redirija a dashboard 
+    		  constructor( private router: Router) { }
+
+  		    login(){
+				    this.router.navigateByUrl('/');
+				  }
+    5.- Se modifica auth.module.ts, se importa RouterModule
+					@NgModule({
+					  declarations: [
+					    LoginComponent,
+					    RegisterComponent,
+					  ],
+					  exports:[
+					    LoginComponent,
+					    RegisterComponent,
+					  ],
+					  imports: [
+					    CommonModule,
+					    RouterModule,
+					    FormsModule
+					  ]
+					})
+					export class AuthModule { }
+		6.- Se modifica index.html, se modifica custom JavaScript 
+			<!--Custom JavaScript -->
+      <script src="./assets/js/custom.js"></script>
+    7.- Se modifica custom.js  
+    	7.1.- Se envuelve la funcion en otra funcion customInitFunction()
+    		const customInitFunction = () => {
+				  $(function() {
+				    "use strict";
+				    $(function() {
+				        $(".preloader").fadeOut();
+				    });
+				    jQuery(document).on('click', '.mega-dropdown', function(e) {
+				        e.stopPropagation()
+				    });
+				    // ==============================================================
+				    // This is for the top header part and sidebar part
+				    // ==============================================================
+				    var set = function() {
+				        var width = (window.innerWidth > 0) ? window.innerWidth : this.screen.width;
+				        var topOffset = 0;
+				        if (width < 1170) {
+				            $("body").addClass("mini-sidebar");
+				            $('.navbar-brand span').hide();
+				            $(".sidebartoggler i").addClass("ti-menu");
+				        } else {
+				            $("body").removeClass("mini-sidebar");
+				            $('.navbar-brand span').show();
+				        }
+
+				        var height = ((window.innerHeight > 0) ? window.innerHeight : this.screen.height) - 1;
+				        height = height - topOffset;
+				        if (height < 1) height = 1;
+				        if (height > topOffset) {
+				            $(".page-wrapper").css("min-height", (height) + "px");
+				        }
+
+				    };
+				    $(window).ready(set);
+				    $(window).on("resize", set);
+
+				    // ==============================================================
+				    // Theme options
+				    // ==============================================================
+				    $(".sidebartoggler").on('click', function() {
+				        if ($("body").hasClass("mini-sidebar")) {
+				            $("body").trigger("resize");
+				            $("body").removeClass("mini-sidebar");
+				            $('.navbar-brand span').show();
+
+				        } else {
+				            $("body").trigger("resize");
+				            $("body").addClass("mini-sidebar");
+				            $('.navbar-brand span').hide();
+
+				        }
+				    });
+
+				    // this is for close icon when navigation open in mobile view
+				    $(".nav-toggler").click(function() {
+				        $("body").toggleClass("show-sidebar");
+				        $(".nav-toggler i").toggleClass("ti-menu");
+				        $(".nav-toggler i").addClass("ti-close");
+				    });
+
+				    $(".search-box a, .search-box .app-search .srh-btn").on('click', function() {
+				        $(".app-search").toggle(200);
+				    });
+				    // ==============================================================
+				    // Right sidebar options
+				    // ==============================================================
+				    $(".right-side-toggle").click(function() {
+				        $(".right-sidebar").slideDown(50);
+				        $(".right-sidebar").toggleClass("shw-rside");
+				    });
+				    // ==============================================================
+				    // This is for the floating labels
+				    // ==============================================================
+				    $('.floating-labels .form-control').on('focus blur', function(e) {
+				        $(this).parents('.form-group').toggleClass('focused', (e.type === 'focus' || this.value.length > 0));
+				    }).trigger('blur');
+
+				    // ==============================================================
+				    // Auto select left navbar
+				    // ==============================================================
+				    $(function() {
+				        var url = window.location;
+				        var element = $('ul#sidebarnav a').filter(function() {
+				            return this.href == url;
+				        }).addClass('active').parent().addClass('active');
+				        while (true) {
+				            if (element.is('li')) {
+				                element = element.parent().addClass('in').parent().addClass('active');
+				            } else {
+				                break;
+				            }
+				        }
+
+				    });
+				    // ==============================================================
+				    //tooltip
+				    // ==============================================================
+				    $(function() {
+				        $('[data-toggle="tooltip"]').tooltip()
+				    })
+				    // ==============================================================
+				    //Popover
+				    // ==============================================================
+				    $(function() {
+				        $('[data-toggle="popover"]').popover()
+				    })
+				    // ==============================================================
+				    // Sidebarmenu
+				    // ==============================================================
+				    $(function() {
+				        $('#sidebarnav').AdminMenu();
+				    });
+
+				    // ==============================================================
+				    // Perfact scrollbar
+				    // ==============================================================
+				    $('.scroll-sidebar, .right-side-panel, .message-center, .right-sidebar').perfectScrollbar();
+
+				    // ==============================================================
+				    // Resize all elements
+				    // ==============================================================
+				    $("body").trigger("resize");
+				    // ==============================================================
+				    // To do list
+				    // ==============================================================
+				    $(".list-task li label").click(function() {
+				        $(this).toggleClass("task-done");
+				    });
+
+
+
+				    // ==============================================================
+				    // Collapsable cards
+				    // ==============================================================
+				    $('a[data-action="collapse"]').on('click', function(e) {
+				        e.preventDefault();
+				        $(this).closest('.card').find('[data-action="collapse"] i').toggleClass('ti-minus ti-plus');
+				        $(this).closest('.card').children('.card-body').collapse('toggle');
+
+				    });
+				    // Toggle fullscreen
+				    $('a[data-action="expand"]').on('click', function(e) {
+				        e.preventDefault();
+				        $(this).closest('.card').find('[data-action="expand"] i').toggleClass('mdi-arrow-expand mdi-arrow-compress');
+				        $(this).closest('.card').toggleClass('card-fullscreen');
+				    });
+
+				    // Close Card
+				    $('a[data-action="close"]').on('click', function() {
+				        $(this).closest('.card').removeClass().slideUp('fast');
+				    });
+
+				  });
+				}
+			7.2.- Se llama a la funcion luego 
+				customInitFunction();
+		8.- Se modifica pages.component.ts, se llama a la funcion javascript de archivo externo desde typescript 
+			8.1.- Se declara la funcion 
+				declare function customInitFunction(): void;
+			8.2.- Se modifica metodo ngOnInit(),se llama a la funcion 
+				ngOnInit(): void {
+			    customInitFunction();
+			  }
+**************************************************************************************************************************************
+69. ************************************************************************************Guardar nuestros cambios en GitHub - Sección 7
+	1.- Se preparan los cambios --> git add .
+ 	2.- Se guardan los cambios en el local --> git commit -m FinSeccion7
+ 	3.- Se suben los cambios al remoto --> git push
+ 	4.- Se visualizan los tags --> git tag
+ 	5.- Se agrega tag --> git tag -a v1.3.0 -m"Fin Seccion 7"
+ 	6.- Se sube el tag al remoto --> git push --tags
+**************************************************************************************************************************************
+******************************************************* Fin Seccion ******************************************************************
+******************************************* Sección 8: Observables y Promesas*********************************************************
+74. ******************************************************************************************************Reforzamiento sobre Promesas
+	1.- Se crea componente promesa 
+		1.1.- Se ejecuta --> ng g c pages/promesas --skip-tests (tarea)
+		1.2.- Se modifica sidebar.service.ts, se crea la entrada del menu para el componente creado (tarea)
+		1.3.- Se modifica pages-routing.module.ts, se crea ruta para el nuevo componente (tarea)
+			const routes: Routes = [
+			  {
+			    path      : 'dashboard',
+			    component : PagesComponent,
+			    children  : [
+			      { path: '', component: DashboardComponent },
+			      { path: 'progress', component: ProgressComponent },
+			      { path: 'grafica1', component: Grafica1Component },
+			      { path: 'setting', component: AccountSettingComponent },
+			      { path: 'promesas', component: PromesaComponent },
+			      { path: '', redirectTo: 'dashboard', pathMatch:'full' }
+			    ]
+			  },
+	2.- Se modifica promesa.component.ts, se crea promesa en el metodo ngOnInit() 
+		  ngOnInit(): void {
+			    const promesa = new Promise( (resolve, reject) => {
+			      if(true){
+			        resolve('Hola Mundo');
+			      }else{
+			        reject('Algo salio mal');
+			      }
+			    });
+
+			    promesa.then( (mensaje) => {
+			      console.log(mensaje);
+			    }).catch((error) => {
+			      console.log( 'Error de la promesa', error );
+			    })
+
+			    console.log('Fin de la promesa')
+			  }
+			}
+**************************************************************************************************************************************
+75. ***************************************************************************************************Funciones que retornan promesas
+	1.- Se accede a la pagina para consumir servicio --> https://reqres.in/
+	2.- Se modifica promesa.component.ts, se crea metodo que devuelve promesa de usuario 
+		  getUsuario(){
+		    return new Promise( (resolve) => {
+		      fetch( 'https://reqres.in/api/users' )
+		        .then( resp => resp.json() )
+		        .then( body => resolve( body.data ) );
+		    } )
+		  }
+		2.1.- Se modifca metodo ngOnInit(), se llama a metodo getUsuario() y se imprime   
+		  ngOnInit(): void {
+
+		    this.getUsuario().then( resp => console.log( resp ) );
+
+		    const promesa = new Promise( (resolve, reject) => {
+		      if(true){
+		        resolve('Hola Mundo');
+		      }else{
+		        reject('Algo salio mal');
+		      }
+		    });
+
+		    promesa.then( (mensaje) => {
+		      console.log(mensaje);
+		    }).catch((error) => {
+		      console.log( 'Error de la promesa', error );
+		    })
+
+		    console.log('Fin de la promesa')
+		  }
+**************************************************************************************************************************************
+76. **********************************************************************************************Componente Rxjs y arreglo en el menú +
+**********************************************************************************************************************routerLinkActive
+*************************************************************************************************************[routerLinkActiveOptions]
+	1.- Se crea componente --> ng g c pages/rxjs --skip-tests
+	2.- Se modifica custom.js, se elemina auto select del js para poder hacerlo con directiva de angular 
+		    // ==============================================================
+		    // Auto select left navbar
+		    // ==============================================================
+		    $(function() {
+		        var url = window.location;
+		        var element = $('ul#sidebarnav a').filter(function() {
+		            return this.href == url;
+		        }).addClass('active').parent().addClass('active');
+		        while (true) {
+		            if (element.is('li')) {
+		                element = element.parent().addClass('in').parent().addClass('active');
+		            } else {
+		                break;
+		            }
+		        }
+
+		    });
+	3.- Se modifica sidebar.component.html, se agrega routerLinkActive 
+      <li *ngFor="let subMenu of item.submenu">
+        <a [routerLink]="subMenu.url"
+            routerLinkActive="active"
+            //Indica que debe ser exactamente igual la opcion para que este activo 
+            [routerLinkActiveOptions]="{exact: true}">{{ subMenu.titulo }} </a>
+      </li>
+**************************************************************************************************************************************
+77. ***************************************************************************************************Crear un observable manualmente
+******************************************************************************************************************************Interval 
+*****************************************************************************************************************************Obsevable
+*****************************************************************************************************************************Subscribe
+	1.- Se modifica rxjs.component.ts, se crea observable en el constructor
+		  constructor() {
+		    const obs$ = new Observable( observer => {
+		      let i = -1;
+		      const interval =   setInterval( () => {
+		        i++;
+		        observer.next(i);
+		        if( i === 4 ){
+		          //Se limpia y se culmina el interval
+		          clearInterval( interval );
+		          observer.complete();
+		        }
+		      }, 1000)
+		    });
+
+		    obs$.subscribe(
+		      valor => console.log('Subs: ', valor),
+		      error => console.warn('Error', error),
+		      () => console.info('Observable termino.')
+		    )
+
+		  }
+**************************************************************************************************************************************
+78. *****************************************************************************************************Método Retry de un observable
+	Nota: Retry se utiliza para cuando el observable falla pero aun asi se quiere volver a intentar una determinada cantidad de veces 
+	1.- Se modifica rxjs.component.ts, se utiliza operador rxjs retry() para hacer reintentos del observable una cantidad de veces 
+	determinada
+		1.1.- Se modifica el metodo constructor()
+			1.1.- Se saca la variable del interva 
+				let i = -1;
+			1.2.- Se genera el error del observables
+				if( i === 2 ){
+          i= 0;
+          observer.error('i llego al valor 2');
+        }
+      1.3.- Se modifica el subscribe, se le añade pipe con el operador retry() y la cantidad de reintentos
+      	obs$.pipe(
+		      retry(2)
+		    ).subscribe(
+		      valor => console.log('Subs: ', valor),
+		      error => console.warn('Error', error),
+		      () => console.info('Observable termino.')
+		    )
+		    --------------------------------------------------------------------------------------------
+		  constructor() {
+		    let i = -1;
+
+		    const obs$ = new Observable( observer => {
+
+		      const interval =   setInterval( () => {
+		        i++;
+		        observer.next(i);
+		        if( i === 4 ){
+		          clearInterval( interval );
+		          observer.complete();
+		        }
+
+		        if( i === 2 ){
+		          i= 0;
+		          observer.error('i llego al valor 2');
+		        }
+		      }, 1000)
+		    });
+
+		    obs$.pipe(
+		      retry(2)
+		    ).subscribe(
+		      valor => console.log('Subs: ', valor),
+		      error => console.warn('Error', error),
+		      () => console.info('Observable termino.')
+		    )
+
+		  }
+**************************************************************************************************************************************
+79. ************************************************************************************************Funciones que retornen observables
+	1.- Se modifica rxjs.component.ts, se crea funcion que retorna el observable 
+		1.1.- Se modifica el metodo constructor(), se corta el observable  
+			constructor() {
+
+		    this.retornaObservable().pipe(
+		      retry(2)
+		    ).subscribe(
+		      valor => console.log('Subs: ', valor),
+		      error => console.warn('Error', error),
+		      () => console.info('Observable termino.')
+		    )
+
+		  }
+		1.2.- Se crea metodo, se pega y retorna el observable
+			  retornaObservable(): Observable<number>{
+			    let i = -1;
+
+			    return new Observable<number>( observer => {
+
+			      const interval =   setInterval( () => {
+			        i++;
+			        observer.next(i);
+			        if( i === 4 ){
+			          clearInterval( interval );
+			          observer.complete();
+			        }
+
+			        if( i === 2 ){
+			          i= 0;
+			          observer.error('i llego al valor 2');
+			        }
+			      }, 1000)
+			    });
+			  }
+**************************************************************************************************************************************
+80. ***************************************************************************************************Operador map de los observables
+*********************************************************************************************************************operador rxjs map 
+********************************************************************************************************************operador rxjs take  
+***************************************************************************************************************funcion rxjs interval()
+	1.- Se modifica rxjs.componen.ts, se utilizan operadores rxjs take() y map()  
+		1.1.- Se crea metodo retornaInterval 
+			  retornaIntervalo(): Observable<string>{
+			    return interval(1000).pipe(
+			                          take(4),
+			                          map( valor => 'Hola '+valor)
+			    );
+			  }
+		1.2.- Se modifica metodo contructor(), se subscribe al ,metodo retornaInterval() 
+			    this.retornaIntervalo().subscribe( valor => {
+			      console.log(valor)
+			    })
+**************************************************************************************************************************************
+81. *******************************************************************************************************************Operador filter
+	1.- Se modifica metodo retornaInterval() de rxjs.component.ts, se utiliza oprador rxjs filter() 
+		  retornaIntervalo(): Observable<number>{
+		    return interval(1000).pipe(
+		      map( valor => valor + 1),
+		      filter( valor => (valor%2) == 0 ),
+		      take(10),
+		      );
+		  } 
+**************************************************************************************************************************************
+83. *************************************************************************************************************Llamar el unsubscribe
+	1.- Se modifica rxjs.component.ts, se utiliza metodo unsubcribe para dstruir el flujo del observable
+		1.1.- Se crea variable para el observable 
+			  public obsSubs: Subscription;
+		1.2.- Se modifica el constructor, se almacena en la variable el observable 
+			  constructor() {
+
+			    /*this.retornaObservable().pipe(
+			      retry(2)
+			    ).subscribe(
+			      valor => console.log('Subs: ', valor),
+			      error => console.warn('Error', error),
+			      () => console.info('Observable termino.')
+			    )*/
+
+			    this.obsSubs = this.retornaIntervalo().subscribe( valor => {console.log(valor)})
+
+			  }
+		1.3.- Se realiza el unsupscribe en el metodo OnDestroy
+			1.3.1.- En la clase se implementa la clase OnDestroy 
+				export class RxjsComponent implements OnInit, OnDestroy {...}
+			1.3.2.- Se implementa el metodo OnDestroy() y se realiza el unsupscribe 
+				  ngOnDestroy(): void {
+				    this.obsSubs.unsubscribe();
+				  }
+**************************************************************************************************************************************
+84. ******************************************************************************Breadcrumbs usando observables y parámetros de rutas
+	1.- Se modifica pages-routing.module.ts, se modifican las rutas para que pasen por data el titulo de cada componente 
+			const routes: Routes = [
+			  {
+			    path      : 'dashboard',
+			    component : PagesComponent,
+			    children  : [
+			      { path: '', component: DashboardComponent, data: { titulo: 'Dashboard'}},
+			      { path: 'progress', component: ProgressComponent , data: { titulo: 'Progress'}},
+			      { path: 'grafica1', component: Grafica1Component , data: { titulo: 'Grafica #1'}},
+			      { path: 'setting', component: AccountSettingComponent , data: { titulo: 'Setting'}},
+			      { path: 'promesas', component: PromesaComponent , data: { titulo: 'Promesas'}},
+			      { path: 'rxjs', component: RxjsComponent , data: { titulo: 'Rxjs'}},
+			      { path: '', redirectTo: 'dashboard', pathMatch:'full' }
+			    ]
+			  },
+
+
+			  //{ path: 'path/:routeParam', component: MyComponent },
+			  //{ path: 'staticPath', component: ... },
+			  //{ path: '**', component: ... },
+			  //{ path: 'oldPath', redirectTo: '/staticPath' },
+			  //{ path: ..., component: ..., data: { message: 'Custom' }
+			];
+	2.- Se modifica breadcrumbs.component.ts, se obtiene la data de titulo del router
+		2.1.- Se crea variable para almacenar el titulo
+			  titulo: string='';  
+		2.2.- Se modifica metodo constructor() para hacer la injeccion de dependencia del router y luego recuperar la data de titulo del 
+					router
+					  constructor( private router: Router ) {
+					  	//Se recupera evento
+					    this.router.events
+					    .pipe(
+					    	//Se filtra por evento de tipo ActivationEnd
+					      filter((event): event is ActivationEnd => event instanceof ActivationEnd),
+					      // Se filtra donde el firstChild sea nulo
+					      filter((event:ActivationEnd) => event.snapshot.firstChild === null ),
+					      // Se retorna la data obtenida 
+					      map((event:ActivationEnd) => event.snapshot.data),
+					      // La data titulo se le asigna a la variable y al titulo del documento
+					    ).subscribe(({titulo}) =>{
+					      this.titulo = titulo;
+					      document.title = `AdminPro - ${titulo}`
+					    });
+					  } 
+		2.3.- Se deja un poco mas limpio el constructor como buena practica 
+				2.3.1.- Se crea metodo getTitle() y se copia todo lo que esta dentro del constructor
+					getTitle() {
+					  	//Se recupera evento
+					    this.router.events
+					    .pipe(
+					    	//Se filtra por evento de tipo ActivationEnd
+					      filter((event): event is ActivationEnd => event instanceof ActivationEnd),
+					      // Se filtra donde el firstChild sea nulo
+					      filter((event:ActivationEnd) => event.snapshot.firstChild === null ),
+					      // Se retorna la data obtenida 
+					      map((event:ActivationEnd) => event.snapshot.data),
+					      // La data titulo se le asigna a la variable y al titulo del documento
+					    ).subscribe(({titulo}) =>{
+					      this.titulo = titulo;
+					      document.title = `AdminPro - ${titulo}`
+					    });
+					  } 
+				2.3.2.- En el constructor se llama al metodo creado 
+					constructor( private router: Router ) { 
+						this.getTitle(); 
+					}
+	3.- Se modifica breadcrumbs.component.html, se renderiza el titulo obtenido 
+		<!-- ============================================================== -->
+		<!-- Bread crumb and right sidebar toggle -->
+		<!-- ============================================================== -->
+		<div class="row page-titles">
+		  <div class="col-md-5 align-self-center">
+		      <h3 class="text-themecolor">{{titulo}}</h3>
+		  </div>
+		  <div class="col-md-7 align-self-center">
+		      <ol class="breadcrumb">
+		          <li class="breadcrumb-item">
+		              <a href="javascript:void(0)">Home</a>
+		          </li>
+		          <li class="breadcrumb-item">pages</li>
+		          <li class="breadcrumb-item active">{{titulo}}</li>
+		      </ol>
+		  </div>
+		  <div>
+		      <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+		  </div>
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Bread crumb and right sidebar toggle -->
+		<!-- ============================================================== -->
+**************************************************************************************************************************************
+85. ****************************************************************************************************Optimizaciones del Breadcrumbs
+	1.- Se modifica breadcrumbs.component.ts, se realiza unsubscribe() del observable 
+		1.1.- Se implementa clase OnDestroy en la clase
+			export class BreadcrumbsComponent implements OnDestroy{...}  
+		1.2.- Se crea metodo ngOnDestroy() y se realiza el unsupscribe() del observable  
+			  ngOnDestroy(): void {
+				    this.tituloSub$.unsubscribe();
+				  }
+**************************************************************************************************************************************
+86. *********************************************************************************************Guardar cambios en GitHub - Sección 8
+	1.- Se preparan los cambios --> git add .
+ 	2.- Se guardan los cambios en el local --> git commit -m FinSeccion8
+ 	3.- Se suben los cambios al remoto --> git push
+ 	4.- Se visualizan los tags --> git tag
+ 	5.- Se agrega tag --> git tag -a v1.4.0 -m"Fin Seccion 8"
+ 	6.- Se sube el tag al remoto --> git push --tags	
+**************************************************************************************************************************************
+******************************************************* Fin Seccion ******************************************************************
+************************ Sección 9: Backend - Node - Express- Mongo - Instalaciones y Configuraciones ********************************
+90. *********************************************************************************************************Inicio del backend server
+	1.- Se crea folder para el proyecto del backend --> adminProBackend 
+	2.- Se crea package.json --> npm init -y 
+	3.- Se instala express --> npm install express --save
+		Referencia --> https://expressjs.com/es/
+**************************************************************************************************************************************
+91. *********************************************************************************************Iniciando nuestro servidor de Express
+	1.- Se crea un archivo en la raiz --> index.js 
+	2.- Se modifica el archivo index.js 
+		console.log('Hello word!!!');
+	3.- Se prueba correr el archivo creado --> node index.js 
+	4.- Se modifica el archivo index.js 
+		// Se importa express 
+			const express = require('express');
+		// Se crea el servidor de express
+		const app = express();
+		// Se levanta el aplicativo en un puerto determinado 
+		app.listen( 3000, () => {
+		    console.log('Servidor corriendo en el puerto'+ 3000);
+		})
+	5.- Se ejecuta --> node index.js 
+	6.- Se prueba en el navegador --> localhost:3000/ 
+		Nota: El servidor debe estar recibiendo peticiones 
+	7.- Se instala nodemon, se abre consola con permisos de administrador y se ejecuta --> npm install -g nodemon
+		Nota: Se installa para que detecte los cambios en caliente 
+	8.- Se ejecuta aplicacion en caliente --> nodemon index.js
+		Nota: Se debe configurar el path para que lo reconozca el terminal 
+			1.- Se ejecuta --> npm install -g nodemon , para saber el path que se debe configurar
+			2.- Se abre variables de entorno y se añade el path a la variable de entorno PATH, se reinicia la pc  
+	9.- Se modifica package.json, se modifica script para correr aplicacion 
+		{
+		  "name": "AdminProBackend",
+		  "version": "1.0.0",
+		  "description": "",
+		  "main": "index.js",
+		  "scripts": {
+		    "start:dev": "nodemon index.js"
+		  },
+		  "keywords": [],
+		  "author": "",
+		  "license": "ISC",
+		  "dependencies": {
+		    "express": "^4.17.1"
+		  }
+		}
+	10.- Se ejecuta script --> 	npm run start:dev
+**************************************************************************************************************************************
+93. **********************************************************************************************************************Primera ruta
+	1.- Se modifica index.js, se crea primera ruta de acceso 
+		app.get( '/', (req, res) => {
+		    res.json({
+		        ok: true,
+		        msg: 'Hello word'
+		    });
+		});
+	2.- Se prueba en el navegador --> localhost:3000/
+	3.- Se prueba en postman --> localhost:3000/
+**************************************************************************************************************************************
+94. *****************************************************************************************************Nota: Enlaces a MongoDB Altas
+	* Referencia 
+		https://www.mongodb.com/es/cloud/atlas/efficiency
+**************************************************************************************************************************************
+95. *************************************************************************************************Mongo Altas - Configuración de BD
+		Referencia --> https://cloud.mongodb.com
+	https://www.udemy.com/course/angular-fernando-herrera/learn/lecture/24468434#overview
+	1.- Se crea Bd en la opcion de Database Access 
+		user: eareizac
+		pass: UnCBCqbB4ClLqMtf
+	2.- Se descarga el aplicativo MongoDB Compass 
+	3.- Se instala mongoose --> npm i mongoose
+	4.- Conectar desde compass con el string de conexion
+		1.1.- Se añade ip de conexion en networw access desde el aplicativo de mongoDB en el explorador 
+			0.0.0.0/0
+	5.- Se crea archivo de configuracion de la DB. 
+		raiz --> db --> config.js 
+	6.- Se modifica config.js 
+		const mongoose = require('mongoose');
+
+		const dbConnection = async() => {
+		    try { 
+		        await mongoose.connect( process.env.BD_CNN );
+		        console.log('DB Online');
+		    } catch (error) {
+		        console.log(error);
+		        throw new Error('Error a la hora de inicializad DB');
+		    }
+		}
+
+		module.exports = {
+		    dbConnection
+		}
+	7.- Se modifica index.js, se ejecuta conexion 
+		const {} = require('.db/config');
+
+		//Base de Datos
+		dbConection();
+	8.- Se instala dotenv para las variables de entorno, este paquete permite leer archivos con extension .env  
+		npm i dorenv
+		8.1.- Se crea archivo en la raiz .env 
+		8.2.- Se modifica index.js, se importa el archivo de enviroment  
+			require('dotenv').config(); 
+	9.- Se modifica archivo .env, se agrega la cadena de conexion y el puerto 
+		PORT=4000
+		BD_CNN=mongodb+srv://eareiza:UnCBCqbB4ClLqMtf@clustertutoangular.ljd5e.mongodb.net/myAngular
+**************************************************************************************************************************************
+98. *******************************************************************************************************************Configurar CORS
+	1.- Se instala cors --> npm i cors 
+	2.- Se modifica index.js
+		2.1.- Se importa la libreria --> const cors = require('cors'); 
+		2.2.- Se configura -->  
+				//Configuracion de cors
+				app.use(cors());
+**************************************************************************************************************************************
+99. *********************************************************************************************Guardar cambios en GitHub - Sección 8
+	0.- Se crea repositorio en Github 
+	1.- Se agrega al proyecto archivo .gitignore, para que ignore esta carpeta  
+		node_modules/
+	2.- Se crea archivo de README.md 
+		# AdminProBackend
+
+		Recuerden ejecutar 
+		    npm install 
+	3.- Se inicializa git --> git init	
+		Nota: debemos asegurarnos que todos los archivos del proyecto esten de color verde menos el node_modules 
+	4.- Se preparan los cambios --> git add .
+ 	5.- Se guardan los cambios en el local --> git commit -m CORS_SPRESS
+ 	6.- Se configura repositorio remoto creado en github 
+ 		git remote add origin https://github.com/dirielfran/adminProBack.git 
+ 	7.- Se crea branch main    
+ 		git branch -M main
+ 	8.- Se suben los cambios al repositorio remoto 
+ 		git push -u origin main
+ 	5.- Se agrega tag --> git tag -a v0.1.0 -m "inicio de backend"
+ 	6.- Se sube el tag al remoto --> git push --tags	
+**************************************************************************************************************************************
+******************************************************* Fin Seccion ******************************************************************
+***************************** Sección 10: HospitalAPP - Backend Server - Funciones de Usuarios ***************************************
+104. ****************************************************************************************************Creando el modelo de usuarios
+	1.- Se crea folder --> models 
+	2.- Se crea modelo --> usuario.ts 
+	3.- Se modifica usuario.ts 
+		3.1.- Se importa Schema y model de mongoose 
+			const { Schema, model }= require('mongoose');
+		3.2.- Se crea el schema del usuario 
+			  const UsuarioSchema = Schema({
+			    nombre: {
+			        type: String,
+			        required: true
+			    },
+			    email: {
+			        type: String,
+			        required: true,
+			        unique: true
+			    },
+			    password: {
+			        type: String,
+			        required: true
+			    },
+			    img: {  
+			        type: String
+			    },
+			    role: {
+			        type: String,
+			        required: true,
+			        default: 'ROLE_USER'
+			    },
+			    google: {
+			        type: Boolean,
+			        default: false
+			    }
+			});   
+		3.3.- Se exporta el modulo  
+			module.exports = model( 'Usuario', UsuarioSchema);
+**************************************************************************************************************************************
+105. ***********************************************************************************Creando las rutas de los servicios del usuario
+	1.- Se crea folder en raiz --> routes 
+	2.- Se crea archivo de rutas para usuarios en el folder creado  --> usuario.route.ts 
+	3.- Se modifica archivo usuario.route.ts   
+		3.1.- Se importa Router de la libreria de express 
+			const { Router } = require('express');
+		3.2.- Se llama a la funcion y se alamacena en variable
+			const router = Router();  
+		3.3.- Se exporta el router
+			module.exports = router;
+		3.4.- Se crea la ruta a usuario 
+			router.get( '/', getUsuarios );
+	4.- Se modifica archivo index.js 
+		1.- Se crean rutas a usuario y se importa del controlador la funcion que maneja el request y el response 
+			const { getUsuarios } = require('../controllers/usuario.controller.ts');
+			//rutas 
+			app.use( '/api/usuarios', require('./routes/usuarios.ts'));
+	5.- Se crea folder controller y archivo usuario.controller.ts 
+	6.- Se modifica el archivo usuario.controller.ts 
+		6.1.- Se crea constante con funcion que maneja el request y el response
+			const getUsuarios = (req, res) => {
+			    res.json({
+			        ok: true,
+			        usuarios: []
+			    });
+			};
+		6.2.- Se exporta la la funcionalidad  
+			module.exports = { getUsuarios, };
+**************************************************************************************************************************************
+106. *************************************************************************************************************POST - Crear usuario
+	1.- Se creo nueva base de datos en mongo --> hospitaldb 
+	2.- Se modifica el archivo de enviroment --> .env, se modifica la conexion 
+		BD_CNN=mongodb+srv://eareiza:UnCBCqbB4ClLqMtf@clustertutoangular.ljd5e.mongodb.net/hospitaldb
+	3.- Se modifica usuario.controller.ts
+		3.1.- Se crea metodo crearsuario 
+			const crearUsuario = async (req, res) => {
+			    const { nombre, password, email } = req.body; 
+
+			    const usuario = new Usuario( req.body )
+
+			    await usuario.save();
+
+			    res.json({
+			        ok: true,
+			        usuario: usuario
+			    });
+			};
+		3.2.- Se exporta metodo 
+			module.exports = { getUsuarios, crearUsuario, };
+	4.- Se modifica archivo usuario.route.ts 
+		1.- Se importa el metodo de crearUsuario
+			const { getUsuarios, crearUsuario } = require('../controllers/usuario.controller.ts');
+		2.- Se crea nueva ruta   
+			router.post( '/', crearUsuario );
+	5.- Se modifica archivo index.js, se añade al middleware el manejo de json 
+		//Lectura y parseo del body 
+		app.use( express.json() )
+**************************************************************************************************************************************	
+107. **************************************************************************************************Terminar el GET de los usuarios
+	1.- Se modifica usuario.controller.ts 
+		const crearUsuario = async (req, res) => {
+				//Se desestructuran las variables del body del request
+		    const { nombre, password, email } = req.body; 
+
+		    //Se crea un usuario con el contenido del request
+		    const usuario = new Usuario( req.body )
+
+		    //Se guarda el usuario en la base de datos 
+		    await usuario.save();
+
+		    res.json({
+		        ok: true,
+		        usuario: usuario
+		    });
+		};
+	3.- Se modifica usuario.ts, se utiliza metodo del schema para modificar el objeto a retornar
+		UsuarioSchema.method('toJSON', function(){
+		    const { __v, _id, ...object } = this.toObject();
+		    object.uid = _id;
+		    return object;
+		})
+**************************************************************************************************************************************
+108. **************************************************************************************Validar que el correo electrónico sea único
+	1.- Se modifica usuario.controller.ts, se modifica metodo para crear usuario se crea validacion para usuario registrado con 
+	anterioridad
+		const crearUsuario = async (req, res = response) => {
+		    const { nombre, password, email } = req.body; 
+
+		    try{
+		        console.log('email', email);
+		        const existeUsuario = await Usuario.findOne({email});
+		        if(existeUsuario){
+		            return res.status(400).json({
+		                ok: false,
+		                msg: 'Usuario ya se encuentra registrado'
+		            });
+		        }
+		        const usuario = new Usuario( req.body );    
+		        await usuario.save();
+		        res.json({
+		            ok: true,
+		            usuario: usuario
+		        });
+		    }catch(error){
+		        console.log(error);
+		        res.status(500).json({
+		            ok: 'false',
+		            msg: 'Eroor inesperado.'
+		        })
+
+		    }
+		};	
+		1.- Se importa response de express 
+			const { response }= require('express');
+**************************************************************************************************************************************
+109. ******************************************************************************************************Validar campos obligatorios
+*********************************************************************************************************************express-validator
+	1.- Se instala --> express-validator
+		npm i express-validator   
+	2.- Validacion de errores en el metodo crearUsuario()
+		2.1.- Se modifica usuario.controller.ts 
+			2.1.1.- Se importa validationResult de la libreria express-validator 
+				const { validationResult }= require('express-validator');
+			2.1.2.- Se modifica metodo crearUsuario(), para validar cada campo del request y mostrar mensaje correspondiente 
+				const crearUsuario = async (req, res = response) => {
+			    const { nombre, password, email } = req.body;
+			    //Se recuperan errores del request 
+			    const errores = validationResult(req);
+			    //Validacion de errores
+			    if(!errores.isEmpty()){
+			        return res.status(400).json({
+			            ok: false,
+			            errors: errores.mapped()
+			        })
+			    }
+			    try{
+			        const existeUsuario = await Usuario.findOne({email});
+			        if(existeUsuario){
+			            return res.status(400).json({
+			                ok: false,
+			                msg: 'Usuario ya se encuentra registrado'
+			            });
+			        }
+			        const usuario = new Usuario( req.body );    
+			        await usuario.save();
+			        res.json({
+			            ok: true,
+			            usuario: usuario
+			        });
+			    }catch(error){
+			        console.log(error);
+			        res.status(500).json({
+			            ok: 'false',
+			            msg: 'Eroor inesperado.'
+			        })
+			    }
+				};
+		2.2.- Se modifica usuario.route.ts
+			2.2.1.- Se importa check de la libreria express-validator  
+				const { check } = require('express-validator') 
+			2.2.2.- Se modifica la ruta post de creacion de usuario, añadiendo los middleware check a cada campo
+				router.post( '/', [
+				    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+				    check('password', 'El password es obligatorio').not().isEmpty(),
+				    check('email', 'El email es obligatorio').isEmail()
+				], crearUsuario );
+**************************************************************************************************************************************
+110. *****************************************************************************************Middleware personalizado - ValidarCampos
+	1.- Se crea archivo --> middlewares --> validar-campos.js 
+	2.- Se modifica usuario.controller.ts, se modifica metodo de crearUsuario() y se corta la validacion de campos y se elimina 
+	la importacion de validationResult que ya	no se utiliza
+		const crearUsuario = async (req, res = response) => {
+		    const { nombre, password, email } = req.body; 
+		    
+		    try{
+		        const existeUsuario = await Usuario.findOne({email});
+		        if(existeUsuario){
+		            return res.status(400).json({
+		                ok: false,
+		                msg: 'Usuario ya se encuentra registrado'
+		            });
+		        }
+		        const usuario = new Usuario( req.body );    
+		        await usuario.save();
+		        res.json({
+		            ok: true,
+		            usuario: usuario
+		        });
+		    }catch(error){
+		        console.log(error);
+		        res.status(500).json({
+		            ok: 'false',
+		            msg: 'Eroor inesperado.'
+		        })
+		    }
+		};
+	3.- Se modifica validar-campos.js, se crea la validacion de campos
+		3.1.- Se importa response y validationResult 
+			const { response } = require('express');
+			const { validationResult } = require('express-validator');
+		3.2.- Se crea constante de validacion de campos 
+			const validarCampos = (req, res = response , next) => {
+				//Se capturan errores del request
+		    const errores = validationResult(req);
+
+		    //Validacion de errores
+		    if(!errores.isEmpty()){
+		        return res.status(400).json({
+		            ok: false,
+		            errors: errores.mapped()
+		        })
+		    }
+
+		    return next();
+			}
+		3.3.- Se exporta el metodo validarCampos() 
+			module.exports = {
+			    validarCampos,
+			}
+	4.- Se modifica usuario.route.ts, se llama al metodo de validacion luego de los check 
+		4.1.- se importa el metodo validarCmpos 
+			const { validarCampos } = require('../middlewares/validar-campos');
+		4.2.- Se modifica el metodo post de creacion de usuario, se le añade validarCampos 
+			router.post( '/', [
+			    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+			    check('password', 'El password es obligatorio').not().isEmpty(),
+			    check('email', 'El email es obligatorio').isEmail(),
+			    validarCampos
+			], crearUsuario );
+**************************************************************************************************************************************
+111. ****************************************************************************Encriptar la contraseña usando método de una sola vía
+******************************************************************************************************************************bcryptjs
+	1.- Se intala bcryptjs
+		npm i bcryptjs
+	2.- Se modifica usuario.controller.ts
+		2.1.- Se importa bcryptjs 
+			const bcryptjs = require('bcryptjs');
+		2.2.- Se modifica metodo crearUsuario(), se le agrega encriptacion de la contraseña 
+			  //Encriptacion de contraseña 
+        const salt = bcryptjs.genSaltSync();
+        usuario.password = bcryptjs.hashSync( password, salt );
+  Nota: se eliminan los usuario creados en la base de datos mongo y se prueba el endpoint de creacion de usuario 
+  	post --> http://localhost:4000/api/usuarios
+
+  	body --> {
+							    "nombre": "Elvis",
+							    "password": "123456",
+							    "email": "dirielfran@gmail.com"
+							}
+**************************************************************************************************************************************
 ******************************************************* Fin Seccion ****************************************************************** 
-
-
-
-
-
-
-
 
 
 
@@ -10967,16 +12347,6 @@ Complementarios*****************************************************************
 		a una ruta. La navegación abre uno o más componentes enrutados en una o más ubicaciones 
 		de la página.<router-outlet>
 	************************************************************************************************************************
-	switchMap***************************************************************************************************************
-		Proyecta cada valor de fuente en un Observable que se fusiona en el Observable de salida, emitiendo valores solo 
-		del Observable proyectado más recientemente.
-
-		el switchMapoperador creará un observable derivado (llamado observable interno) a partir de una fuente observable 
-		y emitirá esos valores.
-
-		Cuando la fuente emite un nuevo valor, creará un nuevo observable interno y switcha esos valores en su lugar. De lo que 
-		se cancela la suscripción son los observables internos que se crean sobre la marcha, y no la fuente observable.
-	************************************************************************************************************************
 	Pluggins para descargar en VC*******************************************************************************************
 		*Angular snippets
 			Nos ayudará completando nuestro código Angular, tanto con las directivas como con los componentes.
@@ -11014,6 +12384,122 @@ Complementarios*****************************************************************
 		pink-bluegrey.css
 		purple-green.css
 	************************************************************************************************************************
+	Operadores 	--> rxjs****************************************************************************************************
+		Los operadores de RxJs son funciones que pueden ser encadenadas en lo que llamamos la cadena o pipeline de 
+		operadores y que se sitúan entre medias del Observable (productor de la información) y el Observer (consumidor 
+		de la misma) con el objetivo de filtrar, transformar o combinar los valores del Observable/Observables.
+
+			Referencia --> http://reactivex.io/documentation/operators.html
+
+		switchMap***********************************************************************************************************
+			Proyecta cada valor de fuente en un Observable que se fusiona en el Observable de salida, emitiendo valores solo 
+			del Observable proyectado más recientemente.
+
+			el switchMap operador creará un observable derivado (llamado observable interno) a partir de una fuente observable 
+			y emitirá esos valores.
+
+			Cuando la fuente emite un nuevo valor, creará un nuevo observable interno y switcha esos valores en su lugar. De lo que 
+			se cancela la suscripción son los observables internos que se crean sobre la marcha, y no la fuente observable.
+
+			Ejemplo:____________________________________________________________________________________________________
+				import { of } from 'rxjs';
+				import { switchMap } from 'rxjs/operators';
+				 
+				const switched = of(1, 2, 3).pipe(switchMap((x: number) => of(x, x ** 2, x ** 3)));
+				switched.subscribe(x => console.log(x));
+				// outputs
+				// 1
+				// 1
+				// 1
+				// 2
+				// 4
+				// 8
+				// ... and so on
+		********************************************************************************************************************
+		retry***************************************************************************************************************
+			Donde el operador catchError ayuda a crear un camino simple para recuperarnos, el operador retry te permite 
+			reintentar una petición fallida.
+
+			Usa el operador retry antes del operador catchError. Dicho operador te re-subscribe a la fuente original del 
+			observable, la cual puede re-ejecutar una secuencia llena de acciones que resultaron en el error en primer lugar. 
+			Si esto incluye una petición HTTP, entonces el operador reintentará hacer la petición HTTP.
+
+			Ejemplo_________________________________________________________________________________________________________
+				import { ajax } from 'rxjs/ajax';
+				import { map, retry, catchError } from 'rxjs/operators';
+
+				const apiData = ajax('/api/data').pipe(
+				  retry(3), // Retry up to 3 times before failing
+				  map(res => {
+				    if (!res.response) {
+				      throw new Error('Value expected!');
+				    }
+				    return res.response;
+				  }),
+				  catchError(err => of([]))
+				);
+
+				apiData.subscribe({
+				  next(x) { console.log('data: ', x); },
+				  error(err) { console.log('errors already caught... will not run'); }
+				});
+		********************************************************************************************************************
+		map()***************************************************************************************************************
+			pasa cada valor de origen a través de una función de transformación para obtener los valores de salida 
+			correspondientes.
+
+			Ejemplo_________________________________________________________________________________________________________
+				import { fromEvent } from 'rxjs';
+				import { map } from 'rxjs/operators';
+
+				const clicks = fromEvent(document, 'click');
+				const positions = clicks.pipe(map(ev => ev.clientX));
+				positions.subscribe(x => console.log(x));
+		********************************************************************************************************************
+		take(n)*************************************************************************************************************
+			takedevuelve un Observable que emite solo los primeros countvalores emitidos por la fuente Observable. Si la 
+			fuente emite menos de countvalores, se emiten todos sus valores. Después de eso, se completa, independientemente 
+			de si la fuente se completa.
+
+			Ejemplo_________________________________________________________________________________________________________
+				import { interval } from 'rxjs';
+				import { take } from 'rxjs/operators';
+				 
+				const intervalCount = interval(1000);
+				const takeFive = intervalCount.pipe(take(5));
+				takeFive.subscribe(x => console.log(x));
+				 
+				// Logs:
+				// 0
+				// 1
+				// 2
+				// 3
+				// 4
+		********************************************************************************************************************
+	************************************************************************************************************************
+	funciones 	--> rxjs ***************************************************************************************************
+		interval()*********************************************************************************************************
+			interval() devuelve un Observable que emite una secuencia infinita de números enteros ascendentes, con un 
+			intervalo de tiempo constante de su elección entre esas emisiones. La primera emisión no se envía inmediatamente, 
+			sino solo después de que ha pasado el primer período. De forma predeterminada, este operador utiliza async 
+			SchedulerLikepara proporcionar una noción de tiempo, pero puede pasarle alguna SchedulerLike
+			Ejemplo_______________________________________________________________________________________________________
+				import { interval } from 'rxjs';
+				import { take } from 'rxjs/operators';
+				 
+				const numbers = interval(1000);
+				 
+				const takeFourNumbers = numbers.pipe(take(4));
+				 
+				takeFourNumbers.subscribe(x => console.log('Next: ', x));
+				 
+				// Logs:
+				// Next: 0
+				// Next: 1
+				// Next: 2
+				// Next: 3
+		*******************************************************************************************************************
+	************************************************************************************************************************
 	combineLatest --> rxjs**************************************************************************************************
 		Combina múltiples Observables para crear un Observable cuyos valores se calculan a partir de los últimos valores 
 		de cada uno de sus Observables de entrada.
@@ -11042,7 +12528,7 @@ Complementarios*****************************************************************
 		el Observable devuelto siempre emitirá una matriz de nvalores, en un orden correspondiente al orden de los 
 		Observables pasados ​​(el valor del primer Observable estará en el índice 0 de la matriz y así sucesivamente).
 	************************************************************************************************************************
-	cicleLife Hooks Angular************************************************************************************************
+	cicleLife Hooks Angular*************************************************************************************************
 		Una instancia de componente tiene un ciclo de vida que comienza cuando Angular crea una instancia de la clase de 
 		componente y representa la vista del componente junto con sus vistas secundarias. El ciclo de vida continúa con 
 		la detección de cambios, ya que Angular verifica cuándo cambian las propiedades vinculadas a los datos y 

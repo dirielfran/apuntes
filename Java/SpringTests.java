@@ -30,6 +30,7 @@ Inicio del Proyecto*************************************************************
 	sout + m 						--> agrega el print con la clase y metodo actual
 	sout + p 						--> print de los argumentos del metodo
 	ctrl + click					--> parado en metodo se va a la implementacion
+	ctr + alt + B 					--> pasar a la implementacion del metodo  desde una interfaz 
 	ctrl + alt + F12 				--> ver estructura de la clase
 	ctrl + alt + L 					--> Ordena el codigo
 	ctr + alt + s 					--> setting

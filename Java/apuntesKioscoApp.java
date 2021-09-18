@@ -2320,6 +2320,38 @@ Proveedor***********************************************************************
 
 		ALTER TABLE `db_springboot_backend`.`proveedores` 
 		ADD COLUMN `movil` VARCHAR(45) NULL AFTER `deleted`;
+
+
+		CREATE TABLE `consignaciones` (
+		  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+		  `user` varchar(45) DEFAULT NULL,
+		  `create_at` timestamp NULL DEFAULT NULL,
+		  `update_at` timestamp NULL DEFAULT NULL,
+		  `cantidad` double DEFAULT NULL,
+		  `pagos` double DEFAULT NULL,
+		  `item_inventario_id` bigint(20) DEFAULT NULL,
+		  PRIMARY KEY (`id`),
+		  KEY `FKiteminventario` (`item_inventario_id`),
+		  CONSTRAINT `FKconsigiteminventario` FOREIGN KEY (`item_inventario_id`) REFERENCES `inventarios_items` (`id`)
+		) ENGINE=InnoDB AUTO_INCREMENT=14922 DEFAULT CHARSET=utf8;
+
+		ALTER TABLE `db_springboot_backend`.`inventarios` 
+		DROP COLUMN `proveedor`;
+
+		ALTER TABLE `db_springboot_backend`.`gastos` 
+		DROP COLUMN `proveedor`;
+
+		ALTER TABLE `db_springboot_backend`.`gastos` 
+		ADD COLUMN `consig_id` BIGINT NULL AFTER `metodopago`,
+		ADD INDEX `FKconsig` (`consig_id` ASC) VISIBLE;
+		ALTER TABLE `db_springboot_backend`.`gastos` ALTER INDEX `FKgastoinventario` INVISIBLE;
+		ALTER TABLE `db_springboot_backend`.`gastos` 
+		ADD CONSTRAINT `FKconsig`
+		  FOREIGN KEY (`consig_id`)
+		  REFERENCES `db_springboot_backend`.`consignaciones` (`id`)
+		  ON DELETE RESTRICT
+		  ON UPDATE RESTRICT;
+
 **********************************************************************************************************************************
 
 Iconos****************************************************************************************************************************

@@ -59,7 +59,7 @@ Los metadatos para una clase de servicio proporcionan la información que Angula
 necesita para que esté disponible para los componentes a través de la inyección 
 de dependencia (DI) .
 
-***Moduos
+***Modulos
  Un NgModule declara un contexto de compilación para un conjunto de componentes 
  que está dedicado a un dominio de aplicación, un flujo de trabajo o un conjunto 
  de capacidades estrechamente relacionadas. Un NgModule puede asociar sus componentes 

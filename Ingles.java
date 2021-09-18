@@ -34,14 +34,6 @@ ISBN 9780194058926
 		st.areiza.elvis85@liceobritanico.com
 		danger120-
 
-	*Clave Ingles EF:
-		https://corporate.ef.com/partner/corp/default.aspx?p=Corp&z=7027169
-		elvis.areiza.contreras@everis.com
-		danger120-
-
-		antonio.alfonso.pinango.araujo@everis.com
-		5736017a
-
 	*English File 
 		dirielfran@gmail.com
 		Danger120-
@@ -61,6 +53,8 @@ ISBN 9780194058926
 - Group B (Purple): meet.google.com/ezy-zzzn-fkq
 - Group C (Green): meet.google.com/haa-tnfm-xhy
 - Group D (Yellow): meet.google.com/ygn-sijx-yap
+
+https://meet.google.com/oeu-utmf-boe?pli=1&authuser=2
 
 
 green 
@@ -264,3 +258,12 @@ whsts your favorite dish
 control america 5g 410 pesos
 3515305891  --> claro 
 diriana Barcenas (atencion al cliente *611 opc 2 2)
+
+
+
+d
+
+did you travel tha last week to china?
+
+
+is the place where 

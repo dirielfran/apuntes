@@ -6451,7 +6451,9 @@ Chorcuts Visualcode*************************************************************
 	alt 									--> se selecciona con el cursor varias lineas
 	ctrl+k  								--> selecciona la linea para luego comentar por ejemplo con ctrl+z
 	alt+ flecha 							--> para mover la linea
-	shift+alt+ flecha  						--> copia la linea o seccion seleccionada para abajo o arriba
+	shift+alt+ flecha  						--> copia la linea o seccion ¿Cómo generar un componente?
+Desde el Angular CLI podemos generar un componente usando el siguiente comando:
+ng generate component <name> [options]seleccionada para abajo o arriba
 	ctrl+Inicio 							--> va alinicio del archivo
 	ctrl+Fin 								--> va al final del archivo
 	./mvnw spring-boot:run 					--> correr proyecto springboot
