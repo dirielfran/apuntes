@@ -12598,6 +12598,73 @@ Complementarios*****************************************************************
 			Timing:
 			Se llama inmediatamente antes de que Angular destruya la directiva o el componente.
 	************************************************************************************************************************
+	Providers***************************************************************************************************************
+		Refrencia --> https://medium.com/@cristianflores.ee/providers-en-angular-1832e8093e2a
+		Un provider es una instrucción para el sistema de Inyección de Dependencias de cómo obtener un valor para 
+		una dependencia. Dependencia: al consumo de los servicios inyectables se le conoce como dependencia. Cada componente 
+		o servicio puede declarar en su constructor sus dependencias hacia servicios inyectables.
+
+		providedIn y NgModules********************************************************************************************
+			Podemos especificar que un servicio se proporcione en un determinado @NgModule. Por ejemplo, si queremos que 
+			UserService no este disponible en la app a menos que se importe un UserModule, podemos especificar que el 
+			servicio se proporcione solo en ese módulo.
+			
+			Ejemplo_____________________________________________________________________________________________________
+				@Injectable({
+				  providedIn: UserModule, // modulo específico
+				})
+				export class UserService {
+				}
+
+			Nota: Si no es posible especificar en el servicio qué módulo debe proporcionarlo, también podemos declarar 
+			un provider para el servicio dentro del módulo.
+
+			Ejemplo_____________________________________________________________________________________________________
+				@NgModule({
+				  providers: [UserService],
+				})
+				export class UserModule {
+				}
+		******************************************************************************************************************
+		Limitar el scope del provider con componentes*********************************************************************
+			Otra forma de limitar el scope del provider es agregar el servicio al array providers de la metadata del 
+			componente. Los providers de componentes y de modulos son independientes entre sí. Este método es útil cuando 
+			deseamos cargar con entusiasmo un módulo que necesita un servicio para sí mismo. La prestación de un servicio 
+			en el componente limita el servicio solo a ese componente (otros componentes en el mismo módulo no pueden 
+			acceder a él).
+
+			Ejemplo____________________________________________________________________________________________________
+				@Component({
+				/* . . . */
+				  providers: [UserService]
+				})
+	************************************************************************************************************************
+	ForRoot*****************************************************************************************************************
+		Referencia --> https://www.freelancermap.com/blog/es/forroot-forchild-modulos-angular/
+		Se usa Cuando un módulo es “eager”, esto es, no es lazy-loaded (lo cargamos al iniciar la aplicación). Angular crea 
+		un factory para todos los módulos, excepto los módulos lazy, que al cargarse bajo demanda, tienen su propio factory. 
+		Cuando nosotros usamos forRoot(), lo que estamos haciendo es cargar un provider que va a ser inyectado hacia la “raíz” 
+		de los módulos gracias a que usa el mismo factory que nuestro módulo principal.
+	************************************************************************************************************************
+	ForChild****************************************************************************************************************
+		Referencia --> https://www.freelancermap.com/blog/es/forroot-forchild-modulos-angular/
+		Se usa forChild al reves: cuando queremos entregar un provider que es visible solamente para los módulos “hijos” de 
+		nuestro modulo, en el caso de que sean lazy loaded. Como cada modulo lazy se carga bajo demanda, tiene su propio 
+		inyector.
+	***********************************************************************************************************************
+	@Input ****************************************************************************************************************
+		Se usa para recibir datos en un componente mientras que @Output se usa para enviar datos fuera de un componente.
+		
+		Para indicarle a un componente que puede recibir un valor desde el componente padre debemos agregarle el decorador 
+		@input a la propiedad que deseamos controlar.
+		
+		Ejemplo_________________________________________________________________________________________________________
+			* incrementador.component.ts
+				@Input() progress: number = 40;
+			* progress.component.html
+				<app-incrementador [progress]="15"></app-incrementador>
+
+	***********************************************************************************************************************
 ************************************************************************************************************************************
 
 errores 
@@ -12610,7 +12677,7 @@ Modificaciones de Kiosco pendientes*********************************************
 	* Incluir Angular Flex y NgPrime
 ***********************************************************************************************************************************
 
-
+nx-dev
 
 
 https://apexcharts.com/angular-chart-demos/
