@@ -11791,7 +11791,7 @@ Seccion 22: Grafica es Angular**************************************************
 **************************************************************************************************************************************
 95. *************************************************************************************************Mongo Altas - Configuración de BD
 		Referencia --> https://cloud.mongodb.com
-	https://www.udemy.com/course/angular-fernando-herrera/learn/lecture/24468434#overview
+		https://www.udemy.com/course/angular-fernando-herrera/learn/lecture/24468434#overview
 	1.- Se crea Bd en la opcion de Database Access 
 		user: eareizac
 		pass: UnCBCqbB4ClLqMtf
@@ -11824,7 +11824,7 @@ Seccion 22: Grafica es Angular**************************************************
 		//Base de Datos
 		dbConection();
 	8.- Se instala dotenv para las variables de entorno, este paquete permite leer archivos con extension .env  
-		npm i dorenv
+		npm i dotenv
 		8.1.- Se crea archivo en la raiz .env 
 		8.2.- Se modifica index.js, se importa el archivo de enviroment  
 			require('dotenv').config(); 
@@ -11904,31 +11904,31 @@ Seccion 22: Grafica es Angular**************************************************
 105. ***********************************************************************************Creando las rutas de los servicios del usuario
 	1.- Se crea folder en raiz --> routes 
 	2.- Se crea archivo de rutas para usuarios en el folder creado  --> usuario.route.ts 
-	3.- Se modifica archivo usuario.route.ts   
-		3.1.- Se importa Router de la libreria de express 
-			const { Router } = require('express');
-		3.2.- Se llama a la funcion y se alamacena en variable
-			const router = Router();  
-		3.3.- Se exporta el router
-			module.exports = router;
-		3.4.- Se crea la ruta a usuario 
-			router.get( '/', getUsuarios );
-	4.- Se modifica archivo index.js 
-		1.- Se crean rutas a usuario y se importa del controlador la funcion que maneja el request y el response 
-			const { getUsuarios } = require('../controllers/usuario.controller.ts');
-			//rutas 
-			app.use( '/api/usuarios', require('./routes/usuarios.ts'));
-	5.- Se crea folder controller y archivo usuario.controller.ts 
-	6.- Se modifica el archivo usuario.controller.ts 
-		6.1.- Se crea constante con funcion que maneja el request y el response
+	3.- Se crea folder controller y archivo usuario.controller.ts 
+	4.- Se modifica el archivo usuario.controller.ts 
+		4.1.- Se crea constante con funcion que maneja el request y el response
 			const getUsuarios = (req, res) => {
 			    res.json({
 			        ok: true,
 			        usuarios: []
 			    });
 			};
-		6.2.- Se exporta la la funcionalidad  
+		4.2.- Se exporta la la funcionalidad  
 			module.exports = { getUsuarios, };
+	5.- Se modifica archivo index.js 
+		1.- Se crean rutas a usuario y se importa del controlador la funcion que maneja el request y el response 
+			const { getUsuarios } = require('../controllers/usuario.controller.ts');
+			//rutas 
+			app.use( '/api/usuarios', require('./routes/usuarios.ts'));
+	6.- Se modifica archivo usuario.route.ts   
+		6.1.- Se importa Router de la libreria de express 
+			const { Router } = require('express');
+		6.2.- Se llama a la funcion y se alamacena en variable
+			const router = Router();  
+		6.3.- Se exporta el router
+			module.exports = router;
+		6.4.- Se crea la ruta a usuario 
+			router.get( '/', getUsuarios );	
 **************************************************************************************************************************************
 106. *************************************************************************************************************POST - Crear usuario
 	1.- Se creo nueva base de datos en mongo --> hospitaldb 

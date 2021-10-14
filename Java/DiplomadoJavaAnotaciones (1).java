@@ -1171,6 +1171,7 @@ Properties del sistema**********************************************************
         properties.forEach((k,v) -> System.out.println(k+":"+v));
     }
 ***********************************************************************************************
+
 ManejoJava
 
 Formato
@@ -1390,6 +1391,55 @@ Formato
     System.out.println( StringUtils.leftPad("56789", 10, "0") );
 ***********************************************************************************************
 
+HttpServlet
+
+***********************************************************************************HttpServlet
+    Referencia --> https://programacion.net/articulo/servlets_basico_108/6
+
+    Los métodos de la clase HttpServlet que manejan peticiones de cliente toman dos argumentos.
+
+    Un objeto HttpServletRequest, que encapsula los datos desde el cliente.
+    Un objeto HttpServletResponse, que encapsula la respuesta hacia el cliente.
+
+    HttpServletRequest*******************************************************************
+        Un objeto HttpServletRequest proporciona acceso a los datos de cabecera HTTP, 
+        como cualquier cookie encontrada en la petición, y el método HTTP con el que 
+        se ha realizado la petición. El objeto HttpServletRequest también permite 
+        obtener los argumentos que el cliente envía como parte de la petición.
+
+        Para acceder a los datos del cliente
+
+            *El método getParameter devuelve el valor de un parámetro nombrado. 
+            Si nuestro parámetro pudiera tener más de un valor, deberíamos utilizar 
+            getParameterValues en su lugar. El método getParameterValues devuelve 
+            un array de valores del parámetro nombrado. (El método getParameterNames 
+            proporciona los nombres de los parámetros.
+            *Para peticiones GET de HTTP, el método getQueryString devuelve en un 
+            String una línea de datos desde el cliente. Debemos analizar estos datos 
+            nosotros mismos para obtener los parámetros y los valores.
+            *Para peticones POST, PUT, y DELETE de HTTP.
+                Si esperamos los datos en formato texto, el método getReader devuelve 
+                un BufferedReader utilizado para leer la línea de datos.
+                Si esperamos datos binarios, el método getInputStream devuelve un 
+                ServletInputStream utilizado para leer la línea de datos.
+        Nota:
+        Se debe utilizar el método getParameter[Values] o uno de los métodos que permitan 
+        analizar los datos. No pueden utilizarse juntos en una única petición.
+    *************************************************************************************
+    HttpServletResponse******************************************************************
+        Un objeto HttpServletResponse proporciona dos formas de devolver datos al usuario.
+
+            *El método getWriter devuelve un Writer
+            *El método getOutputStream devuelve un ServletOutputStream
+
+        Se utiliza el método getWriter para devolver datos en formato texto al usuario 
+        y el método getOutputStream para devolver datos binarios.
+
+        Nota:
+        Si cerramos el Writer o el ServletOutputStream después de haber enviado la 
+        respuesta, permitimos al servidor saber cuando la respuesta se ha completado.
+    *************************************************************************************
+**********************************************************************************************
 
 Sql
 

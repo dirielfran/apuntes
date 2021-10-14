@@ -10,9 +10,6 @@ libro
 English File Intro (4th ed.) - Multipack LCB OUP Students (code included)
 ISBN 9780194058926 
 
-
-
-
 ****************************************************************************************************
 
 
@@ -194,7 +191,7 @@ she drinks orange juice.
 7.- where do they play tennis? 
 they play tennis in a sport enter.
 
-8.- what do you listen to? 
+8.- what do you listen to? ++++++++++++++++++++++++++++++
 i listen to the radio.
 
 9.- what do you and your girlfriend do on friday? 
@@ -253,17 +250,3 @@ always watch tv, about twenty go to bed.
  can you cook?
  yes, i can cook the rice, eggs, salad
 
-whsts your favorite dish
-
-control america 5g 410 pesos
-3515305891  --> claro 
-diriana Barcenas (atencion al cliente *611 opc 2 2)
-
-
-
-d
-
-did you travel tha last week to china?
-
-
-is the place where 
