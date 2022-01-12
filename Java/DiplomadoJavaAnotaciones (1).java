@@ -1439,6 +1439,14 @@ HttpServlet
         Si cerramos el Writer o el ServletOutputStream después de haber enviado la 
         respuesta, permitimos al servidor saber cuando la respuesta se ha completado.
     *************************************************************************************
+    Ejemplo___________________________________________________________________________
+        Enumeration<String> enumeration = request.getHeaderNames();
+        for (Enumeration<?> e = request.getHeaderNames(); e.hasMoreElements();) {
+            String nextHeaderName = (String) e.nextElement();
+            String headerValue = request.getHeader(nextHeaderName);
+            System.out.println(nextHeaderName);
+            System.out.println(headerValue);
+        }
 **********************************************************************************************
 
 Sql
@@ -1451,6 +1459,26 @@ Sql
     <logger name="org.hibernate.type"> 
         <level value="TRACE"/>
     </logger>
+
+    * Por el properties 
+        hibernate.show_sql=false
+        hibernate.format_sql=true
+        hiberante.show_sql=true
+        para ver localmente las consultas sql
+
+        fijate en el archivo log4j2.xml
+        ahi tenes que tener:
+            <logger name="org.hibernate.type" level="TRACE"
+                additivity="false">
+                <AppenderRef ref="Console" />
+            </logger>
+        y
+            <logger name="org.hibernate.sql" level="DEBUG"
+                additivity="false">
+                <AppenderRef ref="Console" />
+            </logger>
+
+
 **********************************************************************************************
 
 Colecciones
@@ -2147,6 +2175,11 @@ Excepciones
     }
 ***********************************************************************************************
 
+Manejo de NullPointerException
+**********************************************************************ObjectUtils.defaultIfNull
+    Devuelve el dto si no es null
+        dto = (ConsultaDocumentoDTO) ObjectUtils.defaultIfNull(dto, new ConsultaDocumentoDTO());
+***********************************************************************************************
 
 Vista
 

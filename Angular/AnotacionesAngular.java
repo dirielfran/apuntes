@@ -1,18 +1,18 @@
 Comandos angular-cli
-ng new [nombre aplicativo] 			--> Creacion de aplicativo angular
-ng generate class footer.component  --> crea clase
-ng serve -o                         --> corre en el servidor la aplicacion
-ng generate component directivas    --> crea un componente 
-ng g c components/heroeTarjeta --skipTests=true  --> Creacion de componente sin el archivo de prueba
-ng g c clientes/form --flat 		--> Crea componente con el -- flat se le indica que no cree folder
-ng generate service cliente         --> Se crea clase de servicio
-ng g s services/user --dry-run  	--> hace una simulacion de creacion de archivo 
-ng g m miModulo						--> Genera un modulo propio
-ng g m template --routing 			--> Genera modulo con su routing
-ng g g usuarios/guard/auth  		--> genera guard en ruta especificada
-ng g p pipes/noimage				--> Creacion de pipe
-ng build --prod 					--> Creacion de mi carpeta de distribucion con la aplicacion mimificada 
-guard 								--> Los Guard son interceptores que sirven para controlar el acceso a las rutas
+ng new [nombre aplicativo] 												--> Creacion de aplicativo angular
+ng generate class footer.component  							--> crea clase
+ng serve -o                         							--> corre en el servidor la aplicacion
+ng generate component directivas    							--> crea un componente 
+ng g c components/heroeTarjeta --skipTests=true  	--> Creacion de componente sin el archivo de prueba
+ng g c clientes/form --flat 											--> Crea componente con el -- flat se le indica que no cree folder
+ng generate service cliente         							--> Se crea clase de servicio
+ng g s services/user --dry-run  									--> hace una simulacion de creacion de archivo 
+ng g m miModulo																		--> Genera un modulo propio
+ng g m template --routing 												--> Genera modulo con su routing
+ng g g usuarios/guard/auth  											--> genera guard en ruta especificada
+ng g p pipes/noimage															--> Creacion de pipe
+ng build --prod 																	--> Creacion de mi carpeta de distribucion con la aplicacion mimificada 
+guard 							--> Los Guard son interceptores que sirven para controlar el acceso a las rutas
 .pipe								--> Los pipes son una herramienta de Angular que nos permite transformar visualmente la información,
 										por ejemplo, cambiar un texto a mayúsculas o minúsculas, o darle formato de fecha y hora.
 Observable 							--> Los observables brindan soporte para pasar mensajes entre partes de su aplicación. 
@@ -2023,6 +2023,7 @@ Seccion 10: Pipes en Angular****************************************************
 		</div>
 *************************************************************************************************************************************
 141.- **************************************************************************************************Cambiar el idioma por defecto
+	Utilizar otros idiomas  --> https://medium.com/angular-chile/aplicaciones-multilenguaje-en-angular-7-con-ngx-translate-db8d1e7b380c
 	1.- Se modifica app.module.ts
 		//Cambiar el locale de la App
 		import localeEs from '@angular/common/locales/es-AR';
@@ -12157,12 +12158,3740 @@ Seccion 22: Grafica es Angular**************************************************
 
 
 
+*********************************************************Redux Ngrx******************************************************************
+	Referencia:
+		https://es.redux.js.org/
+
+
+	Qué es Redux  --> https://www.arsys.es/blog/programacion/redux-datos-aplicaciones/
+	Redux es un patrón de arquitectura de datos que concede manipular el estado de la aplicación de una forma predecible. Está creado 
+	para disminuir el número de relaciones entre los componentes de la aplicación y conservar un flujo de datos asequible.
+
+	Redux ofrece las siguientes ventajas:
+
+		Arquitectura escalable de datos.
+		Máximo control sobre el flujo de datos y el estado de la aplicación.
+		Estado global e inmutable.
+		
+	Estas ventajas son favorables para las aplicaciones que tienen cambios constantes (aplicaciones medianas y grandes), puesto que 
+	Redux ayuda a tener su complejidad bajo control.
+
+	Desmenuzamos las claves de Redux
+		Los principios fundamentales de Redux son los siguientes: el store como pilar de todo, el state es solamente de lectura y las 
+		acciones (actions) y funciones puras (reducers) son para realizar los cambios, como detallamos a continuación :
+			* Store como pilar. Todos escuchan el store. El único estado válido de la aplicación está dentro del mismo 
+			y cuando los componentes necesiten conocer el estado, asistirán al store para rescatarlo. Los datos van de 
+			manera unidireccional desde el store a los componentes.
+			* El estado (state) es de solo lectura. El state en Redux es el único objeto Javascript, estructurado en 
+			forma de árbol y que contiene los datos que se van a manipular en la aplicación, siendo estos solo de lectura.
+			* Si se desea alterar el estado de la aplicación, se deben utilizar las acciones (actions), pues son el único 
+			modo para modificar su estado. Se representan mediante un objeto JavaScript,  contienen (como poco) el tipo 
+			de acción que se desea realizar y además, algunas necesitan describirse con parámetros.
+			* Los cambios se realizan a través de funciones puras. Los reducers especifican cómo cambia el estado de 
+			la aplicación en respuesta a las acciones enviadas al store. Recuerda que las acciones solo describen el 
+			hecho de que sucedió algo, pero no describen de qué manera cambia el estado de la aplicación. Estos 
+			reciben dos parámetros: la acción y el estado que tenía anteriormente. Con ellos, se podrá modificar 
+			el estado y lo devolverá con la nueva situación.
+***************************************Plugins	y	snippets	de	Visual	Studio	Code*************************************************
+	• Angular	2	TypeScript	Emmet
+	• Angular	5	Snippets	– TypeScript,	Html,	Angular	Material…
+	• Angular	Language	Service
+	• Angular	v5	Snippets
+	• Angular2-inline
+	• Bootstrap	4	&	Font	Awesome	snippets
+	• HTML	CSS	Support
+	• JavaScript	(ES6)	code	snippets
+	• JS-CSS-HTML	Formatter
+	• JSHint
+	• Prettier	– Code	Formatter
+	• Terminal
+	• TSLint
+	• TypeScript	Hero
+	• TypeScript	Importer
+*************************************************************************************************************************************
+*************************************Sección 3: Implementar REDUX desde absoluto cero************************************************
+14. ***********************************************************************************************Inicio del proyecto - Redux básico
+	1.- Creacion del proyecto 
+		npm init 
+		npm install -g ts-node
+	2.- Se crea archivo app_1.ts y se modifica  
+		console.log('hello word');
+	3.- Se ejecuta el archivo creado 
+		ts-node app_1
+	4.- instalacion de typescript --> npm install typescript --save
+*************************************************************************************************************************************
+15. ********************************************************************************************************Acciones y Reducer básico
+	1.- Se modifica el archivo app_1.ts 
+		//Se crea interface 
+	 	interface Action{
+		    type: string;
+		    payload?: any;
+		}
+
+		//Funcion reducer
+		function reducer( state = 10, action: Action){
+	    if( action.type === 'INCREMENTAR'){
+	        return state+1;
+	    }
+	    return state;
+		} 
+
+		//Constante de tipo Action 
+		const incrementodorAction: Action = {
+		    type: 'INCREMENTAR'
+		};
+
+		// Se imprime lo retornado por la funcion reducer 
+		console.log(reducer(10, incrementodorAction));
+*************************************************************************************************************************************
+16. ***************************************************************************************Configurar más acciones en nuestro reducer
+	1.- Se modifica el archivo app_1.ts 
+		//Interfaz
+		interface Action{
+		    type: string;
+		    payload?: any;
+		}
+
+		//Funcion reducer
+		function reducer( state = 10, action: Action){
+		    switch( action.type ){
+		        case 'INCREMENTAR':
+		            return state +=1;
+		        case 'DECREMENTAR':
+		            return state -=1;
+		        case 'MULTIPLICAR': 
+		            return state * action.payload;
+		        case 'DIVIDIR': 
+		            return state / action.payload;
+		        default: 
+		            return state;
+		    }
+		} 
+
+		// Ations
+		const incrementodorAction: Action = {
+		    type: 'INCREMENTAR'
+		};
+		const decrementadorAction: Action = {
+		    type: 'DECREMENTAR'
+		};
+		const multiplicadorAction: Action = {
+		    type: 'MULTIPLICAR',
+		    payload: 2
+		};
+		const dividirAction: Action = {
+		    type: 'DIVIDIR',
+		    payload: 2
+		};
+
+		// Impresion de los reducer
+		console.log(reducer(10, incrementodorAction));
+		console.log(reducer(10, decrementadorAction));
+		console.log(reducer(10, multiplicadorAction));
+		console.log(reducer(10, dividirAction));
+*************************************************************************************************************************************
+17. **********************************************************************************************************Organizando el proyecto
+	1.- Se crean folders para organizar el proyecto 
+	 	contador 
+	 	ngrx-fake 
+	2.- Se crean los archivos necesarios 
+		contador/contador.action.ts 
+		ngrx-fake/ngrx.ts 
+		app_2.ts 
+	3.- Se modifica ngrx.ts 
+			export interface Action{
+	    type: string;
+	    payload?: any;
+		}
+	4.- Se modifica contador.action.ts, se agregan las acciones   
+		import { Action } from '../ngrx-fake/ngrx'
+
+		export const incrementodorAction: Action = {
+		    type: 'INCREMENTAR'
+		};
+		export const decrementadorAction: Action = {
+		    type: 'DECREMENTAR'
+		};
+		export const multiplicadorAction: Action = {
+		    type: 'MULTIPLICAR',
+		    payload: 2
+		};
+		export const dividirAction: Action = {
+		    type: 'DIVIDIR',
+		    payload: 2
+		};
+		export const resetAction: Action = {
+		    type: 'RESET'
+		};
+	5.- Se modifica app_2.ts
+		import { Action } from '../recux_basico/ngrx-fake/ngrx'
+		import { incrementodorAction, dividirAction, multiplicadorAction, decrementadorAction , resetAction} from '../recux_basico/contador/contador.action'
+
+		function reducer( state = 10, action: Action){
+		    switch( action.type ){
+		        case 'INCREMENTAR':
+		            return state +=1;
+		        case 'DECREMENTAR':
+		            return state -=1;
+		        case 'MULTIPLICAR': 
+		            return state * action.payload;
+		        case 'DIVIDIR': 
+		            return state / action.payload;
+		        case 'RESET': 
+		            return state = 0;
+		        default: 
+		            return state;
+		    }
+		} 
+
+		console.log(reducer(10, incrementodorAction));
+		console.log(reducer(10, decrementadorAction));
+		console.log(reducer(10, multiplicadorAction));
+		console.log(reducer(10, dividirAction));
+		console.log(reducer(10, resetAction));
+*************************************************************************************************************************************
+18. ****************************************************************************************************************************Store
+	1.- Se crea archivo contador/contador.reducer.ts, para separar el reducer del archivo ejecutable app_2.ts 
+		import { Action } from '../ngrx-fake/ngrx'
+
+		export function reducer( state = 10, action: Action){
+		    switch( action.type ){
+		        case 'INCREMENTAR':
+		            return state +=1;
+		        case 'DECREMENTAR':
+		            return state -=1;
+		        case 'MULTIPLICAR': 
+		            return state * action.payload;
+		        case 'DIVIDIR': 
+		            return state / action.payload;
+		        case 'RESET': 
+		            return state = 0;
+		        default: 
+		            return state;
+		    }
+		} 
+	2.- Se modifica app_2.ts, se elimina la funcion reducer y se importa del archivo creado en el paso anterior  
+		import { reducer } from '../recux_basico/contador/contador.reducer' 
+	3.- Se crea app_3.ts 
+		//Imports 
+		import { contadorReducer } from './contador/contador.reducer';
+		import { Action, Reducer } from './ngrx-fake/ngrx';
+		import { incrementodorAction } from './contador/contador.action'
+
+		//Clase del store
+		class Store<T> {
+		    constructor( private reducer: Reducer<T>,
+		                private state: T){ }
+		    //Obtener el estado
+		    getState(){
+		        return this.state;
+		    }
+		    //Dispatcher del action
+		    dispatch( action: Action ){
+		        this.state = this.reducer( this.state, action)
+		    }
+		}
+
+		//Se crea un obj del store
+		const store = new Store( contadorReducer, 10 );
+
+		//Se imprime el estado 
+		console.log( store.getState() );
+
+		//se despacha la accion
+		store.dispatch( incrementodorAction );
+
+		//Se imprime nuevamente el estado
+		console.log( store.getState() );
+	4.- Se modifica ngrx.ts, se agrega interface reducer  
+		export interface Reducer<T> {
+    	( state: T, action: Action): T
+		}
+*************************************************************************************************************************************
+19. **********************************************************************************************Suscribirse a los cambios del State
+	1.- Se crea archivo app_4.ts   
+	2.- Se instala la dependencia redux para javascript bainilla --> npm i redux 
+		Nota: Se valia que este la dependencia en el package.json 
+	3.- Se modifica el archivo app_4.ts, se hace subscribe del store de redux 
+		 import { Store, createStore} from 'redux';
+			import { contadorReducer } from './contador/contador.reducer';
+			import { incrementodorAction } from './contador/contador.action';
+
+			//Se crea  Store
+			const store: Store = createStore( contadorReducer );
+
+			//Se realiza subscribe
+			store.subscribe( () => {
+			    console.log('Subs: ', store.getState());
+			})
+
+			//Se ejecuta dispatch 
+			store.dispatch( incrementodorAction );
+			store.dispatch( incrementodorAction );
+			store.dispatch( incrementodorAction );
+			store.dispatch( incrementodorAction );
+			store.dispatch( incrementodorAction );
+			store.dispatch( incrementodorAction );  
+*************************************************************************************************************************************
+*************************************************************************************************************************************
+************************************************Sección 4: NGRX - Redux con Angular**************************************************
+23. **********************************************************************************Inicio de proyecto - Aplicación pura de Angular	
+	1.- Creacion de la aplicacion 
+		ng new redux-app
+	2.- Se instala bootstrap 
+		npm install bootstrap --save
+	3.- se instala el audit, va a quitar errores de bulnerabilidad    
+		npm audit fix
+	4.- Se modifica el archivo angular.json, los styles, se agrega bootstrap.min.css   
+    "styles": [
+      "src/styles.css",
+      "node_modules/bootstrap/dist/css/bootstrap.min.css"
+    ]
+  5.- Se corre el aplicativo 
+  	ng serve -o 
+*************************************************************************************************************************************
+25. **********************************************************************************************Creación de componentes adicionales
+	1.- Se crean componentes 
+		ng g c contador/hijo --skip-tests
+		ng g c contador/nieto --skip-tests
+	2.- Se modifica app.component.html
+
+		<div class="row text-center">
+		  <div class="col">
+		    <h1>Contador</h1>
+		    <h2>{{ contador }}</h2>
+		  </div>
+		</div>
+
+		<div class="row text-center">
+		  <div class="col">
+		    <button class="btn btn-primary" (click)="incrementar()">Incrementar</button>
+		    <button class="btn btn-info" (click)="decrementar()">Decrementar</button>
+		  </div>
+		</div>
+		<hr>
+		<div class="row text-center">
+		  <div class="col">
+		    <app-hijo [contador]=contador (cambioContador)="contador= $event"></app-hijo>
+		  </div>
+		</div>
+	3.- Se modifica app.compoent.ts 
+		import { Component } from '@angular/core';
+
+		@Component({
+		  selector: 'app-root',
+		  templateUrl: './app.component.html',
+		  styleUrls: ['./app.component.css']
+		})
+		export class AppComponent {
+		  contador: number;
+
+		  constructor(){
+		    this.contador = 10;
+		  }
+
+		  incrementar(){
+		    this.contador ++;
+		  }
+
+		  decrementar(){
+		    this.contador --;
+		  }
+		}
+	4.- Se crea estilo para margen de los botones  
+		button{
+		  margin-right: 10px !important;
+		}
+	5.- Se modifica archivo style.css 
+		button{
+		  margin-right: 10px !important;
+		}
+	6.- Se modifica hijo.component.ts 
+		import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+
+		@Component({
+		  selector: 'app-hijo',
+		  templateUrl: './hijo.component.html',
+		  styleUrls: ['./hijo.component.css']
+		})
+		export class HijoComponent implements OnInit {
+
+		  @Input() contador: number = 0;
+		  @Output() cambioContador = new EventEmitter<number>();
+
+		  constructor() { }
+
+		  ngOnInit(): void {
+		  }
+
+		  multiplicador(){
+		    this.contador  *= 2;
+		    this.cambioContador.emit(this.contador);
+		  }
+
+		  divisor(){
+		    this.contador  /= 2;
+		    this.cambioContador.emit(this.contador);
+		  }
+
+		}
+	7.- Se modifica hijo.component.html 
+		<h3>Contador</h3>
+
+		<h4>{{contador}}</h4>
+
+
+		<div class="row text-center">
+		  <div class="col">
+		    <button class="btn btn-primary" (click)="multiplicador()">multiplicador</button>
+		    <button class="btn btn-info" (click)="divisor()">divisor</button>
+		  </div>
+		</div>
+*************************************************************************************************************************************
+26. *******************************************************************************Integrar el componente nieto en nuestra aplicación
+	1.- Se modifica nieto.component.html, se le agrega contador 
+		<h3>Contador</h3>
+
+		<h4>{{contador}}</h4>
+
+		<div class="row text-center">
+		  <div class="col">
+		    <button class="btn btn-danger" (click)="reset()">reset</button>
+		  </div>
+		</div>
+	2.- Se modifica nieto.component.ts, se le agrega input, output y metodo de reset del contador 
+		@Input() contador: number = 0;
+	  @Output() cambioContador = new EventEmitter<number>();
+
+	  constructor() { }
+
+	  ngOnInit(): void {
+	  }
+
+	  reset(){
+	    this.contador = 0;
+	    this.cambioContador.emit(this.contador);
+	  }
+	3.- Se modifica hijo.component.html, se le agrega el componente nieto   
+		<hr>
+		<div class="row text-center">
+		  <div class="col">
+		    <app-nieto [contador]=contador (cambioContador)="resetContador($event)"></app-nieto>
+		  </div>
+		</div>
+
+	4.- Se modifica hijo.component.ts, se crea metodo para el reset al padre 
+		  resetContador(numeroContador: number){
+		    this.contador = numeroContador;
+		    this.cambioContador.emit(this.contador)
+		  }
+*************************************************************************************************************************************
+27. *********************************************************************************************Implementar NGRX en nuestro proyecto
+	Referencia --> https://ngrx.io/docs
+	1.- Se instala ngrx  --> npm install @ngrx/store --save
+	2.- Se crea archivo contador/contador.actions.ts 
+		import { createAction } from '@ngrx/store';
+
+		//Se describen las acciones del contador para incrementar, disminuir
+		export const incrementar = createAction('[Contador] Incrementar');
+		export const decrementar = createAction('[Contador] decrementar');
+	3.- Se crea archivo contador/contador.reducer.ts 
+		import { Action } from "@ngrx/store";
+		import { incrementar, decrementar } from './contador.actions'
+
+		//Se crea funcion reductora para manejar cambios en el valor del 
+		//contador según las acciones proporcionadas
+		export function contadorReducer( state: number = 10, action: Action){
+		  switch( action.type){
+		    case incrementar.type:
+		        return state + 1;
+		    case decrementar.type:
+		        return state + 1;
+		    default:
+		      return state;
+		  }
+		}
+	4.- Se modifica app.module.ts, se agrega el store module
+		//NgRx
+		import { StoreModule } from '@ngrx/store';
+		import { contadorReducer } from './contador/contador.reducer';
+
+		Nota: El StoreModule.forRoot()método registra los proveedores 
+		globales necesarios para acceder a Store en toda su aplicación.
+
+	  imports: [
+	    BrowserModule,
+	    AppRoutingModule,
+	    StoreModule.forRoot({contador: contadorReducer})
+	  ],
+
+	5.- Se modifica app.component.html 
+
+		<div class="row text-center">
+		  <div class="col">
+		    <button class="btn btn-primary" (click)="incrementar()">Incrementar</button>
+		    <button class="btn btn-info" (click)="decrementar()">Decrementar</button>
+		  </div>
+		</div>
+		//Se comenta componente hijo
+		<!--
+		<hr>
+		<div class="row text-center">
+		  <div class="col">
+		    <app-hijo [contador]=contador (cambioContador)="contador= $event"></app-hijo>
+		  </div>
+		</div>-->
+	6.- Se modifica app.component.ts 
+		//Se crea contrato
+		interface AppStore{
+		  contador: number;
+		}
+
+		@Component({
+		  selector: 'app-root',
+		  templateUrl: './app.component.html',
+		  styleUrls: ['./app.component.css']
+		})
+		export class AppComponent {
+			//Variable contador
+		  contador!: number;
+
+		  //Se subscribe al store y el resultado lo setea en la variable
+		  constructor( private store: Store<AppStore>){
+		    //this.contador = 10;
+		    this.store.subscribe( state => {
+		      console.log(state);
+		      this.contador = state.contador;
+		    })
+		  }
+
+
+		  incrementar(){
+		    //this.contador ++;
+		    //Se envia accion al store
+		    this.store.dispatch( actions.incrementar() );
+		  }
+
+		  decrementar(){
+		    //this.contador --;
+		     //Se envia accion al store
+		    this.store.dispatch( actions.decrementar() );
+		  }
+		}
+*************************************************************************************************************************************
+29. *******************************************************************************************************************Store DevTools 
+	1.- Se instala store-devtools 
+		npm install @ngrx/store-devtools --save
+	2.- Se instala plugin de chrome y se recarga el navegador 
+		--> https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd
+	3.- Se modifica app.module.ts 
+		import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule,
+		    StoreModule.forRoot({contador: contadorReducer}),
+		    StoreDevtoolsModule.instrument({
+		      maxAge: 25, // Retains last 25 states
+		      logOnly: environment.production, // Restrict extension to log-only mode
+		      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
+		    }),
+		  ],
+	4.- Se prueba en chrome inspeccionar --> redux 
+*************************************************************************************************************************************
+30. ****************************************************************************Escuchar cambios específicos de un elemento del State
+***********************************************************************************************************************Store.select()
+	1.- Se modifica app.component.ts, se modifica constructos para utilizar el select del store, para permitir monitorear una 
+	variable en particular  
+		constructor( private store: Store<AppStore>){
+	    //this.contador = 10;
+	    //this.store.subscribe( state => {
+	    //  console.log(state);
+	    //  this.contador = state.contador;
+	    //})
+	    this.store.select('contador').subscribe( contador => {
+	      console.log(contador);
+	      this.contador = contador;
+	    })
+	  }
+	2.- Probar y ver consola  
+*************************************************************************************************************************************
+31. *******************************************************************************************************************Create Reducer
+	1.- Se modifica contador.reducer.ts, 
+
+		//Se comenta en metodo convencional
+		/*export function contadorReducer( state: number = 10, action: Action){
+		  switch( action.type){
+		    case incrementar.type:
+		        return state + 1;
+		    case decrementar.type:
+		        return state - 1;
+		    default:
+		      return state;
+		  }
+		}*/
+		//Variable del state inicial
+		export const initialState = 200;
+
+		//Funcion reducer con el cambio de estado
+		const _contadorReducer = createReducer(
+		  initialState,
+		  on(incrementar, (state) => state + 1),
+		  on(decrementar, (state) => state - 1),
+		);
+
+
+		export function contadorReducer(state: number | undefined, action: Action) {
+		  return _contadorReducer(state, action);
+		}
+*************************************************************************************************************************************
+32. ******************************************************************************************************Store en el componente hijo
+	1.- Se modifica app.component.html, se le quitan atributos al componente hijo   
+		<hr>
+		<div class="row text-center">
+		  <div class="col">
+		    <!--<app-hijo [contador]=contador (cambioContador)="contador= $event"></app-hijo>-->
+		    <app-hijo ></app-hijo>
+		  </div>
+		</div>
+	2.- Se modifica omponente nieto para enfocarnos unicamente en el componente hijo  
+		<!--<div class="row text-center">
+		  <div class="col">
+		    <app-nieto [contador]=contador (cambioContador)="resetContador($event)"></app-nieto>
+		  </div>
+		</div>-->
+	3.- Se modifica hijo.component.ts
+		export class HijoComponent implements OnInit {
+
+			// Se comenta los input y los output 
+		  /*@Input()*/ contador: number = 0;
+		  //@Output() cambioContador = new EventEmitter<number>();
+
+		  //Se realiza injeccion de dependencia del store
+		  constructor( private store: Store<AppStore>) { }
+
+		  //Consulto en el store la variable contador y realizo subscribe, cuando hay cambios 
+		  //en la variable actualiza variable local
+		  ngOnInit(): void {
+		    this.store.select('contador').subscribe( contador => this.contador = contador);
+		  }
+
+		  //Se comentan los metodos
+		  multiplicador(){
+		    /* this.contador  *= 2;
+		    this.cambioContador.emit(this.contador); */
+		  }
+
+		  divisor(){
+		    /* this.contador  /= 2;
+		    this.cambioContador.emit(this.contador); */
+		  }
+
+		  resetContador(numeroContador: number){
+		    /* this.contador = numeroContador;
+		    this.cambioContador.emit(this.contador) */
+		  }
+
+		}
+	4.- Se crea en app --> app.reducer.ts  
+		export interface AppStore{
+		  contador: number;
+		}
+	5.- Se modifica app.component.ts, se elimina interface AppStore y se importa del archivo creado en el paso anterior 
+		import { AppStore } from './app.reducers';
+*************************************************************************************************************************************
+33. ******************************************************************************************Creando acción de multiplicar y dividir
+********************************************************************************************************************************props
+	1.- Se modifica contador.actions.ts, se agregan las acciones de multiplicar y dividir 
+		export const multiplicar = createAction('[Contador] multiplicar', props<{numero: number}>());
+		export const dividir = createAction('[Contador] dividir', props<{numero: number}>());
+	2.- Se modifica contador.reducer.ts, se modifica el metodo contadorReducer(), se agregan dos casos al reducer 
+		const _contadorReducer = createReducer(
+		  initialState,
+		  on(incrementar, (state) => state + 1),
+		  on(decrementar, (state) => state - 1),
+		  on(multiplicar, ( state, { numero }) => state * numero ),
+		  on(dividir, ( state, { numero }) => state / numero ),
+		);
+	3.- Se modifica hijo.component.ts, se modifican los metodos de dividir y multiplicar, se llaman del dispach del store  
+		  multiplicador(){
+		    /* this.contador  *= 2;
+		    this.cambioContador.emit(this.contador); */
+		    this.store.dispatch( actions.multiplicar({numero: 2}) );
+		  }
+
+		  divisor(){
+		    /* this.contador  /= 2;
+		    this.cambioContador.emit(this.contador); */
+		    this.store.dispatch( actions.dividir({numero: 2}));
+		  } 
+*************************************************************************************************************************************
+34. ***********************************************************************************************************Acción Reset del nieto
+*************************************************************************************************************************initialState
+	1.- Se modifica hijo.component.html, se descomenta el componente nieto y se le eliminan los atributos   
+		<hr>
+		<div class="row text-center">
+		  <div class="col">
+		    <!--<app-nieto [contador]=contador (cambioContador)="resetContador($event)"></app-nieto>-->
+		    <app-nieto></app-nieto>
+		  </div>
+		</div>
+	2.- Se modifica contador.actions.ts, se agrega accion reset   
+		export const reset = createAction('[Contador] reset');   
+	3.- Se modifica contador.reducer.ts, se le agrega case al contador reducer  
+		const _contadorReducer = createReducer(
+		  initialState,
+		  on(incrementar, (state) => state + 1),
+		  on(decrementar, (state) => state - 1),
+		  on(multiplicar, ( state, { numero }) => state * numero ),
+		  on(dividir, ( state, { numero }) => state / numero ),
+		  on(reset, ( state ) => initialState ),
+		);  
+
+	4.- Se modifica hijo.component.ts, se elimina metodo resetContador(), ya que se trabaja desde el store   
+	5.- Se modifica nieto.component.ts 
+		@Component({
+		  selector: 'app-nieto',
+		  templateUrl: './nieto.component.html',
+		  styleUrls: ['./nieto.component.css']
+		})
+		export class NietoComponent implements OnInit {
+
+			//Se eliminan input y output 
+		  /*@Input()*/ contador: number = 0;
+		  /*@Output() cambioContador = new EventEmitter<number>();*/
+
+		  //Se realiza injeccion del Store
+		  constructor( private store: Store<AppStore>) { }
+
+		  //Se realiza select de la variable contador en el store y se subcribe a su cambio
+		  ngOnInit(): void {
+		    this.store.select('contador').subscribe( contadore => this.contador = contadore );
+		  }
+
+		  //Se realiza el dispach del store indicando la accion a ejecutar 
+		  reset(){
+		    /*this.contador = 0;
+		    this.cambioContador.emit(this.contador);*/
+		    this.store.dispatch( actions.reset() );
+		  }
+		}
+*************************************************************************************************************************************
+*************************************************************************************************************************************
+********************************************Sección 5: NGRX - App - Añade Complejidad************************************************
+39. ****************************************************************************************************Inicio del proyecto - TodoApp
+	1.- Se crea plaicacion --> ng new todoapp
+	2.- Se instala --> npm install todomvc-app-css --save
+	3.- Referencia repositorio para las plantillas --> https://github.com/Klerith/TODO-CSS-Template
+	4.- Se copia el body del index del proyecto anterior en el app.component.html 
+		<section class="todoapp">
+		  <header class="header">
+		    <h1>todos</h1>
+		    <input class="new-todo" placeholder="What needs to be done?" autofocus>
+		  </header>
+		  <!-- This section should be hidden by default and shown when there are todos -->
+		  <section class="main">
+		    <input id="toggle-all" class="toggle-all" type="checkbox">
+		    <label for="toggle-all">Mark all as complete</label>
+		    <ul class="todo-list">
+		      <!-- These are here just to show the structure of the list items -->
+		      <!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
+		      <li class="completed">
+		        <div class="view">
+		          <input class="toggle" type="checkbox" checked>
+		          <label>Taste JavaScript</label>
+		          <button class="destroy"></button>
+		        </div>
+		        <input class="edit" value="Create a TodoMVC template">
+		      </li>
+		      <li>
+		        <div class="view">
+		          <input class="toggle" type="checkbox">
+		          <label>Buy a unicorn</label>
+		          <button class="destroy"></button>
+		        </div>
+		        <input class="edit" value="Rule the web">
+		      </li>
+		    </ul>
+		  </section>
+		  <!-- This footer should hidden by default and shown when there are todos -->
+		  <footer class="footer">
+		    <!-- This should be `0 items left` by default -->
+		    <span class="todo-count"><strong>0</strong> item left</span>
+		    <!-- Remove this if you don't implement routing -->
+		    <ul class="filters">
+		      <li>
+		        <a class="selected" href="#/">All</a>
+		      </li>
+		      <li>
+		        <a href="#/active">Active</a>
+		      </li>
+		      <li>
+		        <a href="#/completed">Completed</a>
+		      </li>
+		    </ul>
+		    <!-- Hidden if no completed items are left ↓ -->
+		    <button class="clear-completed">Clear completed</button>
+		  </footer>
+		</section>
+		<footer class="info">
+		  <p>Double-click to edit a todo</p>
+		  <!-- Remove the below line ↓ -->
+		  <p>Template by <a href="http://sindresorhus.com">Sindre Sorhus</a></p>
+		  <!-- Change this out with your name and url ↓ -->
+		  <p>Created by <a href="http://todomvc.com">you</a></p>
+		  <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+		</footer>
+	5.- Se modifica angular.json, se agrega style   
+    "styles": [
+      "src/styles.css",
+      "node_modules/todomvc-app-css/index.css"
+    ],
+  6.- Se prueba la aplicacion --> ng serve -o   
+*************************************************************************************************************************************
+40. ************************************************************************Creando los componentes para nuestra aplicación de tareas
+	1.- Se crea un modulo --> ng g m todos/todo --flat  
+	2.- Se modifica app.module.ts, Se importa el modulo creado en el modulo principal 
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule,
+		    TodoModule
+		  ],
+	3.- Se crean los componentes necesarios 
+		ng g c todos/todo-page  --skip-tests 
+		ng g c todos/todo-list  --skip-tests 
+		ng g c todos/todo-item  --skip-tests 
+		ng g c todos/todo-footer --skip-tests   
+		ng g c todos/todo-add --skip-tests
+*************************************************************************************************************************************
+41. ***********************************************************************************Segmentar el template en múltiples componentes
+	Referencia Plantilla --> https://github.com/Klerith/TODO-CSS-Template/blob/master/index.html
+	1.- Se modifica todo-page.component.html 
+		<section class="todoapp">
+		  <app-todo-add></app-todo-add>
+		  <!-- This section should be hidden by default and shown when there are todos -->
+		  <section class="main">
+		    <input id="toggle-all" class="toggle-all" type="checkbox">
+		    <label for="toggle-all">Mark all as complete</label>
+		    <app-todo-list></app-todo-list>
+		  </section>
+		  <app-todo-footer></app-todo-footer>
+		</section>
+	2.- Se modifica app.component.html 
+		<app-todo-page></app-todo-page>
+		<app-footer></app-footer>
+	3.- Se modifica todo-add.component.html 
+		<header class="header">
+		  <h1>todos</h1>
+		  <input class="new-todo" placeholder="Que necesitas hacer?" autofocus>
+		</header>
+	4.- Se modifica todo-list.component.html 
+		<ul class="todo-list">
+		  <!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
+		  <app-todo-item></app-todo-item>
+		</ul>
+	5.- Se modifica todo-item.component.html 
+		<li class="completed">
+		  <div class="view">
+		    <input class="toggle" type="checkbox" checked>
+		    <label>Taste JavaScript</label>
+		    <button class="destroy"></button>
+		  </div>
+		  <input class="edit" value="Create a TodoMVC template">
+		</li>
+	6.- Se modifica todo-footer.component.html 
+		<!-- This footer should hidden by default and shown when there are todos -->
+		<footer class="footer">
+		  <!-- This should be `0 items left` by default -->
+		  <span class="todo-count"><strong>0</strong> tareas pendientes</span>
+		  <!-- Remove this if you dont implement routing -->
+		  <ul class="filters">
+		    <li>
+		      <a class="selected" href="#/">Todos</a>
+		    </li>
+		    <li>
+		      <a href="#/active">Activos</a>
+		    </li>
+		    <li>
+		      <a href="#/completed">Completados</a>
+		    </li>
+		  </ul>
+		  <!-- Hidden if no completed items are left ↓ -->
+		  <button class="clear-completed">Borrar Completados</button>
+		</footer>
+	7.- Se modifica todo.module.ts, se exporta el componente TodoPageComponent   
+		  exports:[
+		    TodoPageComponent
+		  ]
+*************************************************************************************************************************************	
+42. *******************************************************************************Instalar NgRx, modelo, acciones y reducer de Todos
+	0.- Se instala ngrx --> npm install @ngrx/store --save
+	1.- Se crea folder --> todos/models 
+	2.- Se crea dentr de model todo.model.ts 
+		export class Todo {
+		  public id!: number;
+		  public texto!: string;
+		  public completado!: boolean;
+
+		  constructor(texto: string){
+		    this.texto = texto;
+		    this.id = new Date().getTime();
+		    this.completado = false;
+		  }
+		}
+	3.- Se crea reducer todos/todo.reducer.ts   
+		import { Action, createReducer, on } from '@ngrx/store';
+		import { Todo } from './models/todo.model';
+		import { crear } from './todo.actions';
+
+		export const estadoInicial : Todo[] = [];
+
+		const _todoReducer = createReducer(
+		  estadoInicial,
+		  on(crear, (state, {texto}) => [...state, new Todo(texto)]),
+		);
+
+		export function todoReducer(estado: Todo[] | undefined, action: Action) {
+		  return _todoReducer(estado, action);
+		};
+	4.- Se crea los actions  --> todos/todo.actions.ts 
+		import { Action, createReducer, on } from '@ngrx/store';
+		import { Todo } from './models/todo.model';
+		import { crear } from './todo.actions';
+
+		export const estadoInicial : Todo[] = [];
+
+		const _todoReducer = createReducer(
+		  estadoInicial,
+		  on(crear, (state, {texto}) => [...state, new Todo(texto)]),
+		);
+
+		export function todoReducer(estado: Todo[] | undefined, action: Action) {
+		  return _todoReducer(estado, action);
+		};
+	5.- Se modifica app.module.ts, se importa ngrx 
+		//ngrx
+		import { StoreModule } from '@ngrx/store';
+		import { todoReducer } from './todos/todo.reducer';
+
+		1.- Se  añade en los imports de la aplicacion StoreModule.forRoot function con un objeto que contiene un contador y el 
+		counterReducer que administra los estados. The StoreModule.forRoot() method registers the global providers needed to 
+		access the Store throughout your application.
+			StoreModule.forRoot({ todos: todoReducer })
+*************************************************************************************************************************************
+43. *************************************************************************************Definiendo el AppState de nuestra aplicación
+	1.- Se instala devtools --> npm install @ngrx/store-devtools --save
+	2.- Se modifica app.module.ts, se agrega instrumentacion de devtools a los imports  
+		import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+
+		StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production, // Restrict extension to log-only mode
+    }),
+  3.- Se modifica todo.reducer.ts, se agrega item al estado inicial y se valida en el explorador con el plugin Redux  
+  	export const estadoInicial : Todo[] = [ new Todo('Salvado por la campana')];
+  4.- Se crea app.reducer.ts
+  	import { Todo } from "./todos/models/todo.model";
+
+		export interface AppState{
+		  todos: Todo[]
+		}
+*************************************************************************************************************************************
+44. ******************************************************************************************************************Agregar un TODO
+	1.- Se importan los formularios reactivos en el app.module.ts y en todo.module.ts  
+		import { ReactiveFormsModule} from '@angular/forms'
+
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule,
+		    TodoModule,
+		    StoreModule.forRoot({ todos: todoReducer }),
+		    StoreDevtoolsModule.instrument({
+		      maxAge: 25, // Retains last 25 states
+		      logOnly: environment.production, // Restrict extension to log-only mode
+		    }),
+		    ReactiveFormsModule
+		  ],
+
+	2.- Se modifica todo-add.component.ts  
+
+		// Se crea tributo de tipo FormControl
+		txtInput!: FormControl;
+
+		//Se realiza injeccion de dependencia del Store
+		constructor( private store: Store<AppState>) {
+			// Se crea el Form Control
+	    this.txtInput = new  FormControl( 'Hola', Validators.required);
+	  }
+
+	  agregar(){
+	  	// Se valida si el input es valido 
+	    if(this.txtInput.invalid) return ;
+	    // Se dispara accion del store 
+	    this.store.dispatch(actions.crear({ texto: this.txtInput.value }));
+	    //Se hace reset del input 
+	    this.txtInput.reset();
+	  }
+	 3.- Se modifica todo-add.component.html, se agrega atributo al input txtInput y se agrega evento enter  
+
+	 	<header class="header">
+		  <h1>todos</h1>
+		  <input class="new-todo"
+		    [formControl]="txtInput"
+		    placeholder="Que necesitas hacer?"
+		    (keyup.enter)="agregar()"
+		    autofocus>
+		</header>
+*************************************************************************************************************************************
+45. *************************************************************************************************Desplegar nuestra lista de TODOS
+	1.- Se modifia todo.reducer.ts, se le agregan objetos al estado inicial   
+			export const estadoInicial : Todo[] = [
+          new Todo('Salvar al mundo'),
+          new Todo('Vencer a thanos'),
+          new Todo('Comprar traje de Iroman'),
+          new Todo('Robar escudo del capitan America'),
+        ];
+  2.- Se modifica todo-list.component.ts
+  		//Se crea atribbuto 
+  	  todos: Todo[] = [];
+
+  	  //Se crea ID del store
+		  constructor(private store: Store<AppState>) { }
+
+		  ngOnInit(): void {
+		  	// Se recupera del store la variable todos y se realiza sibscribe 
+		    this.store.select('todos').subscribe( todos => this.todos = todos);
+		  }
+
+	3.- Se modifica todo-list.component.html, se le agrega *ngFor para recorrr la lista   
+		<ul class="todo-list">
+		  <!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
+		  <app-todo-item *ngFor="let todo of todos"></app-todo-item>
+		</ul>  
+*************************************************************************************************************************************
+46. *********************************************************************************************************Controlar los TODO-Items
+*****************************************************************************************************************************@Input()
+***************************************************************************************************************************@ViewChild
+***************************************************************************************************************************ElementRef
+**************************************************************************************************************************FormControl
+************************************************************************************************************************nativeElement
+***************************************************************************************************************************(dblclick)
+*******************************************************************************************************************************(blur)
+	1.- Se modifica todo-list.component.html, se agrega atributo todo
+		<app-todo-item *ngFor="let todo of todos" [todo]="todo"></app-todo-item>
+	2.- Se modifica todo-item.component.ts
+		//Se crea input
+		@Input() todo!: Todo;
+		// Se creat atributo para el check reactivo
+	  chkCompletado!: FormControl;
+	  // Se crea atributo para el input reactivo 
+	  txtInput!: FormControl;
+	 	// Se crea atributo para el cambio de la clase css del elemento li
+	  editando: boolean = false;
+	  // Se crea atributo para manejar referencia al elemento del input 
+	  @ViewChild('elemFisico') txtInputFisico!: ElementRef;
+	  constructor() { }
+
+
+	  ngOnInit(): void {
+	  	// Se crean los elementos 
+	    this.chkCompletado = new FormControl(this.todo.completado);
+	    this.txtInput = new FormControl( this.todo.completado, Validators.required);
+	  }
+
+	  // metodo que agregao/quita la clase css editing y seleccion el txto del input 
+	  editar(){
+	    this.editando = true;
+	    setTimeout(()=>{
+	      this.txtInputFisico.nativeElement.select();
+	    },1)
+
+	  }
+
+	  // Metodo que se dispara con evento blur y cambia la clase css del elemento  li
+	  terminarEdicion(){
+	    this.editando = false;
+	  }
+	3.- Se modifica todo-item.component.html  
+		<li [class.completed]="todo.completado"
+    		[class.editing]="editando">
+		  <div class="view">
+		    <input class="toggle"
+		    type="checkbox"
+		    [formControl]="chkCompletado">
+		    <label (dblclick)="editar()">{{todo.texto}}</label>
+		    <button class="destroy"></button>
+		  </div>
+		  <input class="edit"
+		    type="text"
+		    [formControl]="txtInput"
+		    (blur)="terminarEdicion()"
+		    #elemFisico>
+		</li>
+*************************************************************************************************************************************
+47. ************************************************************************************Toggle Action - Completar o desmarcar un TODO
+*************************************************************************************************************************valueChanges
+*****************************************************************************************************************************dispatch
+	1.- Se modifico todo.model.ts, se cambio la manera de generar el id   
+		  constructor(texto: string){
+		    this.texto = texto;
+		    this.id = Math.random();
+		    this.completado = false;
+		  }
+	2.- Se modifica todo.actions.ts, se crea una nueva accion   
+		export const togleCompletado = createAction(
+		    '[TODO] Togle completado',
+		    // Se pasa el id del obj todo 
+		    props<{id: number}>()
+		);
+	3.- Se modifica todo.reducer.ts, se crea funcionalidad de la accion 
+		const _todoReducer = createReducer(
+		  estadoInicial,
+		  on(crear, (state, {texto}) => [...state, new Todo(texto)]),
+		  // Se crea nueva funcionalidad
+		  on(togleCompletado, (state, {id}) => {
+		  	// Se retorna un nuevo estado
+		    return state.map( todo => {
+		      if( todo.id === id ){
+		      	// Se retorna un nuevo todo
+		        return {
+		          ...todo,
+		          completado: !todo.completado
+		        }
+		      }else{
+		      	// Se retorna el mismo obj todo 
+		        return todo;
+		      }
+		    });
+		  }),
+		);
+	4.- Se modifica todo-item.component.ts
+		// Se importan todas las acciones y se le da un alias
+		import * as actions from '../todo.actions'
+
+		//Se realiza la ID del store
+		constructor( private store: Store<AppState>) { }
+
+		ngOnInit(): void {
+	    this.chkCompletado = new FormControl(this.todo.completado);
+	    this.txtInput = new FormControl( this.todo.completado, Validators.required);
+
+	    // Se subscribe al cambio del atributo 
+	    this.chkCompletado.valueChanges.subscribe( valor => {
+	    	// Se realiza el dispach de la accion
+	      this.store.dispatch( actions.togleCompletado({id: this.todo.id}))
+	    })
+	  }
+*************************************************************************************************************************************
+48. *******************************************************************************************************Editar una tarea por hacer
+	1.- Se modifica todo.actions.ts, se crea una nueva accion  
+		export const editar = createAction(
+		    '[TODO] editar todo',
+		    props<{id: number, texto: string}>()
+		);
+	2.- Se modifica todo.reducer.ts, se crea funcion de la accion creada 
+		const _todoReducer = createReducer(
+		  estadoInicial,
+		  on(crear, (state, {texto}) => [...state, new Todo(texto)]),
+		  on(togleCompletado, (state, {id}) => {
+		    return state.map( todo => {
+		      if( todo.id === id ){
+		        return {
+		          ...todo,
+		          completado: !todo.completado
+		        }
+		      }else{
+		          return todo;
+		      }
+		    });
+		  }),
+		  //Se crea nueva funcionalidad
+		  on(editar, (state, {id, texto}) => {
+		  	// retorna el nuevo estado
+		    return state.map( todo => {
+		      if( todo.id === id ){
+		      	// Retorna un nuevo obj todo
+		        return {
+		          ...todo,
+		          texto: texto
+		        }
+		      }else{
+		      	// retorna el mismo obj todo 
+		          return todo;
+		      }
+		    });
+		  }),
+		);
+	3.- Se modifica todo-item.component.ts 
+		  terminarEdicion(){
+		    this.editando = false;
+		    // Se valida el input si es igual y si es valido 
+		    if( this.txtInput.invalid ) return;
+		    if( this.txtInput.value === this.todo.texto ) return;
+		    // Se realiza el dispatch e la accion
+		    this.store.dispatch(
+		      actions.editar({
+		        id: this.todo.id,
+		        texto: this.txtInput.value
+		      })
+		    );
+		  }
+
+		  editar(){
+		    this.editando = true;
+		    // Se setea valor de todoo en el input 
+		    this.txtInput.setValue( this.todo.texto);
+		    setTimeout(()=>{
+		      this.txtInputFisico.nativeElement.select();
+		    },1)
+		  }
+*************************************************************************************************************************************
+49. *****************************************************************************************************Borrar una tarea de la lista
+	1.- Se modifca todo.action.ts, se crea action eliminar   
+		export const eliminar = createAction(
+		    '[TODO] eliminar todo',
+		    props<{id: number}>()
+		);
+
+	2.- Se modifica todo.reducer.ts, se agrega funcion al eliminar 
+		const _todoReducer = createReducer(
+		  estadoInicial,
+		  on(crear, (state, {texto}) => [...state, new Todo(texto)]),
+		  // Se agrega funcionalidad a la accion eliminar 
+		  on(eliminar, (state, {id}) => state.filter( todo => todo.id !== id )),
+		  on(togleCompletado, (state, {id}) => {
+		    return state.map( todo => {
+		      if( todo.id === id ){
+		        return {
+		          ...todo,
+		          completado: !todo.completado
+		        }
+		      }else{
+		          return todo;
+		      }
+		    });
+		  }),
+		  on(editar, (state, {id, texto}) => {
+		    return state.map( todo => {
+		      if( todo.id === id ){
+		        return {
+		          ...todo,
+		          texto: texto
+		        }
+		      }else{
+		          return todo;
+		      }
+		    });
+		  }),
+		);
+	3.- Se modifica todo-item.component.ts, se agrega metodo eliminar   
+		  eliminar(){
+		    this.store.dispatch( actions.eliminar({ id: this.todo.id }))
+		  }
+	4.- Se modifica todo-item.component.html, se le agrega evento click al boton de eliminar   
+		<button class="destroy" (click)="eliminar()"></button>
+*************************************************************************************************************************************
+50. ********************************************************************************************Toggle All - Marcar o Desmarcar Todos
+	1.- Se modifica todo.action.ts, se agrega action   
+		export const todoAll = createAction(
+		    '[TODO] Togle all',
+		    props<{completado: boolean}>()
+		);
+	2.- Se modifca todo.reducer.ts, se agrega funcionalidad   
+		  on(todoAll, (state, {completado}) => state.map( todo => {
+		  	// Se retorna un nuevo obj 
+		    return {
+		      ...todo,
+		      completado: completado
+		    }
+		  })),
+	3.- Se modifica todo-page.component.ts 
+		//Se crea atributo 
+	  completado: boolean = false;
+	  // Se realiza ID del servicio
+	  constructor( private store: Store<AppState> ) { }
+
+	  // se crea metodo para el evento
+	  togleAll(){
+	    this.completado = !this.completado;
+	    this.store.dispatch( actions.todoAll({ completado : this.completado}));
+	  }
+	4.- Se modifica todo-page.component.html, se crea evento para el checkbox  
+		  <input id="toggle-all"
+        class="toggle-all"
+        type="checkbox"
+        (click)="togleAll()">
+*************************************************************************************************************************************
+51. **********************************************************************************************Creando un segundo reducer - Filtro
+	1.- Se creo un folder en la raiz --> filtros 
+	2.- Se crea un archivo de actions --> filtro.action.ts 
+		//Importacion 
+		import { createAction, props } from '@ngrx/store';
+
+		// Se crea tipo pata el filtro
+		export type filtrosValidos = 'todos' | 'completados' | 'pendientes'
+
+		// Se crea la acion
+		export const setFiltro = createAction('[Filtro] set Filtro', props<{ filtro: filtrosValidos }>());
+
+	3.- Se creo un reducer --> filtro.reducer.ts 
+		//Importacion
+		import { Action, createReducer, on } from '@ngrx/store';
+		import { filtrosValidos, setFiltro } from './filtro.actions';
+
+		// Se añade estado inicial
+		export const initialState: filtrosValidos  = 'todos';
+
+		// Se crea la funcionalidad del action
+		const _filtrosReducer = createReducer<filtrosValidos, Action>(
+		  initialState,
+		  on(setFiltro, (state, { filtro }) => filtro ),
+		);
+
+
+		export function filtrosReducer(state: any, action: Action) {
+		  return _filtrosReducer(state, action);
+		}
+*************************************************************************************************************************************
+52. ***************************************************************************************Combinando 2 o más reducers en el AppState
+	1.- Se modifica app.reducer.ts, 
+		//se agrega atributo de filtros a los state
+		export interface AppState{
+		  todos: Todo[],
+		  filtros: filtrosValidos
+		}
+
+		// Se crea constante de tipo ActionReducerMap con los estados 
+		export const appReducers: ActionReducerMap<AppState> = {
+		  todos: todoReducer,
+		  filtros: filtrosReducer
+		}
+	2.- Se modifica el app.module.ts, se modifica el metodo forRoot del StoreModule, se le agrega la constante creado con los reducers     
+		    StoreModule.forRoot( appReducers ),
+	Nota: Se prueba en el explorador con redux deben aparecer dos children de state 
+*************************************************************************************************************************************
+53. *****************************************************************************************Cambiar el filtro - únicamente el string
+	1.- Se modifica todo-footer.component.ts 
+		// Se crean atributos de la clase
+	  filtroActual: actions.filtrosValidos= 'todos';
+	  filtros: actions.filtrosValidos[] = ['todos','completados','pendientes']
+
+	  // Se realiza ID del store
+	  constructor( private store: Store<AppState>) { }
+
+
+	  ngOnInit(): void {
+	  	// Se busca en el store y se subscribe al dato filtros
+	    this.store.select('filtros').subscribe( filtro => this.filtroActual = filtro);
+	  }
+
+	  // crealiza metodo para que dispare el action del reducer 
+	  cambiarFiltro(filtro: actions.filtrosValidos){
+	    this.store.dispatch(actions.setFiltro({ filtro: filtro }))
+	  }
+	2.- Se modifica todo-footer.component.html
+		<!-- Remove this if you dont implement routing -->
+		  <ul class="filters">
+		    <li *ngFor="let filtro of filtros" (click)="cambiarFiltro(filtro)">
+		      <a [class.selected]="filtro === filtroActual">{{filtro}}</a>
+		    </li>
+		    <!--<li>
+		      <a href="#/active">Activos</a>
+		    </li>
+		    <li>
+		      <a href="#/completed">Completados</a>
+		    </li>-->
+		  </ul>
+		  <!-- Hidden if no completed items are left ↓ -->
+		  <button class="clear-completed">Borrar Completados</button>
+		</footer>
+*************************************************************************************************************************************
+54. ******************************************************************************************************Conteo de tareas pendientes
+	1.- Se modifica todo-footer.component.ts 
+		1.1- Se modifica metodo onInit para que se subscriba al store 
+			 ngOnInit(): void {
+		    //this.store.select('filtros').subscribe( filtro => this.filtroActual = filtro);
+		    this.store.subscribe( state => {
+		    	// Se setea al atributo el filtro actual 
+		      this.filtroActual = state.filtros;
+		      this.pendientes = state.todos.filter( todo => !todo.completado ).length;
+		    })
+		  }
+		1.2.- Se crea atributo para el conteo de tareas pendientes 
+			pendientes: number = 0;
+	2.- Se modifica todo-footer.component.html, se le agrega atributo de conteo   
+		  <span class="todo-count"><strong>{{pendientes}}</strong> tareas pendientes</span>
+*************************************************************************************************************************************
+55. ****************************************************************************************************Aplicar el filtro visualmente
+	1.- Se crea pipe --> ng g pipe todos/filtro --skip-tests
+	2.- Se modifica filtro.pipe.ts 
+		@Pipe({
+		  name: 'filtroTodo'
+		})
+		export class FiltroPipe implements PipeTransform {
+
+		  transform(todos: Todo[], filtro: filtrosValidos): Todo[] {
+		    switch(filtro){
+		      case 'completados':
+		        return todos.filter( todo => todo.completado );
+		      case 'pendientes':
+		        return todos.filter( todo => !todo.completado );
+		      default:
+		      return todos;
+		    }
+		  }
+		}
+	3.- Se modifica todo-list.component.ts 
+		  todos: Todo[] = [];
+		  //Se agrega atributo 
+		  filtroActual!: filtrosValidos;
+
+		  constructor(private store: Store<AppState>) { }
+
+		  ngOnInit(): void {
+		    //this.store.select('todos').subscribe( todos => this.todos = todos);
+		    // Se subscribe al store 
+		    this.store.subscribe( ({filtros, todos }) => {
+		      this.filtroActual = filtros;
+		      this.todos = todos;
+		    })
+		  }
+	4.- Se modifica todo-list.component.html, se agrega pipe 
+		<ul class="todo-list">
+	    <app-todo-item *ngFor="let todo of todos | filtroTodo:filtroActual" [todo]="todo"></app-todo-item>
+	  </ul>
+*************************************************************************************************************************************
+56. ************************************************************************************************Borrar todos los TODO completados
+	1.- Se modifica todo.actions.ts, se crea accion  
+		export const cleanTodos = createAction(
+		    '[TODO] clean all'
+		);
+	2.- Se modifica todo.reducer.ts, se modifica createReducer() se agrega funcionalidad del action creado 
+		  on(cleanTodos, (state) => state.filter( todo => !todo.completado )), 
+	3.- Se modifica todo-footer.component.ts, se crea metodo clean 
+		  clean(){
+		    this.store.dispatch( cleanTodos() )
+		  }
+	4.- Se modifica todo-footer.component.html, se le agrega evento click al boton    
+		<button class="clear-completed" (click)="clean()">Borrar Completados</button>
+*************************************************************************************************************************************
+57. *************************************************************************************Desplegar nuestra aplicación en GitHub Pages
+	1.- Se crea repositorio en github 
+	2.- Se ejecuta --> git init 
+	3.- Se ejecuta --> git add .   
+	4.- Se ejecuta commit --> git commit -m "Primer commit"
+	5.- Se agrega remote --> git remote add pb https://github.com/paulboone/ticgit
+	6.- Se crea branch main --> git branch main 
+	7.- Se realiza el push --> git push 
+	8.- Se construye el app de prod --> ng build --prod --base-href='/<nombre aplicativo en git>/'
+		Nota: el nombre del aplicativo en it va a ser el nombre de tu repositorio
+					se crea una carpeta dist, se entra en dist y se le modifica el nombre a la aplicacion por 
+					docs, luego se pasa esta carpeta al raiz del proyecto y se suben los cambios 
+	9.- Se despliega, se ingresa en el repositorio a la opcion setting, luego al apartados de pages, en source se indica la rama main   
+		y luego la carpeta docs , se salva y se espera unos minutos al despliegue de la aplicacion, se colocara en color verde cuando 
+		este ready, y se ejecuta el link indicado.   
+*************************************************************************************************************************************
+*************************************************************************************************************************************
+********************************************Sección 6: NGRX - App - Ingresos y egresos***********************************************
+62. *******************************************************************************************Inicio del proyecto - IngresoEgresoApp	
+	1.- Se crea la aplicacion --> ng new ingresosEgresosApp
+	2.- Se copian los assets del material del curso en los assets del app 
+	3.- Se crea un componente --> ng g c auth/login --skip-tests
+														--> ng g c auth/register --skip-tests
+														--> ng g c dashboard --skip-tests 
+														--> ng g c ingreso-egreso --skip-tests
+														--> ng g c ingreso-egreso/estadistica --skip-tests
+														--> ng g c ingreso-egreso/detalle --skip-tests
+														--> ng g c shared/footer --skip-tests
+														--> ng g c shared/navbar --skip-tests
+														--> ng g c shared/sidebar --skip-tests
+	4.- Se prueba la aplicacion --> ng serve -o 
+*************************************************************************************************************************************
+64. *****************************************************************************************************Diseño de nuestra aplicación
+	1.- Se modifica index.html, se le agregan estilos a la aplicacion 
+		 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+ 
+		 <link rel="stylesheet" href="assets/css/vendor.bundle.base.css">
+		 <link rel="stylesheet" href="assets/css/vendor.bundle.addons.css">
+		 <link rel="stylesheet" href="assets/css/style.css">
+	2.- Se instala bootstrap --> npm i bootstrap --save
+	3.- Se modifica angular.json, se le agrega estilos de bootstrap   
+    "styles": [
+      "src/styles.css",
+      "node_modules/bootstrap/dist/css/bootstrap.min.css"
+    ],
+  4.- Se modifica login.component.html, se copia del material facilitado 
+		<div class="page-body-wrapper full-page-wrapper auth-page">
+		  <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
+		    <div class="row w-100">
+		      <div class="col-lg-4 mx-auto">
+		        <h2 class="text-center mb-4" style="color: white;">Ingresar</h2>
+		        <div class="auto-form-wrapper">
+		          <form action="#">
+		            <div class="form-group">
+		              <label class="label">Usuario</label>
+		              <div class="input-group">
+		                <input type="email" class="form-control" placeholder="Email">
+		                <div class="input-group-append">
+		                  <span class="input-group-text">
+		                    <i class="fa fa-check-circle"></i>
+		                  </span>
+		                </div>
+		              </div>
+		            </div>
+		            <div class="form-group">
+		              <label class="label">Contraseña</label>
+		              <div class="input-group">
+		                <input type="password" class="form-control" placeholder="*********">
+		                <div class="input-group-append">
+		                  <span class="input-group-text">
+		                    <i class="fa fa-check-circle"></i>
+		                  </span>
+		                </div>
+		              </div>
+		            </div>
+		            <div class="form-group">
+		              <button class="btn btn-primary submit-btn btn-block">Login</button>
+		            </div>
+
+
+		            <div class="text-block text-center my-3">
+		              <span class="text-small font-weight-semibold">No estas registrado? </span>
+		              <br>
+		              <a href="" class="text-black text-small">Crear una cuenta</a>
+		            </div>
+		          </form>
+		        </div>
+
+
+		      </div>
+		    </div>
+		  </div>
+		  <!-- content-wrapper ends -->
+		</div>
+	5.- Se modifica register.component.html, se copia del material facilitado
+	  <div class="page-body-wrapper full-page-wrapper auth-page">
+	    <div class="content-wrapper d-flex align-items-center auth register-bg-1 theme-one">
+	      <div class="row w-100">
+	        <div class="col-lg-4 mx-auto">
+	          <h2 class="text-center mb-4">Registro</h2>
+	          <div class="auto-form-wrapper">
+	            <form action="#">
+	              <div class="form-group">
+	                <div class="input-group">
+	                  <input type="email" class="form-control" placeholder="Correo">
+	                  <div class="input-group-append">
+	                    <span class="input-group-text">
+	                      <i class="fa fa-check-circle"></i>
+	                    </span>
+	                  </div>
+	                </div>
+	              </div>
+	              <div class="form-group">
+	                <div class="input-group">
+	                  <input type="password" class="form-control" placeholder="Password">
+	                  <div class="input-group-append">
+	                    <span class="input-group-text">
+	                      <i class="fa fa-check-circle"></i>
+	                    </span>
+	                  </div>
+	                </div>
+	              </div>
+
+	              <div class="form-group">
+	                <button class="btn btn-primary submit-btn btn-block">Crear cuenta</button>
+	              </div>
+	              <div class="text-block text-center my-3">
+	                <span class="text-small font-weight-semibold">ya tienes una cuenta?</span>
+	                <br>
+	                <a href="" class="text-black text-small">Login</a>
+	              </div>
+	            </form>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	    <!-- content-wrapper ends -->
+	  </div>
+	  <!-- page-body-wrapper ends -->
+	6.- Se modifica footer.component.html, se copia del material facilitado
+		<footer class="footer">
+		  <div class="container-fluid clearfix">
+		    <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Derechos reservados © 20XX
+		      <a href="http://fernando-herrera.com" target="_blank">Fernando Herrera</a>.</span>
+		    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Creado a mano con
+		      <i class="fa fa-heart text-danger"></i>
+		    </span>
+		  </div>
+		</footer>
+	7.- Se modifica navBar.component.html, se copia del material facilitado 
+		<!-- partial:../../partials/_navbar.html -->
+		<nav class="navbar default-layout col-sm-12 col-12 p-0 fixed-top d-flex flex-row">
+		  <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
+		    <a class="navbar-brand brand-logo">
+		      <img src="assets/images/logo.svg" alt="logo" />
+		    </a>
+		    <a class="navbar-brand brand-logo-mini">
+		      <img src="assets/images/logo-mini.svg" alt="logo" />
+		    </a>
+		  </div>
+
+		  <div class="navbar-menu-wrapper d-flex align-items-center">
+
+		    <ul class="navbar-nav navbar-nav-right">
+
+		      <li class="nav-item d-none d-sm-inline-block">
+		        <a class="nav-link" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+		          <span class="profile-text">Hello, Richard V.Welsh !</span>
+		          <img class="img-xs rounded-circle" src="assets/images/faces/face1.jpg" alt="Profile image">
+		        </a>
+		      </li>
+		    </ul>
+		    <button class="navbar-toggler navbar-toggler-right d-sm-none align-self-center" type="button" data-toggle="offcanvas">
+		      <span class="icon-menu"></span>
+		    </button>
+		  </div>
+		</nav>
+		<!-- partial -->
+	8.- Se modifica sidebar.component.html, se copia del material facilitado
+			<nav class="sidebar sidebar-offcanvas">
+			  <ul class="nav">
+			    <li class="nav-item nav-profile">
+			      <div class="nav-link">
+
+			        <div class="user-wrapper">
+			          <div class="profile-image">
+			            <img src="assets/images/faces/face1.jpg" alt="profile image">
+			          </div>
+
+			          <div class="text-wrapper">
+			            <p class="profile-name">Cristobal Colón</p>
+			            <div>
+			              <small class="designation text-muted">Gerente</small>
+			            </div>
+			          </div>
+			        </div>
+
+			      </div>
+			    </li>
+
+			    <li class="nav-item">
+			      <a class="nav-link">
+			        <i class="menu-icon fa fa-tachometer-alt"></i>
+			        <span class="menu-title">Dashboard</span>
+			      </a>
+			    </li>
+
+			    <li class="nav-item">
+			      <a class="nav-link">
+			        <i class="menu-icon fa fa-clipboard-list"></i>
+			        <span class="menu-title">Ingresos y Egresos</span>
+			      </a>
+			    </li>
+
+			    <li class="nav-item">
+			      <a class="nav-link">
+			        <i class="menu-icon fa fa-table"></i>
+			        <span class="menu-title">Detalle</span>
+			      </a>
+			    </li>
+
+			    <li class="nav-item">
+			      <a class="nav-link cursor">
+			        <i class="menu-icon fa fa-sign-out-alt"></i>
+			        <span class="menu-title">Cerrar sesión</span>
+			      </a>
+			    </li>
+
+			  </ul>
+			</nav>
+	9.- Se modifica app.component.html, se agregan componentes
+		<div class="container-scroller">
+		  <!--<app-login></app-login>-->
+		  <!--<app-register></app-register>-->
+		  <app-navbar></app-navbar>
+		  <div class="page-body-wrapper">
+		    <app-sidebar></app-sidebar>
+		    <div class="main-panel">
+		      <div class="content-wrapper">
+		        //paginas
+		      </div>
+		      <app-footer></app-footer>
+		    </div>
+		  </div>
+		</div>
+*************************************************************************************************************************************
+65. ******************************************************************************************Creando las rutas de nuestra aplicación
+	1.- Se modifica app-routing.module.ts, se crean las rutas principales  
+		const routes: Routes = [
+		  { path: 'login', component: LoginComponent },
+		  { path: 'register', component: RegisterComponent },
+		  { path: '', component: DashboardComponent },
+		  { path: '**', redirectTo: '' }
+		];
+	2.- Se modifica app.component.ts, se le agrega router-outlet
+		<div class="container-scroller">
+		  <router-outlet></router-outlet>
+		</div>
+	3.- Se modifica login.component.html, se le agrega atributo routerLink al link de crear cuenta para que nos dirija al 
+	componente register
+		<a routerLink="/register" class="text-black text-small">Crear una cuenta</a>
+	4.- Se modifica register.component.html, se le agrega atributo routerLink al link de crear cuenta para que nos dirija al 
+	componente login  
+		<a routerLink="/login" class="text-black text-small">Login</a>
+*************************************************************************************************************************************
+66. ***********************************************************************************Configurando rutas hijas de nuestra aplicación
+	1.- Se crea archivo dentro de dashboard --> dashboard.routes.ts 
+		export const dashboarRoutes: Routes = [
+		  { path: '', component: EstadisticaComponent },
+		  { path: 'ingreso-egreso', component: IngresoEgresoComponent },
+		  { path: 'detalle', component: DetalleComponent }
+		];
+	2.- Se modifica dashboard.component.html  
+		<app-navbar></app-navbar>
+		<div class="page-body-wrapper">
+		  <app-sidebar></app-sidebar>
+		  <div class="main-panel">
+		    <div class="content-wrapper">
+		      <router-outlet></router-outlet>
+		    </div>
+		    <app-footer></app-footer>
+		  </div>
+		</div>
+	3.- Se modifica app-routing.module.ts, se le agrega children a la ruta de dashboard 
+		const routes: Routes = [
+		  { path: 'login', component: LoginComponent },
+		  { path: 'register', component: RegisterComponent },
+		  { path: '', component: DashboardComponent, children: dashboarRoutes },
+		  { path: '**', redirectTo: '' }
+		];
+	4.- Se prueba, se debe mostrar en el dashboard los componentes hijos 
+		http://localhost:51452/detalle
+		http://localhost:51452/estadistica
+*************************************************************************************************************************************
+67. ********************************************************************************************************Diseño de las rutas hijas
+	1.- Se modifica ingreso-egreso.component.html, se copia del material facilitado
+		<div class="row">
+		  <div class="col-12">
+		      <div class="card">
+		        <div class="card-body">
+		          <h4 class="card-title">Agregar Ingreso / Egreso</h4>
+		          <p class="card-description">
+		            Especifique el monto y el tipo
+		          </p>
+
+		          <form>
+
+		            <div class="form-group">
+		              <label>Descripción</label>
+		              <input type="text"
+		                     class="form-control"
+		                     placeholder="Descripción"
+		                     name="descripcion">
+		            </div>
+
+		            <div class="form-group">
+		                <label>Monto</label>
+		                <input type="number"
+		                       class="form-control"
+		                       placeholder="Monto"
+		                       name="monto">
+		                  <p>
+		                    Debe de ser un monto positivo
+		                  </p>
+		              </div>
+
+		            <div class="form-group">
+		                <label>Tipo</label>
+		                <br>
+		                <button type="button" class="btn btn-primary btn-block">Ingreso</button>
+		                <!-- <button type="button" class="btn btn-warning btn-block">Egreso</button> -->
+		            </div>
+
+		            <hr>
+		            <button type="button" class="btn btn-success mr-2">
+		              <i class="fa fa-save"></i>
+		              Agregar
+		            </button>
+
+		            <!--
+		              <button disabled class="btn btn-success mr-2">
+		                <i class="fa fa-spin fa-sync"></i>
+		                Espere por favor...
+		              </button>
+		            -->
+
+		            <button type="reset" class="btn btn-light">Cancelar</button>
+
+		          </form>
+		        </div>
+		      </div>
+		    </div>
+		</div>
+	2.- Se modifica estadistica.component.html, se copia del material facilitado
+		<div class="row">
+		  <div class="col-6">
+		      <div class="card card-statistics">
+		        <div class="card-body">
+
+		          <div class="clearfix">
+		            <div class="float-left">
+		              <i class="fa fa-money-bill-alt text-success icon-lg"></i>
+		            </div>
+		            <div class="float-right">
+		              <p class="mb-0 text-right">Ingresos</p>
+		              <div class="fluid-container">
+		                <h3 class="font-weight-medium text-right mb-0">$65,650</h3>
+		              </div>
+		            </div>
+		          </div>
+		          <p class="text-muted mt-3 mb-0">
+		            <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i> 65% lower growth
+		          </p>
+		        </div>
+		      </div>
+		    </div>
+
+		    <div class="col-6">
+		        <div class="card card-statistics">
+		          <div class="card-body">
+
+		            <div class="clearfix">
+		              <div class="float-left">
+		                <i class="fa fa-shipping-fast text-danger icon-lg"></i>
+		              </div>
+		              <div class="float-right">
+		                <p class="mb-0 text-right">Ingresos</p>
+		                <div class="fluid-container">
+		                  <h3 class="font-weight-medium text-right mb-0">$65,650</h3>
+		                </div>
+		              </div>
+		            </div>
+		            <p class="text-muted mt-3 mb-0">
+		              <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i> 65% lower growth
+		            </p>
+		          </div>
+		        </div>
+		      </div>
+		</div>
+	3.- Se modifica detalle.component.html, se copia del material facilitado
+		<div class="row">
+		  <div class="col-12">
+		      <div class="card">
+		        <div class="card-body">
+		          <h4 class="card-title">Detalle de ingreso egreso</h4>
+
+		          <table class="table">
+		            <thead>
+		              <tr>
+		                <th>Descripción</th>
+		                <th>Monto</th>
+		                <th>Tipo</th>
+		                <th></th>
+		              </tr>
+		            </thead>
+
+		            <tbody>
+		              <tr>
+		                <td>Descripción</td>
+		                <td>Monto</td>
+		                <td>Tipo</td>
+		                <td>acciones</td>
+		              </tr>
+		            </tbody>
+
+		          </table>
+
+
+		        </div>
+		      </div>
+		  </div>
+		</div>
+	4.- Se modifica sidebar.component.html, se le agregan routerling a las opciones del sidebar  
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/">
+        <i class="menu-icon fa fa-tachometer-alt"></i>
+        <span class="menu-title">Dashboard</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/ingreso-egreso">
+        <i class="menu-icon fa fa-clipboard-list"></i>
+        <span class="menu-title">Ingresos y Egresos</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/detalle">
+        <i class="menu-icon fa fa-table"></i>
+        <span class="menu-title">Detalle</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link cursor" routerLink="/login">
+        <i class="menu-icon fa fa-sign-out-alt"></i>
+        <span class="menu-title">Cerrar sesión</span>
+      </a>
+    </li>
+*************************************************************************************************************************************
+68. ***************************************************************************************Realizando un backup de nuestra aplicación
+	1.- Se crea repositorio en github 
+	2.- Dentro del proyecto se ejecuta 
+		git init 
+		git add .  
+		git commit -m "Primer commit"
+		git remote add origin https://github.com/dirielfran/ingresos-egresosApp.git
+		git branch -M main
+		git push -u origin main
+		git tag -a v1.0.0 -m "Primera version"
+		git push --tags
+	3.- Revizar repositorio, deben estar los cambios y el tag creado 
+	4.- Despliegue de aplicacion en github pages 
+		4.1.- Se modifica index.html 
+			<base href="/ingresos-egresosApp/">
+		4.2.- Se construye la aplicacion --> ng build --prod 
+			Nota: se genero error al crar el index la siguiente correccion utilice, en el angular.json cambie la configuracion para 
+			produccion 	
+				"configurations": {
+            "production": {
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
+    4.3.- Se busca la app en dist y se le cambia el nombre a docs, luego se lleva  a la raiz 
+    4.4.- Se va a github  --> repositorio --> setting --> pages 
+    	4.4.1.- Se escoge la rama, luego el folder docs, se salva, se espera unos minutos a que este en verde y desplegado
+*************************************************************************************************************************************
+*************************************************************************************************************************************
+************************************Sección 7: NGRX - App - Authenticacion, Login y Registro*****************************************
+72. *************************************************************************************************************Pantalla de registro
+**************************************************************************************************************************FormControl
+******************************************************************************************************************ReactiveFormsModule 
+**************************************************************************************************************************FormBuilder 
+****************************************************************************************************************************FormGroup 
+*****************************************************************************************************************************ngSubmit 
+***************************************************************************************************************************Validators
+*****************************************************************************************Validacion por campo del formulario reactivo
+	1.- Se modifica el app.module.ts, se importa formularioreactivoModule 
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule,
+		    ReactiveFormsModule
+		  ],
+	2.- Se modifica register.component.ts
+		export class RegisterComponent implements OnInit {
+			//Atributo para el formulario reactivo
+		  registerForm!: FormGroup;
+
+		  // ID del formBuilder
+		  constructor( private fb: FormBuilder) { }
+
+		  ngOnInit(): void {
+		  	// Se inicializa formulario reactivo
+		    this.registerForm = this.fb.group({
+		      nombre: ['', Validators.required],
+		      correo: ['', [Validators.required, Validators.email] ],
+		      password: ['', [Validators.required]]
+		    })
+		  }
+
+		  //Se crea metodo para crear usuario
+		  crearUsuario(){
+		    console.log(this.registerForm);
+		    console.log(this.registerForm.valid);
+		    console.log(this.registerForm.value);
+		  }
+		}
+	3.- Se modifica register.component.ts
+		3.1.- Se modifica el elemto form, se indica el formGroup y se le agrega evento submit  
+			<form [formGroup]="registerForm" (ngSubmit)="crearUsuario()">
+		3.2.- Se crea input para numbre de usuario, se le agrega formControlName, se valida check si el campo es valido 
+			<div class="form-group">
+        <div class="input-group">
+          <input type="text"
+                  class="form-control"
+                  // Se agrega al formulario reactivo
+                  formControlName="nombre"
+                  placeholder="Nombre">
+          <div class="input-group-append">
+            <span class="input-group-text">
+            	//Se valida si el campo es valido 
+              <i *ngIf="registerForm.get('nombre')?.valid" class="fa fa-check-circle"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    3.3.- Se modifican los input de correo y password, para que validen si son validos y se agregan al formulario reactivo 
+      <div class="form-group">
+        <div class="input-group">
+          <input type="email"
+                  class="form-control"
+                  formControlName="correo"
+                  placeholder="Correo">
+          <div class="input-group-append">
+            <span class="input-group-text">
+              <i *ngIf="registerForm.get('correo')?.valid" class="fa fa-check-circle"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-group">
+          <input type="password"
+                  class="form-control"
+                  formControlName="password"
+                  placeholder="Password">
+          <div class="input-group-append">
+            <span class="input-group-text">
+              <i *ngIf="registerForm.get('password')?.valid" class="fa fa-check-circle"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    3.4.- Se modifica boton para que sea de tipo submit y que se active con el formulario valido 
+              <div class="form-group">
+                <button type="submit"
+                          [disabled]="registerForm.invalid"
+                          class="btn btn-primary submit-btn btn-block">Crear cuenta</button>
+              </div>    	
+*************************************************************************************************************************************
+73. ***************************************************************************************************Preparar nuestra base de datos
+	1.- Se registra aplicacion en firebace.google.com 
+	2.- Una vez registrada la aplicacion --> Authentication --> Metodos de acceso --> correo electronico y contraseña y se habilita
+	3.- Se crea base de datos --> Base de datos -->comenzar en modo bloqueo -->  crear
+		3.1.- Se le cambian las reglas -->  allow read, write  --> publicar 
+*************************************************************************************************************************************
+74. ***************************************************************AngularFire - Comunicar nuestra aplicación de Angular con Firebase
+	Referencia --> https://github.com/angular/angularfire 
+	1.- Agregamos AngularFire para la authenticacion de usuarios 
+		ng add @angular/fire
+	2.- Se agrega una aplicacion web al firebase 
+	3.- Se accde a la documentacion de angularFire --> https://github.com/angular/angularfire  
+	4.- Se modifica enviroment.ts, con los datos que otorga firebase al registrar la aplicacion web   
+		export const environment = {
+		  production: false,
+		  firebase: {
+		    apiKey: "AIzaSyDbzn2-4Q8-Ecct0ueOGc7xtDMHA32Fi50",
+		    authDomain: "ingresos-egresosapp.firebaseapp.com",
+		    projectId: "ingresos-egresosapp",
+		    storageBucket: "ingresos-egresosapp.appspot.com",
+		    messagingSenderId: "781786713066",
+		    appId: "1:781786713066:web:f8cc3fc290ff55ca39c093",
+		    measurementId: "G-59B8G0TMN9"
+		  }
+		};
+	5.- Se modifica enviroment.prod.ts, con los datos que otorga firebase al registrar la aplicacion web   
+		export const environment = {
+		  production: true,
+		  firebase: {
+		    apiKey: "AIzaSyDbzn2-4Q8-Ecct0ueOGc7xtDMHA32Fi50",
+		    authDomain: "ingresos-egresosapp.firebaseapp.com",
+		    projectId: "ingresos-egresosapp",
+		    storageBucket: "ingresos-egresosapp.appspot.com",
+		    messagingSenderId: "781786713066",
+		    appId: "1:781786713066:web:f8cc3fc290ff55ca39c093",
+		    measurementId: "G-59B8G0TMN9"
+		  }
+		};
+	6.- Se modifica app.module.ts, se agregan importaciones de firebase   
+		import { AngularFireModule } from '@angular/fire/compat';
+		import { environment } from 'src/environments/environment';
+		import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+		import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+
+	  imports: [
+	    BrowserModule,
+	    AppRoutingModule,
+	    ReactiveFormsModule,
+	    AngularFireModule.initializeApp(environment.firebase),
+	    AngularFirestoreModule,
+	    AngularFireAuthModule
+	  ],
+	7.- Se prueba la aplicacion que no genere ningun error  
+*************************************************************************************************************************************
+75. *****************************************************************************************************Crear nuestro primer usuario
+	1.- Se crea un servicio --> ng g s services/auth --skip-tests
+		1.1.- Se realiza injeccion de dependencia de AngularFireAuth
+			constructor( public auth: AngularFireAuth ) { }
+		1.2.- Se crea metodo crearUsuario
+		  crearUsuario(nombre: string, email: string, password: string){
+		    //console.log( {nombre, email, password})
+		    return this.auth.createUserWithEmailAndPassword(email,password);
+		  }
+	2.- Se modifica register.component.ts 
+		2.1.- Se modifica el constructor, se agrega la ID del obj Router 
+			constructor( private fb: FormBuilder,
+                private authService: AuthService,
+                private router: Router ) { }
+		2.2.- Se modifica metodo crearUsuario() 
+		  crearUsuario(){
+		  	//Se valida si el formulario es valido
+		    if(this.registerForm.invalid) return;
+		    // Se crean constantes con los valores del formulario
+		    const { nombre, correo, password } = this.registerForm.value;
+		    //Se llama al servicio para crear el usuario
+		    this.authService.crearUsuario( nombre, correo, password)
+		    	// succes
+		      .then( credenciales => {
+		        console.log( credenciales );
+		        //navegamos al dashboard
+		        this.router.navigateByUrl('/')
+		        //error
+		      }).catch( error => {
+		        console.error(error);
+		      });
+
+		  }			
+	3.- Se prueba el aplicativo, componente register, se debe validar que los usuarios se esten creado en firebase --> authenticacion 
+*************************************************************************************************************************************
+76. ******************************************************************************************************Login de nuestra aplicación
+**************************************************************************************************************************FormControl
+******************************************************************************************************************ReactiveFormsModule 
+**************************************************************************************************************************FormBuilder 
+****************************************************************************************************************************FormGroup 
+*****************************************************************************************************************************ngSubmit 
+***************************************************************************************************************************Validators
+	1.- Se modifica auth.service.ts, se crea metodo de loginUsuario()  
+		  loginUsuario(email: string, password: string ){
+		    return this.auth.signInWithEmailAndPassword(email, password);
+		  }
+	2.- Se moifica login.component.ts 
+		2.1.- Se realiza ID de router y clase de servicio authService  
+			constructor( private fb: FormBuilder,
+                private authService: AuthService,
+                private route: Router ) { }
+		2.2.- Se crea atributo para el loginForm 
+			loginForm!: FormGroup;
+		2.3.- Se modifica el metodo onInit(), se inicializa el formulario 
+			  ngOnInit(): void {
+			    this.loginForm = this.fb.group({
+			      email: ['', [Validators.required, Validators.email]],
+			      password: ['', [Validators.required]],
+			    })
+			  }
+		2.4.- Se crea metodo loginUsuario()  
+			  loginUsuario(){
+			  	//Se valida el formulario
+			    if( this.loginForm.invalid ) return;
+			    // Se obtienen los parametros del formulario
+			    const { email, password } = this.loginForm.value;
+			    //Se llamam al servicio para la validacion del login
+			    this.authService.loginUsuario(email, password)
+			    	// Succes
+			      .then( auth => {
+			      	//Se navega al dashboard
+			        console.log( auth);
+			        this.route.navigateByUrl('/');
+			        // error
+			      }).catch( error => {
+			        console.error( error );
+			      })
+			  }
+	3.- Se modifica login.component.html 
+		3.1.- Se modifica el form, se agrega formulario reactivo y el submit 
+			<form [formGroup]="loginForm" (submit)="loginUsuario()">
+		3.2.- Se agrega input al formulario reactivo y se valida si es valido 
+			<div class="input-group">
+        <input type="email"
+                class="form-control"
+                placeholder="Email"
+                formControlName="email">
+        <div class="input-group-append">
+          <span class="input-group-text">
+            <i *ngIf="loginForm.get('email')?.valid" class="fa fa-check-circle"></i>
+          </span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <input type="password"
+                class="form-control"
+                formControlName="password"
+                placeholder="*********">
+        <div class="input-group-append">
+          <span class="input-group-text">
+            <i *ngIf="loginForm.get('password')?.valid" class="fa fa-check-circle"></i>
+          </span>
+        </div>
+      </div>
+     3.3.- Se modifica el boton, se le agrega tipo y se valida el formulario para deshabilitarlo 0
+        <button class="btn btn-primary submit-btn btn-block"
+		      type="submit"
+		      [disabled]="loginForm.invalid"
+		      >Login</button>
+
+	4.- Se valida login, entrando con un usuario creado y con los datos erroneos
+*************************************************************************************************************************************
+77. ****************************************************************************************************SweetAlert 2 para los errores
+	Referencia --> https://sweetalert2.github.io/#download
+	1.- Se instala switalert2 --> npm install sweetalert2
+	2.- Se modifica register.component.ts, se le agrega swit alert en caso de error en la creacion de usuario, se lea agrega louding 
+		crearUsuario(){
+	    if(this.registerForm.invalid) return;
+	    //Se agrega louding
+	    Swal.fire({
+	      title: 'Espere por favor!',
+	      didOpen: () => {
+	        Swal.showLoading()
+	      }
+	    })
+
+	    const { nombre, correo, password } = this.registerForm.value;
+	    this.authService.crearUsuario( nombre, correo, password)
+	      .then( credenciales => {
+	        console.log( credenciales );
+	        //Se cierra loudin en caso de success
+	        Swal.close();
+	        this.router.navigateByUrl('/')
+	      }).catch( error => {
+	      	//Se abre switAlert de error
+	        Swal.fire({
+	          icon: 'error',
+	          title: 'Oops...',
+	          text: error.message
+	        });
+	      });
+  	}
+ 	3.- Se modifica login.component.ts, se le agrega swit alert en caso de error en la creacion de usuario, se lea agrega louding 
+ 		loginUsuario(){
+	    if( this.loginForm.invalid ) return;
+
+	    Swal.fire({
+	      title: 'Espere por favor!',
+	      didOpen: () => {
+	        Swal.showLoading()
+	      }
+	    })
+
+	    const { email, password } = this.loginForm.value;
+	    this.authService.loginUsuario(email, password)
+	      .then( auth => {
+	        console.log( auth);
+	        Swal.close();
+	        this.route.navigateByUrl('/');
+	      }).catch( error => {
+	        Swal.fire({
+	          icon: 'error',
+	          title: 'Oops...',
+	          text: error.message
+	        });
+	      })
+	  }
+*************************************************************************************************************************************
+78. ***********************************************************************************************Logout - Cerrar sesión del usuario
+	1.- Se modifica auth.service.ts, se crea metodo logout() 
+		  logout(){
+		    return this.auth.signOut();
+		  }
+	2.- Se modifica sidebar.component.ts 
+		2.1.- Se realiza ID de router y authService 
+			  constructor( private authService: AuthService, private router: Router) { }
+		2.2.- Se crea metodo logout() 
+			  logout(){
+			    this.authService.logout().then( () => {
+			      this.router.navigateByUrl('/login');
+			    });
+			  }
+	3.- Se modifica sidebar.component.html, se crea evento de logout() 
+		<li class="nav-item">
+      <a (click)="logout()"   class="nav-link cursor" routerLink="/login">
+        <i class="menu-icon fa fa-sign-out-alt"></i>
+        <span class="menu-title">Cerrar sesión</span>
+      </a>
+    </li>
+  4.- Se modifica style.css, se modifica estilo de puntero 
+  	.cursor{
+		  cursor: pointer;
+		}
+*************************************************************************************************************************************
+79. *******************************************************************************Obtener información del usuario activo en Firebase
+	1.- Se modifica auth.service.ts, se crea metodo para saber el state del usuario 
+	  initAuthLister(){
+	    this.auth.authState.subscribe( (user) =>{
+	      console.log(user);
+	      console.log(user?.uid);
+	      console.log(user?.email);
+	    })
+	  }
+	2.- Se modifica app.component.ts, se crea constructor, se le realiza ID del servicio, se llama al servicio
+		  constructor( private authServices: AuthService ){
+		    this.authServices.initAuthLister();
+		  }
+*************************************************************************************************************************************
+80. **********************************************************************************Guard - Proteger el dashboard y sus rutas hijas
+	1.- Se crea guard --> ng g g services/auth --skip-tests
+		//Se realiza ID de router y el servicio
+	  constructor(private authService: AuthService,
+            private router: Router){  }
+
+	  canActivate(): Observable<boolean> {
+	  	//Se valida si esta loguado el usuario
+	    return this.authService.isAuth().pipe(
+	    	// Si es false lo ririge al login
+	      tap( estado => {
+	        if(!estado) this.router.navigateByUrl('/login');
+	      })
+	    );
+	  }
+	2.- Se modifica auth.service.ts, se crea metodo para validar si usuario esta autenticado 
+		  isAuth(){
+		    return this.auth.authState.pipe(
+		      map( user => user != null )
+		    );
+		  }
+	3.- Se modifica app-routing.module.ts, se agrega guar a ruta dashboard 
+		const routes: Routes = [
+		  { path: 'login', component: LoginComponent },
+		  { path: 'register', component: RegisterComponent },
+		  {
+		    path: '',
+		    component: DashboardComponent,
+		    children: dashboarRoutes,
+		    canActivate: [ AuthGuard ]
+		  },
+		  { path: '**', redirectTo: '' }
+		];
+	4.- Se prueba la aplicacion intentando ingresar al dash sin estar logueado
+*************************************************************************************************************************************
+81. ******************************************************************************* Crear documento de base de datos por cada usuario
+	1.- Se crea clase modelo models/Usuario.ts
+		 export  class Usuario{
+		  constructor(
+		    public uid: string,
+		    public nombre: string,
+		    public email: string,
+		  ){}
+		}
+	2.- Se modifica auth.service.ts
+		//Se crea ID de obj AngularFirestore
+		  constructor( public auth: AngularFireAuth,
+                private firestore: AngularFirestore ) { }
+	3.- Se modifica el metodo crearUsuario(), para que al crear el usuario me cree un documento de BD 
+		  crearUsuario(nombre: string, email: string, password: string){
+		    //console.log( {nombre, email, password})
+		    return this.auth.createUserWithEmailAndPassword(email,password)
+		        .then( ({ user }) => {
+		          const newUser = new Usuario( user!.uid, nombre, user?.email! );
+		          return this.firestore.doc(`${user?.uid}/usuario`).set({...newUser});
+		        });
+		  }
+*************************************************************************************************************************************
+82. *********************************************************************************************Realizar backup a GitHub - Sección 7
+	1.- git add .  
+	2.- git commit -m "Seccion 7 - Auth"
+	3.- git push 
+	4.- git tag -a v1.1.0 -m "Sccion 7 terminada" 
+	5.- git push --tags 
+*************************************************************************************************************************************
+*************************************************************************************************************************************
+************************Sección 8: Redux en nuestra aplicación de ingreso y egreso - Fin de la autenticación*************************
+87. **********************************************************************************************Interacciones de usuario - UI State
+******************************************************************************************************************Creacion de snipets
+	Nota; los snipets nos sirven para autocompletar 
+	1.- Snippets para acelerar mi trabajo de creación de acciones, reducers y action reducer maps
+		https://gist.github.com/Klerith/e6cb4f984cf1bc9c1f2e99b5f5509b7f
+		1.1.- Se copian los snipets del repositorio de git 
+		1.2.- En el framework e visualcode  
+			View --> CommandPalette --> Preferences User Configure snipets(enter) --> typescript.json  
+		1.3.- Se pega el contenido en el typescript.json 
+			{
+				// Place your snippets for typescript here. Each snippet is defined under a snippet name and has a prefix, body and 
+				// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+				// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
+				// same ids are connected.
+				// Example:
+				// "Print to console": {
+				// 	"prefix": "log",
+				// 	"body": [
+				// 		"console.log('$1');",
+				// 		"$2"
+				// 	],
+				// 	"description": "Log output to console"
+				// }
+				"Print to console": {
+					"prefix": "clog",
+					"body": [
+						"console.log $1",
+					],
+					"description": "Log output to console"
+				},
+
+				"NgRx Actions": {
+					"prefix": "ngrx-actions",
+					"body": [
+						"import { createAction } from '@ngrx/store';",
+						"",
+						"export const ${1:increment} = createAction('[${2:Counter Component}] ${1:Increment}');",
+					],
+					"description": "Crea las acciones de NgRx"
+				},
+
+				"NgRx Reducer": {
+					"prefix": "ngrx-reducer",
+					"body": [
+						"import { createReducer, on } from '@ngrx/store';",
+						"import { $2 } from './${1:counter}.actions';",
+						"",
+						"export interface State {",
+						"    ${3:key}: ${4:String}; ",
+						"}",
+						"",
+						"export const initialState: State = {",
+						"   ${3:key}: ${5:'hola'},",
+						"}",
+						"",
+						"const _${6:counter}Reducer = createReducer(initialState,",
+						"",
+						"    on(${2:increment}, state => ({ ...state, ${3:key}: ${5:'hola'}})),",
+						"",
+						");",
+						"",
+						"export function ${6:counter}Reducer(state, action) {",
+						"    return _${6:counter}Reducer(state, action);",
+						"}"
+					],
+					"description": "Crea el reducer básico"
+				},
+
+
+				"NgRx App Reducer": {
+					"prefix": "ngrx-app-reducers",
+					"body": [
+						"import { ActionReducerMap } from '@ngrx/store';",
+						"import * as $1 from './$2.reducer';",
+						"",
+						"",
+						"export interface AppState {",
+						"   ${3:todos}: $4",
+						"}",
+						"",
+						"",
+						"",
+						"export const appReducers: ActionReducerMap<AppState> = {",
+						"   ${3:todos}: $5,",
+						"}",
+					],
+					"description": "Crea el AppReducer principal"
+				},
+
+			} 
+		1.4.- Se instala  ngrx --> npm install @ngrx/store --save
+	2.- Se crea actions, reducer en shared 	--> ui.actions.ts 
+																					--> ui.reducer.ts 
+			2.1.- Se modifica ui.actions.ts, se crean las acciones 
+				import { createAction } from '@ngrx/store';
+
+				export const isLoading = createAction('[UI Component] is Loading');
+				export const stopLoading = createAction('[UI Component] Stop Loading');
+			2.2.- Se modifica ui.reducers.ts 
+				import { createReducer, on } from '@ngrx/store';
+				import { isLoading, stopLoading } from './ui.actions';
+
+				export interface State {
+				    isLoading: boolean;
+				}
+
+				export const initialState: State = {
+				   isLoading: false,
+				}
+
+				const _counterReducer = createReducer(initialState,
+
+				    on(isLoading, state => ({ ...state, isLoading: true})),
+				    on(stopLoading, state => ({ ...state, isLoading: false})),
+
+				);
+
+				export function counterReducer(state: any, action: any) {
+				    return _counterReducer(state, action);
+				}
+*************************************************************************************************************************************
+88. ********************************************************************************Estado global de la aplicación - ActionReducerMap
+	1.- Se crea reducer global de la aplicacion en app --> app.reducer.ts 
+		Nota: Si se utiliza el snipets --> ngrx-app-reducer
+		
+		import { ActionReducerMap } from '@ngrx/store';
+		import * as ui from './shared/ui.reducer';
+
+		export interface AppState {
+		   ui: ui.State
+		}
+		export const appReducers: ActionReducerMap<AppState> = {
+		   ui: ui.uiReducer ,
+		}
+	2.- Se modifica el app.module.ts 
+		2.1.- Se Agregue la StoreModule.forRoot función en la imports matriz de su AppModule 
+			Nota: con el objetivo que contenga el count y el counterReducer que administra el estado del contador. 
+			El StoreModule.forRoot() método registra los proveedores globales necesarios para acceder a Store en toda su aplicación.
+			2.1.1.- Se importa 
+				// ngrx
+				import { StoreModule } from '@ngrx/store';
+				import { appReducers } from './app.reducer';
+			2.1.2.- Se agrega a la importacion
+				StoreModule.forRoot(appReducers),
+		2.2.- Se agrega store-devtools 
+			2.2.1.- Se instala --> npm install @ngrx/store-devtools --save  
+			2.2.2.- Se realiza el import 
+				import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+			2.2.3.- Se agrega a los imports 
+				StoreDevtoolsModule.instrument({
+		      maxAge: 25, // Retains last 25 states
+		      logOnly: environment.production, // Restrict extension to log-only mode
+		      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
+		    }),
+	3.- Se prueba la aplicacion 
+		3.1.- Se corre --> ng serve -o 
+		3.2.- Se inspecciona en el navegador el redux 
+*************************************************************************************************************************************
+89. ******************************************************************************************Dispatch - Activar y Desactivar loading
+	1.- Se modifica login.comnent.ts
+		1.1.- Se crea ID del reducer global
+			constructor( private fb: FormBuilder,
+                private authService: AuthService,
+                private store: Store<AppState>,
+                private route: Router ) { }
+		1.2.- Se crean variables para que almacene la suscripcion y uno que almacene el estado del loading 
+			cargando: boolean = false;
+  		uiSubscription!: Subscription;
+  	1.3.- Se modifica metodo onInit(), se realiza subscribe del reducer y se modifica la variable del loading con la accion del 
+  	reducer
+  		  ngOnInit(): void {
+			    this.loginForm = this.fb.group({
+			      email: ['', [Validators.required, Validators.email]],
+			      password: ['', [Validators.required]],
+			    });
+
+			    this.uiSubscription =this.store.select('ui').subscribe( ui => {
+			                            this.cargando = ui.isLoading;
+			                            console.log('Pasando por el store');
+			                          })
+			  }
+		1.4.- Se modifica el metodo de login(), se agregan los dispatch del store 
+			  loginUsuario(){
+			    if( this.loginForm.invalid ) return;
+
+			    //Se agrega dispatch de la accion isLoading()
+			    this.store.dispatch( ui.isLoading() )
+
+			    /*Swal.fire({
+			      title: 'Espere por favor!',
+			      didOpen: () => {
+			        Swal.showLoading()
+			      }
+			    })*/
+
+			    const { email, password } = this.loginForm.value;
+			    this.authService.loginUsuario(email, password)
+			      .then( auth => {
+			        console.log( auth);
+			        //Swal.close();
+			        //Se agrega dispatch de la accion stopLoading()
+			        this.store.dispatch( ui.stopLoading() )
+			        this.route.navigateByUrl('/');
+			      }).catch( error => {
+			      	//Se agrega dispatch de la accion stopLoading()
+			        this.store.dispatch( ui.stopLoading() );
+			        Swal.fire({
+			          icon: 'error',
+			          title: 'Oops...',
+			          text: error.message
+			        });
+			      })
+			  }
+		1.5.- Se implementa el metodo onDestroy(), se realiza la limpieza del subscribe
+			1.5.1.- Se realiza la implementacion de la clase 
+				export class LoginComponent implements OnInit, OnDestroy {
+			4.5.2.- Se implementa el metodo onDestroy(), se realiza limpieza delsubscribe 
+				  ngOnDestroy(): void {
+				    this.uiSubscription.unsubscribe();
+				  }
+	2.- Se modifica register.comnent.ts
+		1.1.- Se crea ID del reducer global
+			  constructor( private fb: FormBuilder,
+			                private authService: AuthService,
+			                private store: Store<AppState>,
+			                private router: Router ) { }
+		1.2.- Se crean variables para que almacene la suscripcion y uno que almacene el estado del loading 
+			cargando: boolean = false;
+  		uiSubscription!: Subscription;
+  	1.3.- Se modifica metodo onInit(), se realiza subscribe del reducer y se modifica la variable del loading con la accion del 
+  	reducer
+			  ngOnInit(): void {
+			    this.registerForm = this.fb.group({
+			      nombre: ['', Validators.required],
+			      correo: ['', [Validators.required, Validators.email] ],
+			      password: ['', [Validators.required]]
+			    })
+
+			    this.uiSubscription = this.store.select('ui').subscribe( ui => {
+			      this.cargando = ui.isLoading;
+			    });
+			  }
+		1.4.- Se modifica el metodo de crearUsuario(), se agregan los dispatch del store 
+			  crearUsuario(){
+			    if(this.registerForm.invalid) return;
+
+			    /*Swal.fire({
+			      title: 'Espere por favor!',
+			      didOpen: () => {
+			        Swal.showLoading()
+			      }
+			    })*/
+			    // dispatch que acciona el el metodo isLoading()
+			    this.store.dispatch( ui.isLoading() );
+
+			    const { nombre, correo, password } = this.registerForm.value;
+			    this.authService.crearUsuario( nombre, correo, password)
+			      .then( credenciales => {
+			        console.log( credenciales );
+			        //Swal.close();
+			        // dispatch que acciona el el metodo stopLoading()
+			        this.store.dispatch( ui.stopLoading() );
+			        this.router.navigateByUrl('/')
+			      }).catch( error => {
+			      	// dispatch que acciona el el metodo stopLoading()
+			        this.store.dispatch( ui.stopLoading() );
+			        Swal.fire({
+			          icon: 'error',
+			          title: 'Oops...',
+			          text: error.message
+			        });
+			      });
+			  }
+		1.5.- Se implementa el metodo onDestroy(), se realiza la limpieza del subscribe
+			1.5.1.- Se realiza la implementacion de la clase 
+				export class RegisterComponent implements OnInit, OnDestroy {
+			4.5.2.- Se implementa el metodo onDestroy(), se realiza limpieza delsubscribe 
+				  ngOnDestroy(): void {
+				    this.uiSubscription.unsubscribe();
+				  }
+*************************************************************************************************************************************
+90. ****************************************************************************************************Utilizar el store - isLoading
+	1.- Se modifica login.component.html, se agrega boton con icono de sync y se valida con la variable cargando
+		1.1.- Se modifica boton submit con validacion de la variable cargando 
+        <button class="btn btn-primary submit-btn btn-block"
+          type="submit"
+          [disabled]="loginForm.invalid"
+          *ngIf="!cargando">Login</button>
+    1.2.- Se crea boton de tipo button para mostrar cuando se este cargando 
+	    <button class="btn btn-primary submit-btn btn-block"
+	            type="button"
+	            [disabled]="true"
+	            *ngIf="cargando">
+	        <i class="fa fa-spin fa-sync"></i>
+	        Espere...
+	    </button>
+	2.- Se modifica register.component.html, se agrega boton con icono de sync y se valida con la variable cargando
+		1.1.- Se modifica boton submit con validacion de la variable cargando 
+        <button type="submit"
+                  [disabled]="registerForm.invalid"
+                  class="btn btn-primary submit-btn btn-block"
+                  *ngIf="!cargando">
+            Crear cuenta
+        </button>
+    1.2.- Se crea boton de tipo button para mostrar cuando se este cargando 
+        <button type="button"
+                  [disabled]="true"
+                  class="btn btn-primary submit-btn btn-block"
+                  *ngIf="cargando">
+            <i class="fa fa-spin fa-sync"></i>
+            Crear cuenta
+        </button>
+*************************************************************************************************************************************
+91. ***********************************************************************************************************Auth Actions y Reducer
+	1.- Se crea auth.actions.ts dentro de auth  
+		import { createAction, props } from '@ngrx/store';
+		import { Usuario } from '../models/usuario.model';
+
+		export const setUser = createAction(
+		  '[Auth] setUser',
+		  props< { user: Usuario }>()
+		);
+
+		export const unSetUser = createAction('[Auth] unSetUser');
+	2.- Se crea auth.reducer.ts dentro de auth  
+		import { createReducer, on } from '@ngrx/store';
+		import { Usuario } from '../models/usuario.model';
+		import { setUser, unSetUser } from './auth.actions';
+
+		export interface State {
+		    user: Usuario | null ;
+		}
+
+		export const initialState: State = {
+		   user: null,
+		}
+
+		const _authReducer = createReducer(initialState,
+		    // Se utiliza desestructuracion para romper la referencia en memoria
+		    on(setUser, (state, { user }) => ({ ...state, user: {...user}})),
+		    on(unSetUser, (state) => ({ ...state, user: null})),
+		    );
+
+		export function authReducer(state: any, action: any) {
+		    return _authReducer(state, action);
+		}
+	3.- Se modifica app.reducer.ts, se agrega reducer auth al reducer global 
+		import { ActionReducerMap } from '@ngrx/store';
+		import * as ui from './shared/ui.reducer';
+		import * as auth from './auth/auth.reducer';
+
+		export interface AppState {
+		   ui: ui.State,
+		   user: auth.State
+		}
+		export const appReducers: ActionReducerMap<AppState> = {
+		   ui: ui.uiReducer ,
+		   user: auth.authReducer
+		}
+	4.- Se debe probar la aplicacion y debe aparecer en redux de chrome otro estado asociado 
+	5.- Se modifica auth.service.ts, se agrega el dispatch de la accion  
+		5.1.- Se crea ID del store 
+			  constructor( public auth: AngularFireAuth,
+                private firestore: AngularFirestore,
+                private store: Store<AppState> ) { }
+		5.2.- Se modifica el metodo initAuthServece(), se valida si viene el user y si viene se ejecuta por el distpatch el la 
+		accion setUser
+				  initAuthLister(){
+				    this.auth.authState.subscribe( (user) =>{
+				        console.log( user );
+				        if(user){
+				          //Existe
+				          this.firestore.doc(`${user.uid}/usuario`).valueChanges().subscribe( firestoreUser => {
+				            console.log( firestoreUser );
+				            const tempUser = new Usuario('abc', 'borrame', 'abc@getMaxListeners.com');
+				            this.store.dispatch( authActions.setUser({ user: tempUser }))
+				          })
+				        }else{
+				          console.log('llamar unset del user')
+				        }
+				    })
+				  }
+*************************************************************************************************************************************
+92. *************************************************************************************Almacenar en el Store el usuario de Firebase
+	1.- Se modifica usuario.model.ts, se crea metodo para construccion de Usuaro con las caracteristicas que vienen de firebase 
+		export  class Usuario{
+		  static fronFirebase({email, uid, nombre}:{ email:any, uid: any, nombre: any}){
+		    return new Usuario( uid, nombre, email );
+		  }
+		  constructor(
+		    public uid: string,
+		    public nombre: string,
+		    public email: string,
+		  ){}
+		}
+	2.- Se modifica auth.service.ts, se modifica el metodo initAuthLister, se recupera el usuario de firebse y se le pasa al store, 
+	se realiza unsubribe y se nullea el user al cerrar session 
+		  initAuthLister(){
+		    this.auth.authState.subscribe( (user) =>{
+		        console.log( user );
+		        if(user){
+		          //Existe
+		          console.log('si tengo usuario')
+		          this.userSubscripcion = this.firestore.doc(`${user.uid}/usuario`).valueChanges().subscribe( (firestoreUser:any) => {
+		            const user = Usuario.fronFirebase( firestoreUser )
+		            this.store.dispatch( authActions.setUser({ user: user }))
+		          })
+		        }else{
+		          this.userSubscripcion.unsubscribe();
+		          this.store.dispatch( authActions.unSetUser() );
+		        }
+		    })
+		  }
+*************************************************************************************************************************************
+93. **********************************************************************************************Backup de la aplicación - Sección 8
+	1.- git add .
+	2.- git commit -m FinSeccion8
+	3.- git push 
+	4.- git tag -a v1.2.0 -m FinSeccion8
+	5.- git push tags
+*************************************************************************************************************************************
+*************************************************************************************************************************************
+*********************************************Sección 9: Modulos de ingresos y egresos************************************************
+97. ****************************************************************************************************Modelo de un ingreso y egreso
+	1.- Se crea clase modelo --> models/ingreso-egreso.model.ts  
+		export class IngresoEgreso{
+		  constructor(
+		    public descripcion: string,
+		    public monto: number,
+		    public tipo: string,
+		    public uid: string
+		  ){}
+		}
+*************************************************************************************************************************************
+98. ****************************************************************************************Pantalla para capturar ingresos y egresos
+**************************************************************************************************************************FormBuilder
+****************************************************************************************************************************FormGroup
+***************************************************************************************************************************Validators
+*****************************************************************************************************************************Disabled
+**********************************************************************************************************************FormControlName
+**********************************************************************************************************************FormControlName
+	1.- Se modifica ingreso-egreso.component.ts, se agrega formulario reactivo  
+		1.1.- Se crean ID de obj FormBuilder
+			constructor( private fb: FormBuilder) { }
+		1.2.- Se crea variables, se crea variable de tipo FormGroup y otra de tipo string para el tipo 
+			  ingresoForm!: FormGroup;
+  			tipo: string = 'ingreso';
+  	1.3.- Se modifica el metodo ngOnInit(), se inicializa el formulario reactivo 
+  		  ngOnInit(): void {
+			    this.ingresoForm = this.fb.group({
+			      descripcion: ['', Validators.required],
+			      monto: ['', [Validators.required, Validators.min(0)]]
+			    })
+			  }
+		1.4.- Se creametodo guardar() 
+			  guardar(){
+			    if(this.ingresoForm.invalid){ return;}
+			    console.log( this.ingresoForm.value);
+			    console.log(this.tipo)
+			  }
+	2.- Se modifica ingreso-egreso.component.html, se vincula al formulario reactivo 
+		2.1.- Se modifica el form 
+			<form [formGroup]="ingresoForm" (submit)="guardar()">
+		2.2.- Se vinculan los inputs con FormControlName
+			      <div class="form-group">
+              <label>Descripción</label>
+              <input type="text"
+                     class="form-control"
+                     placeholder="Descripción"
+                     formControlName="descripcion"
+                     name="descripcion">
+            </div>
+
+            <div class="form-group">
+                <label>Monto</label>
+                <input type="number"
+                       class="form-control"
+                       placeholder="Monto"
+                       formControlName="monto"
+                       name="monto">
+                  <p>
+                    Debe de ser un monto positivo
+                  </p>
+             </div>
+    2.3.- Se modifica boton de agregar, se deshabilita si el formulario es invalido, se le modifica el tipo a submit 
+    	      <button type="submit" class="btn btn-success mr-2" [disabled]="ingresoForm.invalid">
+              <i class="fa fa-save"></i>
+              Agregar
+            </button>
+    2.4.- Se modifica boton de ingreso y egreso, se le agrega evento click y ngIf para que se muestre segun el tipo   
+    	     	<div class="form-group">
+                <label>Tipo</label>
+                <br>
+                <button *ngIf="tipo === 'ingreso'" (click)="tipo = 'egreso'" type="button" class="btn btn-primary btn-block">Ingreso</button>
+                <button *ngIf="tipo === 'egreso'" (click)="tipo = 'ingreso'" type="button" class="btn btn-warning btn-block">Egreso</button>
+            </div>
+*************************************************************************************************************************************
+99. **********************************************************************************************************Servicio Ingreso-Egreso
+	1.- Se crea servicio --> services/ingreso-egreso.service.ts 
+			// Se realiza ID 
+			 constructor( private firestore: AngularFirestore, private authService: AuthService ) { }
+
+			 //Se crea metodo para el ingreso y egreso
+		  crearIngresoEgreso( ingresoEgreso: IngresoEgreso){
+		  	//Se recupera la uid del user por medio del authServices
+		    const uid = this.authService.user.uid;
+		    //Se agrega a la colleccion items el ingresoEgreso
+		    return this.firestore.doc(`${uid}/ingreso-egreso`)
+		      .collection('items')
+		      .add({ ...ingresoEgreso });
+		  }
+	2.- Se modifica auth.service.ts, se agrega variable privada user con su get para poder recuperarla en otra instancia 
+			//Se crea variable
+		  private _user!: Usuario | null;
+
+		  //Se crea metodo de acceso
+		  get user(){
+		    return {... this._user};
+		  }
+
+		  2.1.- Se modifica metodo initAuthLister(), se setea variable user 
+		  	  initAuthLister(){
+				    this.auth.authState.subscribe( (user) =>{
+				        if(user){
+				          //Existe
+				          this.userSubscripcion = this.firestore.doc(`${user.uid}/usuario`).valueChanges().subscribe( (firestoreUser:any) => {
+				            const user = Usuario.fronFirebase( firestoreUser );
+				            //Se setea el usuario
+				            this._user = user;
+				            this.store.dispatch( authActions.setUser({ user: user }));
+				          })
+				        }else{
+				        	//Se setea null el usuario
+				          this._user = null;
+				          this.userSubscripcion.unsubscribe();
+				          this.store.dispatch( authActions.unSetUser() );
+				        }
+				    })
+				  }
+	3.- Se modifica ingreso-egreso.model.ts, se comenta uid 
+			export class IngresoEgreso{
+			  constructor(
+			    public descripcion: string,
+			    public monto: number,
+			    public tipo: string,
+			    //public uid: string
+			  ){}
+			}
+	4.- Se modifica ingreso-egreso.component.ts
+		4.1.- Se cre ID del servicio de ingresoEgreso 
+				constructor( private fb: FormBuilder,
+                private ingresoEgresoService: IngresoEgresoService) { }
+		4.2.- Se modifica metodo guardar(), se llama al metodo de creacion de ingresoegreso en el servicio
+			  guardar(){
+			    if(this.ingresoForm.invalid){ return;}
+			    // Se recuperan variables por desestructuracion de los valores del formulario
+			    const { descripcion, monto } = this.ingresoForm.value;
+			    // Se crea obj de tipo IngresoEgreso
+			    const ingresoEgreso = new IngresoEgreso( descripcion, monto, this.tipo);
+			    //Se invoca al metodo de creacion de ingresoEgreso
+			    this.ingresoEgresoService.crearIngresoEgreso(ingresoEgreso)
+			    .then( () => {
+			      this.ingresoForm.reset();
+			      Swal.fire('Resgistro creado', descripcion, 'success');
+			    })
+			    .catch( err => Swal.fire('Error', err.message, 'error'));
+			  }
+*************************************************************************************************************************************
+100. *******************************************************************************************************Optimizaciones de loading
+**********************************************************************************************************************Store<AppState>
+*************************************************************************************************************************Subscription
+	1.- Se modifica ingreso-egreso.component.html, Se agrega a boton de agregar icono de loading  
+		        <button type="submit" class="btn btn-success mr-2" [disabled]="ingresoForm.invalid">
+              <i class="fa fa-save"></i>
+              <i class="fa fa-spin fa-sync" *ngIf="cargando"></i>
+              Agregar
+            </button>
+  2.- Se modifica ingreso-egreso.component.ts, Se agrega dispatch de loding 
+  	2.1.- Se crean variables
+  			// Variable tipo bandera 
+  		  cargando: boolean = false;
+  		  // Susbscripcion
+  			loadingDubs !: Subscription;
+  	2.2.- Se realiza ID del store 
+  		constructor( private fb: FormBuilder,
+                private ingresoEgresoService: IngresoEgresoService,
+                private store: Store<AppState>) { }
+  	2.3.- Se modifica metodo onInit(), se realiza subcribe al loading del store 
+			  ngOnInit(): void {
+
+			    this.loadingDubs = this.store.select('ui').subscribe( ui => { this.cargando = ui.isLoading });
+
+			    this.ingresoForm = this.fb.group({
+			      descripcion: ['', Validators.required],
+			      monto: ['', [Validators.required, Validators.min(0)]]
+			    })
+
+			  }
+		2.4.- Se modifica metodo guardar(), se realiza el dispatch del loading 
+			 guardar(){
+
+			    if(this.ingresoForm.invalid){ return;}
+			    // Se realiza dispatch del isLoading
+			    this.store.dispatch( ui.isLoading() )
+
+			    const { descripcion, monto } = this.ingresoForm.value;
+			    const ingresoEgreso = new IngresoEgreso( descripcion, monto, this.tipo);
+
+			    this.ingresoEgresoService.crearIngresoEgreso(ingresoEgreso)
+			    .then( () => {
+			      this.ingresoForm.reset();
+			      // Se realiza dispatch del stopLoading
+			      this.store.dispatch( ui.stopLoading() );
+			      Swal.fire('Resgistro creado', descripcion, 'success');
+			    })
+			    .catch( err => {
+			    	// Se realiza dispatch del stopLoading
+			      this.store.dispatch( ui.stopLoading() );
+			      Swal.fire('Error', err.message, 'error')
+			    });
+			  }
+		2.5.- Se implementa metodo onDestroy(), se realiza la desusbscripcion del store  
+			  ngOnDestroy(): void {
+				    this.loadingDubs.unsubscribe();
+				  }
+*************************************************************************************************************************************
+101. *******************************************************************************************Ingreso y Egreso - Acciones y Reducer
+	1.- Se crea actions --> ingreso-egreso/ingreso-egreso.actions.ts 
+		import { createAction, props } from '@ngrx/store';
+		import { IngresoEgreso } from '../models/ingreso-egreso.model';
+
+		export const setItems = createAction('[IngresoEgreso] Set Items', props<{ items: IngresoEgreso[] }>());
+		export const unSetItems = createAction('[IngresoEgreso] UnSet Items');
+	2.- Se crea reducer --> ingreso-egreso/ingreso-egreso.reducer.ts
+		import { createReducer, on } from '@ngrx/store';
+		import { IngresoEgreso } from '../models/ingreso-egreso.model';
+		import { setItems, unSetItems } from './ingreso-egreso.actions';
+
+		export interface State {
+		    items: IngresoEgreso[];
+		}
+
+		export const initialState: State = {
+		  items: [],
+		}
+
+		const _ingresoEgresoReducer = createReducer(initialState,
+
+		    on( setItems, (state, { items }) => ({ ...state, items: [...items]})),
+		    on( unSetItems, state => ({ ...state, items: []})),
+
+		);
+
+		export function ingresoEgresoReducer(state: any, action: any) {
+		    return _ingresoEgresoReducer(state, action);
+		}
+	3.- Se modifica app.reducer.ts, se agrega nuevo reducer ingresoEgresoReducer
+			export interface AppState {
+			   ui: ui.State,
+			   user: auth.State,
+			   // Se agrega el estado
+			   ingresosEgresos: ingresoEgreso.State
+			}
+			export const appReducers: ActionReducerMap<AppState> = {
+			   ui: ui.uiReducer ,
+			   user: auth.authReducer,
+			   // Se agrega el reducer
+			   ingresosEgresos: ingresoEgreso.ingresoEgresoReducer
+			}
+*************************************************************************************************************************************
+102. *****************************************************************************************************Cargar items desde Firebase
+	1.- Se modifica ingreso-egreso.service.ts, se crea metodo que trae de firestore los items
+			  initIngreosEgresosListener (uid: string ){
+			    this.firestore.collection(`${uid}/ingreso-egreso/items`).valueChanges()
+			      .subscribe( algo => {
+			        console.log(algo);
+			      })
+			  }
+	2.- Se modifica dashboard.component.ts, se traen los items del servicio  
+		2.1.- Se crea variable para la subscripcion 
+			userSubscription!: Subscription;
+		2.2.- Se modifica metodo ngOnInit(), obtenemos el usuario y los items del usuario  
+			ngOnInit(): void {
+				// Se almacena en el subcribe la subscripcion del store
+		    this.userSubscription = this.store.select('user')
+		    .pipe(
+		    	//Se filtra para que no venga null
+		      filter(auth => auth.user != null)
+		      )
+		    .subscribe( ({user}) => {
+		      console.log(user);
+		      //Se llama al servicio para obtener los items
+		      this.ingresoEgresoService.initIngreosEgresosListener(user?.uid!);
+		    })
+  		}
+  	2.3.- Se implementa el metodo ngOnDestroy(), para eliminr la subscripcion 	
+  		  ngOnDestroy(): void {
+			      this.userSubscription.unsubscribe();
+			  }
+*************************************************************************************************************************************
+103. ********************************************************************************Obtener el UID de nuestros elementos de Firebase
+***********************************************************************************************************************Manejo de json *****
+	1.- Se modifica ingreso-egreso.service.ts, se utiliza el metodo snapshotChanges() y se convierte la data con el operador map
+		     this.firestore.collection(`${uid}/ingreso-egreso/items`).snapshotChanges()
+			    .pipe(
+			    	//Se obtiene el item
+			      map( snapshot => {
+			      	// Se obtiene los datos uid y data
+			        return snapshot.map( doc => {
+			          return {
+			            uid: doc.payload.doc.id,
+			            ...doc.payload.doc.data() as any
+			          }
+			        })
+			      })
+			    )
+			    .subscribe( algo => {
+			        console.log(algo);
+			      })
+			  }
+			}
+*************************************************************************************************************************************
+104. **************************************************************************************Dispatch de las acciones para cargar items
+	1.- Se modifica ingreso-egreso.service.ts, se modifica metodo initIngreosEgresosListener(), se elimina la subscripcion   
+		  initIngreosEgresosListener (uid: string ){
+			    this.firestore.collection(`${uid}/ingreso-egreso/items`).snapshotChanges()
+			    .pipe(
+			      map( snapshot => {
+			        //console.log(snapshot);
+			        return snapshot.map( doc => {
+			          return {
+			            uid: doc.payload.doc.id,
+			            ...doc.payload.doc.data() as any
+			          }
+			        })
+			      })
+			    )
+			    //.subscribe( algo => {
+			    //    console.log(algo);
+			    //  })
+			}
+	2.- Se modifica dashboard.component.ts
+		2.1.- Se crea variable de tipo subscription  
+			ingresosEgresoSuscription!: Subscription;
+		2.2.- Se modifica metodo ngoninit(), se realiza la subscricion al servicio ingresoEgresoService y se realiza dispatch para 
+			setear items
+
+			  ngOnInit(): void {
+			    this.userSubscription = this.store.select('user')
+			    .pipe(
+			      filter(auth => auth.user != null)
+			      )
+			    .subscribe( ({user}) => {
+			    	// Se almacena en variable la subcripcion
+			      this.ingresosEgresoSuscription = this.ingresoEgresoService.initIngreosEgresosListener(user?.uid!)
+			      	//Se realiza la subcripcion al servicio
+			        .subscribe( ingresosEgresos => {
+			        	//Se realiza dispatch de la accion
+			          this.store.dispatch( ingresoEgresoActions.setItems({ items : ingresosEgresos }));
+			        });
+			    })
+			  }
+		2.3.- Se modifica el metodo ngOnDestroy(), para realizar el unsubscribe. 
+			  ngOnDestroy(): void {
+			    this.userSubscription.unsubscribe();
+			    this.ingresosEgresoSuscription.unsubscribe();
+			  }
+	3.- Se modifica auth.service.ts, se modifica el metodo initAuthLister(), se realiza el unSetItems cuando no existe usuarios
+			import * as ingresoEgresoActions from '../ingreso-egreso/ingreso-egreso.actions';
+
+		  initAuthLister(){
+		    this.auth.authState.subscribe( (user) =>{
+		        if(user){
+		          //Existe
+		          this.userSubscripcion = this.firestore.doc(`${user.uid}/usuario`).valueChanges().subscribe( (firestoreUser:any) => {
+		            const user = Usuario.fronFirebase( firestoreUser );
+		            this._user = user;
+		            this.store.dispatch( authActions.setUser({ user: user }));
+		          })
+		        }else{
+		          this._user = null;
+		          this.userSubscripcion.unsubscribe();
+		          this.store.dispatch( authActions.unSetUser() );
+		          //Se realiza unset de items
+		          this.store.dispatch( ingresoEgresoActions.unSetItems() );
+		        }
+		    })
+		  }
+*************************************************************************************************************************************
+105. *********************************************************************************Mostrar todos los elementos de ingreso y egreso
+*******************************************************************************************************************class.text-success
+********************************************************************************************************************class.text-danger
+	1.- se modifica ingreso-egreso.model.ts, se descomenta atributo uid 
+		export class IngresoEgreso{
+		  constructor(
+		    public descripcion: string,
+		    public monto: number,
+		    public tipo: string,
+		    public uid?: string
+		  ){}
+		}
+	2.- Se modifica detalle.component.ts
+		2.1.- Se crean variables
+			  ingresosEgresos: IngresoEgreso[] = [];
+  			ingresosEgresosSubscription!: Subscription; 
+  	2.2.- Se realiza ID de store 
+  	  constructor( private store: Store<AppState> ) { }
+  	2.3.- Se modifica metodo ngOnInit(), se realiza subscription al store para recuperar los ingresosEgresos
+  		  ngOnInit(): void {
+			    this.ingresosEgresosSubscription = this.store.select('ingresosEgresos').subscribe( ({items}) =>{
+			      this.ingresosEgresos = items;
+			    })
+			  }
+		2.4.- Se implementa el metodo ngOnDestroy()
+			  ngOnDestroy(){
+			    this.ingresosEgresosSubscription.unsubscribe();
+			  }
+		2.5.- Se crea metodo eliminar()
+				  eliminar(uid: string){
+				    console.log(uid);
+				  }
+	3.- Se modifica detalle.component.html
+		<tr *ngFor="let item of ingresosEgresos">
+      <td>{{ item.descripcion }}</td>
+      <td>{{ item.monto }}</td>
+      <td [class.text-success]="item.tipo === 'ingreso'"
+          [class.text-danger]="item.tipo === 'egreso'">{{ item.tipo }}</td>
+      <td>
+        <button type="button" class="btn btn-danger" (click)="eliminar( item.uid! )">
+          <i class="fa fa-trash"></i>
+          Eliminar
+        </button>
+      </td>
+    </tr>
+  4.- Se modifica ingreso-egreso.service.ts, se modifica metodo crearIngresoEgreso(), se elimina el atributo uid de ingresoEgreso  
+  	Nota: esta modificacion tiene que ver con el punto 1 donde se le descomenta el uid, y cuando crea un ingreso egreso genera error 
+  	por atributo undefined 
+  		  crearIngresoEgreso( ingresoEgreso: IngresoEgreso){
+			    const uid = this.authService.user.uid;
+			    // Se borra atributo uid 
+			    delete ingresoEgreso.uid;
+			    return this.firestore.doc(`${uid}/ingreso-egreso`)
+			      .collection('items')
+			      .add({ ...ingresoEgreso });
+			  }
+*************************************************************************************************************************************
+106. ******************************************************************************************************Eliminar items de firebase
+	1.- Se modifica ingreso-egreso.service.ts, se crea metodo para borrarIngresoEgreso()
+		  borrarIngresoEgreso( uidItem: string){
+		    const uid = this.authService.user.uid;
+		    return this.firestore.doc(`${ uid }/ingreso-egreso/items/${ uidItem }`).delete();
+		  }
+	2.- Se modifica metodo eliminar(), se llama al servicio para eliminar el items  
+		  eliminar(uid: string){
+		    this.ingresoEgresoService.borrarIngresoEgreso(uid)
+		      .then( () => { Swal.fire(
+		        'Borrado',
+		        'Item Borrado.',
+		        'success'
+		      )}
+		      ).catch((err) => { Swal.fire(
+		        'Error',
+		        err.message,
+		        'error'
+		        )
+		      });
+		  }
+*************************************************************************************************************************************
+107.- ********************************************************************************************************** Ordenar items - Pipe
+*********************************************************************************************************************creacion de pipe
+	1.- Se crea pipe --> ng g pipe pipes/ordenIngreso --skip-tests
+			import { Pipe, PipeTransform } from '@angular/core';
+			import { IngresoEgreso } from '../models/ingreso-egreso.model';
+
+			@Pipe({
+			  name: 'ordenIngreso'
+			})
+			export class OrdenIngresoPipe implements PipeTransform {
+
+			  transform(items: IngresoEgreso[]):IngresoEgreso[] {
+			  	//Se agrega slice por error generado 
+			    return items.slice().sort( (a,b) =>{
+			      if (a.tipo === 'ingreso' ){
+			        return -1;
+			      }else{
+			        return 1;
+			      }
+			    });
+			  }
+			}
+	2.- Se modifica detalle.component.html, se ultiliza el pipe 
+		<tr *ngFor="let item of ingresosEgresos | ordenIngreso">
+*************************************************************************************************************************************
+108. **************************************************************************************************Dashboard - Estadística básica
+	1.- Se modifica estadistica.component.ts
+		1.1.- Se rean variables  
+			  ingresos: number = 0;
+			  egresos: number = 0;
+			  totalIngresos: number = 0;
+			  totalEgresos: number = 0;
+
+		1.2.- Se crea ID del store 
+			  constructor( private store: Store<AppState>) {  }
+		1.3.- Se modifica el metodo ngOnInit(), se recuperan los datos para las estadisticas  
+			ngOnInit(): void {
+		    this.store.select('ingresosEgresos').subscribe( ({items}) => {
+		      this.generarEstadisticas( items );
+		    })
+		  }
+		1.4.- Se crea metodo que procesa la data y genera estadisticas
+			generarEstadisticas( items: IngresoEgreso[]){
+		    items.forEach((item: IngresoEgreso) => {
+		      if( item.tipo === 'ingreso' ){
+		        this.totalIngresos += item.monto;
+		        this.ingresos ++;
+		      }else{
+		        this.totalEgresos += item.monto;
+		        this.egresos ++;
+		      }
+		    });
+		  }
+	2.- Se modifica estadistica.component.html 
+		2.1.- Se agregan los ingresos
+			<div class="card card-statistics">
+        <div class="card-body">
+
+          <div class="clearfix">
+            <div class="float-left">
+              <i class="fa fa-money-bill-alt text-success icon-lg"></i>
+            </div>
+            <div class="float-right">
+              <p class="mb-0 text-right">Ingresos</p>
+              <div class="fluid-container">
+                <h3 class="font-weight-medium text-right mb-0">{{totalIngresos | currency}}</h3>
+              </div>
+            </div>
+          </div>
+          <p class="text-muted mt-3 mb-0">
+            <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i> {{ ingresos }} ingresos
+          </p>
+        </div>
+      </div>
+    2.2.- Se agregan los egresos 
+	    <div class="card-body">
+
+        <div class="clearfix">
+          <div class="float-left">
+            <i class="fa fa-shipping-fast text-danger icon-lg"></i>
+          </div>
+          <div class="float-right">
+            <p class="mb-0 text-right">Egresos</p>
+            <div class="fluid-container">
+              <h3 class="font-weight-medium text-right mb-0">{{ totalEgresos | currency}}</h3>
+            </div>
+          </div>
+        </div>
+        <p class="text-muted mt-3 mb-0">
+          <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i> {{ egresos }} egresos
+        </p>
+      </div>
+    2.3.- Se crea apartado de diferencias y grafica
+    	<!-- Diferencias -->
+			<div class="row m-5">
+
+			  <div class="col-12">
+			      <div class="card card-statistics">
+			        <div class="card-body">
+			            <div class="clearfix">
+			                <div class="float-left">
+			                  <i class="fa fa-building text-info icon-lg"></i>
+			                </div>
+			                <div class="float-right">
+			                  <p class="mb-0 text-right">Diferencia</p>
+			                  <div class="fluid-container">
+			                    <h3 [class.text-success]=" totalIngresos - totalEgresos > 0"
+			                        [class.text-danger]=" totalIngresos - totalEgresos < 0">
+			                      {{ totalIngresos - totalEgresos | currency }}
+			                    </h3>
+			                  </div>
+			                </div>
+			              </div>
+			        </div>
+			    </div>
+			  </div>
+
+			  <div class="col-12 p-5" *ngIf="ingresos > 0 || egresos > 0">
+			      <div class="card card-statistics">
+			        <div class="card-body">
+			          <h1 class="card-title">GrÃ¡fica</h1>
+
+			            <!-- grÃ¡fica ira aquÃ­ -->
+
+			        </div>
+			      </div>
+			  </div>
+			</div>
+*************************************************************************************************************************************
+110. ******************************************************************************************Chart.js - Gráficas para Angular - URL
+	Refrencia --> https://valor-software.com/ng2-charts/
+
+	1.- Se modifica estadistica.component.ts,  se agrega chart de dona al componente 
+		1.1.- Se crea variable para los labels y la data 
+			  // Doughnut
+			  public doughnutChartLabels: string[] = [ 'Ingresos', 'Egresos'];
+			  public doughnutChartData: ChartData<'doughnut'> = {
+			    labels: this.doughnutChartLabels,
+			    datasets: [
+			      { data: [  ] },
+			    ]
+			  };
+
+	  	  public doughnutChartOptions: ChartConfiguration['options'] = {
+			    responsive: true,
+			    maintainAspectRatio: false,
+			  };
+
+				public doughnutChartType: ChartType = 'doughnut';
+		1.2.- Se modifica metodo generarEstadistica()
+			generarEstadisticas( items: IngresoEgreso[]){
+		    console.log(items);
+		    //Se realiza clean de las variables
+		    this.totalIngresos = 0;
+		    this.totalEgresos = 0;
+		    this.ingresos = 0;
+		    this.egresos = 0;
+		    items.forEach((item: IngresoEgreso) => {
+		      if( item.tipo === 'ingreso' ){
+		        this.totalIngresos += item.monto;
+		        this.ingresos ++;
+		      }else{
+		        this.totalEgresos += item.monto;
+		        this.egresos ++;
+		      }
+		    });
+		    // Se setea la data de estadisticas 
+		    console.log(this.doughnutChartData.datasets[0]);
+		    this.doughnutChartData.datasets[0].data[0] = this.totalIngresos;
+		    this.doughnutChartData.datasets[0].data[1] = this.totalEgresos;
+		  }
+	2.- Se modifica estadistica.component.html, se agrega chart dona  
+		  <div class="col-12 p-5" *ngIf="ingresos > 0 || egresos > 0">
+	      <div class="card card-statistics" style="width: 400px; height: 400px">
+	        <div class="card-body" >
+	          <h1 class="card-title">Grafica</h1>
+
+	          <div style="display: block">
+	            <canvas baseChart [data]="doughnutChartData"
+	                              [type]="doughnutChartType">
+	                              [options]="doughnutChartOptions"
+	            </canvas>
+	          </div>
+	        </div>
+	      </div>
+	  </div>
+*************************************************************************************************************************************
+111. ***************************************************************************************************Colocar el nombre del usuario
+	1.- Se modifica sidebar.component.ts  
+		1.1.- Se crean variable para almacenar nombre del usuario y la subscripcion  
+			  nameUsuario!: String | undefined;
+  			nameSubscription!: Subscription;
+  	1.2.- Se realiza ID del store 
+  		  constructor( private authService: AuthService,
+                private router: Router,
+                private store: Store<AppState>) { }
+  	1.3.- Se modifica metodo ngOnInit(), se recupera usuario del store  
+  		  ngOnInit(): void {
+			    this.nameSubscription = this.store.select('user')
+			    //Se pasa por pipe para que no lo traiga en caso de ser null
+			    .pipe(
+			      filter( ({ user }) => user != null )
+			    )
+			    .subscribe( ({user}) => {
+			      this.nameUsuario = user?.nombre;
+			    });
+			  }
+		1.4.- Se implementa el metodo ngOnDestroy() 
+		  ngOnDestroy(): void {
+		    this.nameSubscription.unsubscribe();
+		  }	
+	2.- Se modica sidebar.component.html, se renderia la variable creada
+		    	<div class="text-wrapper">
+            <p class="profile-name">{{ nameUsuario}}</p>
+            <div>
+              <small class="designation text-muted">Gerente</small>
+            </div>
+	        </div>
+*************************************************************************************************************************************
+112. *****************************************************************************************Realizar un backup a GitHub - Sección 9
+	1.- git add .
+	2.- git commit -m FinSeccion9
+	3.- git push 
+	4.- git tag -a v3.0.0 -m FinSeccion9
+	5.- git push tags	
+*************************************************************************************************************************************
+*************************************************************************************************************************************
+***************************************************Sección 10: NGRX con LazyLoad*****************************************************
+116. *********************************************************************************************************************Módulo Auth
+	1.- Se crea modulo --> ng g m auth/auth --flat
+		1.1.- Se declaran los componentes, y se importan los modulos que se necesitan  
+				@NgModule({
+				  declarations: [ LoginComponent, RegisterComponent ],
+				  imports: [
+				    CommonModule,
+				    ReactiveFormsModule,
+				    RouterModule
+				  ]
+				})
+				export class AuthModule { }
+	2.- Se modifica app.module.ts, se eliminan los componentes de login y register, se importa el nuevo modulo 
+		@NgModule({
+		  declarations: [
+		    AppComponent,
+		    DashboardComponent,
+		    IngresoEgresoComponent,
+		    EstadisticaComponent,
+		    DetalleComponent,
+		    FooterComponent,
+		    NavbarComponent,
+		    SidebarComponent,
+		    OrdenIngresoPipe
+		  ],
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule,
+		    AuthModule,
+		    ReactiveFormsModule,
+		    AngularFireModule.initializeApp(environment.firebase),
+		    AngularFirestoreModule,
+		    AngularFireAuthModule,
+		    NgChartsModule,
+		    StoreModule.forRoot(appReducers),
+		    StoreDevtoolsModule.instrument({
+		      maxAge: 25, // Retains last 25 states
+		      logOnly: environment.production, // Restrict extension to log-only mode
+		      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
+		    }),
+		  ],
+		  providers: [],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+*************************************************************************************************************************************
+117. ********************************************************************************************************************Módulo Share
+	1.- se crea modulo --> ng g m shared/shared --flat  
+		@NgModule({
+		  declarations: [
+		    FooterComponent,
+		    NavbarComponent,
+		    SidebarComponent,
+		  ],
+		  imports: [
+		    CommonModule,
+		    RouterModule
+		  ],
+		  exports: [
+		    FooterComponent,
+		    NavbarComponent,
+		    SidebarComponent,
+		  ],
+		})
+		export class SharedModule { }
+	2.- Se eliminan los componentes de footer, navbar y sidebar, se importa el nuevo modulo 
+			@NgModule({
+			  declarations: [
+			    AppComponent,
+			    DashboardComponent,
+			    IngresoEgresoComponent,
+			    EstadisticaComponent,
+			    DetalleComponent,
+			    OrdenIngresoPipe
+			  ],
+			  imports: [
+			    BrowserModule,
+			    AppRoutingModule,
+			    AuthModule,
+			    SharedModule,
+			    ReactiveFormsModule,
+			    AngularFireModule.initializeApp(environment.firebase),
+			    AngularFirestoreModule,
+			    AngularFireAuthModule,
+			    NgChartsModule,
+			    StoreModule.forRoot(appReducers),
+			    StoreDevtoolsModule.instrument({
+			      maxAge: 25, // Retains last 25 states
+			      logOnly: environment.production, // Restrict extension to log-only mode
+			      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
+			    }),
+			  ],
+			  providers: [],
+			  bootstrap: [AppComponent]
+			})
+			export class AppModule { }
+*************************************************************************************************************************************
+118. ***********************************************************************************************************Módulo Ingreso-Egreso
+	1.- Se crea modulo --> ng g m ingreso-egreso/ingresoEgreso --flat
+		@NgModule({
+		  declarations: [
+		    DashboardComponent,
+		    IngresoEgresoComponent,
+		    EstadisticaComponent,
+		    DetalleComponent,
+		    OrdenIngresoPipe
+		  ],
+		  imports: [
+		    CommonModule,
+		    ReactiveFormsModule,
+		    NgChartsModule,
+		    SharedModule,
+		    RouterModule
+		  ]
+		})
+		export class IngresoEgresoModule { }
+	2.- Se modifica app.module.ts, se eliminan los componentes Dashboard, IngresoEgreso, Estadistica, Detalle, OrdenIngresoPipe y se 
+	importa el modulo creado, se elimina el modulo SharedModule y NgChartsModule 	
+		@NgModule({
+		  declarations: [
+		    AppComponent
+		  ],
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule,
+		    AuthModule,
+		    IngresoEgresoModule,
+		    AngularFireModule.initializeApp(environment.firebase),
+		    AngularFirestoreModule,
+		    AngularFireAuthModule,
+		    StoreModule.forRoot(appReducers),
+		    StoreDevtoolsModule.instrument({
+		      maxAge: 25, // Retains last 25 states
+		      logOnly: environment.production, // Restrict extension to log-only mode
+		      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
+		    }),
+		  ],
+		  providers: [],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+*************************************************************************************************************************************
+119. ********************************************************************************************************Dashboard Routing Module
+	1.- Se crea modulo -->  ng g m dashboard/dashboardRoutes --flat 
+			//Se crean rutas hijas
+			const rutasHijas: Routes = [
+			  {
+			    path: '',
+			    component: DashboardComponent,
+			    children: dashboarRoutes,
+			    //canActivate: [ AuthGuard ]
+			  },
+			]
+
+			@NgModule({
+			  declarations: [],
+			  imports: [
+			  	// Se cargan las rutas hijas en el routerModule
+			    RouterModule.forChild( rutasHijas )
+			  ],
+			  exports:[
+			    RouterModule
+			  ]
+			})
+			export class DashboardRoutesModule { }
+
+	2.- Se modifica app-routing.module.ts, se elimina rutas al dashboard
+		const routes: Routes = [
+		  { path: 'login', component: LoginComponent },
+		  { path: 'register', component: RegisterComponent },
+		  { path: '**', redirectTo: '' }
+		];
+	3.- Se modifica elingreso.-egreso.module.ts, se importa el DashboardRoutesModule 
+		  imports: [
+		    CommonModule,
+		    ReactiveFormsModule,
+		    NgChartsModule,
+		    SharedModule,
+		    RouterModule,
+		    DashboardRoutesModule
+		  ]
+*************************************************************************************************************************************
+120. *****************************************************************************************LazyLoad del módulo de ingreso y egreso
+	Referencia --> https://angular.io/guide/lazy-loading-ngmodules
+	1.-Se modifica app-routing.module.ts, se carga modulo de ingresoegreso de forma lazy 
+		const routes: Routes = [
+			  { path: 'login', component: LoginComponent },
+			  { path: 'register', component: RegisterComponent },
+			  {
+			    path:'',
+			    loadChildren: () => import('./ingreso-egreso/ingreso-egreso.module').then( m => m.IngresoEgresoModule )
+			  },
+			  { path: '**', redirectTo: '' }
+			];
+	2.- Se modifica app.module.ts, se elimina import de modulo IngresoEgresoModule
+		@NgModule({
+		  declarations: [
+		    AppComponent
+		  ],
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule,
+		    AuthModule,
+		    AngularFireModule.initializeApp(environment.firebase),
+		    AngularFirestoreModule,
+		    AngularFireAuthModule,
+		    StoreModule.forRoot(appReducers),
+		    StoreDevtoolsModule.instrument({
+		      maxAge: 25, // Retains last 25 states
+		      logOnly: environment.production, // Restrict extension to log-only mode
+		      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
+		    }),
+		  ],
+		  providers: [],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+*************************************************************************************************************************************
+121. *************************************************************************************************************************CanLoad
+*********************************************************************************************************Operador take rxjs/operators
+	1.- Se modifica dashboard.component.ts, se corrige error con subscribe al deslogear 
+		  ngOnDestroy(): void {
+		    this.userSubscription?.unsubscribe();
+		    this.store?.dispatch( authActions.unSetUser() );
+		    this.ingresosEgresoSuscription?.unsubscribe();
+		  }
+	2.- Se modifica auth.guard.ts, se implementa el metodo canLoad()  
+		  canLoad(): Observable<boolean> {
+		    return this.authService.isAuth().pipe(
+		      tap( estado => {
+		        if(!estado) this.router.navigateByUrl('/login');
+		      }),
+		      take(1)
+		    );
+		  }
+	3.- Se modifica app-routing.module.ts,se modifican las rutas, se agrega guard canLoad antes de la carga del modulo de ingresos 
+		const routes: Routes = [
+		  { path: 'login', component: LoginComponent },
+		  { path: 'register', component: RegisterComponent },
+		  {
+		    path:'',
+		    // Se agrega guard canLoad
+		    canLoad: [ AuthGuard ],
+		    loadChildren: () => import('./ingreso-egreso/ingreso-egreso.module').then( m => m.IngresoEgresoModule )
+		  },
+		  { path: '**', redirectTo: '' }
+		];
+*************************************************************************************************************************************
+122. ******************************************************************************************************************LazyLoad Store
+	1.- Se modifica app.reducer.ts, se elimina la entrada al state del ingresosEgresos
+		export interface AppState {
+		   ui: ui.State,
+		   user: auth.State,
+		   //ingresosEgresos: ingresoEgreso.State
+		}
+		export const appReducers: ActionReducerMap<AppState> = {
+		   ui: ui.uiReducer ,
+		   user: auth.authReducer,
+		   //ingresosEgresos: ingresoEgreso.ingresoEgresoReducer
+		}
+	2.- Se modifica ingreso-egreso.module.ts, se realiza forFeature a ingresoEgresoReducer
+		@NgModule({
+		  declarations: [
+		    DashboardComponent,
+		    IngresoEgresoComponent,
+		    EstadisticaComponent,
+		    DetalleComponent,
+		    OrdenIngresoPipe
+		  ],
+		  imports: [
+		    CommonModule,
+		    StoreModule.forFeature('ingresosEgresos', ingresoEgresoReducer),
+		    ReactiveFormsModule,
+		    NgChartsModule,
+		    SharedModule,
+		    RouterModule,
+		    DashboardRoutesModule
+		  ]
+		})
+		export class IngresoEgresoModule { }
+	3.- Se modifica ingreso-egreso.reducer.ts, se realiza extends de AppState 
+		export interface AppStateWithIngreso extends AppState{
+		  ingresosEgresos: State
+		}
+	4.- Se modifica estadistica.component.ts, se cambia el state del store 
+		constructor( private store: Store<AppStateWithIngreso>) {  }
+	5.- Se modifica detalle.component.ts, se cambia el state del store 
+		  constructor( private store: Store<AppStateWithIngreso>,
+                private ingresoEgresoService: IngresoEgresoService) { }
+*************************************************************************************************************************************
+123. ********************************************************************************************Backup de la aplicación - Sección 10
+	1.- git add .
+	2.- git commit -m FinSeccion10
+	3.- git push 
+	4.- git tag -a v2.0.0 -m FinSeccion10
+	5.- git push tags	
+*************************************************************************************************************************************
+*************************************************************************************************************************************
+*************************************************************************************************************************************
+
+
 
 https://superheroapi.com/
 10226514756277459
-
-
-
 
 Complementarios*********************************************************************************************************************
 	CanLoad Guard***********************************************************************************************************
@@ -12457,7 +16186,7 @@ Complementarios*****************************************************************
 				positions.subscribe(x => console.log(x));
 		********************************************************************************************************************
 		take(n)*************************************************************************************************************
-			takedevuelve un Observable que emite solo los primeros countvalores emitidos por la fuente Observable. Si la 
+			take devuelve un Observable que emite solo los primeros countvalores emitidos por la fuente Observable. Si la 
 			fuente emite menos de countvalores, se emiten todos sus valores. Después de eso, se completa, independientemente 
 			de si la fuente se completa.
 
@@ -12651,7 +16380,48 @@ Complementarios*****************************************************************
 		Se usa forChild al reves: cuando queremos entregar un provider que es visible solamente para los módulos “hijos” de 
 		nuestro modulo, en el caso de que sean lazy loaded. Como cada modulo lazy se carga bajo demanda, tiene su propio 
 		inyector.
-	***********************************************************************************************************************
+	************************************************************************************************************************
+	ForFeature**************************************************************************************************************
+		Para manejar fácilmente los módulos Angular, debe conocer una terminología básica que lo ayudará con problemas 
+		similares a este en el futuro.
+
+		Una aplicación Angular está (básicamente) hecha de un módulo, llamado "AppModule" que se conoce convencionalmente 
+		como Módulo raíz : este es el módulo principal de la aplicación, el que se inicia en el archivo main.ts que es, en 
+		realidad, la entrada de la aplicación. Cuando importa algunos módulos externos en la matriz de importaciones de AppModule, 
+		generalmente invoca el método estático forRoot para dar una configuración inicial a ese módulo: es el caso del método 
+		forRoot de StoreModule, que establece la configuración inicial de la tienda.
+
+		Puede desarrollar su aplicación encontrando alguna "zona de preocupación" para resolver una parte específica de su 
+		problema. Cuando combina componentes, directivas, servicios y otros elementos de Angular en un módulo, ese módulo se 
+		convierte en un módulo de características porque, como sugiere la convención de nomenclatura, proporciona una 
+		característica a su aplicación. No importa cómo cargue un módulo (Eagerly o Lazily), siempre será un módulo de 
+		características.
+
+
+		El método forRoot se invoca en AppModule y, generalmente, una vez en la aplicación para inicializar Store y proporcionar 
+		la configuración inicial de reductores/acciones/estado. Si usa EffectsModule, también invocará el método forRoot en 
+		este módulo:
+
+			@ngModule({ importaciones: [ StoreModule.forRoot(), EffectsModule.forRoot() ] }) class AppModule {}
+
+		El método forFeature se invoca en cualquier módulo de características que requiera su propia parte de la gestión del 
+		estado: como ejemplo, un UserModule definirá su propia parte del estado, describiendo las acciones requeridas, los 
+		reductores, etc. Si usa EffectsModule, recuerde invocar el método forFeature contra él también. Como usted mismo habrá 
+		entendido, forFeature (como el método forChild de Angular más genérico ) se puede invocar varias veces para el mismo 
+		módulo importado en la aplicación:
+
+			AppModule -> StoreModule.forRoot(...) UsersModule -> StoreModule.forFeature(...) OtherModule -> StoreModule.forFeature(...)
+
+		Finalmente, recuerde que las firmas forRoot y forFeature son ligeramente diferentes entre sí: esta última tiene, de hecho, 
+		el primer parámetro que describe el nombre de la característica . Los otros parámetros, si no recuerdo mal, son los mismos 
+		que los del método forRoot. Si intenta generar un modelo para un módulo de funciones con el paquete @ngrx/schematics con el 
+		siguiente comando:
+
+			ng generate feature user/User -m modules/users/users.module.ts --group
+		
+		Encontrará que el nombre de la característica será simplemente la versión en minúsculas de la palabra Usuario en el 
+		comando dado: usuario .
+	************************************************************************************************************************
 	@Input ****************************************************************************************************************
 		Se usa para recibir datos en un componente mientras que @Output se usa para enviar datos fuera de un componente.
 		
@@ -12663,7 +16433,6 @@ Complementarios*****************************************************************
 				@Input() progress: number = 40;
 			* progress.component.html
 				<app-incrementador [progress]="15"></app-incrementador>
-
 	***********************************************************************************************************************
 ************************************************************************************************************************************
 
@@ -14734,4 +18503,27 @@ Seccion 8: Componentes, Directivas de atributos y ciclo de vida*****************
 
 
 
-
+* {
+    margin: 0;
+   }
+   nav{
+    height:70px;
+    background-color: green;
+   }
+   .container{
+    display: flex;
+    height: calc(100vh - 70px);
+   }
+   .container .main-body{
+    width: 100%;
+   }
+   .container aside{
+     width: 0;
+     overflow-y: auto;
+     transition: all 0.5s;
+     background-color: yellow;
+   }
+   /*Im using hover event to expand sidebar for example, you can use JS to handle click event*/
+   .container:hover aside{
+     width: 200px;
+   }

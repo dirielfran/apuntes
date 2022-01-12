@@ -578,7 +578,7 @@ Referencias*********************************************************************
 	DispatcherServletcontextos. Solo puede tener una entrada de esto en web.xml.
 
 	El contexto de ContextLoaderListenercontiene beans que son visibles globalmente, como servicios, repositorios, beans de 
-	infraestructura, etc. Una vez creado el contexto de la aplicación raíz, se almacena ServletContextcomo un atributo
+	infraestructura, etc. Una vez creado el contexto de la aplicación raíz, se almacena ServletContext como un atributo
 
 	El ContextLoaderListner es uno de los componentes esenciales del marco Spring MVC, probablemente el más importante después de la 
 	DispatcherServlet sí. Se utiliza para crear el contexto raíz y responsable de cargar beans, que son compartidos por múltiples 
@@ -3358,7 +3358,7 @@ Spring Data JPA integracion con Spring MVC**************************************
 		23.2.- Se agrega el metodo buscarTodas() a la clase de servicio, BannersServiceJPA, y se crea metodo en el controlador
 			23.2.1.- Se crea metodo buscarTodas()
 				@Override
-				public Page<Banner> buscarTodas(Pageable pagina) {
+159830				public Page<Banner> buscarTodas(Pageable pagina) {
 					return bannersRepo.findAll(pagina);
 				}
 			23.2.2.- Se crea metodo en el controlador

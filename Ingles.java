@@ -250,3 +250,4 @@ always watch tv, about twenty go to bed.
  can you cook?
  yes, i can cook the rice, eggs, salad
 
+how much sugar you have 
