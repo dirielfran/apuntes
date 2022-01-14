@@ -14170,6 +14170,7 @@ Seccion 22: Grafica es Angular**************************************************
 *************************************************************************************************************************************
 74. ***************************************************************AngularFire - Comunicar nuestra aplicación de Angular con Firebase
 	Referencia --> https://github.com/angular/angularfire 
+							--> https://console.firebase.google.com/u/0/
 	1.- Agregamos AngularFire para la authenticacion de usuarios 
 		ng add @angular/fire
 	2.- Se agrega una aplicacion web al firebase 
@@ -15886,6 +15887,409 @@ Seccion 22: Grafica es Angular**************************************************
 	5.- git push tags	
 *************************************************************************************************************************************
 *************************************************************************************************************************************
+***********************************************Sección 11: Desplegar App en Firebase*************************************************
+	1.- Buildeamos la aplicacion --> ng build --prod 
+	2.- abrimos la consola de firebase --> https://console.firebase.google.com/u/0/project/ingresos-egresosapp/overview
+																			--> hosting 
+																			--> comenzar
+			2.1.- Se ejecuta --> npm install -g firebase-tools
+																
+											--> firebase login dirielfran@gmail.com
+											--> firebase init
+														--> proceed? yes 
+														-->  set up GitHub Action deploys
+														--> dist
+											--> firebase deploy
+
+
+											https://ingresos-egresosapp.web.app/login
+*************************************************************************************************************************************
+*******************************************************Sección 12: EffectsApp********************************************************
+132. **********************************************************************************************Inicio del proyecto - http-effects
+	1.- Se crea la aplicacion --> ng new http-effects
+	2.- Se agrega style de bootstrap 4 --> 
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+			integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+	3.- Se agrega script de fontawesome   
+		  <script src="https://kit.fontawesome.com/6cd398d6ed.js" crossorigin="anonymous"></script>
+	4.- Se crea estructura del proyecto se crean los siguientes folder dentro de app  
+		services, models, shared, store, usuarios 
+*************************************************************************************************************************************
+133. *************************************************************************************Módulos y componentes de nuestra aplicación
+	1.- Se crean modulos de la aplicacion 
+			--> ng g m shared/shared --flat 
+			--> ng g m usuarios/usuarios --flat 
+	2.- Se crean componetes 
+		--> ng g c shared/navbar --skip-tests
+		--> ng g c usuarios/usuario --skip-tests
+	3.- Se modifica sared.module.ts, se le agrega el componente navBar a los exports 
+		@NgModule({
+		  declarations: [
+		    NavbarComponent
+		  ],
+		  imports: [
+		    CommonModule
+		  ],
+		  exports: [
+		    NavbarComponent
+		  ]
+		})
+		export class SharedModule { }
+	4.- Se modifica usuarios.module.ts, se agregan los componentes al export  
+		@NgModule({
+		  declarations: [
+		    ListaComponent,
+		    UsuarioComponent
+		  ],
+		  imports: [
+		    CommonModule
+		  ],
+		  exports: [
+		    ListaComponent,
+		    UsuarioComponent
+		  ]
+		})
+		export class UsuariosModule { }
+	5.- Se modifica app.module.ts, se agregan los modulos a los imports 
+		@NgModule({
+		  declarations: [
+		    AppComponent
+		  ],
+		  imports: [
+		    BrowserModule,
+		    AppRoutingModule,
+		    UsuariosModule,
+		    SharedModule
+		  ],
+		  providers: [],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+	6.- Se modifica navbar.components.html, se copia estructura de navbar de bootstrap y se pega --> https://getbootstrap.com/docs/5.1/components/navbar/
+		<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+		  <div class="container-fluid">
+		    <a class="navbar-brand" href="#">Effects</a>
+		    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		      <span class="navbar-toggler-icon"></span>
+		    </button>
+		    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+		      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+		        <li class="nav-item">
+		          <a class="nav-link active" aria-current="page" href="#">Home</a>
+		        </li>
+		        <li class="nav-item">
+		          <a class="nav-link" href="#">Usuario</a>
+		        </li>
+		      </ul>
+		      <form class="d-flex">
+		        <input class="form-control me-2" type="search" placeholder="Id Usuario" >
+		        <button class="btn btn-outline-success" type="button">Buscar</button>
+		      </form>
+		    </div>
+		  </div>
+		</nav>
+	7.- Se modifica app.component.ts, se borra todo el contenido y se agrega componentes 
+		<app-navbar></app-navbar>
+		<div class="container p-3">
+		  <app-lista></app-lista>
+		</div>
+*************************************************************************************************************************************
+134. *****************************************************************************************************Rutas de nuestra aplicación
+	1.- Se modifica app-routing.module.ts, se agregan routes 
+		const routes: Routes = [
+		  { path: 'home', component: ListaComponent},
+		  { path: 'usuario/:id', component: UsuarioComponent},
+		  { path: '**', redirectTo:'home'}
+		];
+	2.- Se modifica shared.module.ts, se agrega a los import RouterModule 
+			@NgModule({
+					  declarations: [
+					    NavbarComponent
+					  ],
+					  imports: [
+					    CommonModule,
+					    // Nos permite utilizar la propiedad routerLink y routerLinkActive 
+					    RouterModule
+					  ],
+					  exports: [
+					    NavbarComponent
+					  ]
+					})
+		export class SharedModule { }
+	3.- Se modifica app.component.html, se agrega router-oulet 
+		<div class="container p-3">
+		  <router-outlet></router-outlet>
+		</div>
+	4.- Se modifica navbar.component.ts 
+		4.1.- Se crea ID de router para poder navegar entre links 
+			  constructor( private router: Router) { }
+		4.2.- Se crea metodo irUsuario(), para que navegue al componente de usuario 
+		  irUsuario( id: string ){
+		    if (!id){
+		      return;
+		    }
+		    this.router.navigate([ '/usuario', id ])
+		  }
+	5.- Se modifica navbar.component.html, se agregan routerLink y se agrega evento click a buscador 
+		5.1.- Se agrega a home, routerLink y routerLinkActive, se elimina la clase active 
+			  <li class="nav-item">
+          <a class="nav-link" aria-current="page" routerLink="home" routerLinkActive="active">Home</a>
+        </li>
+    5.2.- Se agrega a usuario, routerLink y routerLinkActive, se elimina la clase active 
+    	  <li class="nav-item">
+          <a class="nav-link" routerLink="usuario/1" routerLinkActive="active">Usuario</a>
+        </li>
+    5.3.- Se agregan eventos click y keyup al input y button 
+    	<div class="d-flex">
+        <input #txtInput (keyup.enter)="irUsuario( txtInput.value )" class="form-control me-2" type="search" placeholder="Id Usuario" >
+        <button (click)="irUsuario( txtInput.value )" class="btn btn-outline-success" type="button">Buscar</button>
+      </div>
+*************************************************************************************************************************************
+136. ****************************************************************************************************************Reqres y Postman
+	1.- Ingresar al siguiente link para pruebas de api en el front --> https://reqres.in/
+	2.- Se utilizara postman para las pruebas, en el link sepueden revizar todos los endpoint que tenemos disponibles 
+		--> https://reqres.in/api/users/1
+		--> https://reqres.in/api/users
+*************************************************************************************************************************************
+137. ***************************************************************************************************************Modelo de usuario
+	1.- Se crea dentro de models file --> usuario.model.ts 
+		export class Usuario{
+
+		  constructor(
+		    public id: string,
+		    public email: string,
+		    public first_name: string,
+		    public last_name: string,
+		    public avatar: string,
+		  ){}
+		}
+*************************************************************************************************************************************
+138. *****************************************************************************************************************Usuario Service
+	1.- Se crea servici para usuario --> ng g s services/usuario --skip-tests --flat
+		@Injectable({
+		  providedIn: 'root'
+		})
+		export class UsuarioService {
+
+			// Variable para la url raiz de la api
+		  private url = 'https://reqres.in/api';
+
+		  // Se agrega ID de HttpClient para llegar a los endpoint 
+		  constructor( private http:HttpClient ) { }
+
+		  getUsers(){
+		  	// Se consume servicio
+		    return this.http.get(`${this.url}/users`)
+		      .pipe(
+		      	// Se tranforma respuesta en onj de tipo usuario
+		        map( (resp: any) => {
+		          return resp['data'];
+		        })
+		      );
+		  }
+		}
+	2.- Se modifica app.module.ts, se agrega import del modulo HttpClientModule 
+		@NgModule({
+		  declarations: [
+		    AppComponent
+		  ],
+		  imports: [
+		    BrowserModule,
+		    HttpClientModule,
+		    AppRoutingModule,
+		    UsuariosModule,
+		    SharedModule
+		  ],
+		  providers: [],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+	3.- Se modifica lista.component.ts
+		@Component({
+		  selector: 'app-lista',
+		  templateUrl: './lista.component.html',
+		  styleUrls: ['./lista.component.css']
+		})
+		export class ListaComponent implements OnInit {
+
+			// Se realiza ID del servicio
+		  constructor( private userService: UsuarioService) { }
+
+		  ngOnInit(): void {
+		  	// Se realiza subscribe del servicio
+		    this.userService.getUsers().subscribe( data => {
+		      console.log( data );
+		    })
+		  }
+
+		}
+*************************************************************************************************************************************
+139. ********************************************************************************************************HTML del lista.component
+	1.- Se modifica lista.component.ts, se crea atributo para guardar la lista de usuario 
+		@Component({
+		  selector: 'app-lista',
+		  templateUrl: './lista.component.html',
+		  styleUrls: ['./lista.component.css']
+		})
+		export class ListaComponent implements OnInit {
+
+		 //Lista de usuarios
+		  usuarios: Usuario[] = [];
+
+		  constructor( private userService: UsuarioService) { }
+
+		  ngOnInit(): void {
+		    this.userService.getUsers().subscribe( data => {
+		      console.log( data );
+		      // Se asigna a la variable la data 
+		      this.usuarios = data;
+		    })
+		  }
+
+		}
+	2.- Se modifica lista.component.html 
+		<div class="card-group">
+		  <div class="card" *ngFor="let user of usuarios">
+		    <img [src]="user.avatar" class="card-img-top" alt="...">
+		    <div class="card-body">
+		      <h5 class="card-title">{{user.first_name}} {{user.last_name}}</h5>
+		      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+		      <p class="card-text"><small class="text-muted">{{user.id}}</small></p>
+		    </div>
+		  </div>
+		</div>
+*************************************************************************************************************************************
+140. ********************************************************************Realizar un backup a GitHub de nuestro proyecto - sección 12
+	1.- Se crea repositorio en git EffectApp 
+	2.- git init
+	3.- git add .
+	4.- git commit -m PrimerCoomit
+	5.- git remote add origin https://github.com/dirielfran/EffectsApp.git
+	6.- git branch -M main
+	7.- git push -u origin main
+	8.- git tag -a v1.0.0 -m appSinEffects
+	9.- git push --tags
+*************************************************************************************************************************************
+*************************************************************************************************************************************
+*******************************************************Sección 12: ngrx/effects******************************************************
+144. ************************************************************************************************************Acciones de Usuarios
+*********************************************************************************************************************Instalacion ngrx
+	1.- Install de ngrx --> npm install @ngrx/store --save
+	2.- Se crea estructura de folder store 
+			--> actions  
+			--> effects  
+			--> reducers  
+	3.- Se crea dentro de actions --> usuarios.actions.ts , se crean acciones 
+		import { createAction, props } from '@ngrx/store';
+		import { Usuario } from 'src/app/models/usuario.model';
+
+		export const cargarUsuarios = createAction('[Usuarios] Cargar Usuarios');
+
+		export const cargarUsuariosSuccess = createAction(
+		      '[Usuarios] Cargar Usuarios Success',
+		      props<{usuarios: Usuario[]}>()
+		);
+
+		export const cargarUsuariosError = createAction(
+		    '[Usuarios] Cargar Usuarios Error',
+		    props<{ payload: any}>()
+		);
+	4.- Se crea dentro de actions --> index.ts  
+		export * from './usuarios.actions';
+*************************************************************************************************************************************
+145. *************************************************************************************************************Reducer de Usuarios
+	1.- Se crea usuarios.reducers.ts dentro de reducers 
+		import { createReducer, on } from '@ngrx/store';
+		import { Usuario } from 'src/app/models/usuario.model';
+		import { cargarUsuarios, cargarUsuariosSuccess, cargarUsuariosError } from '../actions';
+
+		//Tipado
+		export interface UsuariosState {
+		    users: Usuario[],
+		    loaded: boolean,
+		    loading: boolean,
+		    error: any
+		}
+
+		//State inicial
+		export const UsuariosInitialState: UsuariosState = {
+		  users: [],
+		  loaded: false,
+		  loading: false,
+		  error: null
+		}
+
+		//Se crean las funciones por cada accon
+		const _usuariosReducer = createReducer(UsuariosInitialState,
+
+		    on(cargarUsuarios , state => ({ ...state, loading: true})),
+		    on(cargarUsuariosSuccess , (state , { usuarios }) => ({
+		      ...state,
+		      loading: false,
+		      loaded: true,
+		      users: [ ...usuarios ]
+		    })),
+		    on(cargarUsuariosError , (state , { payload }) => ({
+		      ...state,
+		      loading: false,
+		      loaded: false,
+		      users: payload
+		    })),
+
+		);
+
+		//Se expone el reducer
+		export function usuariosReducer(state: any, action: any) {
+		    return _usuariosReducer(state, action);
+		}
+	2.- Se crea dentro de reducers index.ts 
+		export * from './usuarios.reducers';
+*************************************************************************************************************************************
+146. **********************************************************************************************AppReducer, StoreModule y DevTools
+************************************************************************************************************Se instala Store-devtools
+	Se instala --> npm install @ngrx/store-devtools --save
+	1.- Se crea dentro de folder reducers --> app.reducers.ts 
+		snippets --> ngrxapp
+
+		import { ActionReducerMap } from '@ngrx/store';
+		import * as reducers from './reducers';
+
+
+		export interface AppState {
+		   usuarios: reducers.UsuariosState
+		}
+
+		export const appReducers: ActionReducerMap<AppState> = {
+		   usuarios: reducers.usuariosReducer,
+		}
+	2.- Se modifica app.module.ts, se importan el StoreModule integrando appReducers y se importa StoreDevtoolsModule
+			@NgModule({
+		  declarations: [
+		    AppComponent
+		  ],
+		  imports: [
+		    BrowserAnimationsModule,
+		    BrowserModule,
+		    HttpClientModule,
+		    AppRoutingModule,
+		    UsuariosModule,
+		    SharedModule,
+		    ButtonModule,
+		    SidebarModule,
+		    StoreModule.forRoot( appReducers ),
+		    StoreDevtoolsModule.instrument({
+		      maxAge: 25, // Retains last 25 states
+		      logOnly: environment.production, // Restrict extension to log-only mode
+		      autoPause: true, // Pauses recording actions and state changes when the extension window is not open
+		    })
+		  ],
+		  providers: [],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule { }
+	3.- Subir la aplicacion y proBar la consola de redux en chrome
+*************************************************************************************************************************************
+*************************************************************************************************************************************
 *************************************************************************************************************************************
 
 
@@ -16106,6 +16510,8 @@ Complementarios*****************************************************************
 		    *{
 			      margin: 15 px;
 			    }
+	************************************************************************************************************************
+	Evitar propagacion de eventos*******************************************************************************************
 	************************************************************************************************************************
 	Temas de AngularMaterial************************************************************************************************
 		deeppurple-amber.css
