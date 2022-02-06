@@ -1001,16 +1001,7 @@ Seccion 5: CRUD con Spring API REST*********************************************
   			<td>
                 <button class="btn btn-primary" type="button" name="button" [routerLink]="['./clientes/form', cliente.id]">Editar</button>
             </td>
-
-
-
-
-
-
-
-
-
-54.- **************************************************************************Update en el cliente.service.ts y en form.component.ts
+54.- *********************************************************************+*****Update en el cliente.service.ts y en form.component.ts
 	1.- Se modifica cliente.servises.ts, se crea metodo update() para modificacion de cliente
 		//Metodo de modificacion del cliente
 		  update(cliente: Cliente): Observable<Cliente>{
@@ -1118,7 +1109,6 @@ Seccion 5: CRUD con Spring API REST*********************************************
     	), se quitan todos los import y se corre la aplicacion
     3.- Se añaden los insert al archivo import.sql
 Seccion 6: Manejo de errores en String(Backend)**************************************************************************************
-
 59.- ******************************************************************************************Manejo de errores metodo showCliente()
 	1.- Se modifica ClienteRestController.java, Se agrega objeto ResponseEntity para el manejo de errores
 		@GetMapping("/clientes/{id}")
@@ -1674,21 +1664,6 @@ Seccion 10: Transformacion de datos del observable usando map*******************
 				import { NgModule, LOCALE_ID } from '@angular/core';
 			3.1.3.- Se modifica configuracion del LOCALE_ID para que use el registerLocaleData configurado ('es')
 				providers: [ClienteService, {provide: LOCALE_ID, useValue: 'es' }],
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 78.- *******************************************************************************************Uso del operador map en el Observable
 	1.- Se modifica cliente.service.ts
 		1.1.- Se importa el operador 
@@ -6728,10 +6703,6 @@ mvn install para la creacion del jar
 docker build -t dockerbasico
 docker run -it -p 8080:8080 dockerbasico
 
-
-puntos pendientes
-prueba unitarias
-endpoints
 
 
 

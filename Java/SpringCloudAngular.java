@@ -164,21 +164,21 @@ Seccion 2: Microservicio Usuario (Backend)**************************************
 	2.- Se crea la tabla de base de datasource
 		create database db_microservicios;
 Seccion 3: Backend Eureka Server registrando Microservicios********************************************************************************
-	*Servidor de nombres para registrar los microservicios
-	*El servicio se registra por un id
+	* Servidor de nombres para registrar los microservicios
+	* El servicio se registra por un id
 	* Registra el id, la ubicacion fisica, ip, puerto y metada propia del servicio
 	* Solo nos comunicamos por medio del identificador del servicio
-	*Se utiliza el balanceo de carga
+	* Se utiliza el balanceo de carga
 16.- ***********************************************************************************************Creacion de servidor de registro eureka
 	1.- Desde sts se crea un new Spring Starter Project
 		1.1.- Se crea proyecto
-				name 			 --> microservicios-eureka
-				type         -->Maven
-				Packaging    -->jar
-				Java version --> 8
-				Group 		 --> com.alfonso.app.eureka
-				artifact	 --> microservicios-eureka
-				package      --> com.alfonso.app.eureka
+				name 			--> microservicios-eureka
+				type         	--> Maven
+				Packaging    	--> jar
+				Java version 	--> 8
+				Group 		 	--> com.alfonso.app.eureka
+				artifact	 	--> microservicios-eureka
+				package      	--> com.alfonso.app.eureka
 
 				next-->
 
@@ -418,6 +418,71 @@ Seccion 3: Backend Eureka Server registrando Microservicios*********************
 		//	public void deleteById(Long idAlumno) {
 		//		alumnoRepo.deleteById(idAlumno);
 		//	}
+
+		}
+22.- *****************************************************************Añadiendo librería common para un controller genérico y reutilizar
+	1.- En micreservicios-commons
+		1.1.- Se crea CommonController.java 
+			public class CommonController<E, S extends ICommonService<E>>{
+
+			@Autowired
+			protected S entityService;
+			
+			@GetMapping
+			public ResponseEntity<?> listar(){
+				return ResponseEntity.ok().body(entityService.buscarTodos());
+			}
+			
+			@GetMapping("/{id}")
+			public ResponseEntity<?> verAlumno(@PathVariable Long id){
+				Optional<E> opt = entityService.BuscarXId(id);
+				if(opt.isEmpty()) {
+					//Si no lo encuentra envia un codigo 404 y construye body vacio
+					return ResponseEntity.notFound().build();
+				}
+				return ResponseEntity.ok(opt.get());
+			}
+			
+			@PostMapping
+			public ResponseEntity<?> guardar(@RequestBody E entity){
+				
+				E entityBD = entityService.guardar(entity);
+				return ResponseEntity.status(HttpStatus.CREATED).body(entityBD);
+			}
+			
+			
+			
+			@DeleteMapping("/{id}")
+			public ResponseEntity<?> borrarAlumno(@PathVariable Long id){
+				entityService.deleteById(id);
+				return ResponseEntity.noContent().build();
+			}
+	2.- Se modifica AlumnoController.java 
+		@RestController
+		public class AlumnoController extends CommonController<Alumno, IAlumnoService>{
+
+			
+			@PutMapping("/{id}")
+			public ResponseEntity<?> editar(@RequestBody Alumno alumno , @PathVariable Long id){
+				
+				Optional<Alumno> opt = entityService.BuscarXId(id);
+				if(opt.isEmpty()) {
+					return ResponseEntity.notFound().build();
+				}
+				
+				Alumno alumnoDB = opt.get();
+				alumnoDB.setNombre(alumno.getNombre());
+				alumnoDB.setApellido(alumno.getApellido());
+				alumnoDB.setEmail(alumno.getEmail());
+				
+				return ResponseEntity.status(HttpStatus.CREATED).body(entityService.guardar(alumnoDB));
+			}
+			
+			//endpoint para la busqueda de alumno por apellido o nombre
+			@GetMapping("/filtrar/{term}")
+			public ResponseEntity<?> filtrarAlumno(@PathVariable String term){
+				return ResponseEntity.ok(entityService.findByNombreOrApellido(term));
+			}
 
 		}
 Seccion 4: Backend: Microservicio cursos***************************************************************************************************
@@ -997,6 +1062,11 @@ Seccion 5: Backend: Microservicios examenes*************************************
 	1.- Se modifica microservicios-cursos, se modifica entidad Curso, se le agrega atributo examenes con su get y set
 		@ManyToMany(fetch = FetchType.LAZY)
 		private List<Examen> examenes;
+		1.0.- Se agrega en el consructor inicializacion de la lista de examenes
+				public Curso() {
+					this.alumnos = new ArrayList<>();
+					this.examenes = new ArrayList<>();
+				}
 		1.1.- Se agrega metodo addExamen y removeExamen
 			public void addExamen(Examen examen) {
 				this.examenes.add(examen);
@@ -1022,7 +1092,7 @@ Seccion 5: Backend: Microservicios examenes*************************************
 			}
 	2.- Se modifica CursoController.java, se agregan metodos para eliminar y agregar examen al curso
 			//metodo que añade examen al curso
-			@PutMapping("/{id}/asignar-examen")
+			@PutMapping("/{id}/asignar-examenes")
 			public ResponseEntity<?> asignarExamen(@RequestBody List<Examen> examenes, @PathVariable Long id){
 				Optional<Curso> opt = this.entityService.BuscarXId(id);
 				if(!opt.isPresent()) {
@@ -1036,7 +1106,7 @@ Seccion 5: Backend: Microservicios examenes*************************************
 				return ResponseEntity.status(HttpStatus.CREATED).body(this.entityService.guardar(cursodb));
 			}
 			
-			//metodo que elimina un alumno del curso
+			//metodo que elimina un examen del curso
 			@PutMapping("/{id}/eliminar-examen")
 			public ResponseEntity<?> eliminarExamen(@RequestBody Examen examen, @PathVariable Long id){
 				Optional<Curso> opt = this.entityService.BuscarXId(id);
@@ -1052,11 +1122,12 @@ Seccion 5: Backend: Microservicios examenes*************************************
 	1.- Se modifica microservicios-examenes, se modifica la clase principal MicroserviciosExamenesApplication.java, se le agrega el 
 	scan de la entidad
 		@EntityScan({"com.alfonso.commons.examenes.models.entity"})
-		1.1.- Se crea query para la busqueda de examen por nombre
-				@Query("SELECT e FROM EXAMEN e WHERE e.nombre like %?1%")
-		1.2.- Se modifica la interface 
+		1.1.- Se modifica IExamenRepository, Se crea query para la busqueda de examen por nombre
+			@Query("SELECT e FROM Examen e WHERE e.nombre like %?1%")
 			public List<Examen> findByNombre(String nombre);
-		1.3.- Se modifica la clase de servicio
+		1.2.- Se modifica la interface IExamenService 
+			public List<Examen> findByNombre(String nombre);
+		1.3.- Se modifica la clase de servicio ExamenServiceImpl.java
 				@Override
 				@Transactional(readOnly = true)
 				public List<Examen> findByNombre(String nombre) {
@@ -1067,13 +1138,11 @@ Seccion 5: Backend: Microservicios examenes*************************************
 				public ResponseEntity<?> filtrarExamen(@PathVariable String term){
 					return ResponseEntity.ok(entityService.findByNombre(term));
 				}
-	public List<Examen> findByNombre(String nombre);
 	2.- Se modifica microservicios-cursos, se modifica la clase principal MicroserviciosExamenesApplication.java, se le agrega el 
 	scan de la entidad
 		@EntityScan({"com.alfonso.commons.alumnos.models.entity",
 				"com.alfonso.commons.examenes.models.entity",
 				"com.alfonso.app.cursos.models.entity"})
-		
 40.- **************************************************************************************************Se añaden asignaturas a los examenes
 	1.- Se modifica commons-examenes, se agrega pojo Asignatura.java
 		@Entity
@@ -1104,9 +1173,9 @@ Seccion 5: Backend: Microservicios examenes*************************************
 
 		}
 	2.- Se modifica Examen.java, se agrega atributo asignatura con su get y su set
-			@ManyToMany(fetch = FetchType.LAZY)
+			@ManyToOne(fetch = FetchType.LAZY)
 			private Asignatura asignatura;
-	3.- Se modifica Asignatura.java, se lecrean relaciones para subclases de asignatura, se agregan set y get
+	3.- Se modifica Asignatura.java, se le crean relaciones para subclases de asignatura, se agregan set y get
 			//Trae la clase padre
 		@JsonIgnoreProperties(value= {"hijos"})
 		@ManyToOne(fetch = FetchType.LAZY)
@@ -1121,20 +1190,208 @@ Seccion 5: Backend: Microservicios examenes*************************************
 					this.hijos= new ArrayList<>();
 				}
 41.- ******************************************************************************Add Componente Service y Controller para las asignaturas
-	1.- Se modifica microservicios-examenes, se agrega IAsignaturaRepository.java
+	1.- En micreservicios-examenes, se crea repositorio IAsignaturaRepository 
 		public interface IAsignaturaRepository extends CrudRepository<Asignatura, Long> {
 
 		}
-		1.2.- Se modifica IExamenService.java, se agrega metodo abstracto para buscar todas las asignaturas
-			public List<Asignatura> findAllAsignatura();
-		1.3.- Se modifica ExamenServiceImpl.java, se le agrega metodo para buscar asignaturas
-				@Autowired
-				private IAsignaturaRepository asignaturaRepo;
+	2.- Se modifica IExamenService, se agrega firma de metodo para recuperar las asignaturas  
+			public Iterable<Asignatura> findAllAsignatura();
+	3.- Se modifica ExamenServiceImpl, se agrega implementacion del metodo findAllAsignatura() 
+		3.1.- Se realia ID del repositorio IAsignaturaRepository 
+			//repository de Asignatura
+			@Autowired
+			private IAsignaturaRepository asignaturaRepo;
+		3.2.- Se crea metodo findAllAsignatura() 
+			@Override
+			public Iterable<Asignatura> findAllAsignatura() {
+				return asignaturaRepo.findAll();
+			}
+	4.- Se modifica ExamenController, se agrega metodo para recuperar asignaturas 
+		@GetMapping("asignaturas")
+		public ResponseEntity<?> getAsignaturas(){
+			return ResponseEntity.ok(entityService.findAllAsignatura());
+		}
+42.- *************************************************************************************** Añadiendo datos de prueba para las asignaturas
+	1.- Se levantan los microservicios eureka y examenes 
+	2.- Se realizan insert en la tabla 
+		INSERT INTO `asignaturas` (`id`, `nombre`, `padre_id`) VALUES
+			(1, 'Matemáticas', NULL),
+			(2, 'Lenguaje', NULL),
+			(3, 'Inglés', NULL),
+			(4, 'Ciencias Naturales', NULL),
+			(5, 'Ciencias Sociales y Historia', NULL),
+			(6, 'Música', NULL),
+			(7, 'Artes', NULL),
+			(8, 'Algebra', 1),
+			(9, 'Aritmética', 1),
+			(10, 'Trigonometría', 1),
+			(11, 'Lectura y comprensión', 2),
+			(12, 'Verbos', 2),
+			(13, 'Gramática', 2),
+			(14, 'Inglés', 3),
+			(15, 'Gramática', 3),
+			(16, 'Verbos', 3),
+			(17, 'Ciencias Naturales', 4),
+			(18, 'Biología', 4),
+			(19, 'Física', 4),
+			(20, 'Quimica', 4),
+			(21, 'Historia', 5),
+			(22, 'Ciencias Sociales', 5),
+			(23, 'Filosofía', 5),
+			(24, 'Música', 6),
+			(25, 'Artes', 7);
+	3.- Se levanta microservicio zuul 
+	4.- Se prueba en postman --> http://localhost:8092/api/examenes/asignaturas
+Seccion 5: Backend: Validaciones en crear y editar (POST y PUT )***************************************************************************
+44. *****************************************************************************************Añadiendo reglas de validaciones en los entity
+	1.- En commons-examenes
+		1.1.- Se modifica pom.xml, se agrega dependencia validation 
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-validation</artifactId>
+			</dependency>
+		1.2.- Se modifica Examen.java, se agregan validaciones a nombre, asignatura  
+			@NotEmpty
+			private String nombre;
 
-				@Override
-				public Iterable<Asignatura> findAllAsignatura() {
-					return asignaturaRepo.findAll();
+			@ManyToOne(fetch = FetchType.LAZY)
+			@NotNull
+			private Asignatura asignatura;
+	2.- En commons-alumnos
+		2.1.- Se modifica pom.xml, se agrega dependencia validation 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		2.2.- Se modifica Examen.java, se agregan validaciones a nombre, apellido, email 
+
+			@NotEmpty
+			private String nombre;
+			
+			@NotEmpty
+			private String apellido;
+			
+			@NotEmpty
+			@Email
+			private String email;
+	3.- En micreservicios-commons  
+		3.1.- Se modifica pom.xml, se agrega dependencia validation 
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-validation</artifactId>
+			</dependency>	
+		3.2.- Se modifica CommonController.java, se crea metodo para validar campos de forma generica y se modifica metodo guardar para 
+		validar entidad 
+			3.2.1.- Se crea metodo validar()
+				protected ResponseEntity<?> validar( BindingResult result){
+					Map<String, Object> errores = new HashMap<>();
+					result.getFieldErrors().forEach( err -> {
+						errores.put(err.getField(), "El campo " + err.getField() + " " + err.getDefaultMessage());
+					});
+					return ResponseEntity.badRequest().body(errores);
 				}
+			3.2.3.- Se modifica metodo guardar() , se agrega anotacion @Valid, el BindingResult y se realiza validacion de errores
+				@PostMapping
+				public ResponseEntity<?> guardar(@Valid @RequestBody E entity, BindingResult result){
+					if(result.hasErrors()) return this.validar(result);
+					E entityBD = entityService.guardar(entity);
+					return ResponseEntity.status(HttpStatus.CREATED).body(entityBD);
+				}
+	3.- En micreservicios-cursos 
+		3.1.- Se modifica entidad Curso, e agregan validaciones a nombre 
+			@NotEmpty
+			private String nombre;
+		3.2.- Se modifica CursoController, se modifica metodo editarCurso(), se agrega validacion de entidad 
+			@PutMapping("/{id}")
+			public ResponseEntity<?> editarCurso(@Valid @RequestBody Curso curso, BindingResult result, @PathVariable Long id){
+				
+				// Validacion de campos
+				if(result.hasErrors()) return this.validar(result);
+				
+				Optional<Curso> opt = this.entityService.BuscarXId(id);
+				if(!opt.isPresent()) {
+					return ResponseEntity.notFound().build();
+				}
+				Curso cursodb = opt.get();
+				cursodb.setNombre(curso.getNombre());
+				return ResponseEntity.status(HttpStatus.CREATED).body(this.entityService.guardar(cursodb));
+			}
+	4.- En micreservicios-usuarios1, se modifica AlumnoController, se añade validacion de entidad 
+		@PutMapping("/{id}")
+		public ResponseEntity<?> editar(@Valid @RequestBody Alumno alumno, BindingResult result , @PathVariable Long id){
+			
+			// Validacion de campos
+			if(result.hasErrors()) return this.validar(result);
+			
+			Optional<Alumno> opt = entityService.BuscarXId(id);
+			if(opt.isEmpty()) {
+				return ResponseEntity.notFound().build();
+			}
+			
+			Alumno alumnoDB = opt.get();
+			alumnoDB.setNombre(alumno.getNombre());
+			alumnoDB.setApellido(alumno.getApellido());
+			alumnoDB.setEmail(alumno.getEmail());
+			
+			return ResponseEntity.status(HttpStatus.CREATED).body(entityService.guardar(alumnoDB));
+		}
+	4.- En micreservicios-examenes, se modifica ExamenController, se añade validacion de entidad 
+		@PutMapping("/{id}")
+		public ResponseEntity<?> editar(@Valid @RequestBody Examen examen, BindingResult result , @PathVariable Long id){
+			
+			// Validacion de campos
+			if(result.hasErrors()) return this.validar(result);
+			
+			Optional<Examen> opt = entityService.BuscarXId(id);
+			if(!opt.isPresent()) {
+				return ResponseEntity.noContent().build();
+			}
+			Examen examenbd = opt.get();
+			examenbd.setNombre(examen.getNombre());
+			
+			//Se eliminan de la bd las preguntas eliminadas
+			List<Pregunta> eliminadas = new ArrayList<>();
+			
+			examenbd.getPreguntas()
+			.stream()
+			.filter(p -> !examenbd.getPreguntas().contains(p))
+			.forEach(examenbd::deletePregunta);
+			
+			examenbd.setPreguntas(examen.getPreguntas());
+		
+			return ResponseEntity.status(HttpStatus.CREATED).body(entityService.guardar(examenbd));
+		}
+45. *******************************************************************************************************Probando validaciones en Postman
+	1.- Se prueba micreoservicio alumno  
+		POST --> http://localhost:8092/api/alumnos
+		body: {}
+
+		Nota: Se debe validar los campos
+			{
+			    "apellido": "El campo apellido no debe estar vacío",
+			    "nombre": "El campo nombre no debe estar vacío",
+			    "email": "El campo email no debe estar vacío"
+			}
+	2.-  Se prueba micreoservicio cursos 
+		body: {}
+
+			Nota: Se debe validar los campos
+			{
+			    "asignatura": "El campo asignatura no debe ser nulo",
+			    "nombre": "El campo nombre no debe estar vacío"
+			}
+
+		body: {
+				    "nombre": ""
+				}
+			Nota: Se debe validar los campos
+			{
+			    "asignatura": "El campo asignatura no debe ser nulo",
+			    "nombre": "El campo nombre el tamaño debe estar entre 4 y 20"
+			}
+
+
+
 
 
 
