@@ -1242,7 +1242,7 @@ Seccion 5: Backend: Microservicios examenes*************************************
 			(25, 'Artes', 7);
 	3.- Se levanta microservicio zuul 
 	4.- Se prueba en postman --> http://localhost:8092/api/examenes/asignaturas
-Seccion 5: Backend: Validaciones en crear y editar (POST y PUT )***************************************************************************
+Seccion 6: Backend: Validaciones en crear y editar (POST y PUT )***************************************************************************
 44. *****************************************************************************************Añadiendo reglas de validaciones en los entity
 	1.- En commons-examenes
 		1.1.- Se modifica pom.xml, se agrega dependencia validation 
@@ -1389,9 +1389,384 @@ Seccion 5: Backend: Validaciones en crear y editar (POST y PUT )****************
 			    "asignatura": "El campo asignatura no debe ser nulo",
 			    "nombre": "El campo nombre el tamaño debe estar entre 4 y 20"
 			}
+46. *******************************************************************************************************************Añadiendo paginación
+	1.- Se modifica microservicios-usuarios1
+		1.1.- Se modifica IAlumnosRepository, se cambia la interfaz a la que hereda PagingAndSortingRepository
+			@Repository
+			public interface IAlumnosRepository extends PagingAndSortingRepository<Alumno, Long> {
+	2.- Se modifica microservicios-examenes
+		1.1.- Se modifica IExamenRepository, se cambia la interfaz a la que hereda PagingAndSortingRepository
+			@Repository
+			public interface IExamenRepository extends PagingAndSortingRepository<Examen, Long> {
+	3.- Se modifica microservicios-cursos
+		1.1.- Se modifica ICursoRepository, se cambia la interfaz a la que hereda PagingAndSortingRepository
+			@Repository
+			public interface ICursoRepository extends PagingAndSortingRepository<Curso, Long> {
+	4.- Se modifica microservicios-commons, se modifica CommonServiceImpl
+		4.1.- Se modifica la firma se extiende PagingAndSortingRepository
+			public class CommonServiceImpl<E, R extends PagingAndSortingRepository<E,Long>> implements ICommonService<E> {
+		4.2.- Se crea metodo pageable buscarTodos() retorna un Page	
 
+			@Override
+			@Transactional(readOnly = true)
+			public Page<E> buscarTodos(Pageable pageable) {
+				return this.buscarTodos(pageable);
+			}
+	5.- Se modifica microservicios-commons, se modifica ICommonService, se crea firma de metodo pageable buscarTodos()
+			public Page<E> buscarTodos(Pageable pageable);
+	6.- Se modifica microservicios-commons, se modifica CommonController, se crea metodo pageable litar()
+			@GetMapping("/paginable")
+			public ResponseEntity<?> listar(Pageable pageable){
+				return ResponseEntity.ok().body(entityService.buscarTodos(pageable));
+			}
+47. *********************************************************************************************************Probando paginación en Postman
+	1.- Se prueba en postman paginacion del microservicio de usuarios
+		http://localhost:8092/api/alumnos/paginable?page=1&size=3
 
+		Respuesta:
+			{
+			    "content": [
+			        {
+			            "id": 4,
+			            "nombre": "Antonio",
+			            "apellido": "Piñango",
+			            "email": "aa@gmail",
+			            "createAt": "2022-02-07T22:56:35.378+00:00"
+			        },
+			        {
+			            "id": 5,
+			            "nombre": "Yalaury",
+			            "apellido": "toboa",
+			            "email": "Yalaury@gmail",
+			            "createAt": "2022-02-07T22:57:11.834+00:00"
+			        },
+			        {
+			            "id": 6,
+			            "nombre": "Camila",
+			            "apellido": "toboa",
+			            "email": "Camila@gmail",
+			            "createAt": "2022-02-07T22:57:27.363+00:00"
+			        }
+			    ],
+			    "pageable": {
+			        "sort": {
+			            "empty": true,
+			            "sorted": false,
+			            "unsorted": true
+			        },
+			        "offset": 3,
+			        "pageNumber": 1,
+			        "pageSize": 3,
+			        "paged": true,
+			        "unpaged": false
+			    },
+			    "last": false,
+			    "totalElements": 9,
+			    "totalPages": 3,
+			    "size": 3,
+			    "number": 1,
+			    "sort": {
+			        "empty": true,
+			        "sorted": false,
+			        "unsorted": true
+			    },
+			    "first": false,
+			    "numberOfElements": 3,
+			    "empty": false
+			}
+Seccion 5: Backend: Upload de foto en microservicio alumnos ********************************************************************************
+48. *********************************************************************************Añadiendo atributo foto del tipo Blob en entity Alumno
+***************************************************************************************************************************************@Lob
+*********************************************************************************************************************************@JsonIgnore
+	1.- Se modifica libreria commons-alumnos
+		1.1.- Se modifica Alumno.java
+			1.1.1.- Se crea atributo de tipo byte[] para la foto con su get y set 
+				//Para manejo de datos muy grandes 
+				@Lob
+				@JsonIgnore
+				private byte[] foto; 
+	2.- Se crea metodo para obtener el hash de la foto 
+			public Integer getFotoHshCode() {
+				return ( this.foto != null ) ? this.foto.hashCode() : null;
+			}
+49. *******************************************************************Añadeindo métodos handlers con soporte multipartfile para post y put
+	1.- Se modifica microservicios-asuarios1, se modifica AlumnoController.java 
+		1.1.- Se crea metodo guardarConFoto() 
+				@PostMapping("crear-con-foto")
+				//Se agrega MultipartFile
+				public ResponseEntity<?> guardarConFoto(@Valid Alumno alumno, BindingResult result, @RequestParam MultipartFile archivo) throws IOException {
+					if( !archivo.isEmpty() ) {
+						alumno.setFoto(archivo.getBytes());
+					}
+					return super.guardar(alumno, result);
+				}
+		1.2.- Se crea metodo editarConFoto() 
+				@PutMapping("/editar-con-foto/{id}")
+				// No se utiliza en @RequestBody ya que no maneja json y se agrega MultipartFile
+				public ResponseEntity<?> editarConFoto(@Valid Alumno alumno, BindingResult result , @PathVariable Long id,
+						@RequestParam MultipartFile archivo) throws IOException{
+					
+					// Validacion de campos
+					if(result.hasErrors()) return this.validar(result);
+					
+					Optional<Alumno> opt = entityService.BuscarXId(id);
+					if(opt.isEmpty()) {
+						return ResponseEntity.notFound().build();
+					}
+					
+					Alumno alumnoDB = opt.get();
+					alumnoDB.setNombre(alumno.getNombre());
+					alumnoDB.setApellido(alumno.getApellido());
+					alumnoDB.setEmail(alumno.getEmail());
+					// Se agrega la foto 
+					if( !archivo.isEmpty() ) {
+						alumnoDB.setFoto(archivo.getBytes());
+					}
+					
+					return ResponseEntity.status(HttpStatus.CREATED).body(entityService.guardar(alumnoDB));
+				}
+50. *************************************************************************************************************Probando upload en Postman
+	1.- Se prueba POST --> http://localhost:8092/api/alumnos/crear-con-foto
+		form-data 
+			archivo --> se selecciona la imagen 
+			nombre 	--> prosegur
+			apellido --> areiza	
+			email    --> proegur@gmail.com  
 
+		respuesta: 
+		{
+		    "id": 10,
+		    "nombre": "prosegur",
+		    "apellido": "areiza",
+		    "email": "proegur@gmail.com",
+		    "createAt": "2022-02-08T00:01:10.141+00:00",
+		    "fotoHshCode": 911538362
+		}
+	2.- Se prueba PUT --> http://localhost:8092/api/alumnos/editar-con-foto/1
+		form-data 
+			archivo --> se selecciona la imagen 
+			nombre 	--> elvis
+			apellido --> areiza	
+			email    --> dirielafran@gmail.com 
+		Respuesta 
+			{
+			    "id": 1,
+			    "nombre": "elvis",
+			    "apellido": "areiza",
+			    "email": "dirielfran@gmail.com",
+			    "createAt": "2022-02-04T01:56:09.968+00:00",
+			    "fotoHshCode": 220310321
+			}
+51. *****************************************************************Añadiendo método handler del controlador para ver la imagen del alumno
+***********************************************************************************************************************************Resource
+	1.- Se modifica microservicios-usuarios, se modifica AlumnoController.java, se crea metodo para mostrar la foto 
+			@GetMapping("/uploads/img/{id}")
+			public  ResponseEntity<?> verFoto(@PathVariable Long id){
+				Optional<Alumno> opt = entityService.BuscarXId(id);
+				if(opt.isEmpty() || opt.get().getFoto() == null) {
+					return ResponseEntity.notFound().build();
+				}
+				
+				Resource imagen = new ByteArrayResource(opt.get().getFoto());
+				return ResponseEntity.ok()
+						.contentType(MediaType.IMAGE_JPEG)
+						.body(imagen);
+			}	
+	2.- Se prueba en postman 
+		GET --> http://localhost:8092/api/alumnos/uploads/img/1
+		Nota: se debe motrar la imagen
+52. *******************************************************************************************************Creando microservicio respuestas
+	1.- 1.- Desde sts se crea un new Spring Starter Project
+			1.1.- Se crea proyecto
+					name 			 --> microservicios-respuesta
+					type         -->Maven
+					Packaging    -->jar
+					Java version --> 8
+					Group 		 --> com.alfonso.app.respuesta
+					artifact	 --> microservicios-repuesta
+					package      --> com.alfonso.app.respuesta
+
+					next-->
+
+					Spring Boot Project 		--> 2.3.4
+					Seleccionas dependencias	-->	Spring Boot DeevTool
+												--> Spring Data JPA
+												--> MySQL Driver
+												--> Spring Web
+												--> Eureka Discovery Client
+	2.- Se modifica microservicios-respuesta 
+		2.1.- Se modifica application.properties 
+			#Config eureka como cliente
+			spring.application.name=microservicios-respuesta
+			#se habilita puerto de forma ramdom, asigna puerto automaticamente
+			server.port=${PORT:0}
+			#Se configura intancia id en eureka de forma random
+			eureka.instance.instance-id=${spring.application.name}:${random.value}
+			#ruta de eureka
+			eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+			#Configuracion del datasource
+			#spring.datasource.url=jdbc:mysql://localhost/db_springboot_backend
+			spring.datasource.url=jdbc:mysql://localhost:3306/db_microservicios?useSSL=false&serverTimezone=America/Argentina/Buenos_Aires&allowPublicKeyRetrieval=true
+			spring.datasource.username=alfonso
+			spring.datasource.password=danger120-
+			spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+			#Se configura el dialecto
+			#InnoDBDialec soporte a integridad referencial
+			spring.jpa.database-platform=org.hibernate.dialect.MySQL57Dialect
+			#Configuracion para que las tables se creen de forma automatica
+			#a partir de las clases entity
+			spring.jpa.generate-ddl=true
+			#Configuracion para mostrar las consultas nativas SQL
+			logging.level.org.hibernate.SQL=debug
+		2.2.- Se modifica la clase MicroserviciosRespuestaApplication
+			@EnableEurekaClient
+			@SpringBootApplication
+			public class MicroserviciosRespuestaApplication {
+		2.3.- Se agrega paquete 
+			package com.alfonso.app.respuesta.models.entity;
+			package com.alfonso.app.respuesta.models.repository;
+		2.4.- Se crea clase repositorio 
+			public interface RespuestaRepository extends CrudRepository<Respuesta, Long>{
+		2.5.- Se crea entidad 
+			@Entity
+			@Table(name="respuesta")
+			public class Respuesta {
+				
+				@Id
+				@GeneratedValue(strategy = GenerationType.IDENTITY)
+				private Long id; 
+				
+				private String texto;
+
+				public Long getId() {
+					return id;
+				}
+
+				public void setId(Long id) {
+					this.id = id;
+				}
+
+				public String getTexto() {
+					return texto;
+				}
+
+				public void setTexto(String texto) {
+					this.texto = texto;
+				}
+
+			}
+
+	3.- Se modifica microservicios-zuul, se agrega ruta a microservicios -respuesta 
+		#Se crea la ruta al microservicio respuesta
+		zuul.routes.examenes.service-id=microservicios-respuesta
+		//zuul.routes.examenes.path=/api/respuetas/**
+53. ***************************************************************************************************************Configurando entity scan
+	1.- Se modifica microservicios-respuesta 
+		1.1.- Se modifica pom.xml, se agregan dependencias de commons-alumnos y commons-examenes
+			<dependency>
+				<groupId>com.alfonso.commons.examenes</groupId>
+				<artifactId>commons-examenes</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alfonso.commons.alumnos</groupId>
+				<artifactId>commons-alumnos</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+		1.2.- Se modifica clase principal MicroserviciosRespuestaApplication, se agrega EntityScan 
+			@EnableEurekaClient
+			@SpringBootApplication
+			@EntityScan({"com.alfonso.app.respuesta.models.entity",
+							"com.alfonso.commons.alumnos.models.entity",
+							"com.alfonso.commons.examenes.models.entity"})
+			public class MicroserviciosRespuestaApplication {
+54. ****************************************************************Añadiendo entity Respuesta y sus relaciones con el alumno y la pregunta
+	1.- Se modifica microservicios-respuesta, se modifica entidad Respuesta se agregan atributos alumno, pregunta
+		@ManyToOne(fetch = FetchType.LAZY)
+		private Alumno alumno;
+		
+		@OneToOne(fetch = FetchType.LAZY)
+		private Pregunta pregunta; 
+
+		public Alumno getAlumno() {
+			return alumno;
+		}
+
+		public void setAlumno(Alumno alumno) {
+			this.alumno = alumno;
+		}
+
+		public Pregunta getPregunta() {
+			return pregunta;
+		}
+
+		public void setPregunta(Pregunta pregunta) {
+			this.pregunta = pregunta;
+		}
+55. *********************************************************************************************Añadiendo componentes service y controller
+	1.- Se modifica microservicios-respuesta 
+		1.1.- Se crea clase de servicio  
+			1.1.1.- Se crea paquete de servicios  
+				package com.alfonso.app.respuesta.services;
+			1.1.2.- Se crea interface del servicio 
+				public interface IRespuestaService {
+					public Iterable<Respuesta> saveAll( Iterable<Respuesta> respuestas);
+				}
+			1.1.3.- Se crea implementacion del servicio 
+				@Service
+				public class RespuestaServiceImpl implements IRespuestaService {
+					
+					@Autowired
+					private RespuestaRepository respuestaRepository;
+
+					@Override
+					@Transactional
+					public Iterable<Respuesta> saveAll(Iterable<Respuesta> respuestas) {
+						return respuestaRepository.saveAll(respuestas);
+					}
+				}	
+		1.2.- Se crea controlador de respuestas 
+			1.2.1.- Se crea paquete para el controlador  
+				package com.alfonso.app.respuesta.controller;
+			1.2.2.- Se crea controlador 
+				@RestController
+				public class RespuestaController {
+					
+					@Autowired
+					IRespuestaService iRespuestaService;
+					
+					@PostMapping
+					public ResponseEntity<?> crear(@RequestBody Iterable<Respuesta> respuestas){
+						Iterable<Respuesta> respuestasDB = this.iRespuestaService.saveAll(respuestas);
+						return ResponseEntity.status(HttpStatus.CREATED).body(respuestasDB);
+					}
+				} 
+56. **************************************************************************************************************Escribiendo consulta JPQL 
+	1.- Se modifica microservicios-respuesta, se modifica repositorio, se realiza consulta JPQL 
+		@Repository
+		public interface RespuestaRepository extends CrudRepository<Respuesta, Long>{
+			
+			@Query("select r from Respuesta r join fetch r.alumno a join fetch r.pregunta p join fetch p.examen e where a.id = ?1 and e.id = ?2")
+			public Iterable<Respuesta> findRespuestaByAlumnoByExamen(Long idAlumno, Long idExamen);
+
+		}
+57. *************************************************************Añadiendo métodos en service y controlador para las respuestas del alumno
+	1.- Se modifica microservicios-respuesta 
+		1.1.- Se modifica iRespuestaService, se crea firma del metodo 
+			public Iterable<Respuesta> findRespuestaByAlumnoByExamen(Long idAlumno, Long idExamen);
+		1.2.- Se modifica RespuestaServiceImpl.java, se implementa metodo  
+			@Override
+			@Transactional(readOnly = true)
+			public Iterable<Respuesta> findRespuestaByAlumnoByExamen(Long idAlumno, Long idExamen) {
+				return respuestaRepository.findRespuestaByAlumnoByExamen(idAlumno, idExamen);
+			}	
+		1.3.- Se crea metodo en el controlador que recupera las respuestas por alumno y por examen  
+			@GetMapping("/alumno/{idAlumno}/examen/{idExamen}")
+			public ResponseEntity<?> getRespuestasXAlumXExam(@PathVariable Long idAlumno, @PathVariable Long idExamen){
+				Iterable<Respuesta> respuestas = iRespuestaService.findRespuestaByAlumnoByExamen(idAlumno, idExamen);
+				return ResponseEntity.ok(respuestas);
+			}
 
 
 
