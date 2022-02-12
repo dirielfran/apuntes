@@ -1767,8 +1767,286 @@ Seccion 5: Backend: Upload de foto en microservicio alumnos ********************
 				Iterable<Respuesta> respuestas = iRespuestaService.findRespuestaByAlumnoByExamen(idAlumno, idExamen);
 				return ResponseEntity.ok(respuestas);
 			}
+58. ***************************************************************Consulta JPQL para obtener los ids de exámenes respondidos por el alumno
+*********************************************************************************************************************************@Transient
+	1.- Se modifica la libreria commons-examenes, se modifica Examen.java, se le agrega atributo respondido 
+		1.1.- Se crea el atributo y se anota con la anotacion @Trasient para indicar que no persistira en la tabla de BD
+			@Transient
+			private boolean respondido;
+		1.2.- Se crea su get y set 
+			public boolean isRespondido() {
+				return respondido;
+			}
 
+			public void setRespondido(boolean respondido) {
+				this.respondido = respondido;
+			}
+	2.- Se modifica microservicios-respuesta, se moddifica RespuestaRepository, se crea consulta para obtener ids de examenes con respuesta 
+	por alumno  
+		@Query("select e.id from Respuesta r join r.alumno a join r.pregunta p join p.examen e where a.id=? group by e.id")
+		public Iterable<Long> findExamenesIdsConRespuestaByAlumno(Long alumnoId);
+59. ************************************************************************Añadiendo métodos en service y controlador para ids de exámenes		
+	1.- Se modifica microservicios-respuesta 
+		1.1.- Se modifica IRespuestaService.java, se agrega la firma para metodo de consulta findExamenesIdsConRespuestaByAlumno() 
+			public Iterable<Long> findExamenesIdsConRespuestaByAlumno(Long alumnoId);
+		1.2.- Se modifica RespuestaServiceImpl, se implementa metodo findExamenesIdsConRespuestaByAlumno()	
+			@Override
+			@Transactional(readOnly = true)
+			public Iterable<Long> findExamenesIdsConRespuestaByAlumno(Long alumnoId) {
+				return respuestaRepository.findExamenesIdsConRespuestaByAlumno(alumnoId);
+			}
+		1.3.- Se modifica RespuestaController.java, se crea metodo para la consulta getExamenesIdsRespondidos()
+			@GetMapping("/alumno/{idAlumno}/examenes-respondidos")
+			public ResponseEntity<?> getExamenesIdsRespondidos(@PathVariable Long idAlumno){
+				Iterable<Long> examenesIds = iRespuestaService.findExamenesIdsConRespuestaByAlumno(idAlumno);
+				return ResponseEntity.ok(examenesIds);
+			}
+60. ***************************************************************************************************Probando en postman responder examen		
+	0.- Se levantan lo microservicios:
+		eureka
+		cursos  
+		examenes  
+		respuesta  
+		usuarios 
+		zuul 
+	1.- Se abre postman, se prueba micreoservicio-respuesta  
+		1.1.- Se insertan respuestas 
+			Metodo: POST 
+			path: http://localhost:8092/api/respuestas
+			body --> raw --> JSON: 
+				[
+				    {
+				        "texto": "Cristobal Colon",
+				        "alumno": {
+				            "id": 2,
+				            "nombre": "Diego",
+				            "apellido": "Areiza",
+				            "email": "diego2@gmail",
+				            "createAt": "2022-02-04T01:56:24.644+00:00",
+				            "fotoHshCode": null
+				        },
+				        "pregunta": {
+				            "id": 1,
+				            "texto": "Quien descubrio Centro America?"
+				        }
+				    },
+				    {
+				        "texto": "15",
+				        "alumno": {
+				            "id": 2,
+				            "nombre": "Diego",
+				            "apellido": "Areiza",
+				            "email": "diego2@gmail",
+				            "createAt": "2022-02-04T01:56:24.644+00:00",
+				            "fotoHshCode": null
+				        },
+				        "pregunta": {
+				            "id": 3,
+				            "texto": "Cuantos paises tiene America?"
+				        }
+				    },
+				    {
+				        "texto": "Caracas",
+				        "alumno": {
+				            "id": 2,
+				            "nombre": "Diego",
+				            "apellido": "Areiza",
+				            "email": "diego2@gmail",
+				            "createAt": "2022-02-04T01:56:24.644+00:00",
+				            "fotoHshCode": null
+				        },
+				        "pregunta": {
+				            "id": 4,
+				            "texto": "Capital de Venezuela?"
+				        }
+				    }
+				]
+		1.2.- Se prueba metodo getRespuestasXAlumXExam() 
+			metodo: GET 
+			Path: http://localhost:8092/api/respuestas/alumno/2/examen/1
+			Respuesta:
+				[
+				    {
+				        "id": 1,
+				        "texto": "Cristobal Colon",
+				        "alumno": {
+				            "id": 2,
+				            "nombre": "Diego",
+				            "apellido": "Areiza",
+				            "email": "diego2@gmail",
+				            "createAt": "2022-02-04T01:56:24.644+00:00",
+				            "fotoHshCode": null
+				        },
+				        "pregunta": {
+				            "id": 1,
+				            "texto": "Quien descubrio Centro America?",
+				            "examen": {
+				                "id": 1,
+				                "nombre": "Examen de Historia",
+				                "createAt": "2022-02-05T12:25:27.016+00:00",
+				                "asignatura": null,
+				                "respondido": false
+				            }
+				        }
+				    },
+				    {
+				        "id": 2,
+				        "texto": "15",
+				        "alumno": {
+				            "id": 2,
+				            "nombre": "Diego",
+				            "apellido": "Areiza",
+				            "email": "diego2@gmail",
+				            "createAt": "2022-02-04T01:56:24.644+00:00",
+				            "fotoHshCode": null
+				        },
+				        "pregunta": {
+				            "id": 3,
+				            "texto": "Cuantos paises tiene America?",
+				            "examen": {
+				                "id": 1,
+				                "nombre": "Examen de Historia",
+				                "createAt": "2022-02-05T12:25:27.016+00:00",
+				                "asignatura": null,
+				                "respondido": false
+				            }
+				        }
+				    },
+				    {
+				        "id": 3,
+				        "texto": "Caracas",
+				        "alumno": {
+				            "id": 2,
+				            "nombre": "Diego",
+				            "apellido": "Areiza",
+				            "email": "diego2@gmail",
+				            "createAt": "2022-02-04T01:56:24.644+00:00",
+				            "fotoHshCode": null
+				        },
+				        "pregunta": {
+				            "id": 4,
+				            "texto": "Capital de Venezuela?",
+				            "examen": {
+				                "id": 1,
+				                "nombre": "Examen de Historia",
+				                "createAt": "2022-02-05T12:25:27.016+00:00",
+				                "asignatura": null,
+				                "respondido": false
+				            }
+				        }
+				    }
+				]
+		1.3.- Se prueba metodo getExamenesIdsRespondidos() 
+			Metodo: GET 
+			Path: http://localhost:8092/api/respuestas/alumno/2/examenes-respondidos
+			Respuesta:
+				[1]
+61. **********************************************************************Implementando cliente HTTP Feign en cursos para obteners examenes
+*******************************************************************************************************************************@FeignClient
+	1.- Se modfica micreoservicio-cursos 
+		1.1.- Se modifica pom.xml, Se agrega dependencia de openfeign
+				<dependency>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-openfeign</artifactId>
+				</dependency>
+		1.2.- Se modifica clase principal para habilitar FeignClient  
+			// Se habilita FeingClient
+			@EnableFeignClients
+			//Se configura la aplicación Spring Boot actúe como un cliente de Eureka.
+			@EnableEurekaClient
+			@SpringBootApplication
+			//Se agrega los paquetes para el escaneo de la entidad
+			@EntityScan({"com.alfonso.commons.alumnos.models.entity",
+							"com.alfonso.commons.examenes.models.entity",
+							"com.alfonso.app.cursos.models.entity"})
+			public class MicroserviciosCursosApplication {
 
+				public static void main(String[] args) {
+					SpringApplication.run(MicroserviciosCursosApplication.class, args);
+				}
+
+			}
+		1.3.- Se crea interface RespuestaFeingClient.java 
+			1.3.1.- Se crea paquete package --> com.alfonso.app.cursos.clients
+			1.3.2.- Se crea la interface 
+				@FeignClient(name = "microservicios-respuesta")
+				public interface RespuestaFeignClient {
+					
+					@GetMapping("/alumno/{idAlumno}/examenes-respondidos")
+					public Iterable<Long> getExamenesIdsRespondidos(@PathVariable Long idAlumno);
+
+				}
+		1.4.- Se modifica ICursoService, se agrega la firma del metodo 
+			public Iterable<Long> getExamenesIdsRespondidos(Long idAlumno);
+		1.5.- Se modifica CursoServiceImpl.java, se implementa el metodo   
+			@Override
+			public Iterable<Long> getExamenesIdsRespondidos(Long idAlumno) {
+				return respuestaFeignClient.getExamenesIdsRespondidos(idAlumno);
+			}
+62. ***********************************************************************Comunicacion con servicio respuesta para obtener ids de examenes
+	1.- Se modifica CursoController, metodo buscarCursoXAlumnoId(), se agrega modificacion a cada examen en el atributo respondido 
+		//Metodo que devuelve curso por id del alumno
+		@GetMapping("/alumno/{id}")
+		public ResponseEntity<?> buscarCursoXAlumnoId(@PathVariable Long id){
+			Curso curso = entityService.findCursoByAlumnoId(id);
+			// Valida si existe curso
+			if( null != curso) {
+				//Se recuperan ids de examenes respondidos por alumno
+				List<Long> examenesIds = (List<Long>) entityService.getExamenesIdsRespondidos(id);
+				
+				//Se valida si el examen del curso fue respondido 
+				List<Examen> examenes = curso.getExamenes().stream().map( examen -> {
+					if( examenesIds.contains(examen.getId())) {
+						examen.setRespondido(true);
+					}
+					return examen;
+				}).collect(Collectors.toList());
+				curso.setExamenes(examenes);
+			}
+			return ResponseEntity.ok(curso);
+		}
+	2.- Se prueba en postman 
+		Metodo: GET
+		Path: http://localhost:8092/api/cursos/alumno/3
+		Respuesta: Debe traer el curso del alumno con el atributo respondido en examen
+			{
+			    "id": 7,
+			    "nombre": "4° Secundaria",
+			    "createAt": "2022-02-04T19:28:19.358+00:00",
+			    "alumnos": [
+			        {
+			            "id": 2,
+			            "nombre": "Diego",
+			            "apellido": "Areiza",
+			            "email": "diego2@gmail",
+			            "createAt": "2022-02-04T01:56:24.644+00:00",
+			            "fotoHshCode": null
+			        }
+			    ],
+			    "examenes": [
+			        {
+			            "id": 1,
+			            "nombre": "Examen de Historia",
+			            "preguntas": [
+			                {
+			                    "id": 1,
+			                    "texto": "Quien descubrio Centro America?"
+			                },
+			                {
+			                    "id": 3,
+			                    "texto": "Cuantos paises tiene America?"
+			                },
+			                {
+			                    "id": 4,
+			                    "texto": "Capital de Venezuela?"
+			                }
+			            ],
+			            "createAt": "2022-02-05T12:25:27.016+00:00",
+			            "asignatura": null,
+			            "respondido": true
+			        }
+			    ]
+			}
 
 Apuntes************************************************************************************************************************************
 	Eureka Server**********************************************************************************************************************
