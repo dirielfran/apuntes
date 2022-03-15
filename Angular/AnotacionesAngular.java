@@ -16215,7 +16215,7 @@ cambio de puerto 					--> ng serve --port 4401
 			  error: null
 			}
 
-			//Se crean las funciones por cada accon
+			//Se crean las funciones por cada accion
 			const _usuariosReducer = createReducer(UsuariosInitialState,
 
 			    on(cargarUsuarios , state => ({ ...state, loading: true})),
@@ -16923,6 +16923,7 @@ Complementarios*****************************************************************
 			    }
 	************************************************************************************************************************
 	Evitar propagacion de eventos*******************************************************************************************
+		<button pButton pRipple type="button" (click)="$event.stopPropagation()" icon="pi pi-save" iconPos="right" class="p-button-rounded p-button-success p-button-sm"></button>
 	************************************************************************************************************************
 	Temas de AngularMaterial************************************************************************************************
 		deeppurple-amber.css
@@ -17334,6 +17335,7 @@ Modificaciones de Kiosco pendientes*********************************************
 		    nombre: "Diego",
 		    apellido : "areiza",
 		    edad : 15
+		    
 		}
 
 		const {nombre, apellido, edad} = persona;

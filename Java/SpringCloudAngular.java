@@ -1389,6 +1389,7 @@ Seccion 6: Backend: Validaciones en crear y editar (POST y PUT )****************
 			    "asignatura": "El campo asignatura no debe ser nulo",
 			    "nombre": "El campo nombre el tamaño debe estar entre 4 y 20"
 			}
+Seccion 7: Backend: Paginacion*************************************************************************************************************
 46. *******************************************************************************************************************Añadiendo paginación
 	1.- Se modifica microservicios-usuarios1
 		1.1.- Se modifica IAlumnosRepository, se cambia la interfaz a la que hereda PagingAndSortingRepository
@@ -1474,7 +1475,7 @@ Seccion 6: Backend: Validaciones en crear y editar (POST y PUT )****************
 			    "numberOfElements": 3,
 			    "empty": false
 			}
-Seccion 5: Backend: Upload de foto en microservicio alumnos ********************************************************************************
+Seccion 8: Backend: Upload de foto en microservicio alumnos ********************************************************************************
 48. *********************************************************************************Añadiendo atributo foto del tipo Blob en entity Alumno
 ***************************************************************************************************************************************@Lob
 *********************************************************************************************************************************@JsonIgnore
@@ -1575,6 +1576,7 @@ Seccion 5: Backend: Upload de foto en microservicio alumnos ********************
 	2.- Se prueba en postman 
 		GET --> http://localhost:8092/api/alumnos/uploads/img/1
 		Nota: se debe motrar la imagen
+Seccion 9: Backend: Microservicio-respuesta************************************************************************************************
 52. *******************************************************************************************************Creando microservicio respuestas
 	1.- 1.- Desde sts se crea un new Spring Starter Project
 			1.1.- Se crea proyecto
@@ -2047,7 +2049,101 @@ Seccion 5: Backend: Upload de foto en microservicio alumnos ********************
 			        }
 			    ]
 			}
+Seccion 10: Backend: Spring Cloud Gateway**************************************************************************************************
+63. ***********************************************************************************Creando y configurando servidor Spring Cloud Gateway
+	1.- 1.- Desde sts se crea un new Spring Starter Project
+			1.1.- Se crea proyecto
+					name 			--> microservicios-gateway
+					type         	-->Maven
+					Packaging    	-->jar
+					Java version 	--> 8
+					Group 		 --> com.alfonso.app.gateway
+					artifact	 	--> microservicios-gateway
+					package      	--> com.alfonso.app.gateway
 
+					next-->
+
+					Spring Boot Project 		--> 2.6.3
+					Seleccionas dependencias	-->	Spring Boot DeevTool
+												--> Gateway
+												--> Eureka Discovery Client
+	2.- Se modifica la clase principal, se habilita eurekaClient 
+		@EnableEurekaClient
+		@SpringBootApplication
+		public class MicroserviciosGatewayApplication {
+
+			public static void main(String[] args) {
+				SpringApplication.run(MicroserviciosGatewayApplication.class, args);
+			}
+
+		}
+	3.- Se modifica el application.properties, se agrega las configuraciones del gateway 
+		spring.application.name=microservicios-gateway
+		server.port=8090
+
+		#Se registra donde se encuentra eureka 
+		eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+
+		#Se crea la ruta al microservicio usuario
+		spring.cloud.gateway.routes[0].id=microservicios-usuarios
+		#Balanceo de cargas con loadBalancer
+		spring.cloud.gateway.routes[0].uri=lb://microservicios-usuarios
+		#Se configura la ruta 
+		/*spring.cloud.gateway.routes[0].predicates=Path=/api/alumnos/**
+		#que parametros se eliminan  en la request internamente, se borran los dos primeros prefijos del path
+		spring.cloud.gateway.routes[0].filters=StripPrefix=2
+
+		#Se crea la ruta al microservicio cursos
+		spring.cloud.gateway.routes[1].id=microservicios-cursos
+		spring.cloud.gateway.routes[1].uri=lb://microservicios-cursos
+		spring.cloud.gateway.routes[1].predicates=Path=/api/cursos/**
+		spring.cloud.gateway.routes[1].filters=StripPrefix=2
+
+		#Se crea la ruta al microservicio examenes
+		spring.cloud.gateway.routes[2].id=microservicios-examenes
+		spring.cloud.gateway.routes[2].uri=lb://microservicios-examenes
+		spring.cloud.gateway.routes[2].predicates=Path=/api/examenes/**
+		spring.cloud.gateway.routes[2].filters=StripPrefix=2
+
+		#Se crea la ruta al microservicio respuesta
+		spring.cloud.gateway.routes[3].id=microservicios-respuesta
+		spring.cloud.gateway.routes[3].uri=lb://microservicios-respuesta
+		spring.cloud.gateway.routes[3].predicates=Path=/api/respuestas/**
+		spring.cloud.gateway.routes[3].filters=StripPrefix=2
+
+
+		#Se deshabilita ribbon  para el balanceo de carga
+		spring.cloud.loadbalancer.enabled=false*/
+64. **********************************************************************************Probando Balanceo de carga Spring Cloud Load Balancer
+	1.- Se modifica microservicios-cursos 
+		1.1.- Se agrega dependencia --> spring-cloud-starter-loadbalancer en el pom.xml, desde el 
+			proyecto --> rigth --> Spring --> addStarters --> Spring Cloud Routing --> Cloud loadBalancer
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-loadbalancer</artifactId>
+			</dependency> 
+		1.2.- Se modifica application.properties, se agrega variable de entorno para prueba
+			#Se configura variable de entorno para pruebas 
+			config.balanceador.test=${BALANCEADOR_TEST: por defecto}
+		1.3.- Se modifica CursoController.java, se agrega endpoint    
+				//Para la variable de entorno 
+				@Value("${config.balanceador.test}")
+				private String balanceadorTest;
+				
+				@GetMapping("/balanceador-test")
+				public ResponseEntity<?> balancedorTest() {
+					Map<String, Object> response = new HashMap<String, Object>();
+					response.put("balanceador", balanceadorTest);
+					response.put("cursos", this.entityService.buscarTodos());
+					return ResponseEntity.ok(response);
+				}
+65. **************************************************************************************************Probando balanceo de carga en postman
+
+
+
+
+https://ard333.medium.com/authentication-and-authorization-using-jwt-on-spring-webflux-29b81f813e78
 Apuntes************************************************************************************************************************************
 	Eureka Server**********************************************************************************************************************
 		Eureka Server es una aplicación que contiene la información sobre todas las aplicaciones de servicio al cliente. Cada servicio 
