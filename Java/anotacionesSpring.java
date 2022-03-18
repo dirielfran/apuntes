@@ -3358,7 +3358,7 @@ Spring Data JPA integracion con Spring MVC**************************************
 		23.2.- Se agrega el metodo buscarTodas() a la clase de servicio, BannersServiceJPA, y se crea metodo en el controlador
 			23.2.1.- Se crea metodo buscarTodas()
 				@Override
-159830				public Page<Banner> buscarTodas(Pageable pagina) {
+				public Page<Banner> buscarTodas(Pageable pagina) {
 					return bannersRepo.findAll(pagina);
 				}
 			23.2.2.- Se crea metodo en el controlador
@@ -3405,7 +3405,7 @@ Spring Data JPA integracion con Spring MVC**************************************
 			24.3.2.- Se crea clase de servicio NotociasServiceJPA.java
 				24.3.2.1.- Se implementa la interface INoticiasService.java
 					@Service
-					public class NoticiasServiceJPA implements INoticiasService{
+					public class NoticiasServiceJPA implements INoticiasService{...}
 				24.3.2.2.- Se crea intancia de un objeto repositorio por inyeccion de dependecias
 					@Autowired
 					private NoticiasRepository noticiasRepo;
@@ -4109,6 +4109,8 @@ Spring Data JPA integracion con Spring MVC**************************************
 					private int id;
 					private String cuenta;
 					private String perfil;
+
+				}
 			7.1.7.- se agregan sus get, set y el metodo toString
 		7.2.- Creacion de repositorios
 			7.2.1.- Se crea Interface repositorio  UsuarioRepository.java
@@ -4524,7 +4526,7 @@ Anotaciones*********************************************************************
 
 				@EnableGlobalMethodSecurity(securedEnabled = true)
 				@Configuration
-				public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
+				public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{...}
 		-----------------------------------------------------------------------------------------------------------------------
 		@Secured
 			La anotación @Secured se utiliza a nivel de método. Por ejemplo, puede agregar la anotación @Secured encima del 
@@ -4695,7 +4697,7 @@ Seccion 22 SpringBoot y thymeleaf***********************************************
 	2.2.- Se crea dentro del paquete creado una clase -->HomeController
 		2.2.1.- Se le agrega la anotacion @RestController
 			@Controller
-			public class HomeController {
+			public class HomeController {...}
 		2.2.2.- Se crea metodo
 			@GetMapping("/")
 			public String motrarHome() {
@@ -4803,11 +4805,12 @@ Thymeleaf***********************************************************************
 		8.1.- Se crea nuevo paquete com.eareiza.model
 		8.2.- Se crea clase modelo, su get, set y tiString -->Vacante
 			public class Vacante {
-			private int id;
-			private String nombre;
-			private String descripcion;
-			private Date fecha;
-			private Integer salario;
+				private int id;
+				private String nombre;
+				private String descripcion;
+				private Date fecha;
+				private Integer salario;
+			}
 		8.3.- Se crea metodo mostrarDetalle(), en el controlador --> HomeController.java
 			@GetMapping("/detalle")
 			public String mostrarDetalle(Model modelo) {
@@ -4993,7 +4996,7 @@ Seccion 23 - Spring Boot y Thymeleaf - Contrladores*****************************
 	1.- Se crea controlador CategoriasController.java
 		1.1.- Se agrega anotacion @Controller
 			@Controller
-			public class CategoriasController {
+			public class CategoriasController {...}
 		1.2.- Se crean los metodos en el Contrladores
 			// @GetMapping("/index")
 			@RequestMapping(value="/index", method=RequestMethod.GET)*****************************************************************
@@ -5016,7 +5019,7 @@ Seccion 23 - Spring Boot y Thymeleaf - Contrladores*****************************
 	1.- Se agrega @RequestMapping al controlador
 		@Controller
 		@RequestMapping(value="/Categorias")******************************************************************************************
-		public class CategoriasController {
+		public class CategoriasController {...}
 ************************************************************************************************Anotacion @PathVariable -URLs Dinamicas
 	1.- Se crea un controlador --> VacantesController.java
 		@Controller
@@ -5415,7 +5418,7 @@ Seccion 26 Spring Boot y thymeleaf - Data Binding*******************************
 	6.- Creacion de lista para las vacantes.
 		6.1.- Se crea metodo en VacantesController.java mostrarIndex()
 			@GetMapping("/index")
-			public String mostrarIndex(Model modelo) {
+			public String mostrarIndex(Model modelo) {...}
 		6.2.-  Obtener todas las vacantes (recuperarlas con la clase de servicio)
 			List<Vacante> vacantes = serviceVacantes.buscarTodas();
 		6.3.- Agregar al modelo el listado de vacantes
@@ -5531,6 +5534,7 @@ Seccion 26 Spring Boot y thymeleaf - Data Binding*******************************
 		private Integer id;
 		private String nombre;
 		private String descripcion;
+	}
 	2.- Se crea Interface ICategoriaService.java
 		public interface ICategoriasService {
 			void guardar(Categoria categoria);
@@ -5539,14 +5543,15 @@ Seccion 26 Spring Boot y thymeleaf - Data Binding*******************************
 		}
 	3.- Se crea clase de servicio CategoriasServicesImp.java
 		@Service
-		public class CategoriasServiceImp implements ICategoriasService{
+		public class CategoriasServiceImp implements ICategoriasService{..}
 		3.1.- Se crea constructor donde se crea lista enlazada LinkedList de categorias
 			public CategoriasServiceImp() {
-			super();
-			listaCateg = new LinkedList<Categoria>();
-			Categoria categoria1 = new Categoria();
-			Categoria categoria2 = new Categoria();
-			Categoria categoria3 = new Categoria();
+				super();
+				listaCateg = new LinkedList<Categoria>();
+				Categoria categoria1 = new Categoria();
+				Categoria categoria2 = new Categoria();
+				Categoria categoria3 = new Categoria();
+			}
 		3.2.- Se crea atributo List, para almacenar la lista de categorias 
 			private List<Categoria> listaCateg= null;
 		3.3.- Se sobreesscribe metodo guardar()
@@ -5621,7 +5626,7 @@ Seccion 26 Spring Boot y thymeleaf - Data Binding*******************************
 				attr.addFlashAttribute("msg", "Registro guardado.");
 					return "redirect:/categorias/index";
 				}
-
+			}
 		6.6.- Se modifica metodo crear(), se le pasa como parametro un objeto Categoria.java, para vincularlo con el formulario
 			// @GetMapping("/create")
 			@RequestMapping(value="/create", method=RequestMethod.GET)
@@ -5897,7 +5902,7 @@ Seccion 28 SpringBoot&SpringDataJPA*********************************************
 ***************************************************************************Interfaz CommandLineRunner - Spring Boot Console Application
 	1.- Configuracion con interfaz CommandLineRunner para que funcione como una aplicacion de Console
 		1.1.- Se implementa la interfaz
-			public class JpaDemoApplication implements CommandLineRunner{
+			public class JpaDemoApplication implements CommandLineRunner{...}
 		1.2.- Se añaden los metodos de la interfaz
 		Nota: todo el codigo que se programe en este metodo sera ejecutado al inicio de la aplicacion
 			@Override
@@ -5912,7 +5917,7 @@ Seccion 28 SpringBoot&SpringDataJPA*********************************************
 		tabla de la base de datos
 			@Entity
 			@Table(name="Categorias")
-			public class Categoria {
+			public class Categoria {...}
 		1.3.- Mapeo de la llave primaria
 		1.4.- Se añade anotacion @GeneratedValue, para indicar que sera autoincrementable
 			@Id
@@ -5928,10 +5933,10 @@ Seccion 28 SpringBoot&SpringDataJPA*********************************************
 			2.1.1.- Se le pasa como parametro el modelo que va a mapear el repositorio
 				Categoria
 			2.1.2.- Se le pasa el tipo de dato de la llave Primaria
-				public interface CategoriasRepository extends CrudRepository<Categoria, Integer> {
+				public interface CategoriasRepository extends CrudRepository<Categoria, Integer> {...}
 			2.1.3.- Se le agrega la anotacion @Repository
 				@Repository
-				public interface categoriaRepository extends CrudRepository<Categoria, Integer> {
+				public interface categoriaRepository extends CrudRepository<Categoria, Integer> {...}
 ***************************************************************************Notacion @Autowired - Inyectando instancia de un repositorio
 	1.- Se modifica JpaDemoApplication.java, Se crea atributo privado de tipo de la interfaz CategoriasRepository
 	2.- Se le agrega Anotacion @Autowired
@@ -5978,6 +5983,7 @@ Seccion 28 SpringBoot&SpringDataJPA*********************************************
 				repo.save(catTmp);
 			}else {
 				System.out.println("Categoria no encontrada");
+			}
 		}
 ********************************************************************************Operaciones CRUD - Delete - Eliminar una entidad por id
 	1.- Se crea metodo eliminar()
@@ -6076,7 +6082,7 @@ Seccion 29 SpringBoot&SpringDataJPA-Interfaz JpaRepository**********************
 		Nota: En este curso, nos centraremos en la interfaz JpaRepository.	
 
 	1.- Modificar la interface CategoriasRepository para que extienda de JpaRepository
-		public interface CategoriasRepository extends JpaRepository<Categoria, Integer> {
+		public interface CategoriasRepository extends JpaRepository<Categoria, Integer> {...}
 *********************************************************************************************************Metodo findAll - JpaRepository
 	Nota: Ete metodo devuelve un objeto tipo List
 	1.- Se crea metodo buscarTodasJPA, el cual nos devuelve un obj tipo List
@@ -6142,7 +6148,7 @@ Seccion 30 SpringBoot&&SpringDataJPA - Relaciones*******************************
 			
 			@Entity
 			@Table(name="vacantes")
-			public class Vacante {
+			public class Vacante {...}
 		1.2.- Se configura la clave primaria y la generacion de forma automatica con las anotaciones @Id y @GeneratedValue	
 			@Id
 			@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -6200,6 +6206,7 @@ Seccion 30 SpringBoot&&SpringDataJPA - Relaciones*******************************
 			@GeneratedValue(strategy= GenerationType.IDENTITY) //auto_increment MySql
 			private Integer id;
 			private String perfil;
+		}
 	2.- Se crea entidad Usuario(), con get, set y contructor
 		@Entity
 		@Table(name="Usuarios")
@@ -6214,11 +6221,11 @@ Seccion 30 SpringBoot&&SpringDataJPA - Relaciones*******************************
 			private Integer estatus;
 			private Date fechaRegistro;
 
-
+		}
 	3.- Se crea repositorio PerfilRepository
-		public interface PerfilesRepository extends JpaRepository<Perfil, Integer> {
+		public interface PerfilesRepository extends JpaRepository<Perfil, Integer> {...}
 	4.- Se crea repositorio UsuariosRepository
-		public interface UsuariosRepository extends JpaRepository<Usuario, Integer> {
+		public interface UsuariosRepository extends JpaRepository<Usuario, Integer> {...}
 	5.- se inyectan las dependencias a los repositorios en la clase principal
 		@Autowired
 		private PerfilesRepository repoPerfil;
@@ -6330,6 +6337,7 @@ Seccion 31 SpringBoot&SpringDataJPA - QueryMethod*******************************
 		for (Vacante vacante2 : vacante) {
 			System.out.println(vacante2.getNombre());			
 		}
+	}
 ****************************************************************************************************************************keyWord And
 	1.- Se crea metodo buscarBacantesPorDestacadoEstatus()
 		private void buscarBacantesPorDestacadoEstatus() {
@@ -6397,7 +6405,7 @@ Seccion 32 SpringBoot&SpringDataJPA - Integracion*******************************
 	2.- Se crea la clase de servicio CategoriasServiceJPA.java, se le agrega la anotacion @Service y se implementan los metodos 
 	declaradoe en la interface
 		@Service
-		public class CategoriasServiceJPA implements ICategoriasService {
+		public class CategoriasServiceJPA implements ICategoriasService {...}
 
 	3.- Se añade la inyeccion de dependencias del repositorio
 		@Autowired
@@ -6547,14 +6555,14 @@ Seccion 32 SpringBoot&SpringDataJPA - Integracion*******************************
 		3.1.- Se modifica el @GetMapping para que recupere el id de forma dinamica
 			@GetMapping("/delete/{id}")
 		3.2.- Se le añade la anotacion @PathVariable para que recupere el id
-			public String eliminar(@PathVariable("id") int idVacante, Model modelo) {
+			public String eliminar(@PathVariable("id") int idVacante, Model modelo) {..}
 		3.3.- Se llama al metodo eliminar de mi clase de servicio ya instanciada
 			serviceVacantes.eliminar(idVacante);
 		3.4.- Se modifica el metodo para que redireccione a vacantes/index
 			return "redirect:/vacantes/index";
 		3.5.- Se agrega mensaje en la vista de registro eliminado
 			3.5.1.- Se agrega a los parametros del metodo eliminar un parametro RedirectAttributes 
-				public String eliminar(@PathVariable("id") int idVacante, Model modelo, RedirectAttributes attr) {
+				public String eliminar(@PathVariable("id") int idVacante, Model modelo, RedirectAttributes attr) {...}
 			3.5.2.- Se agrega un atributo flash
 				attr.addFlashAttribute("msg", "Registro eliminado.");
 
@@ -6604,7 +6612,7 @@ Seccion 32 SpringBoot&SpringDataJPA - Integracion*******************************
 			return "redirect:/categorias/index";
 		3.5.- Se agrega mensaje en la vista de registro eliminado
 			3.5.1.- Se agrega a los parametros del metodo eliminar un parametro RedirectAttributes 
-				public String eliminarCategoria(@PathVariable("id") int idCategoria, RedirectAttributes attr ) { 
+				public String eliminarCategoria(@PathVariable("id") int idCategoria, RedirectAttributes attr ) { ...}
 			3.5.2.- Se agrega un atributo flash
 				attr.addFlashAttribute("msg", "Categoria eliminada.");
 		3.6.- Se le añade un try{}catch{}, para el amnejo de excepcion por clave foranes
@@ -6945,7 +6953,7 @@ Seccion 32 SpringBoot&SpringDataJPA - Integracion*******************************
 		    	return "";
 		    }
 		5.2.- Se le agrega a los parametros un objeto de tipo Vacante y la anotacion @ModelAttribute() mapeada con el objeto de dataBinding serch
-			public String buscar(@ModelAttribute("vacanteSearch")Vacante vacante) {
+			public String buscar(@ModelAttribute("vacanteSearch")Vacante vacante) {...}
 	6.- Se crea un metodo para que se resetee el atributo imagen que viene por defecto en el objeto Vacante 
 		6.1.- Se modifica el bean Vacante.java, Se crea metodo en el bean, resetee el valor 
 			public void resetImagen() {
@@ -7339,13 +7347,13 @@ SpringBoot&SpringSecurity - Configuracion de acceso a los recursos por roles****
 		3.1.- Se configura como thymeleaf
 			<html xmlns:th="http://www.thymeleaf.org">
 		3.2.- Se configuran los recursos estaticos
-			<!-- Bootstrap core CSS -->
+			/*<!-- Bootstrap core CSS -->
 		    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
 		    <!-- Custom styles for this template -->
 		    <link th:href="@{/bootstrap/css/jumbotron.css}" rel="stylesheet">
 		    <link th:href="@{/bootstrap/css/sticky-footer-navbar.css}" rel="stylesheet">
 
-		    <script th:src="@{bootstrap/js/bootstrap.min.js}"></script>  
+		    <script th:src="@{bootstrap/js/bootstrap.min.js}"></script>  */
 *****************************************************************************************Metodo personalizado para el cierre de session 
 ***************************************************************************************************************************************
 ***************************************************************************************************************************************
@@ -7390,7 +7398,7 @@ FIN SPRNG BOOT, DATA, SECURITY**************************************************
 		REST dentro de los métodos de controladores.
 		ResponseEntity maneja toda la respuesta HTTP incluyendo el cuerpo, cabecera y códigos de estado permitiéndonos total 
 		libertad de configurar la respuesta que queremos que se envié desde nuestros endpoints.
-
+/
 		Ejemplo_____________________________________________________________________________________________
 
 			@GetMapping("/clientes/{id}")
@@ -8627,6 +8635,7 @@ Tuto Spring Boot****************************************************************
 				      return restTemplate.exchange("http://localhost:9090/products", HttpMethod.GET, entity, String.class).getBody();
 				   }
 			}
+
 			______________________________________________________________________________________________________________
 			@SpringBootApplication
 			@RestController
@@ -8823,7 +8832,7 @@ Tuto Spring Boot****************************************************************
 			--------------------------------------------------------------------------------------------------------------
 				@RestController
 				@RequestMapping("/api")
-				public class ProductServiciosController {
+				public class ProductServiciosController {--}
 	******************************************************************************************************************************
 	Spring Boot - Thymeleaf*******************************************************************************************************
 		Thymeleaf es una biblioteca basada en Java que se utiliza para crear una aplicación web. Proporciona un buen soporte 
@@ -9564,7 +9573,7 @@ Tuto Spring Boot****************************************************************
 
 					#Se crea la ruta al microservicio examenes
 					zuul.routes.examenes.service-id=microservicios-examenes
-					zuul.routes.examenes.path=/api/examenes/**
+					zuul.routes.examenes.path=/api/examenes/**   */
 
 	******************************************************************************************************************************
 	
