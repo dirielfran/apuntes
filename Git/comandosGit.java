@@ -584,165 +584,71 @@ Trabajando con branch***********************************************************
 ********************************************************************************
 
 
-git push -u origin master
-git add: agrega un ar
-//configurar usuario
-git config --global user.name elvis
-git config --global user.email "elvis@gmail.com"
-//para ver las configuraciones
-git config --get-regexp user
-git config --list  //configuracion de git
-nano README.md  //crea un archivo con nano
-en nano
-ctrl + o  // guarda
-ctrl + x // salir
-
-//llevar seguimiento en git
-git status // compara  si es igual al que esta en el index
-git add README.md //agrega seguimiento al archivo
 
 
-//commit --> se crea un apuntador
-git commit  //comitea
-			//se agrega comentario
-			//scape , shift + :wr  -->escribe
-			// shift + q  --> salir
+Curso de Git Fernado herrera****************************************************
+*****************************************************Seccion 1: Inicio del curso
+	* pluguns instalados para visual code 
+		* Terminal 
+		* Activitus Bar 
+	* Descarga de Git 
+********************************************************************************
+**********************************************************Seccion 2: Fundamentos
+	git -- version 				--> Ver la version 
+	git help					--> Ayuda
+	git help <comando>			--> Ayuda sobre un comando en especifico 
+***************************Configuraciones globales  son configuraciones locales
+	git config --global user.name "Elvis Areiza"
+	git config --global user.email "dirielfran@gmail.com"
+	git config --global
+********************************Inicializa repositorios (Crea repositorio local)
+	git init 
+***********************************************************Informacion de status 
+	git status 
 
-git log  // te permite ver el log de commit
-
-git add index/   //agrega todo lo que hay en el directorio
-
-git commit -m "Se agrego la carpeta index" //realiza commit y pone un mensaje
-
---          // si se va a escribir un texto
--           // espera un caracter
-regexp      //busca una palabra
-q           //para salir
-
-
-
-
-CLASE 2
-$ git log -1      // un solo comit
-git log --oneline // un solo commit
-git log --since="2020-05-01"  // muestra los commit desde una fecha
-git log --after="2020-04-01" --before="2020-06-01" entre fechas
-git log --after="2020-04-01" --before="2020-06-01" --oneline
-
-decorate // para que muestre en otro color las ramas
-graph // en fotma de rama
-git log --oneline --decorate --all --graph 
-
-//cuando crea una rama crea un nuevo apuntador
-head es un apuntador dinamico
-git branch entrendiendo-ramas //crea rama
-git branch  //muestra las ramas
-git checkout entrendiendo-ramas //cambia de rama
-rm -d prueba.txt
-rm -rf prueba.txt
-
-git checkout master //swit a master
-
-git add . //se agregan los cambios
-git commit -m "se agrego rama" //se realiza el commit
-//para ver todas las ramas
-git log --oneline --decorate --all --graph 
-
-
-comando de ramas
-git branch <nombre>           crea una rama
-git switch <nombre>           cambia de rama
-git checkout <nombre>         cambia de rama
-git checkout -b <nombre>      crea la rama y la cambia hacia ella
-
-comandos de branch
-git branch                    lista las ramas locales
-git branch -r                 lista las ramas remotas
-git branch -a                 lista todas las ramas remotas / locales
-           -d <nombre>       elimina una rama (si fue fussionada
-           -D <nombre>                         sin importar si no fue fusionada
-
-git commmit --amend  // para cambiar desde del ultimo commit
-
-git commmit --amend  - m  "descripcion"
-
-git add repo/  //agrego carpeta
-
-hacerle seguimiento a la rama
- $ git push --set-upstream https://github.com/dirielfran/curso-git entrendiendo-ramas
-
-//clonar un repositorio
-git clone http://github.com/c215714n/git-desarrollo github
-
-
-//para ver las rutas
-git remote -v
-
-origin  http://github.com/c215714n/git-desarrollo (fetch)
-origin  http://github.com/c215714n/git-desarrollo (push)
-
-git clone <url>        clon de un repositorio remoto, utiliza la rama master como principal
-                        tambien se agrega por defecto el remoto origin con la direccion de url clonada
-
-
-git clone <url> <nombre>  crea un clon en una carpeta con el nombre que elegimos
-
-git clone --branch <nombrerama> <url>:
-        crea un clon de la rama especificada siempre y cuando exista en el repositorio remoto
-
-git fetch <url>:
-        obtiene del servidor los archivos correspondientes a la rama actual
-        actualiza
-
-git pull <url> <rama>:
-        obt los archivos del servidor y los combina con la rama actual fusionando los cambios
-        actualiza repositorio LOCAL (fetch + merge + commit)
-        en caso de trabajar con varias personas, si se han realizado cambios en el repo remoto antes de mandar los cambios al servidor debemos realizar el pull de los mismos
-
-git push <url>:
-        manda del local al servidor, en caso de trabajar de manera colaborativa para evitar conflictos en el historial git nos pide que hagamos un pull de los cambios efectuados en el servido>
-        ACTUALIZA EL REPO REMOTO (commit)
-        los cambios se podran enviar a ramas que se esten haciendo seguimiento, en caso contrario debemos agregarlas al servidor
-
-git push --set-upstream <url> <rama>
-        define una nueva rama a la que se le hara seguimiento y se agregara a las ramas administradas por nuestro repositorio remoto
-        esta operacion debe realizarce la primera vez que realizamos un push sobre una rama agregada recientemente
-        ACTUALIZA REPOSITORIO REOTO (BRANCH)
-
-git push --unset-upstream <url> <rama> :
-        quita el seguimiento de la rama por parte del repositorio
-        ACTUALIZA REPOSITORIO LOCAL /REMOTO (BRANCH-)
-
-***comparar la rama actual y otra
-git diff entrendiendo-ramas
-
-***realiza merge de la rama actual con otra
-	git merge entrendiendo-ramas
-
-//cancela la integracion de ramas, cuando surge un conflicto
-git merge --abort
-
-//te permite ir a un checkout del histoorico
-git checkout <hash>
-
-//puedes ir al head de nuevo
-git switch -
-
-//ir a dos commit atras 
-git switch HEAD~2
-
-//ir al ancestro
-git checkout HEAD~1^
-
-//ir a master
-git checkout master
-
-//quitar del index o sacar del commit 
-git reset branches.txt
-
-//reestablecer un archivo 
-git checkout HEAD -- branches.txt
-
-//reorganizar todos los directorios
-git rebase branch-merge
-
+	* Status corto 
+		git status --short 
+		git status -sb 
+******************************************************************Añadir cambios 
+	git add <archivo>
+	git add .
+*****************************************Para ejecutar la accion de add + commit 
+		git commit -am <"mensaje del commit "> 
+		Nota: (solo funciona si el archivo tiene seguimiento)
+*******************************************Add de cambios por la ext del archivo(***)
+	git add *.html 
+	git add <directorio>/*.html			*/
+*************************Para que git le haga seguimiento a una carpeta vacia se 
+	debe crear un archivo .gitkeep dentro del folder 
+*******************************************Add de todos lo archivos de un forder(***)
+		git  add css/ 
+*******************************************************Revertir cambio del stage 
+	git reset <archivo> 
+	Nota: solo aplica para archivos en seguimiento 
+*****************************************************************Realizar commit 
+	git commit -m "Mensaje del commit"
+********************************************Recuperar imagen de el ultimo commit(***)
+	git checkout -- . 
+	Nota: solo de los archivos a los que se le da seguimiento 
+*********************************************Indica la rama en la que se trabaja 
+	git branch  
+****************************************************Cambiar el nombre de la rama   
+	git branch -m <rama a modificar> <nombre de la rama>
+***********************************Poner nombre por defecto de la rama principal 
+	git config --global init.defaultBranch <nombre> 
+*************************************************************Log del repositorio  
+	git log 
+		
+	Nota: para salir del log --> q + enter 
+	* forma costa del log 
+		git log --oneline
+	* Forma de graficos 
+		git log --oneline --decorate --all --graph
+****************************************************************Cracion de alias 
+	git config --global alias.<s(alias)> <status --short(comando para el alias)> 
+************************************************************************ Edicion 
+		git config -e 
+***************************************************************Alias para el log 
+	git config --global alias.lg "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
+********************************************************************************
+********************************************************************************

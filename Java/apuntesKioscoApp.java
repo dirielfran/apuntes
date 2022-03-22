@@ -2518,9 +2518,9 @@ Complementos********************************************************************
 					* Dentro del dist creado se modifica el index.html 
 						<base href="/kiosco/">
 					* Se sube el contenido del folder dist al folder de kiosco del servidor  
-			* Backend 
+			* Backend (sts)
 				* Se realiza backup del back 
-				* Se compila aplicacion -->		mvn clean package -Dmaven.test.skip=true 
+				* Se compila aplicacion parado en la raiz del proyecto -->		mvn clean package -Dmaven.test.skip=true 
 				* Se accede al manager del tomcat 66.228.61.76/manager 
 					user: eareiza
 					pass: Danger120- 
