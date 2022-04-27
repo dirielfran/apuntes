@@ -603,52 +603,200 @@ Curso de Git Fernado herrera****************************************************
 	git config --global
 ********************************Inicializa repositorios (Crea repositorio local)
 	git init 
-***********************************************************Informacion de status 
+***********************************************************Informacion de status
 	git status 
 
 	* Status corto 
 		git status --short 
 		git status -sb 
-******************************************************************Añadir cambios 
+******************************************************************Añadir cambios
 	git add <archivo>
 	git add .
-*****************************************Para ejecutar la accion de add + commit 
+*****************************************Para ejecutar la accion de add + commit
 		git commit -am <"mensaje del commit "> 
 		Nota: (solo funciona si el archivo tiene seguimiento)
-*******************************************Add de cambios por la ext del archivo(***)
+(***)**************************************Add de cambios por la ext del archivo
 	git add *.html 
 	git add <directorio>/*.html			*/
-*************************Para que git le haga seguimiento a una carpeta vacia se 
+	* Add de todo lo que esta en folder 
+
+	git add historia/  (***)
+(***)********************Para que git le haga seguimiento a una carpeta vacia se
+	
 	debe crear un archivo .gitkeep dentro del folder 
-*******************************************Add de todos lo archivos de un forder(***)
-		git  add css/ 
-*******************************************************Revertir cambio del stage 
+(***)**************************************Add de todos lo archivos de un forder
+
+		git  add css/ (***)
+(***)**************************************************Revertir cambio del stage
 	git reset <archivo> 
 	Nota: solo aplica para archivos en seguimiento 
-*****************************************************************Realizar commit 
+*****************************************************************Realizar commit
 	git commit -m "Mensaje del commit"
-********************************************Recuperar imagen de el ultimo commit(***)
+	* add + commit 
+		git commit -am "<Comentario>"
+(***)***************************************Recuperar imagen de el ultimo commit
 	git checkout -- . 
-	Nota: solo de los archivos a los que se le da seguimiento 
-*********************************************Indica la rama en la que se trabaja 
+	Nota: solo de los archivos a los que se le da seguimiento (***)
+*********************************************Indica la rama en la que se trabaja
+	
 	git branch  
-****************************************************Cambiar el nombre de la rama   
+(***)***********************************************Cambiar el nombre de la rama
+	
 	git branch -m <rama a modificar> <nombre de la rama>
-***********************************Poner nombre por defecto de la rama principal 
+***********************************Poner nombre por defecto de la rama principal
+	
 	git config --global init.defaultBranch <nombre> 
-*************************************************************Log del repositorio  
+*************************************************************Log del repositorio
 	git log 
-		
+	git lg
 	Nota: para salir del log --> q + enter 
 	* forma costa del log 
 		git log --oneline
 	* Forma de graficos 
 		git log --oneline --decorate --all --graph
-****************************************************************Cracion de alias 
+(***)***********************************************************Cracion de alias
+	
 	git config --global alias.<s(alias)> <status --short(comando para el alias)> 
-************************************************************************ Edicion 
+************************************************************************ Edicion
+		
 		git config -e 
-***************************************************************Alias para el log 
+***************************************************************Alias para el log
+	
 	git config --global alias.lg "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
+********************************************************************************
+***********************************************************************Seccion 3
+****************************************************Ver diferencias con git diff
+	git diff 
+	git diff <archivo>
+	git diff --staged --
+(***)****************************Actualizar mensaje del commit y revertir commit
+	* Actualizar mensaje del commit anterior(-m)
+		git commit --ammend -m "nuevo mensaje"
+	* Actualizar commit anterior
+		git commit --ammend  
+	* Add modificaciones a un commit anterior
+		git reset --soft HEAD^<numero de commit anteriores>
+(***)****************************************Viajes en el tiempo, reset y reflog
+	*Deshacer cambios con git reset a un determinado commit
+	* Saca todo del stage para que se vuelvan add los cambios   
+		git reset --mixed 56d2f23
+	* Destruye los cambios
+		git reset --hard 56d2f23 
+	* Destruye hasta un commit anterior  
+		git reset --hard HEAD^ 
+	* git reflog, nos hace referencia a todos los cambios en orden cronologico 
+		git reflog
+******************************Cambiar el nombre y eliminar archivos mediante git
+	* Renombrar archivo   
+		git mv destruir-mundo.md salvar_mundo.md
+	* remover un archivo 
+		git rm salvar_mundo.md
+	* otra forma de renombrar   
+		* se cambia el nombre del archivo 
+		* git add . 
+		* git commit 
+(***)*****************************************Ignorando archivos que no deseamos
+	* Se crea archivo .gitignore 
+		dist/					--> Ignora folder completo
+		server.log 				--> Ignora archivo 
+		node_modules/*.ts 		**/	--> Ignora  archivos por extension dentro de un folder especifico
+		*.log 					--> Ignora archivos por su extension
+********************************************************************************
+************************************Seccion 4: ramas, uniones, conflictos y tags
+(***)********************************************************Merge: Fast-Forward
+	* Crear rama 
+		git branch <nomre de la rama >
+	* Ver ramas 
+		git branch 
+	* Cambiar de rama 
+		git checkout <rama>
+	* Hacer merge  
+		git merge <rama de donde te traes los cambios>
+	* Borrar una rama   
+		git branch -d rama-villanos
+	* Borrar una rama de manera forzada 
+		git branch -d rama-villanos -f 
+******************************************************Merge: uniones automaticas
+	* Crear rama y switchar automaticamente 
+		git checkout -b rama-villanos
+(***)*****************************************************Creando etiquetas tags
+	* Creacion de tag 
+		git tag version 1.0
+	* Creando un tag a un commit especifico por hash  
+		git tag -a v0.1.0 f239ab6 -m "Version alpha" 
+	* Ver los tags 
+		git tag  
+	* Ver informacion de un tag 
+		git show v0.1.0
+	* Subir tags al repsitorio remoto 
+		git push --tags
+********************************************************************************
+*******************************************************Seccion 5: stash y rebase
+***************************************************************************stash
+	* Crear un stash 			--> git stash 
+	* Listar los stash 			--> git stash list 
+	* Listar en detalle 		--> git stash list --stat
+	* Aplicar el ult. stash 	--> git stash pop 
+	* Borrar todos los stash 	--> git stash clear 
+	* Crear un stash con nombre --> git stash save "Add loki a villanos"
+**************************************************************************Rebase
+	* Realizar rebase 
+		Nota: coloca los commit de la rama en un temp actualiza ls commit de 
+		la rama a la que se quiere rebase y luego incluye los commit de la rama  
+		actual 
+			git rebase <rama de la cual quiees hacer rebase> 
+
+			Ej: 
+				*parado en rama 
+				git rebase master 
+	* Union de commit Squash  
+		git rebase -i HEAD~4 (muestra los ultimos 4 commit)
+		Se coloca opcion s al commit que quieres unir
+	* Cambiar el mensaje de un commit   
+		git rebase -i HEAD~4 (muestra los ultimos 4 commit)
+		Se coloca opcion r al commit que quieres modificar el mensaje
+	* Editar un commit  
+		git rebase -i HEAD~4 (muestra los ultimos 4 commit)
+		Se coloca opcion e al commit que quieres editar 
+********************************************************************************
+********************************************************Seccion 6: Inicio GitHub
+	* Creacion de repositorio con proyecto existente
+		* Se cre arepositorio  
+			git remote add origin https://github.com/dirielfran/liga-justicia.git
+			git branch -M main
+			git push -u origin main
+		* Para ver repositorio remoto 
+			git remote -v 
+************************************************************************git pull
+	* Bajar los cambios del repositorio   
+		git pull 	 
+***********************************************************************git clone
+	* Clonar repositorio remoto  
+		git clone <repositorio url>
+********************************************************************************
+********************************************************Seccion 7: GitHub Basico
+************************************************************************Markdown
+	Tutorial de Markdown:
+		Markdowntutorial.com
+
+	Emojis de GitHub
+		https://www.webfx.com/tools/emoji-cheat-sheet/
+*********************************************************************GitHub Flow
+	Referencia 
+	https://docs.github.com/es/get-started/quickstart/github-flow
+********************************************************************************
+********************************************************Seccion 7: GitHub Basico
+********************************************************************************
+********************************************************************************
+
+
+Complementos********************************************************************
+***************************************************************Errores y warning
+	Si les aparece este warning:
+		warning: LF will be replaced by CRLF in historia/batman.historia.md.
+
+	Pueden configurar ese salto de carrete así
+
+		git config core.autocrlf true
 ********************************************************************************
 ********************************************************************************
