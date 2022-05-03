@@ -657,6 +657,8 @@ Curso de Git Fernado herrera****************************************************
 (***)***********************************************************Cracion de alias
 	
 	git config --global alias.<s(alias)> <status --short(comando para el alias)> 
+	* Edicion de alias  
+		git config --global -e
 ************************************************************************ Edicion
 		
 		git config -e 
@@ -769,7 +771,11 @@ Curso de Git Fernado herrera****************************************************
 			git remote -v 
 ************************************************************************git pull
 	* Bajar los cambios del repositorio   
-		git pull 	 
+		git pull 	
+	* Para traer las ramas de otros 
+		git pull --all
+		* para ver las ramas  
+			git branch -a 
 ***********************************************************************git clone
 	* Clonar repositorio remoto  
 		git clone <repositorio url>
@@ -785,7 +791,33 @@ Curso de Git Fernado herrera****************************************************
 	Referencia 
 	https://docs.github.com/es/get-started/quickstart/github-flow
 ********************************************************************************
-********************************************************Seccion 7: GitHub Basico
+********************************************************Seccion 8: GitHub Basico
+	* Markdown 
+	* Busqueda de archivos en github   
+	* Row, Blame, history, edit 
+	* Git fetch 
+	* Comentarios en los commits  
+	* Flujo de github 
+********************************************************************************
+******************************************************Seccion 8: GitHub Avanzado
+	* Fork, clone 
+	* Pull Request 
+	* Review changes 
+	* Actualizacion de fork 
+	* Fetch upstream 
+	* Feature branch  
+	* Revisar el trabajo de otros compañeros 
+	* Limpiar ramas 
+		* Borrar rama 
+			git branch -d <rama> 
+		* Purgar las ramas a como las engo en el remoto 
+			git remote prune origin   
+		* Borrar rama remota 
+			git push origin :<rama remota>  
+	* Recuperar rama de produccion 
+********************************************************************************
+******************************************************Seccion 8: GitHub Avanzado
+
 ********************************************************************************
 ********************************************************************************
 
