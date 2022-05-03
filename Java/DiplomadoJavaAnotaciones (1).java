@@ -3622,6 +3622,28 @@ Java 8
                 .map(role -> new SimpleGrantedAuthority(role.getNombre()))
                 .peek(authority -> logger.info("Role: "+authority.getAuthority()))
                 .collect(Collectors.toList());
+    **********************************************************************************
+        * Manejo de stream() java 8
+        * Convertir una lista de objetos en una lista de ids 
+            List<String> nombresInstalaciones = instalacionesDto.stream().map(InstalacionUsuarioDTO::getNombreInstalacion).collect(Collectors.toList());
+        * Convertir una lista de string a una cadena separados por comas
+            nombresInstalaciones.stream().collect(Collectors.joining(","));
+        * Partiendo de una lista de long busca objetos y devuelve un atributo de ese objeto, y los muta a una lista de String 
+            List<String> instalacionesDto = idsInstalaciones.stream().map(idIns -> {
+                try {
+                    return iInstalacionBusiness.buscarPorIdPorProjection(idIns).getNombre();
+                } catch (PersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                return null;
+            }).collect(Collectors.toList());
+        * Partiendo de una cadena separada por comas lo muta a una lista de String 
+            List<String> list = Stream.of(idsConfActuacion.split(",")).map(String::trim).collect(Collectors.toList());
+        * Muta una lista de String a una lista de Long 
+            list.stream().map(Long::valueOf).collect(Collectors.toList())
+        * Filtrado de objeto 
+            List<InstalacionUsuarioDTO> instSinTodElementos = instalacionesUsusDto.stream().filter(x -> !x.getTodosElementosAsignados()).collect(Collectors.toList());
 ***********************************************************************************************
 
 
