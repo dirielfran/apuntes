@@ -799,7 +799,7 @@ Curso de Git Fernado herrera****************************************************
 	* Comentarios en los commits  
 	* Flujo de github 
 ********************************************************************************
-******************************************************Seccion 8: GitHub Avanzado
+******************************************************Seccion 9: GitHub Avanzado
 	* Fork, clone 
 	* Pull Request 
 	* Review changes 
@@ -816,8 +816,24 @@ Curso de Git Fernado herrera****************************************************
 			git push origin :<rama remota>  
 	* Recuperar rama de produccion 
 ********************************************************************************
-******************************************************Seccion 8: GitHub Avanzado
-
+********************************************Seccion 9: GitHub issues y milestone
+	* Issues 
+	* Cerrar Issues 
+	* Cerrar Issues mediante commit   
+		* Se realizan los cambios en el repo local   
+		* Se realiza commit identificando el numero de issue  
+			git commit -am "Fixed #5: Hecho, cambios realizados"
+		* Se realiza push 
+	* Isuues Templete 
+	* labels y etiquetas   
+	* milestone 
+	* Add colaboradores a reppositorio  
+********************************************************************************
+**********************************************************************Seccion 10
+wikis***************************************************************************
+Proyectos***********************************************************************
+GitHubs Pages*******************************************************************
+Insights************************************************************************
 ********************************************************************************
 ********************************************************************************
 
