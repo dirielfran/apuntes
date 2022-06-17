@@ -27,3 +27,10 @@ CREATE TABLE `tipo_producto` (
 
 ALTER TABLE `db_springboot_backend`.`tipo_producto` 
 ADD COLUMN `deleted` TINYINT NULL DEFAULT '0' AFTER `codigo`;
+
+
+--Ajuste de iva en inventario
+ALTER TABLE `db_springboot_backend`.`inventarios` 
+ADD COLUMN `is_impuesto` TINYINT(1) NULL DEFAULT 0 AFTER `metodopago`,
+ADD COLUMN `impuestos` DOUBLE NULL AFTER `is_impuesto`,
+ADD COLUMN `is_iva` TINYINT(1) NULL DEFAULT 0 AFTER `impuestos`;
