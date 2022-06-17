@@ -2115,6 +2115,20 @@ Seccion 10: Backend: Spring Cloud Gateway***************************************
 
 		#Se deshabilita ribbon  para el balanceo de carga
 		spring.cloud.loadbalancer.enabled=false*/
+
+	4.- Configuracion en archivo application.yml  
+		4.1.- Se crea archivo application.yml 
+		4.2.- Se crean las configuraciones  
+			spring:
+			  cloud:
+			    gateway:
+			      routes:
+			      - id: microservicio-usuarios
+			        uri: lb://microservicios-usuarios
+			        predicates:
+			          - Path=/api/usuarios/**					(**/)
+			        filters:
+			          - StripPrefix=2 
 64. **********************************************************************************Probando Balanceo de carga Spring Cloud Load Balancer
 	1.- Se modifica microservicios-cursos 
 		1.1.- Se agrega dependencia --> spring-cloud-starter-loadbalancer en el pom.xml, desde el 
@@ -2139,11 +2153,135 @@ Seccion 10: Backend: Spring Cloud Gateway***************************************
 					return ResponseEntity.ok(response);
 				}
 65. **************************************************************************************************Probando balanceo de carga en postman
+35. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Implementando filtros globales pre y post
+	1.- Se crea paquete de configuracion --> com.eareiza.app.gateway.config
+	2.- Se cea clase Filters 
+
+		//Se mapea como bean
+		@Component
+		//Se implementa GlobalFilter
+		public class Filters implements GlobalFilter{
+
+			//Se instancia Logger			
+			private final Logger logger = LoggerFactory.getLogger(Filters.class);
+
+			@Override
+			// GatewayFilterChain Contrato para permitir WebFilterque uno delegue al siguiente en la cadena.
+			public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+				logger.info("Ejecutando  filtro pre");
+				
+				//Se obtiene el contrato y se retorna un Mono
+				return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+					logger.info("Ejecutando filtro post");
+					//se obtiene el response y se le agrega cookie
+					exchange.getResponse().getCookies().add("color", ResponseCookie.from("color", "rojo").build());
+					//se obtiene los headers y se setea tipo
+					exchange.getResponse().getHeaders().setContentType(MediaType.TEXT_PLAIN);
+				}));
+			}
+
+		}
+36. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Modificando el request en el filtro pre
+	1.- Se modifica la clase para modificar el request
+		//Se implementa Oredered para darle valor de precedencia al filtro
+		public class Filters implements GlobalFilter, Ordered{
+			
+			private final Logger logger = LoggerFactory.getLogger(Filters.class);
+
+			@Override
+			public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+				logger.info("Ejecutando  filtro pre");
+				
+				//Se recupera y se muta el request, añadiendo un token a los headers
+				exchange.getRequest().mutate().headers(h -> h.add("token", "123456"));
+				
+				return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+					logger.info("Ejecutando filtro post");
+					
+					//Se utiliza Optional para validar que venga el token 
+					//Se obtiene el token del request y se añade al response
+					Optional.ofNullable(exchange.getRequest().getHeaders().getFirst("token")).ifPresent(valor -> {
+						exchange.getResponse().getHeaders().add("token", valor);
+					});
+					
+					exchange.getResponse().getCookies().add("color", ResponseCookie.from("color", "rojo").build());
+					exchange.getResponse().getHeaders().setContentType(MediaType.TEXT_PLAIN);
+				}));
+			}
+
+			@Override
+			//Se le da valor de precedencia al filtro
+			public int getOrder() {
+				return -1;
+			}
+
+		}
+	2.- Se prueba en postman, se valida que la respuesta tenga en los headers el token 
+		--> GET --> http://localhost:8090/api/usuarios/3
+37. +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Implementando Gateway Filter Factory
+	1.- Se crea clase de filtro perzonalizado 
+	@Component
+	//Se hereda de AbstractGatewayFilterFactory
+	public class EjemploGatewayFilterFactory extends AbstractGatewayFilterFactory<EjemploGatewayFilterFactory.Configuration>{
+
+		private final Logger logger = LoggerFactory.getLogger(EjemploGatewayFilterFactory.class);	
+
+		//Se crea contructor y se le pasa la clase Configuration
+		public EjemploGatewayFilterFactory() {
+			super(Configuration.class);
+		}
+
+		@Override
+		//Se implementa metodo apply
+		public GatewayFilter apply(Configuration config) {
+
+			// exchange --> ServerWebExchange 
+			// chain --> GatewayFilterChain 
+			return (exchange, chain) -> {
+				logger.info("Ejecutando pre filter"+ config.mensaje);
+				return chain.filter(exchange).then(Mono.fromRunnable(() ->{
+					//Se utiliza Optional para validar que venga la cookie
+					//Se obtienen los headers y se añade cookie
+					Optional.ofNullable(config.cookieValor).ifPresent(cookie -> {
+						exchange.getResponse().addCookie(ResponseCookie.from(config.cookieNombre, cookie).build());
+					});
+					
+					logger.info("Ejecutando post filter"+ config.mensaje);
+				}));
+			};
+		}
+		
+		//Se crea clase Configuration 
+		public static class Configuration {
+			
+			private String mensaje;
+			private String cookieValor;
+			private String cookieNombre;
+			public String getMensaje() {
+				return mensaje;
+			}
+			public void setMensaje(String mensaje) {
+				this.mensaje = mensaje;
+			}
+			public String getCookieValor() {
+				return cookieValor;
+			}
+			public void setCookieValor(String cookieValor) {
+				this.cookieValor = cookieValor;
+			}
+			public String getCookieNombre() {
+				return cookieNombre;
+			}
+			public void setCookieNombre(String cookieNombre) {
+				this.cookieNombre = cookieNombre;
+			}
+
+		}
+
+	}
 
 
 
-
-https://ard333.medium.com/authentication-and-authorization-using-jwt-on-spring-webflux-29b81f813e78
 Apuntes************************************************************************************************************************************
 	Eureka Server**********************************************************************************************************************
 		Eureka Server es una aplicación que contiene la información sobre todas las aplicaciones de servicio al cliente. Cada servicio 
@@ -2164,4 +2302,17 @@ Apuntes*************************************************************************
 		@EnableZuulProxy-----------------------------------------------------------------------------------------------------------
 			se utiliza para hacer que su aplicación Spring Boot actúe como un servidor proxy Zuul.
 	***********************************************************************************************************************************
+	ServerWebExchange******************************************************************************************************************
+	 	Contrato para una interacción de solicitud-respuesta HTTP. Proporciona acceso a la solicitud y respuesta HTTP y también expone 
+	 	propiedades y características adicionales relacionadas con el procesamiento del lado del servidor, como los atributos de 
+	 	solicitud.
+	***********************************************************************************************************************************
+	GatewayFilterChain*****************************************************************************************************************
+		Contrato para permitir WebFilterque uno delegue al siguiente en la cadena.
+	***********************************************************************************************************************************
 *******************************************************************************************************************************************
+
+
+
+++++++++++++++++++Curso Microservicios con Spring Boot y Spring Cloud Netflix Eureka
+******************Curso Microservicios con Spring Cloud y Angular full stack
