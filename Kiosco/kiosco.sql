@@ -43,8 +43,6 @@ CREATE TABLE `db_springboot_backend`.`logs` (
   `user` VARCHAR(45) NOT NULL,
   `create_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `update_at` TIMESTAMP NULL,
-  `name` VARCHAR(100) NULL,
-  `action` VARCHAR(45) NULL,
   `entity` VARCHAR(45) NULL,
   `description_old` VARCHAR(255) NULL,
   `description_new` VARCHAR(255) NULL,
@@ -54,3 +52,12 @@ CREATE TABLE `db_springboot_backend`.`logs` (
 
 ALTER TABLE `db_springboot_backend`.`logs` 
 ADD COLUMN `metodo` VARCHAR(45) NULL AFTER `entity`;
+
+ALTER TABLE `db_springboot_backend`.`logs` 
+DROP COLUMN `action`,
+DROP COLUMN `name`,
+CHANGE COLUMN `description_old` `description_old` TEXT NULL DEFAULT NULL ,
+CHANGE COLUMN `description_new` `description_new` TEXT NULL DEFAULT NULL ;
+
+ALTER TABLE `db_springboot_backend`.`logs` 
+CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;
