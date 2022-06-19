@@ -50,3 +50,7 @@ CREATE TABLE `db_springboot_backend`.`logs` (
   `description_new` VARCHAR(255) NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
+
+
+ALTER TABLE `db_springboot_backend`.`logs` 
+ADD COLUMN `metodo` VARCHAR(45) NULL AFTER `entity`;
