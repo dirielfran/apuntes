@@ -34,3 +34,19 @@ ALTER TABLE `db_springboot_backend`.`inventarios`
 ADD COLUMN `is_impuesto` TINYINT(1) NULL DEFAULT 0 AFTER `metodopago`,
 ADD COLUMN `impuestos` DOUBLE NULL AFTER `is_impuesto`,
 ADD COLUMN `is_iva` TINYINT(1) NULL DEFAULT 0 AFTER `impuestos`;
+
+
+
+-- Se agrega tabla de logs
+CREATE TABLE `db_springboot_backend`.`logs` (
+  `id` INT NOT NULL,
+  `user` VARCHAR(45) NOT NULL,
+  `create_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `update_at` TIMESTAMP NULL,
+  `name` VARCHAR(100) NULL,
+  `action` VARCHAR(45) NULL,
+  `entity` VARCHAR(45) NULL,
+  `description_old` VARCHAR(255) NULL,
+  `description_new` VARCHAR(255) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
