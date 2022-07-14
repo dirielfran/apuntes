@@ -885,7 +885,8 @@ Arquitectura y Modelos
     ------------------------------------------------------------------------------------------------
     Patrones de diseño arquitectura
     ------------------------------------------------------------------------------------------------
-        Ppatrón Circuit Breaker 
+        Referencia --> https://apiumhub.com/es/tech-blog-barcelona/patron-circuit-breaker/
+        Patrón Circuit Breaker 
             El patrón Circuit Breaker evita que una aplicación intente de manera reiterada una 
             operación que con probabilidad vaya a fallar, permitiendo que esta continúe con su 
             ejecución sin malgastar recursos mientras el problema no se resuelva. Además este 
