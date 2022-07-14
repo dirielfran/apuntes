@@ -882,6 +882,57 @@ Arquitectura y Modelos
                         facade.of(telefono);
                     }
                 }
+    ------------------------------------------------------------------------------------------------
+    Patrones de diseño arquitectura
+    ------------------------------------------------------------------------------------------------
+        Ppatrón Circuit Breaker 
+            El patrón Circuit Breaker evita que una aplicación intente de manera reiterada una 
+            operación que con probabilidad vaya a fallar, permitiendo que esta continúe con su 
+            ejecución sin malgastar recursos mientras el problema no se resuelva. Además este 
+            patrón puede detectar cuando se ha resuelto el problema permitiendo de esta manera 
+            volver a ejecutar la operación comprometida. Podemos entender este patrón como un 
+            proxy entre nuestra aplicación y el servicio remoto que se implementa como si fuera 
+            una máquina de estados que imita el comportamiento de un interruptor de un circuito 
+            eléctrico.
+
+            Los estados:
+
+                * Closed:   El circuito está cerrado y el flujo fluye ininterrumpidamente. 
+                            Este es el estado inicial, todo funciona bien, la aplicación 
+                            funciona de la manera esperada y la llamada al recurso/servicio 
+                            se realiza de manera normal.
+                * Open:     El circuito está abierto y el flujo interrumpido. En este estado 
+                            todas las llamadas al recurso/servicio fallan inmediatamente, es 
+                            decir no se realizan, devolviendo la última excepción conocida a 
+                            la aplicación.
+                * Half-Open: El circuito está medio abierto (o medio cerrado) dando una 
+                            oportunidad al flujo para su restauración. En este estado la 
+                            aplicación volverá a intentar realizar la petición al 
+                            servicio/recurso que fallaba.
+
+            Los cambios de estado:
+
+                Como ya hemos comentado, el estado inicial es Closed. El proxy mantiene un contador 
+                con el número de errores que se producen al realizar la llamada, si el número de 
+                errores excede el límite especificado por configuración el proxy establece el 
+                estado a Open. Además, este punto es muy importante, al mismo tiempo se inicia 
+                un temporizador.
+
+                Mientras el estado sea Open las llamadas al servicio no se realizarán, devolviendo 
+                de manera automática el último error conocido. El tiempo en que el proxy permanece 
+                en este estado lo marca la configuración del temporizador.
+
+                Cuando el temporizador concluye su ciclo el estado pasa a ser Half-Open. En 
+                este estado la llamada al servicio vuelve a estar disponible al menos una vez de 
+                manera que:
+
+                    Si la petición funciona correctamente se asume que el error se ha corregido, 
+                    se restablece a cero el contador de errores y se establece el estado del 
+                    proxy a Closed de nuevo. Todo vuelve a funcionar correctamente.
+
+                    Si por lo contrario se produce algún error en la petición se asume que el 
+                    error continua, se establece de nuevo el estado a Open y se reinicia el 
+                    temporizador. El servicio/recurso continua siendo inaccesible.
 ************************************************************************************************
 
 

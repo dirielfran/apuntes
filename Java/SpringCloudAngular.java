@@ -1787,7 +1787,7 @@ Seccion 9: Backend: Microservicio-respuesta*************************************
 	por alumno  
 		@Query("select e.id from Respuesta r join r.alumno a join r.pregunta p join p.examen e where a.id=? group by e.id")
 		public Iterable<Long> findExamenesIdsConRespuestaByAlumno(Long alumnoId);
-59. ************************************************************************Añadiendo métodos en service y controlador para ids de exámenes		
+59. ************************************************************************Añadiendo métodos en service y controlador para ids de exámenes
 	1.- Se modifica microservicios-respuesta 
 		1.1.- Se modifica IRespuestaService.java, se agrega la firma para metodo de consulta findExamenesIdsConRespuestaByAlumno() 
 			public Iterable<Long> findExamenesIdsConRespuestaByAlumno(Long alumnoId);
@@ -1803,7 +1803,7 @@ Seccion 9: Backend: Microservicio-respuesta*************************************
 				Iterable<Long> examenesIds = iRespuestaService.findExamenesIdsConRespuestaByAlumno(idAlumno);
 				return ResponseEntity.ok(examenesIds);
 			}
-60. ***************************************************************************************************Probando en postman responder examen		
+60. ***************************************************************************************************Probando en postman responder examen
 	0.- Se levantan lo microservicios:
 		eureka
 		cursos  
@@ -2116,7 +2116,7 @@ Seccion 10: Backend: Spring Cloud Gateway***************************************
 		#Se deshabilita ribbon  para el balanceo de carga
 		spring.cloud.loadbalancer.enabled=false*/
 
-	4.- Configuracion en archivo application.yml  
+	4.- Configuracion en archivo application.yml, se elimina el mapeo a las rutas en el properties y se configuran en tml 
 		4.1.- Se crea archivo application.yml 
 		4.2.- Se crean las configuraciones  
 			spring:
@@ -2182,7 +2182,7 @@ Seccion 10: Backend: Spring Cloud Gateway***************************************
 
 		}
 36. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Modificando el request en el filtro pre
-	1.- Se modifica la clase para modificar el request
+	1.- Se modifica la clase Filters para modificar el request
 		//Se implementa Oredered para darle valor de precedencia al filtro
 		public class Filters implements GlobalFilter, Ordered{
 			
@@ -2279,6 +2279,101 @@ Seccion 10: Backend: Spring Cloud Gateway***************************************
 		}
 
 	}
+38. +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Configurando y probando nuestro Gateway Filter Factory personalizado
+	1.- Se modifica application.yml, se agrega filter configurado en la clase 
+		spring:
+		  cloud:
+		    gateway:
+		      routes:
+		      - id: microservicio-usuarios
+		        uri: lb://microservicios-usuarios
+		        predicates:
+		          - Path=/api/usuarios/**   (**/)
+		        filters:
+		          - StripPrefix=2 
+		          - name: Ejemplo
+		            args:
+		              mensaje: Mensaje Personalizado
+		              cookieNombre: usuario
+		              cookieValor: ElvisAreiza
+    2.- Se modifica Filters, se le cambia orden de precedencia
+    		@Override
+			//Se le da valor de precedencia al filtro
+			public int getOrder() {
+				return 1;
+			}
+    3.- Se prueba en postman, se deben validar las cookies agregadas
+    	* Se levanta eureka --> 
+    	GET --> http://localhost:8090/api/usuarios/3
+39. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Filtros Gateway Factory que vienen de fábrica
+	Referencia --> https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/#gatewayfilter-factories
+	1.- Se modifica application.yml, se le agregan filters de fabrica 
+		spring:
+		  cloud:
+		    gateway:
+		      routes:
+		      - id: microservicio-usuarios
+		        uri: lb://microservicios-usuarios
+		        predicates:
+		          - Path=/api/usuarios/**				(**/)
+		        filters:
+		          - StripPrefix=2 
+		          - name: Ejemplo
+		            args:
+		              mensaje: Mensaje Personalizado
+		              cookieNombre: usuario
+		              cookieValor: ElvisAreiza
+		          - AddRequestHeader=token-request, 123456
+		          - AddResponseHeader=token-response, 123456
+		          // Se modifica el Content-Type  
+		          - SetResponseHeader=Content-Type, text/plain
+		          - AddRequestParameter=nombre, andres
+	2.- Se modifica CommonsControllers, para imprimir filtros agregados al request en el metodo listar()  
+			@GetMapping
+			public ResponseEntity<?> listar(@RequestParam String nombre, @RequestHeader String token){
+				System.out.println(nombre);
+				System.out.println(token);
+				return ResponseEntity.ok().body(service.findAll());
+			}
+	3.- Se prueba por postman, se debe validar los headers que esten los filters agregados 
+		http://localhost:8090/api/usuarios
+40. +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Request Predicates Factory que vienen de fábrica
+	Referecia --> https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/#gateway-request-predicates-factories
+	1.- Se modifica application.yml 
+		spring:
+		  cloud:
+		    gateway:
+		      routes:
+		      - id: microservicio-usuarios
+		        uri: lb://microservicios-usuarios
+		        predicates:
+		          - Path=/api/usuarios/**      (**/)
+				  - Header=Content-Type,application/json
+		          - Header= token, \d+  -->(Expresion regular \d+ --> que sea digito)
+		          - Method= GET, POST
+		          - Query=color, verde
+		          - Cookie=color, azul
+		        filters:
+		          - StripPrefix=2 
+		          - name: Ejemplo
+		            args:
+		              mensaje: Mensaje Personalizado
+		              cookieNombre: usuario
+		              cookieValor: ElvisAreiza
+		          - AddRequestHeader=token-request, 123456
+		          - AddResponseHeader=token-response, 123456
+		          - AddRequestParameter=nombre, andres
+	2.- Se prueba en postman
+		2.1.- Debe fallar 
+		2.2.- Se agregan filtros    
+			header 	--> token 			--> 123456
+					--> Content-Type 	--> application/json
+			param  	--> color 			--> verde  
+			cookie 	--> color 			--> azul
+            
+
+
+
 
 
 
@@ -2316,3 +2411,6 @@ Apuntes*************************************************************************
 
 ++++++++++++++++++Curso Microservicios con Spring Boot y Spring Cloud Netflix Eureka
 ******************Curso Microservicios con Spring Cloud y Angular full stack
+
+
+<kite-box [css]="{ background: '$white', padding: '$md', width: '100vw', '@md': {borderRadius: '8px', boxShadow: '0px 2px 4px rgba(225, 225, 235, 0.5)', width: '416px'}}">
