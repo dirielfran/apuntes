@@ -2370,12 +2370,66 @@ Seccion 10: Backend: Spring Cloud Gateway***************************************
 					--> Content-Type 	--> application/json
 			param  	--> color 			--> verde  
 			cookie 	--> color 			--> azul
-            
+Seccion 5: Backend: Resilencia4J: Resilencia y toleracia a fallos++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++           
+43. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Configurando microservicio con Resilience4J
 
 
 
 
 
+
+
+
+******************************************************Curso de Kubernetes******************************************************************
+	Referencia --> https://www.udemy.com/course/guia-completa-de-docker-kubernetes-con-spring-boot/learn/lecture/31678416#overview
+	6.- Creacion de primer Microservicio***************************************************************************************************
+		* Se crea proyecto maven general de kubernetes
+		* Se crea ms usuarios 
+			Componentes -->	data JPA
+							web 
+							openfeign  
+							devtools
+							mysql 
+		* Se modifica el proyecto padre MS-SpringKubernetes, el pom.xml 
+			* Se agrega parent del ms-usuarios y se agrega modulo 
+			    <parent>
+			        <groupId>org.springframework.boot</groupId>
+			        <artifactId>spring-boot-starter-parent</artifactId>
+			        <version>2.7.2</version>
+			        <relativePath/> <!-- lookup parent from repository -->
+			    </parent>
+
+		   	    <modules>
+			        <module>ms-usuarios</module>
+			    </modules>
+		* Se modifica el proyecto MS-usuarios, el pom.xml 
+			* Se agrega parent del ms-SpringKubernetes 
+				<parent>
+					<groupId>com.areiza</groupId>
+					<artifactId>MS-SpringCloudkubernetes</artifactId>
+					<version>1.0-SNAPSHOT</version>
+				</parent>
+	8.- Configuracion de contexto**********************************************************************************************************
+		* Se modifica ms-usuarios, se modifica properties, se le da nombre al servicio y puerto 
+			spring.application.name=ms-usuarios
+			server.port=8081 
+		* Se crea package --> com.eareiza.ms.usuarios.entitys
+		* Se crea la clase usuarios 
+	9- Implementacion de Componente repository*********************************************************************************************
+		Spring Data JPA Referencia --> https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories 
+		* Se crea pauqete --> com.eareiza.ms.usuarios.repositories
+		* Se crea repositorio UsuarioRepository
+	11. Implementando el componente Service************************************************************************************************
+		* Se crean paquetes   
+			package com.eareiza.ms.usuarios.services;
+			package com.eareiza.ms.usuarios.interfaces;
+		* Se crea interface e implementacion 
+			UsuarioService 
+			UsuarioServiceImpl
+	12. Implementando el controlador RestController y metodos handler**********************************************************************
+		* Se crea packege --> package com.eareiza.ms.usuarios.controllers;
+		* Se crea clase controlador UsuarioController 
+	
 
 Apuntes************************************************************************************************************************************
 	Eureka Server**********************************************************************************************************************
