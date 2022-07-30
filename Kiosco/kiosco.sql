@@ -90,7 +90,13 @@ CREATE TABLE `db_springboot_backend`.`saldos` (
 
 ALTER TABLE `db_springboot_backend`.`saldos` 
 CHANGE COLUMN `mercadoPago` `mercado_pago` DOUBLE NULL DEFAULT '0' ,
-CHANGE COLUMN `patrimoniPesos` `patrimoni_pesos` DOUBLE NULL DEFAULT '0' ,
+CHANGE COLUMN `patrimonioPesos` `patrimoni_pesos` DOUBLE NULL DEFAULT '0' ,
 CHANGE COLUMN `patrimonioDolar` `patrimonio_dolar` DOUBLE NULL DEFAULT '0' ,
 CHANGE COLUMN `puntoVenta` `punto_venta` DOUBLE NULL DEFAULT '0' ,
 CHANGE COLUMN `pedidosYa` `pedidos_ya` DOUBLE NULL DEFAULT '0' ;
+
+ALTER TABLE `db_springboot_backend`.`saldos` 
+CHANGE COLUMN `tasaDolar` `tasa_dolar` DOUBLE NULL DEFAULT '0' ;
+
+ALTER TABLE `db_springboot_backend`.`saldos` 
+CHANGE COLUMN `id` `id` BIGINT NOT NULL AUTO_INCREMENT ;
