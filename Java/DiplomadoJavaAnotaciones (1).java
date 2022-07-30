@@ -3664,6 +3664,15 @@ Java 8
             System.out.println(lista.stream().count());
         }
     ----------------------------------------------------------------------------------
+        distinct()
+        El método distinct nos permitirá remover datos duplicados de una lista.
+
+        public static void main(String[] args) {
+            List numbers = Arrays.asList(7, 7, 7, 7, 2, 2, 2, 3, 3, 3, 3, 100, 100, 200, 200);
+            numbers = numbers.stream().distinct().collect(Collectors.toList());
+            System.out.println(numbers);
+        }
+    ----------------------------------------------------------------------------------
     Metodo peek
         Devuelve una secuencia que consta de los elementos de esta secuencia, además 
         de realizar la acción proporcionada en cada elemento a medida que se consumen 

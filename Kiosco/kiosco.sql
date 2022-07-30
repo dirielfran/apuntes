@@ -67,3 +67,30 @@ CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;
 -- responsable en facturas al costo
 ALTER TABLE `db_springboot_backend`.`facturas` 
 ADD COLUMN `responsable_id` BIGINT NULL DEFAULT NULL AFTER `costo`;
+
+
+-- Se agrega registros de saldos 
+CREATE TABLE `db_springboot_backend`.`saldos` (
+  `id` BIGINT NOT NULL,
+  `user` VARCHAR(45) NULL DEFAULT NULL,
+  `create_at` TIMESTAMP NULL DEFAULT NULL,
+  `update_at` TIMESTAMP NULL DEFAULT NULL,
+  `efectivo` DOUBLE NULL DEFAULT 0,
+  `mercadoPago` DOUBLE NULL DEFAULT 0,
+  `patrimoniPesos` DOUBLE NULL DEFAULT 0,
+  `patrimonioDolar` DOUBLE NULL DEFAULT 0,
+  `puntoVenta` DOUBLE NULL DEFAULT 0,
+  `pedidosYa` DOUBLE NULL DEFAULT 0,
+  `ganancias` DOUBLE NULL DEFAULT 0,
+  `perdidas` DOUBLE NULL DEFAULT 0,
+  `gastos` DOUBLE NULL DEFAULT 0,
+  `diferencias` DOUBLE NULL DEFAULT 0,
+  `tasaDolar` DOUBLE NULL DEFAULT 0,
+  PRIMARY KEY (`id`));
+
+ALTER TABLE `db_springboot_backend`.`saldos` 
+CHANGE COLUMN `mercadoPago` `mercado_pago` DOUBLE NULL DEFAULT '0' ,
+CHANGE COLUMN `patrimoniPesos` `patrimoni_pesos` DOUBLE NULL DEFAULT '0' ,
+CHANGE COLUMN `patrimonioDolar` `patrimonio_dolar` DOUBLE NULL DEFAULT '0' ,
+CHANGE COLUMN `puntoVenta` `punto_venta` DOUBLE NULL DEFAULT '0' ,
+CHANGE COLUMN `pedidosYa` `pedidos_ya` DOUBLE NULL DEFAULT '0' ;
