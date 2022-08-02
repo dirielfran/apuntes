@@ -2429,7 +2429,87 @@ Seccion 5: Backend: Resilencia4J: Resilencia y toleracia a fallos+++++++++++++++
 	12. Implementando el controlador RestController y metodos handler**********************************************************************
 		* Se crea packege --> package com.eareiza.ms.usuarios.controllers;
 		* Se crea clase controlador UsuarioController 
-	
+	15. Configurando en el application.properties conexión*********************************************************************************
+		* Se configura DataSource en el properties
+			#DataSource
+			spring.datasource.url=jdbc:mysql://localhost:3306/ms_kubernetes?useSSL=false&serverTimezone=America/Argentina/Buenos_Aires&allowPublicKeyRetrieval=true
+			spring.datasource.username=alfonso
+			spring.datasource.password=danger120-
+			spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+			#Se configura el dialecto
+			#InnoDBDialec soporte a integridad referencial
+			spring.jpa.database-platform=org.hibernate.dialect.MySQL57Dialect
+			spring.jpa.generate-ddl=true
+			#Pa no mostrar la consulta de sql
+			logging.level.org.hibernate.SQL=debug
+		* Se crea la base de datos ms_kubernetes
+		* Se prueban los CRUD en postman  
+**************************************************	Seccion 3: Microservicios Cursos  *****************************************************
+	19.- Creacion de ms-cursos 
+		* Se crea ms-cursos
+			Componentes -->	data JPA
+							web 
+							openfeign  
+							devtools
+							postgre 
+							validation 
+							loombok
+		* Se modifica el proyecto padre MS-SpringKubernetes, el pom.xml 
+			* Se agrega se agrega modulo 
+		   	    <modules>
+			        <module>ms-usuarios</module>
+			        <module>ms-cursos</module>
+			    </modules>
+		* Se modifica el proyecto MS-usuarios, el pom.xml 
+			* Se agrega parent del ms-SpringKubernetes 
+				<parent>
+					<groupId>com.areiza</groupId>
+					<artifactId>MS-SpringCloudkubernetes</artifactId>
+					<version>1.0-SNAPSHOT</version>
+				</parent>
+		Configuracion de contexto**********************************************************************************************************
+		* Se modifica ms-cursos, se modifica properties, se le da nombre al servicio y puerto 
+			spring.application.name=ms-cursos
+			server.port=8002
+	20. Añadiendo la clase Entity y el CrudRepository**************************************************************************************
+		*Se crean paquetes 
+			entities
+			services 
+			controllers  
+			interfaces 
+		* Se crea entidad Curso  
+		* Se crea Repository  CursoRepository
+		* Se crea interface CursoService  
+		* Se crea clase de servicio CursoServiceImpl  
+	23.- Configurando el datasource y conexión con PostgreSQL******************************************************************************
+		* Se modifica ms-cursos, se crean las configuraciones del datasource en el application.properties   
+			#DataSource
+			spring.datasource.url=jdbc:postgresql://localhost:5432/ms-cursos
+			spring.datasource.username=postgres
+			spring.datasource.password=sasa
+			spring.datasource.driver-class-name=org.postgresql.Driver
+			spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL10Dialect
+			spring.jpa.generate-ddl=true
+			logging.level.org.hibernate.SQL=debug
+
+			spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+		* Se instala PostgreSQL 
+			https://www.postgresql.org/download/windows/
+		* Se crea base de datos, con la herramienta instalada pgadmin   
+			ms-cursos
+*******************************************	Seccion : Validaciones y Manejod de errores ***************************************************
+	* BindingResult
+	* @Valid 
+	* @NotEmpty
+	* @NotBlank
+	* @Email 
+
+
+
+
+
+
+
 
 Apuntes************************************************************************************************************************************
 	Eureka Server**********************************************************************************************************************
