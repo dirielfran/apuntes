@@ -70,33 +70,39 @@ ADD COLUMN `responsable_id` BIGINT NULL DEFAULT NULL AFTER `costo`;
 
 
 -- Se agrega registros de saldos 
-CREATE TABLE `db_springboot_backend`.`saldos` (
-  `id` BIGINT NOT NULL,
-  `user` VARCHAR(45) NULL DEFAULT NULL,
-  `create_at` TIMESTAMP NULL DEFAULT NULL,
-  `update_at` TIMESTAMP NULL DEFAULT NULL,
-  `efectivo` DOUBLE NULL DEFAULT 0,
-  `mercadoPago` DOUBLE NULL DEFAULT 0,
-  `patrimoniPesos` DOUBLE NULL DEFAULT 0,
-  `patrimonioDolar` DOUBLE NULL DEFAULT 0,
-  `puntoVenta` DOUBLE NULL DEFAULT 0,
-  `pedidosYa` DOUBLE NULL DEFAULT 0,
-  `ganancias` DOUBLE NULL DEFAULT 0,
-  `perdidas` DOUBLE NULL DEFAULT 0,
-  `gastos` DOUBLE NULL DEFAULT 0,
-  `diferencias` DOUBLE NULL DEFAULT 0,
-  `tasaDolar` DOUBLE NULL DEFAULT 0,
-  PRIMARY KEY (`id`));
+CREATE TABLE `saldos` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `efectivo` double DEFAULT '0',
+  `mercado_pago` double DEFAULT '0',
+  `patrimonio_pesos` double DEFAULT '0',
+  `patrimonio_dolar` double DEFAULT '0',
+  `punto_venta` double DEFAULT '0',
+  `pedidos_ya` double DEFAULT '0',
+  `ganancias` double DEFAULT '0',
+  `perdidas` double DEFAULT '0',
+  `gastos` double DEFAULT '0',
+  `diferencias` double DEFAULT '0',
+  `tasa_dolar` double DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+SELECT * FROM db_springboot_backend.saldos;
+
+
+
+
+# Se agrea saldo dollar 
+ALTER TABLE `db_springboot_backend`.`cajachica` 
+ADD COLUMN `saldodollar` DOUBLE NULL DEFAULT 0 AFTER `saldoefectivo`,
+ADD COLUMN `isdollar` BIT(1) NULL DEFAULT b'0' AFTER `transferencia`;
+
+ALTER TABLE `db_springboot_backend`.`cajachica` 
+ADD COLUMN `tasa` DOUBLE NULL DEFAULT 0 AFTER `isdollar`;
 
 ALTER TABLE `db_springboot_backend`.`saldos` 
-CHANGE COLUMN `mercadoPago` `mercado_pago` DOUBLE NULL DEFAULT '0' ,
-CHANGE COLUMN `patrimonioPesos` `patrimoni_pesos` DOUBLE NULL DEFAULT '0' ,
-CHANGE COLUMN `patrimonioDolar` `patrimonio_dolar` DOUBLE NULL DEFAULT '0' ,
-CHANGE COLUMN `puntoVenta` `punto_venta` DOUBLE NULL DEFAULT '0' ,
-CHANGE COLUMN `pedidosYa` `pedidos_ya` DOUBLE NULL DEFAULT '0' ;
+ADD COLUMN `dollar` DOUBLE NULL DEFAULT 0 AFTER `tasa_dolar`;
 
 ALTER TABLE `db_springboot_backend`.`saldos` 
-CHANGE COLUMN `tasaDolar` `tasa_dolar` DOUBLE NULL DEFAULT '0' ;
-
-ALTER TABLE `db_springboot_backend`.`saldos` 
-CHANGE COLUMN `id` `id` BIGINT NOT NULL AUTO_INCREMENT ;
+ADD COLUMN `is_transferencia` BIT(1) NULL DEFAULT b'0' AFTER `dollar`;
