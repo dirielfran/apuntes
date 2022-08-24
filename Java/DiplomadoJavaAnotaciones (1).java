@@ -939,6 +939,469 @@ Arquitectura y Modelos
 
 
 
+
+Colecciones
+
+*********************************************************************Manejo de Objetos For each
+    //Recorre articulos
+    for (Articulo a : articulos) {
+        //Valida si encuentra el mismo articulo
+        if (idproducto == a.getIdProducto()) {
+            if (a.getCantidad()>0){
+                //añade cantidad al id encontrado
+                a.setCantidad(a.getCantidad() - 1);
+                //cambia bandera
+                flag = true;
+                break;
+            }
+        }
+    }
+***********************************************************************************************
+
+
+*********************************************************************************API COLLECTION
+    Referencia --> https://www.adictosaltrabajo.com/2015/09/25/introduccion-a-colecciones-en-java/
+    Una colección representa un grupo de objetos. Esto objetos son conocidos como elementos. 
+    Cuando queremos trabajar con un conjunto de elementos, necesitamos un almacén donde poder 
+    guardarlos. En Java, se emplea la interfaz genérica Collection para este propósito. 
+    Gracias a esta interfaz, podemos almacenar cualquier tipo de objeto y podemos usar una 
+    serie de métodos comunes, como pueden ser: añadir, eliminar, obtener el tamaño de la colección… 
+    Partiendo de la interfaz genérica Collection extienden otra serie de interfaces genéricas. 
+    Estas subinterfaces aportan distintas funcionalidades sobre la interfaz anterior.
+
+    Tipos de colecciones:
+        * Set
+            +HashSet
+            +TreeSet
+            +LinkedHashSet
+        *List
+            +ArrayList
+            +LinkedList
+        *Map
+            +HashMap
+            +TreeMap
+            +LinkedHashMap
+
+    Set*********************************************************************************
+        La interfaz Set define una colección que no puede contener elementos duplicados. 
+        Esta interfaz contiene, únicamente, los métodos heredados de Collection añadiendo 
+        la restricción de que los elementos duplicados están prohibidos. Es importante 
+        destacar que, para comprobar si los elementos son elementos duplicados o no lo 
+        son, es necesario que dichos elementos tengan implementada, de forma correcta, 
+        los métodos equals y hashCode. 
+        Para comprobar si dos Set son iguales, se comprobarán si todos los elementos 
+        que los componen son iguales sin importar en el orden que ocupen dichos elementos.
+
+        Ninguna de estas implementaciones son sincronizadas; es decir, no se garantiza 
+        el estado del Set si dos o más hilos acceden de forma concurrente al mismo. 
+        Esto se puede solucionar empleando una serie de métodos que actúan de wrapper 
+        para dotar a estas colecciones de esta falta de sincronización:
+
+            Java
+            Set set = Collections.synchronizedSet(new HashSet());
+            SortedSet sortedSet = Collections.synchronizedSortedSet(new TreeSet());
+            Set set = Collections.synchronizedSet(new LinkedHashSet());
+
+
+        HashSet:+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            Esta implementación almacena los elementos en una tabla hash. Es la implementación 
+            con mejor rendimiento de todas pero no garantiza ningún orden a la hora de realizar 
+            iteraciones. 
+            Es la implementación más empleada debido a su rendimiento y a que, generalmente, 
+            no nos importa el orden que ocupen los elementos. 
+            Es importante definir el tamaño inicial de la tabla ya que este tamaño marcará 
+            el rendimiento de esta implementación.
+                //Se crea y se inicializa HashSet
+                final Set hashSet = new HashSet(1_000_000);
+                //Almacenamos el tiempo actual en milisegundos cuando comienza
+                final Long startHashSetTime = System.currentTimeMillis();
+                //Se  le añaden los elementos al hashSet
+                for (int i = 0; i < 1_000_000; i++) {
+                    hashSet.add(i);
+                }       
+                //Almacenamos el tiempo actual en milisegundos cuando termina
+                final Long endHashSetTime = System.currentTimeMillis();
+                //Se imprime cuanto tarda
+                System.out.println("Time spent by HashSet: " + (endHashSetTime - startHashSetTime));
+        TreeSet:+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            Esta implementación almacena los elementos ordenándolos en función de sus 
+            valores. Es bastante más lento que HashSet. Los elementos almacenados deben 
+            implementar la interfaz Comparable. 
+                //Se crea TreeSet
+                final Set treeSet = new TreeSet();
+                //Almacenamos el tiempo actual en milisegundos cuando comienza
+                final Long startTreeSetTime = System.currentTimeMillis();
+                //Se  le añaden los elementos 
+                for (int i = 0; i < 1000000; i++) {
+                    treeSet.add(i);
+                }
+                //Almacenamos el tiempo actual en milisegundos cuando termina
+                final Long endTreeSetTime = System.currentTimeMillis();
+                //Se imprime cuanto tarda
+                System.out.println("Time spent by TreeSet: " + (endTreeSetTime - startTreeSetTime));
+        LinkedHashSet: ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            Esta implementación almacena los elementos en función del orden de inserción. 
+            Es, simplemente, un poco más costosa que HashSet.
+                //Se crea LinkedHashSet
+                final Set linkedHashSet = new LinkedHashSet(1_000_000);
+                //Almacenamos el tiempo actual en milisegundos cuando comienza
+                final Long startLinkedHashSetTime = System.currentTimeMillis();
+                //Se  le añaden los elementos 
+                for (int i = 0; i < 1000000; i++) {
+                    linkedHashSet.add(i);
+                }
+                //Almacenamos el tiempo actual en milisegundos cuando termina
+                final Long endLinkedHashSetTime = System.currentTimeMillis();
+                //Se imprime cuanto tarda
+                System.out.println("Time spent by LinkedHashSet: " + (endLinkedHashSetTime - startLinkedHashSetTime));
+    List********************************************************************************
+        Referencia --> https://es.fondoperlaterra.org/comdifference-between-arraylist-and-linkedlist-in-java-20#:~:text=ArrayList%20permite%20el%20acceso%20aleatorio,los%20elementos%20de%20la%20lista.
+        La interfaz List define una sucesión de elementos. A diferencia de la interfaz 
+        Set, la interfaz List sí admite elementos duplicados. A parte de los métodos 
+        heredados de Collection, añade métodos que permiten mejorar los siguientes puntos:
+
+            *Acceso posicional a elementos: manipula elementos en función de su posición 
+            en la lista.
+            *Búsqueda de elementos: busca un elemento concreto de la lista y devuelve su 
+            posición.
+            *Iteración sobre elementos: mejora el Iterator por defecto.
+            *Rango de operación: permite realizar ciertas operaciones sobre rangos de 
+            elementos dentro de la propia lista.
+
+        Dentro de la interfaz List existen varios tipos de implementaciones realizadas 
+        dentro de la plataforma Java. Vamos a analizar cada una de ellas:
+
+            ArrayList: +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                Esta es la implementación típica. Se basa en un array redimensionable 
+                que aumenta su tamaño según crece la colección de elementos. Es la que 
+                mejor rendimiento tiene sobre la mayoría de situaciones.
+
+                Hay tres constructores de ArrayList:
+
+                    ArrayList () 
+                    ArrayList (Colección <? Extiende E> c) 
+                    ArrayList (int capacidad)
+
+                    El primero El constructor implementa una lista de matriz vacía. 
+                    El segundo el constructor implementa una lista de matriz inicializada 
+                    usando el Colección c elementos. 
+                    El tercero el constructor implementa la lista de matrices con el 
+                    capacidad proporcionado en el argumento. 
+
+                Al trabajar con ArrayList, a veces será necesario convertir la Collection 
+                ArrayList en una matriz. Se puede hacer llamando toArray ().
+                ---------------------------------------------------------------
+                    //Add
+                    ArrayList<String> cars = new ArrayList<String>();
+                    cars.add("Volvo");
+                    cars.add("BMW");
+                    cars.add("Ford");
+                    cars.add("Mazda");
+                    System.out.println(cars);
+                    //Cambio de Item
+                    cars.set(0, "Opel");
+                    //Remueve un item
+                    cars.remove(0);
+                    //remueve todos los items
+                    cars.clear();
+                    //devuelve el tamaño
+                    ArrayList Size
+            LinkedList: ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                Esta implementación permite que mejore el rendimiento en ciertas ocasiones. 
+                Esta implementación se basa en una lista doblemente enlazada de los 
+                elementos, teniendo cada uno de los elementos un puntero al anterior y 
+                al siguiente elemento.
+
+                No se puede acceder al azar a la lista vinculada implementada usando LinkedList. 
+                Si desea recuperar cualquier elemento de la lista, debe iterar la lista 
+                para buscar ese elemento.
+
+                Hay dos constructores en la clase LinkedList:
+
+                    LinkedList () 
+                    LinkedList (Colección <? Extiende E> c)
+
+                    El primero El constructor crea una lista enlazada vacía. 
+                    El segundo El constructor crea una lista vinculada, 
+                    inicializada con los elementos de Colección C.
+                    ------------------------------------------------------------
+                    //Add
+                    LinkedList<String> cars = new LinkedList<String>();
+                    cars.add("Volvo");
+                    cars.add("BMW");
+                    cars.add("Ford");
+                    cars.add("Mazda");
+                    System.out.println(cars);
+
+                    addFirst()  Adds an item to the beginning of the list.  
+                    addLast()   Add an item to the end of the list  
+                    removeFirst()   Remove an item from the beginning of the list.  
+                    removeLast()    Remove an item from the end of the list 
+                    getFirst()  Get the item at the beginning of the list   
+                    getLast()   Get the item at the end of the list
+
+        Ninguna de estas implementaciones son sincronizadas; es decir, no se garantiza 
+        el estado del List si dos o más hilos acceden de forma concurrente al mismo. Esto 
+        se puede solucionar empleando una serie de métodos que actúan de wrapper para dotar 
+        a estas colecciones de esta falta de sincronización:
+
+            Java
+            List list = Collections.synchronizedList(new ArrayList());
+            List list = Collections.synchronizedList(new LinkedList());
+    Map*********************************************************************************
+        La interfaz Map asocia claves a valores. Esta interfaz no puede contener claves 
+        duplicadas y; cada una de dichas claves, sólo puede tener asociado un valor como 
+        máximo.
+
+        Dentro de la interfaz Map existen varios tipos de implementaciones realizadas 
+        dentro de la plataforma Java. Vamos a analizar cada una de ellas:
+
+            HashMap+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                Un HashMap es la implementación de la interface Map, esta interface es un tipo de 
+                Collection que almacena datos asociando una llave a un valor, esta interface sirve 
+                para muchas cosas y tiene ciertas caracteristicas que la definen, por ejemplo, no 
+                permite key duplicados, cada key tiene que estar asociado a un valor como máximo, 
+                si agregas un key que ya existe sobrescribe el valor del key anterior, solo permite 
+                Object types lo que quiere decir que no puedes poner un valor primitivo...
+
+                El HashMap funciona con el principio del hashing, como ya explique trabaja asignando 
+                una ubicación a una key con el método hashCode() de Java.
+
+                    Map miMapa=new HashMap();
+                    //Lave, valor
+                    miMapa.put("1", "Juan");
+                    miMapa.put("2", "Carlos");
+                    miMapa.put("3", "Rosario");
+                    miMapa.put("4", "Esperanza");
+                    //Se imprimen todas las llaves
+                    imprimir(miMapa.keySet());
+                    //Se imprimen todos los valores
+                    imprimir(miMapa.values());
+                    }
+
+                    private static void imprimir(Collection coleccion) {
+                        for(Object elemento :coleccion) {
+                            System.out.print(elemento +" ");
+                        }
+                        System.out.println("");
+                    }
+                ------------------------------------------------------------------
+                // Create a HashMap object called capitalCities
+                HashMap<String, String> capitalCities = new HashMap<String, String>();
+
+                // Add keys and values (Country, City)
+                capitalCities.put("England", "London");
+                capitalCities.put("Germany", "Berlin");
+                capitalCities.put("Norway", "Oslo");
+                capitalCities.put("USA", "Washington DC");
+                System.out.println(capitalCities);
+                //Accede a un Item
+                capitalCities.get("England");
+                //Remueve un Item
+                capitalCities.remove("England");
+                //Devuelve el tamaña de Item
+                capitalCities.size();
+
+                // Print keys
+                for (String i : capitalCities.keySet()) {
+                  System.out.println(i);
+                }
+                // Print values
+                for (String i : capitalCities.values()) {
+                  System.out.println(i);
+                }
+                // Print keys and values
+                for (String i : capitalCities.keySet()) {
+                  System.out.println("key: " + i + " value: " + capitalCities.get(i));
+                }
+            TreeMap:++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                Esta implementación almacena las claves ordenándolas en función de sus 
+                valores. Es bastante más lento que HashMap. Las claves almacenadas deben 
+                implementar la interfaz Comparable. Esta implementación garantiza, siempre, 
+                un rendimiento de log(N) en las operaciones básicas, debido a la estructura 
+                de árbol empleada para almacenar los elementos.
+
+                // Declaración de un Map (un HashMap) con clave "Integer" y Valor "String". 
+                //Las claves pueden ser de cualquier tipo de objetos, aunque los más utilizados 
+                //como clave son los objetos predefinidos de Java como String, Integer, Double ... 
+                //!!!!CUIDADO los Map no permiten datos atómicos
+                Map<Integer, String> nombreMap = new HashMap<Integer, String>();
+                nombreMap.size(); // Devuelve el numero de elementos del Map
+                nombreMap.isEmpty(); // Devuelve true si no hay elementos en el Map y false si si los hay
+                nombreMap.put(K clave, V valor); // Añade un elemento al Map
+                nombreMap.get(K clave); // Devuelve el valor de la clave que se le pasa como parámetro o 'null' si la clave no existe
+                nombreMap.clear(); // Borra todos los componentes del Map
+                nombreMap.remove(K clave); // Borra el par clave/valor de la clave que se le pasa como parámetro
+                nombreMap.containsKey(K clave); // Devuelve true si en el map hay una clave que coincide con K
+                nombreMap.containsValue(V valor); // Devuelve true si en el map hay un Valor que coincide con V
+                nombreMap.values(); // Devuelve una "Collection" con los valores del Map
+            LinkedHashMap: +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                Esta implementación almacena las claves en función del orden de inserción. 
+                Es, simplemente, un poco más costosa que HashMap.
+
+        Ninguna de estas implementaciones son sincronizadas; es decir, no se garantiza 
+        el estado del Map si dos o más hilos acceden de forma concurrente al mismo. Esto 
+        se puede solucionar empleando una serie de métodos que actúan de wrapper para 
+        dotar a estas colecciones de esta falta de sincronización:
+
+            Java
+            Map map = Collections.synchronizedMap(new HashMap());
+            SortedMap mortedMap = Collections.synchronizedSortedMap(new TreeMap());
+            Map map = Collections.synchronizedMap(new LinkedHashMap());
+
+        Otro elemento importante a la hora de trabajar con los Maps (aunque no lo es 
+        tanto como a la hora de trabajar con los ArrayList) son los "Iteradores" (Iterator). 
+        Los Iteradores sirven para recorrer los Map y poder trabajar con ellos. Los Iteradores 
+        solo tienen tres métodos que son el “hasNext()” para comprobar que siguen quedando 
+        elementos en el iterador, el“next()”  para que nos de el siguiente elemento del 
+        iterador; y el “remove()” que sirve para eliminar el elemento del Iterador. En 
+        realidad se puede prescindir de los iteradores para trabajar con los Map ya que 
+        la gran ventaja de los Map frente a los ArrayList, es que estos tienen una clave 
+        asociada al objeto y se les puede buscar por la clave, aunque nunca esta de más 
+        saber utilizar los iteradores para manejar los Map.
+
+            // Imprimimos el Map con un Iterador
+            Iterator it = map.keySet().iterator();
+            while(it.hasNext()){
+              Integer key = it.next();
+              System.out.println("Clave: " + key + " -> Valor: " + map.get(key));
+            }
+    Ejemplo___________________________________________________________________________
+        Se agrega registro a un array
+        lista = new ArrayList<String>(Arrays.asList(arrayLinExp_1));
+        lista.add(25,alicuota.toString());                  
+        String[] arrayNew = new String[lista.size()];
+        arrayNew = lista.toArray(arrayNew);
+        lineaActual = StringUtils.join(arrayNew, ";");
+***********************************************************************************************
+
+
+**********************************************************Ordenal una lista con API Collections
+    Collections.sort(lista, new Comparator<String>() {
+        @Override
+        public int compare(String o1, String o2) {
+            return o1.compareTo(o2);
+        }           
+    });
+***********************************************************************************************
+
+
+********************************************************Manejo de objetos con arrayLis y sesion
+
+    ArrayList<Conversor> lista = session.getAttribute("listado") == null
+            ? new ArrayList<Conversor>() : (ArrayList) session.getAttribute("listado");
+***********************************************************************************************
+
+
+*******************************************************Borrar objetos repetidos de un arrayList
+    Set<String> hs = new HashSet<>();
+    hs.addAll(miArrayList);
+    miArrayList.clear();
+    miArrayList.addAll(hs);
+***********************************************************************************************
+
+
+***********************************************************************Ordenar array de objetos
+
+    for(int i=0; i<=hs.size()-1;i++){
+        for (int j = i+1; j <= hs.size()-1 ; j++) {
+            if (clausulasAll.get(j).getId() < clausulasAll.get(i).getId()){
+                aux = clausulasAll.get(i);
+                clausulasAll.set(i, clausulasAll.get(j));
+                clausulasAll.set(j, aux);
+            }
+        } 
+    }
+***********************************************************************************************
+
+****************************************************************************Copiar un arreglo[]
+    función predefinida en la biblioteca de estándar de Java:
+        System.arraycopy(from, fromIndex, to, toIndex, n);
+        int []datos= new int[pares.length];
+        System.arraycopy(pares, 0, datos, 0, pares.length);
+
+***********************************************************************************************
+
+
+*******************************************************************************Java.util.Arrays
+    La biblioteca de clases de Java incluye una clase auxiliar llamada “java.util.Arrays”, que
+    incluye como métodos algunas de las tareas que se realizan más a menudo con vectores:
+        Nota: es necesario importar la biblioteca,
+        import java.util.Arrays;
+        ● Arrays.sort(v) ordena los elementos del
+        vector.
+        ● Arrays.equals(v1,v2) comprueba si dos
+        vectores son iguales.
+        ● Arrays.toString(v) devuelve una cadena
+        que representa el contenido del vector.
+***********************************************************************************************
+Genericos
+
+******************************************************************************Genericos en Java
+    //Se crea clase de tipo generica
+    public class Gen<T> {
+        //Se declara objeto de tipo Gen
+        T obj;
+        
+        //Constructor que pasa una variable de tipo T a obj
+        Gen(T o){
+            obj = o;
+        }
+        
+        //El parametro G tambien se utiliza para especificar el tipo de retorno de un objeto
+        T getOb(){
+            return obj;
+        }
+        
+        void mostrarTipo(){
+            System.out.println("El tipo de va riable es: "+obj.getClass().getName());
+        }
+    }
+
+    -----------------------------------------------------------------------------------------------
+    Una clase genérica con dos parámetros de tipo
+    Puede declarar más de un parámetro de tipo en un tipo genérico. Para especificar dos o más 
+    parámetros de tipo, simplemente use una lista separada por comas. 
+
+    -----------------------------------------------------------------------------------------------
+    //Se crea variable generica de entero
+            Gen<Integer> iObj;
+
+    ----------------------------------------------------------------------------------------------
+
+    Tipos Genericos(Convensiones)
+
+    E           Elemento(utilizado generalmente por el framework de Collecciones de java
+    K           Key (Utilizados en mapas)
+    N           Number(utilizado para numeros)
+    T           Type(representa un tipo, es decir, una clase)
+    V           Value(representa un valor, tambien se usa en mapas)
+    ----------------------------------------------------------------------------------------------
+***********************************************************************************************
+
+
+*******************************************************************************Lectura de bytes
+    //Se creaarray de tipo de dato byte de solo 20 de longitud
+        byte data[]= new byte[20];
+        
+        //Se solicitan datos 
+        System.out.println("Ingrese cadena de caracteres: ");
+        //Se almacena datos en el arreglo de bytes
+        System.in.read(data);
+
+
+    //Se recorre arrglo de bytes y se imprimen en consola
+        for (int i = 0; i < data.length; i++) {
+            System.out.print((char)data[i]);
+        }
+***********************************************************************************************
+
+
+
+
+
+
+
 ****************************************************************************************Facelets
 
     1.- Se crea proyecto y se escoje el framewrok JSF, luego se escoje el lenguaje a utilizar entre facelets 
@@ -1533,461 +1996,7 @@ Sql
 
 **********************************************************************************************
 
-Colecciones
 
-*********************************************************************Manejo de Objetos For each
-    //Recorre articulos
-    for (Articulo a : articulos) {
-        //Valida si encuentra el mismo articulo
-        if (idproducto == a.getIdProducto()) {
-            if (a.getCantidad()>0){
-                //añade cantidad al id encontrado
-                a.setCantidad(a.getCantidad() - 1);
-                //cambia bandera
-                flag = true;
-                break;
-            }
-        }
-    }
-***********************************************************************************************
-
-
-*********************************************************************************API COLLECTION
-    Referencia --> https://www.adictosaltrabajo.com/2015/09/25/introduccion-a-colecciones-en-java/
-    Una colección representa un grupo de objetos. Esto objetos son conocidos como elementos. 
-    Cuando queremos trabajar con un conjunto de elementos, necesitamos un almacén donde poder 
-    guardarlos. En Java, se emplea la interfaz genérica Collection para este propósito. 
-    Gracias a esta interfaz, podemos almacenar cualquier tipo de objeto y podemos usar una 
-    serie de métodos comunes, como pueden ser: añadir, eliminar, obtener el tamaño de la colección… 
-    Partiendo de la interfaz genérica Collection extienden otra serie de interfaces genéricas. 
-    Estas subinterfaces aportan distintas funcionalidades sobre la interfaz anterior.
-
-    Tipos de colecciones:
-        * Set
-            +HashSet
-            +TreeSet
-            +LinkedHashSet
-        *List
-            +ArrayList
-            +LinkedList
-        *Map
-            +HashMap
-            +TreeMap
-            +LinkedHashMap
-
-    Set*********************************************************************************
-        La interfaz Set define una colección que no puede contener elementos duplicados. 
-        Esta interfaz contiene, únicamente, los métodos heredados de Collection añadiendo 
-        la restricción de que los elementos duplicados están prohibidos. Es importante 
-        destacar que, para comprobar si los elementos son elementos duplicados o no lo 
-        son, es necesario que dichos elementos tengan implementada, de forma correcta, 
-        los métodos equals y hashCode. 
-        Para comprobar si dos Set son iguales, se comprobarán si todos los elementos 
-        que los componen son iguales sin importar en el orden que ocupen dichos elementos.
-
-        Ninguna de estas implementaciones son sincronizadas; es decir, no se garantiza 
-        el estado del Set si dos o más hilos acceden de forma concurrente al mismo. 
-        Esto se puede solucionar empleando una serie de métodos que actúan de wrapper 
-        para dotar a estas colecciones de esta falta de sincronización:
-
-            Java
-            Set set = Collections.synchronizedSet(new HashSet());
-            SortedSet sortedSet = Collections.synchronizedSortedSet(new TreeSet());
-            Set set = Collections.synchronizedSet(new LinkedHashSet());
-
-
-        HashSet:+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            Esta implementación almacena los elementos en una tabla hash. Es la implementación 
-            con mejor rendimiento de todas pero no garantiza ningún orden a la hora de realizar 
-            iteraciones. 
-            Es la implementación más empleada debido a su rendimiento y a que, generalmente, 
-            no nos importa el orden que ocupen los elementos. 
-            Es importante definir el tamaño inicial de la tabla ya que este tamaño marcará 
-            el rendimiento de esta implementación.
-                //Se crea y se inicializa HashSet
-                final Set hashSet = new HashSet(1_000_000);
-                //Almacenamos el tiempo actual en milisegundos cuando comienza
-                final Long startHashSetTime = System.currentTimeMillis();
-                //Se  le añaden los elementos al hashSet
-                for (int i = 0; i < 1_000_000; i++) {
-                    hashSet.add(i);
-                }       
-                //Almacenamos el tiempo actual en milisegundos cuando termina
-                final Long endHashSetTime = System.currentTimeMillis();
-                //Se imprime cuanto tarda
-                System.out.println("Time spent by HashSet: " + (endHashSetTime - startHashSetTime));
-        TreeSet:+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            Esta implementación almacena los elementos ordenándolos en función de sus 
-            valores. Es bastante más lento que HashSet. Los elementos almacenados deben 
-            implementar la interfaz Comparable. 
-                //Se crea TreeSet
-                final Set treeSet = new TreeSet();
-                //Almacenamos el tiempo actual en milisegundos cuando comienza
-                final Long startTreeSetTime = System.currentTimeMillis();
-                //Se  le añaden los elementos 
-                for (int i = 0; i < 1000000; i++) {
-                    treeSet.add(i);
-                }
-                //Almacenamos el tiempo actual en milisegundos cuando termina
-                final Long endTreeSetTime = System.currentTimeMillis();
-                //Se imprime cuanto tarda
-                System.out.println("Time spent by TreeSet: " + (endTreeSetTime - startTreeSetTime));
-        LinkedHashSet: ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            Esta implementación almacena los elementos en función del orden de inserción. 
-            Es, simplemente, un poco más costosa que HashSet.
-                //Se crea LinkedHashSet
-                final Set linkedHashSet = new LinkedHashSet(1_000_000);
-                //Almacenamos el tiempo actual en milisegundos cuando comienza
-                final Long startLinkedHashSetTime = System.currentTimeMillis();
-                //Se  le añaden los elementos 
-                for (int i = 0; i < 1000000; i++) {
-                    linkedHashSet.add(i);
-                }
-                //Almacenamos el tiempo actual en milisegundos cuando termina
-                final Long endLinkedHashSetTime = System.currentTimeMillis();
-                //Se imprime cuanto tarda
-                System.out.println("Time spent by LinkedHashSet: " + (endLinkedHashSetTime - startLinkedHashSetTime));
-    List********************************************************************************
-        Referencia --> https://es.fondoperlaterra.org/comdifference-between-arraylist-and-linkedlist-in-java-20#:~:text=ArrayList%20permite%20el%20acceso%20aleatorio,los%20elementos%20de%20la%20lista.
-        La interfaz List define una sucesión de elementos. A diferencia de la interfaz 
-        Set, la interfaz List sí admite elementos duplicados. A parte de los métodos 
-        heredados de Collection, añade métodos que permiten mejorar los siguientes puntos:
-
-            *Acceso posicional a elementos: manipula elementos en función de su posición 
-            en la lista.
-            *Búsqueda de elementos: busca un elemento concreto de la lista y devuelve su 
-            posición.
-            *Iteración sobre elementos: mejora el Iterator por defecto.
-            *Rango de operación: permite realizar ciertas operaciones sobre rangos de 
-            elementos dentro de la propia lista.
-
-        Dentro de la interfaz List existen varios tipos de implementaciones realizadas 
-        dentro de la plataforma Java. Vamos a analizar cada una de ellas:
-
-            ArrayList: +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                Esta es la implementación típica. Se basa en un array redimensionable 
-                que aumenta su tamaño según crece la colección de elementos. Es la que 
-                mejor rendimiento tiene sobre la mayoría de situaciones.
-
-                Hay tres constructores de ArrayList:
-
-                    ArrayList () 
-                    ArrayList (Colección <? Extiende E> c) 
-                    ArrayList (int capacidad)
-
-                    El primero El constructor implementa una lista de matriz vacía. 
-                    El segundo el constructor implementa una lista de matriz inicializada 
-                    usando el Colección c elementos. 
-                    El tercero el constructor implementa la lista de matrices con el 
-                    capacidad proporcionado en el argumento. 
-
-                Al trabajar con ArrayList, a veces será necesario convertir la Collection 
-                ArrayList en una matriz. Se puede hacer llamando toArray ().
-                ---------------------------------------------------------------
-                    //Add
-                    ArrayList<String> cars = new ArrayList<String>();
-                    cars.add("Volvo");
-                    cars.add("BMW");
-                    cars.add("Ford");
-                    cars.add("Mazda");
-                    System.out.println(cars);
-                    //Cambio de Item
-                    cars.set(0, "Opel");
-                    //Remueve un item
-                    cars.remove(0);
-                    //remueve todos los items
-                    cars.clear();
-                    //devuelve el tamaño
-                    ArrayList Size
-            LinkedList: ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                Esta implementación permite que mejore el rendimiento en ciertas ocasiones. 
-                Esta implementación se basa en una lista doblemente enlazada de los 
-                elementos, teniendo cada uno de los elementos un puntero al anterior y 
-                al siguiente elemento.
-
-                No se puede acceder al azar a la lista vinculada implementada usando LinkedList. 
-                Si desea recuperar cualquier elemento de la lista, debe iterar la lista 
-                para buscar ese elemento.
-
-                Hay dos constructores en la clase LinkedList:
-
-                    LinkedList () 
-                    LinkedList (Colección <? Extiende E> c)
-
-                    El primero El constructor crea una lista enlazada vacía. 
-                    El segundo El constructor crea una lista vinculada, 
-                    inicializada con los elementos de Colección C.
-                    ------------------------------------------------------------
-                    //Add
-                    LinkedList<String> cars = new LinkedList<String>();
-                    cars.add("Volvo");
-                    cars.add("BMW");
-                    cars.add("Ford");
-                    cars.add("Mazda");
-                    System.out.println(cars);
-
-                    addFirst()  Adds an item to the beginning of the list.  
-                    addLast()   Add an item to the end of the list  
-                    removeFirst()   Remove an item from the beginning of the list.  
-                    removeLast()    Remove an item from the end of the list 
-                    getFirst()  Get the item at the beginning of the list   
-                    getLast()   Get the item at the end of the list
-
-        Ninguna de estas implementaciones son sincronizadas; es decir, no se garantiza 
-        el estado del List si dos o más hilos acceden de forma concurrente al mismo. Esto 
-        se puede solucionar empleando una serie de métodos que actúan de wrapper para dotar 
-        a estas colecciones de esta falta de sincronización:
-
-            Java
-            List list = Collections.synchronizedList(new ArrayList());
-            List list = Collections.synchronizedList(new LinkedList());
-    Map*********************************************************************************
-        La interfaz Map asocia claves a valores. Esta interfaz no puede contener claves 
-        duplicadas y; cada una de dichas claves, sólo puede tener asociado un valor como 
-        máximo.
-
-        Dentro de la interfaz Map existen varios tipos de implementaciones realizadas 
-        dentro de la plataforma Java. Vamos a analizar cada una de ellas:
-
-            HashMap+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                Un HashMap es la implementación de la interface Map, esta interface es un tipo de 
-                Collection que almacena datos asociando una llave a un valor, esta interface sirve 
-                para muchas cosas y tiene ciertas caracteristicas que la definen, por ejemplo, no 
-                permite key duplicados, cada key tiene que estar asociado a un valor como máximo, 
-                si agregas un key que ya existe sobrescribe el valor del key anterior, solo permite 
-                Object types lo que quiere decir que no puedes poner un valor primitivo...
-
-                El HashMap funciona con el principio del hashing, como ya explique trabaja asignando 
-                una ubicación a una key con el método hashCode() de Java.
-
-                    Map miMapa=new HashMap();
-                    //Lave, valor
-                    miMapa.put("1", "Juan");
-                    miMapa.put("2", "Carlos");
-                    miMapa.put("3", "Rosario");
-                    miMapa.put("4", "Esperanza");
-                    //Se imprimen todas las llaves
-                    imprimir(miMapa.keySet());
-                    //Se imprimen todos los valores
-                    imprimir(miMapa.values());
-                    }
-
-                    private static void imprimir(Collection coleccion) {
-                        for(Object elemento :coleccion) {
-                            System.out.print(elemento +" ");
-                        }
-                        System.out.println("");
-                    }
-                ------------------------------------------------------------------
-                // Create a HashMap object called capitalCities
-                HashMap<String, String> capitalCities = new HashMap<String, String>();
-
-                // Add keys and values (Country, City)
-                capitalCities.put("England", "London");
-                capitalCities.put("Germany", "Berlin");
-                capitalCities.put("Norway", "Oslo");
-                capitalCities.put("USA", "Washington DC");
-                System.out.println(capitalCities);
-                //Accede a un Item
-                capitalCities.get("England");
-                //Remueve un Item
-                capitalCities.remove("England");
-                //Devuelve el tamaña de Item
-                capitalCities.size();
-
-                // Print keys
-                for (String i : capitalCities.keySet()) {
-                  System.out.println(i);
-                }
-                // Print values
-                for (String i : capitalCities.values()) {
-                  System.out.println(i);
-                }
-                // Print keys and values
-                for (String i : capitalCities.keySet()) {
-                  System.out.println("key: " + i + " value: " + capitalCities.get(i));
-                }
-            TreeMap:++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                Esta implementación almacena las claves ordenándolas en función de sus 
-                valores. Es bastante más lento que HashMap. Las claves almacenadas deben 
-                implementar la interfaz Comparable. Esta implementación garantiza, siempre, 
-                un rendimiento de log(N) en las operaciones básicas, debido a la estructura 
-                de árbol empleada para almacenar los elementos.
-
-                // Declaración de un Map (un HashMap) con clave "Integer" y Valor "String". 
-                //Las claves pueden ser de cualquier tipo de objetos, aunque los más utilizados 
-                //como clave son los objetos predefinidos de Java como String, Integer, Double ... 
-                //!!!!CUIDADO los Map no permiten datos atómicos
-                Map<Integer, String> nombreMap = new HashMap<Integer, String>();
-                nombreMap.size(); // Devuelve el numero de elementos del Map
-                nombreMap.isEmpty(); // Devuelve true si no hay elementos en el Map y false si si los hay
-                nombreMap.put(K clave, V valor); // Añade un elemento al Map
-                nombreMap.get(K clave); // Devuelve el valor de la clave que se le pasa como parámetro o 'null' si la clave no existe
-                nombreMap.clear(); // Borra todos los componentes del Map
-                nombreMap.remove(K clave); // Borra el par clave/valor de la clave que se le pasa como parámetro
-                nombreMap.containsKey(K clave); // Devuelve true si en el map hay una clave que coincide con K
-                nombreMap.containsValue(V valor); // Devuelve true si en el map hay un Valor que coincide con V
-                nombreMap.values(); // Devuelve una "Collection" con los valores del Map
-            LinkedHashMap: +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                Esta implementación almacena las claves en función del orden de inserción. 
-                Es, simplemente, un poco más costosa que HashMap.
-
-        Ninguna de estas implementaciones son sincronizadas; es decir, no se garantiza 
-        el estado del Map si dos o más hilos acceden de forma concurrente al mismo. Esto 
-        se puede solucionar empleando una serie de métodos que actúan de wrapper para 
-        dotar a estas colecciones de esta falta de sincronización:
-
-            Java
-            Map map = Collections.synchronizedMap(new HashMap());
-            SortedMap mortedMap = Collections.synchronizedSortedMap(new TreeMap());
-            Map map = Collections.synchronizedMap(new LinkedHashMap());
-
-        Otro elemento importante a la hora de trabajar con los Maps (aunque no lo es 
-        tanto como a la hora de trabajar con los ArrayList) son los "Iteradores" (Iterator). 
-        Los Iteradores sirven para recorrer los Map y poder trabajar con ellos. Los Iteradores 
-        solo tienen tres métodos que son el “hasNext()” para comprobar que siguen quedando 
-        elementos en el iterador, el“next()”  para que nos de el siguiente elemento del 
-        iterador; y el “remove()” que sirve para eliminar el elemento del Iterador. En 
-        realidad se puede prescindir de los iteradores para trabajar con los Map ya que 
-        la gran ventaja de los Map frente a los ArrayList, es que estos tienen una clave 
-        asociada al objeto y se les puede buscar por la clave, aunque nunca esta de más 
-        saber utilizar los iteradores para manejar los Map.
-
-            // Imprimimos el Map con un Iterador
-            Iterator it = map.keySet().iterator();
-            while(it.hasNext()){
-              Integer key = it.next();
-              System.out.println("Clave: " + key + " -> Valor: " + map.get(key));
-            }
-    Ejemplo___________________________________________________________________________
-        Se agrega registro a un array
-        lista = new ArrayList<String>(Arrays.asList(arrayLinExp_1));
-        lista.add(25,alicuota.toString());                  
-        String[] arrayNew = new String[lista.size()];
-        arrayNew = lista.toArray(arrayNew);
-        lineaActual = StringUtils.join(arrayNew, ";");
-***********************************************************************************************
-
-
-**********************************************************Ordenal una lista con API Collections
-    Collections.sort(lista, new Comparator<String>() {
-        @Override
-        public int compare(String o1, String o2) {
-            return o1.compareTo(o2);
-        }           
-    });
-***********************************************************************************************
-
-
-********************************************************Manejo de objetos con arrayLis y sesion
-
-    ArrayList<Conversor> lista = session.getAttribute("listado") == null
-            ? new ArrayList<Conversor>() : (ArrayList) session.getAttribute("listado");
-***********************************************************************************************
-
-
-*******************************************************Borrar objetos repetidos de un arrayList
-    Set<String> hs = new HashSet<>();
-    hs.addAll(miArrayList);
-    miArrayList.clear();
-    miArrayList.addAll(hs);
-***********************************************************************************************
-
-
-***********************************************************************Ordenar array de objetos
-
-    for(int i=0; i<=hs.size()-1;i++){
-        for (int j = i+1; j <= hs.size()-1 ; j++) {
-            if (clausulasAll.get(j).getId() < clausulasAll.get(i).getId()){
-                aux = clausulasAll.get(i);
-                clausulasAll.set(i, clausulasAll.get(j));
-                clausulasAll.set(j, aux);
-            }
-        } 
-    }
-***********************************************************************************************
-
-****************************************************************************Copiar un arreglo[]
-    función predefinida en la biblioteca de estándar de Java:
-        System.arraycopy(from, fromIndex, to, toIndex, n);
-        int []datos= new int[pares.length];
-        System.arraycopy(pares, 0, datos, 0, pares.length);
-
-***********************************************************************************************
-
-
-*******************************************************************************Java.util.Arrays
-    La biblioteca de clases de Java incluye una clase auxiliar llamada “java.util.Arrays”, que
-    incluye como métodos algunas de las tareas que se realizan más a menudo con vectores:
-        Nota: es necesario importar la biblioteca,
-        import java.util.Arrays;
-        ● Arrays.sort(v) ordena los elementos del
-        vector.
-        ● Arrays.equals(v1,v2) comprueba si dos
-        vectores son iguales.
-        ● Arrays.toString(v) devuelve una cadena
-        que representa el contenido del vector.
-***********************************************************************************************
-Genericos
-
-******************************************************************************Genericos en Java
-    //Se crea clase de tipo generica
-    public class Gen<T> {
-        //Se declara objeto de tipo Gen
-        T obj;
-        
-        //Constructor que pasa una variable de tipo T a obj
-        Gen(T o){
-            obj = o;
-        }
-        
-        //El parametro G tambien se utiliza para especificar el tipo de retorno de un objeto
-        T getOb(){
-            return obj;
-        }
-        
-        void mostrarTipo(){
-            System.out.println("El tipo de va riable es: "+obj.getClass().getName());
-        }
-    }
-
-    -----------------------------------------------------------------------------------------------
-    Una clase genérica con dos parámetros de tipo
-    Puede declarar más de un parámetro de tipo en un tipo genérico. Para especificar dos o más 
-    parámetros de tipo, simplemente use una lista separada por comas. 
-
-    -----------------------------------------------------------------------------------------------
-    //Se crea variable generica de entero
-            Gen<Integer> iObj;
-
-    ----------------------------------------------------------------------------------------------
-
-    Tipos Genericos(Convensiones)
-
-    E			Elemento(utilizado generalmente por el framework de Collecciones de java
-    K			Key (Utilizados en mapas)
-    N			Number(utilizado para numeros)
-    T			Type(representa un tipo, es decir, una clase)
-    V			Value(representa un valor, tambien se usa en mapas)
-    ----------------------------------------------------------------------------------------------
-***********************************************************************************************
-
-
-*******************************************************************************Lectura de bytes
-    //Se creaarray de tipo de dato byte de solo 20 de longitud
-        byte data[]= new byte[20];
-        
-        //Se solicitan datos 
-        System.out.println("Ingrese cadena de caracteres: ");
-        //Se almacena datos en el arreglo de bytes
-        System.in.read(data);
-
-
-    //Se recorre arrglo de bytes y se imprimen en consola
-        for (int i = 0; i < data.length; i++) {
-            System.out.print((char)data[i]);
-        }
-***********************************************************************************************
 
 
 Fechas

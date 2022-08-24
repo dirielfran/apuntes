@@ -7398,7 +7398,7 @@ FIN SPRNG BOOT, DATA, SECURITY**************************************************
 		REST dentro de los métodos de controladores.
 		ResponseEntity maneja toda la respuesta HTTP incluyendo el cuerpo, cabecera y códigos de estado permitiéndonos total 
 		libertad de configurar la respuesta que queremos que se envié desde nuestros endpoints.
-/
+		/
 		Ejemplo_____________________________________________________________________________________________
 
 			@GetMapping("/clientes/{id}")
@@ -8103,17 +8103,23 @@ Publicacion de aplicacion CineApp***********************************************
 	    return new ResponseEntity<InformacionPais>(pais, HttpStatus.OK);
 	}
 ************************************************************************************************************************************
-//Crear usuario con privilegios en mysql
-CREATE USER 'alfonso'@'localhost' IDENTIFIED BY 'danger120-';
-GRANT ALL PRIVILEGES ON * . * TO 'alfonso'@'localhost';
-FLUSH PRIVILEGES;
 
-//revisar los log de catalina
-less /opt/tomcat/logs/catalina.out
-less /opt/apache-tomcat-8.5.54/logs/catalina.out
 
-$ tail -f /opt/apache-tomcat-8.5.54/logs/catalina.out
 
+
+**********************************************************************************************Crear usuario con privilegios en mysql
+	CREATE USER 'alfonso'@'localhost' IDENTIFIED BY 'danger120-';
+	GRANT ALL PRIVILEGES ON * . * TO 'alfonso'@'localhost';
+	FLUSH PRIVILEGES;
+************************************************************************************************************************************
+
+
+*********************************************************************************************************Revisar los log de catalina
+	less /opt/tomcat/logs/catalina.out
+	less /opt/apache-tomcat-8.5.54/logs/catalina.out
+
+	$ tail -f /opt/apache-tomcat-8.5.54/logs/catalina.out
+************************************************************************************************************************************
 
 
 
@@ -8168,6 +8174,13 @@ Platillas gratis****************************************************************
 https://colorlib.com/wp/free-bootstrap-ecommerce-website-templates/
 
 
+
+***********************************************************************************************************************Correr app Spring
+	* Empaquetar app spring boot 
+		./mvnw.cmd clean package 
+	* Levantar aplicativo con el jar   
+		java -jar .\target\ms-usuarios-0.0.1-sanpshot.jar
+****************************************************************************************************************************************
 
 
 
