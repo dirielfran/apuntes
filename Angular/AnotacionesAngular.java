@@ -19346,3 +19346,203 @@ sidebar*************************************************************************
 	     width: 200px;
 	   }
 **************************************************************************************************************************************
+
+
+ng test
+ng test --code-coverage
+esto carga jazmin
+
+	* describe
+	* it  
+	* beforeEach
+		beforeEach( () => jugador = new Jugador2() );
+	* expect 
+	* toBe
+		expect( nuevoHP ).toBe(0);
+	* toBeTruthy
+		expect( control.valid ).toBeTruthy();
+	* toBeFalsy
+		expect( control.valid ).toBeFalsy();
+	* toBeGreaterThan
+		expect( componente.medicos.length ).toBeGreaterThan(0);  
+	* spyOn
+		spyOn( servicio, 'getMedicos').and.callFake(() =>{ return Observable.from([medicos]); } );
+		spyOn( servicio, 'getMedicos').and.returnValue(() =>{ return Observable.from([medico]); } );
+		spyOn( servicio, 'getMedicos').and.returnValue(() =>{ return Observable.throw(myError); } );
+		spyOn( window, 'confirm').and.returnValue(true );
+	* toHaveBeenCalled
+		expect( espia ).toHaveBeenCalled();
+	* toHaveBeenCalledWith
+		expect( espia ).toHaveBeenCalledWith('1');
+	* toBeGreaterThanOrEqueal
+		expect( componente.medicos.indexOf( medico ) ).toBeGreaterThanOrEqual(0);
+	* toBeNull
+		expect( debugElement ).not.toBeNull();
+
+	* Integracion 
+		* TestBed 
+		* ComponentFixture
+
+			  let component: IncrementadorComponent;
+		    let fixture: ComponentFixture<IncrementadorComponent>;
+
+		    beforeEach( () => {
+		        TestBed.configureTestingModule({
+		            declarations: [ IncrementadorComponent ],
+		            imports: [ FormsModule ]
+		        });
+
+		        fixture = TestBed.createComponent(IncrementadorComponent);
+		        component = fixture.componentInstance;
+
+		    });
+		* Obtiene elemento html, aplica deteccion de cambios, fixture.debugElement.query
+		    it('Debe de mostrar la leyenda', () => {
+
+		        component.leyenda = 'Progreso de carga';
+
+		        fixture.detectChanges(); // disparar la detección de cambios
+
+		        const elem: HTMLElement = fixture.debugElement.query( By.css('h3') ).nativeElement;
+
+		        expect( elem.innerHTML ).toContain('Progreso de carga');
+
+		    });
+
+		* fixture para controlar la deteccion de cambios, fixture.whenStable, revisar valor de input , fixture.debugElement.query
+				  it( 'Debe de mostrar en el input el valor del progreso', () => {
+
+			        component.cambiarValor(5);
+			        fixture.detectChanges();
+
+			        fixture.whenStable().then( () => {
+
+			            const input = fixture.debugElement.query( By.css('input') );
+			            const elem = input.nativeElement;
+
+			            console.log( elem );
+
+			            expect( elem.value ).toBe( '55' );
+
+
+			        });
+
+			    });
+
+		* Validar eventos de componentes html 
+				    it( 'Debe de incrementar/decrementar en 5, con un click en el botón', () => {
+
+				        const botones = fixture.debugElement.queryAll( By.css('.btn-primary') );
+
+				        botones[0].triggerEventHandler('click', null);
+				        expect( component.progreso ).toBe(45);
+
+				        botones[1].triggerEventHandler('click', null);
+				        expect( component.progreso ).toBe(50);
+
+
+				    });
+
+
+		* Validar valor de un input luego de un evento  
+				    it( 'En el titulo del componente, debe de mostrar el progreso', () => {
+
+			        const botones = fixture.debugElement.queryAll( By.css('.btn-primary') );
+			        botones[0].triggerEventHandler('click', null);
+
+			        fixture.detectChanges();
+
+			        const elem: HTMLElement = fixture.debugElement.query( By.css('h3') ).nativeElement;
+
+			        expect( elem.innerHTML ).toContain('45');
+			    });
+
+
+
+	* Integraciones 2 
+		* Probando la existencia de una ruta 
+			import { RUTAS } from './app.routes';
+			import { MedicoComponent } from '../../intermedio2/medico/medico.component';
+
+			describe( 'Rutas principales', () => {
+
+			    it( 'Debe de existir la ruta /medico/:id', () => {
+
+			        expect( RUTAS ).toContain({
+			            path: 'medico/:id',
+			            component: MedicoComponent
+			        });
+
+
+			    });
+
+			});
+
+		* Pruebas de un router-oulet, confirmar que exista  
+			
+					import { TestBed, async } from '@angular/core/testing';
+					import { AppComponent } from './app.component';
+
+					import { RouterTestingModule } from '@angular/router/testing';
+					import { By } from '@angular/platform-browser';
+					import { RouterOutlet, RouterLinkWithHref } from '@angular/router';
+					import { NO_ERRORS_SCHEMA } from '@angular/core';
+
+					describe('AppComponent', () => {
+
+					  beforeEach(async(() => {
+					    TestBed.configureTestingModule({
+					      declarations: [
+					        AppComponent
+					      ],
+					      //Se modifica el beforeEach, se le agrega en los imports el RouterTestingModule
+					      imports: [
+					        RouterTestingModule.withRoutes([])
+					      ],
+					      schemas: [ NO_ERRORS_SCHEMA ]
+					    }).compileComponents();
+					  }));
+
+					  it('should create the app', async(() => {
+					    const fixture = TestBed.createComponent(AppComponent);
+					    const app = fixture.debugElement.componentInstance;
+					    expect(app).toBeTruthy();
+					  }));
+
+					  it(`should have as title 'app'`, async(() => {
+					    const fixture = TestBed.createComponent(AppComponent);
+					    const app = fixture.debugElement.componentInstance;
+					    expect(app.title).toEqual('app');
+					  }));
+
+
+					  it( 'Debe de tener un router-outlet', () => {
+					  	// Se obtiene el fixture
+					    const fixture = TestBed.createComponent(AppComponent);
+					    // Se obtiene el RouterOulet
+					    const debugElement = fixture.debugElement.query( By.directive( RouterOutlet ) );
+					    // Se valida que no sea null
+					    expect( debugElement ).not.toBeNull();
+
+					  });
+
+
+					});
+
+		* Probar un routerLink   
+				  it( 'Debe de tener un router-outlet', () => {
+
+				    const fixture = TestBed.createComponent(AppComponent);
+
+				    const elementos = fixture.debugElement.queryAll( By.directive( RouterLinkWithHref ) );
+				    let existe = false;
+
+				    for( const elem of elementos){
+				    	if(elem.attributes['RouterLink'] === '/medicos'){
+				    		existe = true;
+				    		break;
+				    	}
+				    }
+				    expect( existe ).toBeTruthy();
+
+				  });
