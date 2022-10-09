@@ -106,3 +106,41 @@ ADD COLUMN `dollar` DOUBLE NULL DEFAULT 0 AFTER `tasa_dolar`;
 
 ALTER TABLE `db_springboot_backend`.`saldos` 
 ADD COLUMN `is_transferencia` BIT(1) NULL DEFAULT b'0' AFTER `dollar`;
+
+
+# Se add column existencia en perdidas
+ALTER TABLE `db_springboot_backend`.`perdidas` 
+ADD COLUMN `existencia` DOUBLE NULL DEFAULT 0 AFTER `cantidad`;
+
+
+# Se crea tabla de promociones 
+ CREATE TABLE `promociones` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `is_complete` TINYINT DEFAULT '0',
+  `is_several` TINYINT DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+ALTER TABLE `db_springboot_backend`.`productos` 
+ADD COLUMN `promocion_id` BIGINT NULL DEFAULT NULL AFTER `tipo_producto_id`
+
+
+ALTER TABLE `db_springboot_backend`.`productos` 
+ADD COLUMN `is_promocion_total` TINYINT NULL DEFAULT 0 AFTER `promocin_id`;
+
+ALTER TABLE `db_springboot_backend`.`facturas_items` 
+ADD COLUMN `is_promocion` TINYINT(1) NULL DEFAULT 0 AFTER `consignacion`;
+
+
+# Requerimiento de cuadre de caja
+ALTER TABLE `db_springboot_backend`.`cajas` 
+ADD COLUMN `is_cuadre` BIT(1) NULL DEFAULT b'0' AFTER `ganancia`;
+
+ALTER TABLE `db_springboot_backend`.`cajas` 
+CHANGE COLUMN `is_cuadre` `is_cuadre` BIGINT(1) NULL DEFAULT 0 ;
+
+
