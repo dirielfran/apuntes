@@ -144,3 +144,21 @@ ALTER TABLE `db_springboot_backend`.`cajas`
 CHANGE COLUMN `is_cuadre` `is_cuadre` BIGINT(1) NULL DEFAULT 0 ;
 
 
+
+# Facturas al credito
+ALTER TABLE `db_springboot_backend`.`facturas` 
+ADD COLUMN `is_credito` TINYINT NOT NULL DEFAULT b'0' AFTER `responsable_id`,
+ADD COLUMN `usu_cred_id` BIGINT NULL DEFAULT NULL AFTER `is_credito`,
+ADD COLUMN `fecha_aprob` TIMESTAMP NULL DEFAULT NULL AFTER `usu_cred_id`,
+ADD COLUMN `is_aprobada` TINYINT NULL DEFAULT b'0' AFTER `fecha_aprob`,
+ADD COLUMN `fecha_pago` TIMESTAMP NULL DEFAULT NULL AFTER `is_aprobada`,
+ADD COLUMN `is_pago` TINYINT NOT NULL DEFAULT b'0' AFTER `fecha_pago`,
+ADD COLUMN `usu_res_pago_id` BIGINT NULL DEFAULT NULL AFTER `is_pago`,
+ADD COLUMN `usu_aprob` BIGINT NULL DEFAULT NULL AFTER `usu_res_pago_id`;
+
+
+ALTER TABLE `db_springboot_backend`.`facturas` 
+CHANGE COLUMN `usu_aprob` `usu_aprob_id` BIGINT NULL DEFAULT NULL ;
+
+
+
