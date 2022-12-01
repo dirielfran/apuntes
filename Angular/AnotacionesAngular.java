@@ -17286,6 +17286,7 @@ Modificaciones de Kiosco pendientes*********************************************
 	Seccion 1 Intro************************************************************************************************************************
 	Complementarios************************************************************************************************************************
 		Versionado de herramientas
+			instalar node.js
 			instalacion de npm --> npm install npm@latest -g
 			node -v 
 			npm -v 

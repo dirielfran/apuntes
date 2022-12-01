@@ -161,4 +161,31 @@ ALTER TABLE `db_springboot_backend`.`facturas`
 CHANGE COLUMN `usu_aprob` `usu_aprob_id` BIGINT NULL DEFAULT NULL ;
 
 
+# Modulo de promociones
+
+ALTER TABLE `db_springboot_backend`.`productos` 
+CHANGE COLUMN `promocion_id` `promotion_id` BIGINT(20) NULL DEFAULT NULL ;
+
+
+DROP TABLE `db_springboot_backend`.`promociones`; 
+
+# Se crea tabla de promociones 
+ CREATE TABLE `promotions` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `name` VARCHAR(100) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `price` double DEFAULT '0',
+  `percent` int DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+ ALTER TABLE `db_springboot_backend`.`promotions` 
+ADD UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE;
+;
+
+ADD COLUMN `code` VARCHAR(5) NOT NULL AFTER `percent`, RENAME TO  `db_springboot_backend`.`promotions` ;
 
