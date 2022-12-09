@@ -1,3 +1,17 @@
+anotaciones*****************************************************************************************
+	@Test 
+	@DisplayName
+	@Nested
+	@Tag 
+	@ExtendWith
+	@BeforeEach 
+	@AfterEach
+	@BeforeAll
+	@afterAll
+	@Disabled
+	@Order We can use the @Order annotation to enforce tests to run in a specific order.
+
+****************************************************************************************************
 Inicio del Proyecto*********************************************************************************
 ******************************************************************************Seccion 1:Introduccion
 	1.- Instalacion de Intellj DEA
@@ -370,6 +384,7 @@ Inicio del Proyecto*************************************************************
 ****************************************************************************************@DisplayName
 **********************************************************************************************fail()
 	Nota: @Disables deshabilita el metodo pero indica en los resultados que esta deshabilitado
+	Nota: fail() es un metodo que fuerza el fallo del test
 	1.- Se modific CuentaTest.java, se modifica metodo testRelacionBancoCuenta() para incluir 
 		@Disabled, @DisplayName y fail()
 		@Test
@@ -470,6 +485,11 @@ Inicio del Proyecto*************************************************************
 		    se ejecuta antes de ser creada la clase. Estos metodos se ejecutan una sola vez.
 		2.- Se utiliza la anotacion @TestInstance para que sea creada la instancia una sola vez por 
 			clase y o por metodo que es el default
+
+			@TestInstance tiene dos modos. Uno es LifeCycle.PER_METHOD (el predeterminado). El otro 
+			es Lifecycle.PER_CLASS . Este último nos permite pedirle a JUnit que cree solo una 
+			instancia de la clase de prueba y la reutilice entre pruebas.
+			
 			@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 			class CuentaTest {...}
 ****************************************************************************************************
