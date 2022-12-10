@@ -170,22 +170,82 @@ CHANGE COLUMN `promocion_id` `promotion_id` BIGINT(20) NULL DEFAULT NULL ;
 DROP TABLE `db_springboot_backend`.`promociones`; 
 
 # Se crea tabla de promociones 
- CREATE TABLE `promotions` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user` varchar(45) DEFAULT NULL,
-  `create_at` timestamp NULL DEFAULT NULL,
-  `update_at` timestamp NULL DEFAULT NULL,
-  `deleted` TINYINT DEFAULT '0',
-  `name` VARCHAR(100) NOT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `price` double DEFAULT '0',
-  `percent` int DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+   CREATE TABLE `promotions` (
+    `id` bigint NOT NULL AUTO_INCREMENT,
+    `user` varchar(45) DEFAULT NULL,
+    `create_at` timestamp NULL DEFAULT NULL,
+    `update_at` timestamp NULL DEFAULT NULL,
+    `deleted` TINYINT DEFAULT '0',
+    `name` VARCHAR(100) NOT NULL,
+    `description` varchar(255) DEFAULT NULL,
+    `price` double DEFAULT '0',
+    `percent` int DEFAULT '0',
+    PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
- ALTER TABLE `db_springboot_backend`.`promotions` 
-ADD UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE;
+   ALTER TABLE `db_springboot_backend`.`promotions` 
+  ADD UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE;
+  ;
+
+
+
+  ADD COLUMN `code` VARCHAR(5) NOT NULL AFTER `percent`, RENAME TO  `db_springboot_backend`.`promotions` ;
+
+
+
+
+  CREATE TABLE `promotions_products` (
+    `promotion_id` bigint NOT NULL,
+    `product_id` bigint NOT NULL,
+    UNIQUE KEY `UKitems` (`promotion_id`,`product_id`),
+    KEY `FKiteminventario` (`product_id`),
+    CONSTRAINT `FKpromotio` FOREIGN KEY (`promotion_id`) REFERENCES `Promotions` (`id`),
+    CONSTRAINT `FKproducts` FOREIGN KEY (`product_id`) REFERENCES `productos` (`id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+  ALTER TABLE `db_springboot_backend`.`promotions_products` 
+  ADD COLUMN `price` DOUBLE NOT NULL DEFAULT 0 AFTER `product_id`;
+
+
+  ALTER TABLE `db_springboot_backend`.`promotions_products` 
+  ADD COLUMN `id` BIGINT NOT NULL AUTO_INCREMENT FIRST,
+  ADD COLUMN `user` VARCHAR(45) NULL DEFAULT NULL AFTER `id`,
+  ADD COLUMN `create_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `user`,
+  ADD COLUMN `update_at` TIMESTAMP NULL DEFAULT NULL AFTER `create_at`,
+  ADD PRIMARY KEY (`id`);
 ;
 
-ADD COLUMN `code` VARCHAR(5) NOT NULL AFTER `percent`, RENAME TO  `db_springboot_backend`.`promotions` ;
+  ALTER TABLE `db_springboot_backend`.`promotions_products` 
+  DROP COLUMN `price`;
 
+
+  ALTER TABLE `db_springboot_backend`.`productos` 
+  ADD COLUMN `price_promotion` DOUBLE NULL DEFAULT '0' AFTER `is_promocion_total`;
+
+
+  ALTER TABLE `db_springboot_backend`.`promotions_products` 
+  DROP COLUMN `update_at`,
+  DROP COLUMN `create_at`,
+  DROP COLUMN `user`,
+  DROP COLUMN `id`,
+  DROP PRIMARY KEY;
+  ;
+
+  ALTER TABLE `db_springboot_backend`.`promotions_products` 
+  ADD COLUMN `price` DOUBLE NOT NULL AFTER `product_id`;
+
+  ALTER TABLE `db_springboot_backend`.`promotions_products` 
+ADD INDEX `FKPromotion_idx` (`promotion_id` ASC) VISIBLE;
+;
+ALTER TABLE `db_springboot_backend`.`promotions_products` 
+ADD CONSTRAINT `FKPromotion`
+  FOREIGN KEY (`promotion_id`)
+  REFERENCES `db_springboot_backend`.`promotions` (`id`)
+  ON DELETE RESTRICT
+  ON UPDATE RESTRICT;
+
+  ALTER TABLE `db_springboot_backend`.`promotions_products` 
+CHANGE COLUMN `price` `price` DOUBLE NULL ;
+
+ALTER TABLE `db_springboot_backend`.`productos` 
+DROP COLUMN `price_promotion`;
