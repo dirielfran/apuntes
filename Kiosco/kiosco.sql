@@ -249,3 +249,7 @@ CHANGE COLUMN `price` `price` DOUBLE NULL ;
 
 ALTER TABLE `db_springboot_backend`.`productos` 
 DROP COLUMN `price_promotion`;
+
+
+ALTER TABLE `db_springboot_backend`.`promotions_products` 
+ADD COLUMN `amount` DOUBLE NULL DEFAULT NULL AFTER `price`;

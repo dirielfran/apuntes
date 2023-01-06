@@ -1203,6 +1203,11 @@ Inicio del Proyecto*************************************************************
 35.- Realizando primeras pruebas con mockito********************************************************
 ************************************************************************************************mock
 ************************************************************************************************when
+
+	Mockito nos permite crear objetos simulados y probar el comportamiento de nuestros casos de 
+	prueba. Por lo general, nos burlamos del comportamiento usando when()y thenReturn()en el 
+	objeto simulado.
+	
 	1.- Se modifica ExamenServiceImplTest.java
 		1.1.- Se modifica findExamenPorNombre(), implementando Mockito para simular la 
 		implementacion de la clase ExamenRepositoryImpl y con when simulamos los datos
@@ -1270,6 +1275,10 @@ Inicio del Proyecto*************************************************************
 ****************************************************************************************************
 37.- Probando nuevas dependencias mock**************************************************************
 *******************************************************************************************anyLong()
+	A veces queremos simular el comportamiento de cualquier argumento del tipo dado, en ese caso, 
+	podemos usar comparadores de argumentos de Mockito. Los métodos de argumento de Mockito se 
+	definen en org.mockito.ArgumentMatchersclase como métodos estáticos.
+
 	1.- Se crea una clase Datos 
 		1.1.- Se modifica ExamenServiceImplTest.java, se modifica metodo findExamenPorNombre() se 
 		corta la lista generada y se pasa a la clase Datos, se llama a la lista de la clase 
