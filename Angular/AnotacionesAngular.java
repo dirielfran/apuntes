@@ -8846,6 +8846,17 @@ cambio de puerto 					--> ng serve --port 4401
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 ****************************************************Angular Fit Avanzado**************************************************************
 	**************************************************************************************************************************************
 	**************************************************************************************************************************************
@@ -11925,10 +11936,6 @@ cambio de puerto 					--> ng serve --port 4401
 			6.4.- Se crea la ruta a usuario 
 				router.get( '/', getUsuarios );	
 	**************************************************************************************************************************************
-	
-
-
-
 	107. *************************************************************************************************************POST - Crear usuario
 		1.- Se creo nueva base de datos en mongo --> hospitaldb 
 		2.- Se modifica el archivo de enviroment --> .env, se modifica la conexion 
@@ -12150,7 +12157,73 @@ cambio de puerto 					--> ng serve --port 4401
 								    "email": "dirielfran@gmail.com"
 								}
 	**************************************************************************************************************************************
-******************************************************* Fin Seccion ****************************************************************** 
+	******************************************************* Fin Seccion ******************************************************************
+	**************************************** Sección 12: Backend -Autenticacion con Google Sign-in ***************************************
+		Referencia --> https://developers.google.com/identity/gsi/web/guides/overview
+		144. Crear ID de la aplicación y un ID secreto - Google Developer*********************************************************************
+			1.- Se crea app en Google --> https://console.cloud.google.com/apis/dashboard?project=kioscoapp
+			2.- seleccionar Proyectos --> Proyecto Nuevo
+			3.- Pantalle de consentimiento
+				Nombre de la aplicacion --> KioscoApp
+				Correo electrónico de asistencia del usuario  --> dirielfran@gmail.com
+				Logotipo -->   kiosco.png
+				Contacto del desarrollador --> dirielfran@gmail.com 
+			4.- Permisos  --> No se asocia ninguno  --> Guardar y continuear
+			5.- Usuarios de Prueba  --> Guardar y continuar  --> Volver al panel  
+			6.- Seleccionar Credenciales --> Crear ID de Cliente OAuth
+				Tipo de aplicacion --> aplicacion Web  
+				Nombre --> KioscoApp1
+				Orígenes autorizados de JavaScript --> 
+					http://localhost
+					http://localhost:4200
+					http://localhost:8080
+				--> Crear  
+				Se crea el cliente de OAuth
+					ID de cliente 
+						87337512484-5ot6pus6ha76hs4co1n5ejsef1srsc11.apps.googleusercontent.com
+					SECRET 
+						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
+		************************************************************************************************************************************
+		173. Obtener el Token de una autenticación, Google Sign-In**************************************************************************
+			Nota: se tomo como ejemplo KioscoApp 
+			1.- Se modifica --> index.html, se agrega script de google -->
+				<script src="https://accounts.google.com/gsi/client" async defer></script>
+			2.- Se modifica login.component.html, se crea div que haaga de boton google SingIn 
+				<div #googleBtn id="buttonDiv"></div>
+			3.- Se modifica login.component.ts 
+				3.1.- Se agrega referencia al boton  
+					  @ViewChild('googleBtn') googleBtn: ElementRef;
+				3.2.- Se utiliza el metodo ngAfterViewInit, para que despues que este cargada la pagina se renderice el botone
+					 ngAfterViewInit(): void {
+				    google.accounts.id.initialize({
+				      client_id: "87337512484-5ot6pus6ha76hs4co1n5ejsef1srsc11.apps.googleusercontent.com",
+				      callback: this.handleCredentialResponse
+				    });
+				    google.accounts.id.renderButton(
+				        this.googleBtn.nativeElement,
+				        { theme: "outline", size: "large" }  // customization attributes
+				    );
+				  }
+
+				 	handleCredentialResponse(response: any){
+				    console.log("Encoded JWT ID token: "+ response.credential)
+				  }
+			**********************************************************************************************************************************
+			174. Usar el Token de Google para autenticarnos***********************************************************************************
+			**********************************************************************************************************************************
+		************************************************************************************************************************************
+	**************************************************************************************************************************************
+
+
+	**************************************************************************************************************************************
+	******************************************************* Fin Seccion ******************************************************************
+******************************************************* Fin Seccion ******************************************************************
+
+
+
+
+
+
 
 
 

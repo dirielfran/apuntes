@@ -253,3 +253,10 @@ DROP COLUMN `price_promotion`;
 
 ALTER TABLE `db_springboot_backend`.`promotions_products` 
 ADD COLUMN `amount` DOUBLE NULL DEFAULT NULL AFTER `price`;
+
+## Modulo de proveedor
+ALTER TABLE `db_springboot_backend`.`inventarios` 
+ADD COLUMN `proveedor_id` BIGINT NULL DEFAULT NULL AFTER `is_iva`;
+
+ALTER TABLE `db_springboot_backend`.`gastos` 
+ADD COLUMN `proveedor_id` BIGINT NULL DEFAULT NULL AFTER `metodopago`;
