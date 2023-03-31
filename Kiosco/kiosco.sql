@@ -260,3 +260,14 @@ ADD COLUMN `proveedor_id` BIGINT NULL DEFAULT NULL AFTER `is_iva`;
 
 ALTER TABLE `db_springboot_backend`.`gastos` 
 ADD COLUMN `proveedor_id` BIGINT NULL DEFAULT NULL AFTER `metodopago`;
+
+
+## Creacion de Nuevo ROL
+INSERT INTO `db_springboot_backend`.`roles` (`id`, `nombre`) VALUES ('3', 'ROLE_COORDINATOR');
+
+
+## Refacto de Comision entity, se le agrega EntityCommon
+ALTER TABLE `db_springboot_backend`.`comisiones` 
+ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+ADD COLUMN `create_at` TIMESTAMP NULL AFTER `user`,
+ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`;
