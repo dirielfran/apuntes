@@ -317,7 +317,7 @@ Inicio del Proyecto*************************************************************
 		private Banco banco;
 ****************************************************************************************************
 14.- Add AssertAll*******************************************************************Metodo usertAll
-*******************************************************************************************assertAll
+*******************************************************************************************assertAll  --> Agrupa varios assertions, beneficiando quepor cada falla se van a mostrar en el reporte
 	Nota: AssertAll te permite hacer varias pruevas individuales agrupadas y se fallan te da el 
 	detalle de cada una que fallaron
 	1.- Se modific CuentaTest.java, se modifica metodo testRelacionBancoCuenta() para incluir 
@@ -1438,7 +1438,7 @@ Inicio del Proyecto*************************************************************
 		            }
 
 		        });
-		        //then
+		        //when
 		        Examen examen = examenService.guardar(newExamen);
 		        //then
 		        assertNotNull(examen.getId());
@@ -1699,6 +1699,15 @@ Inicio del Proyecto*************************************************************
 ****************************************************************************************atMostOnce()
 *********************************************************************************************never()
 ******************************************************************************verifyNoInteractions()
+	NOTA: 
+			times 					--> Se valida que se invoque n cantidad de veces 
+			atLeast 				-->	Se valida que se ejecute al menos n cantidad de veces
+			atLeastOnce				--> Se valida que se ejecute al menos una vez
+			atMostOnce				--> Se valida que se a lo sumo n cantidad de veces  
+			atMostOnce				--> Se valida que se a lo sumo 1 cantidad de veces  
+			never           		--> Se valida que no se ejecute  
+			verifyNoInteractions	--> 
+
 	1.- Se modifica ExamenServiceImpl.java, se modifica metodo se invoca dos veces a preguntaRepo, 
 	para las pruebas de invocaciones
 		 @Override
@@ -2436,6 +2445,14 @@ Inicio del Proyecto*************************************************************
 *****************************************************************************************@WebMvcTest
 ******************************************************************************MockMvcRequestBuilders
 *******************************************************************************************@MockBean
+	SpringBoot proporciona la anotación @WebMvcTest para probar los controladores Spring MVC. 
+	Además, la prueba basada en @WebMvcTest se ejecuta más rápido porque solo cargará el controlador 
+	especificado y sus dependencias sin cargar toda la aplicación. 
+
+	Spring Boot instancia solo la capa web en lugar de todo el contexto de la aplicación. En una aplicación 
+	con varios controladores, incluso puede solicitar que solo se cree una instancia de uno utilizando, 
+	por ejemplo, @WebMvcTest(HomeController.class).
+
 	1.- Se crea clase de prueba para el controlador
 		1.1.- Se crea en el paquete 
 			package com.eareiza.test.springboot.app.controllers;
@@ -2663,6 +2680,24 @@ Inicio del Proyecto*************************************************************
 ****************************************************************************************************
 **************************************** Fin Seccion ***********************************************
 ******************** Sección 7: Spring Boot: Test de Servicios *************************************
+*************************************************************************************@SpringBootTest
+	Spring Boot proporciona  la anotación @SpringBootTest  para las pruebas de integración. 
+	Esta anotación crea un contexto de aplicación y carga el contexto de aplicación completo.
+
+	@SpringBootTest  arrancará el contexto completo de la aplicación, lo que significa que podemos  
+	@Autowire  cualquier bean que haya sido recogido por el escaneo de componentes en nuestra prueba.
+
+	Inicia el servidor incorporado, crea un entorno web y luego habilita los métodos @Test para realizar 
+	pruebas de integración.
+
+	De forma predeterminada, @SpringBootTest no inicia un servidor. Necesitamos agregar el atributo  
+	webEnvironment  para refinar aún más cómo se ejecutan sus pruebas. Tiene varias opciones: 
+		MOCK (predeterminado):  carga un contexto de aplicación web y proporciona un entorno web simulado.
+		RANDOM_PORT:  carga un WebServerApplicationContext y proporciona un entorno web real. El servidor 
+		incorporado se inicia y escucha en un puerto aleatorio. Este es el que se debe utilizar para la 
+		prueba de integración.
+		DEFINED_PORT:  carga un WebServerApplicationContext y proporciona un entorno web real. 
+		NINGUNO: Carga un ApplicationContext usando SpringApplication pero no proporciona ningún entorno web.
 85. Configuración y escribiendo las primeras pruebas de integración*********************************
 	1.- Se modifica el pom.xml, se añade dependencia
 		<dependency>

@@ -271,3 +271,18 @@ ALTER TABLE `db_springboot_backend`.`comisiones`
 ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
 ADD COLUMN `create_at` TIMESTAMP NULL AFTER `user`,
 ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`;
+
+# ProductGroup
+CREATE TABLE `product_group` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `name` VARCHAR(100) NOT NULL,
+  `description` varchar(255) DEFAULT NULL
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+ALTER TABLE `db_springboot_backend`.`productos` 
+ADD COLUMN `group_id` BIGINT NULL AFTER `is_promocion_total`;
