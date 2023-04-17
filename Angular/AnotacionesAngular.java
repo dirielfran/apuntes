@@ -12205,6 +12205,268 @@ cambio de puerto 																	--> ng serve --port 4401
 	**************************************************************************************************************************************
 	**************************************************************************************************************************************
 	******************************************************* Fin Seccion ******************************************************************
+
+
+
+	Seccion 22: Pruebas Unitarias*********************************************************************************************************
+		272.- Probando String***************************************************************************************************************
+		*****************************************************************************************************************************ng test
+		***************************************************************************************************************************decribe()
+		********************************************************************************************************************************it()
+		*******************************************************************************************************************************spect
+		******************************************************************************************************************************toBe()
+			La función describe() es para agrupar especificaciones relacionadas, normalmente cada archivo de prueba tiene uno en el nivel 
+			superior. El parámetro de cadena es para nombrar la colección de especificaciones y se concatenará con las especificaciones para 
+			formar el nombre completo de una especificación. Esto ayuda a encontrar especificaciones en una suite grande. 
+
+			Una Spect contiene una o más expectativas que prueban el estado del código. Una expectativa en Jasmine es una afirmación que es 
+			verdadera o falsa. Una especificación con todas las expectativas verdaderas es una especificación aprobatoria.
+
+			Dado que los bloques describe y it son funciones, pueden contener cualquier código ejecutable necesario para implementar la prueba. 
+			Se aplican las reglas de alcance de JavaScript, por lo que las variables declaradas en a describe están disponibles para cualquier 
+			it bloque dentro de la suite.
+
+			1.- Se crea folder para pruebas --> testBasic --> string 	--> string.ts
+																																--> string.spec.ts
+			2.- Se modifica string.ts, se crea funcion 
+				export function mensaje(nombre: string){
+				    return `Saludos ${nombre}`;
+				}
+			3.- Se modifica string.spec.ts, se crea prueba 
+				import { mensaje } from "./string"
+
+
+				describe('Pruebas de string', () => {
+				    it('Debe regresar un string', () =>{
+				        const res = mensaje('Elvis');
+				        expect( typeof res ).toBe('string');
+				    })
+				})
+		***********************************************************************************************************************************
+		274.- Probando numeros***************************************************************************************************************
+			1.- Se crea folder para pruebas --> testBasic --> number	--> number.ts
+																																--> number.spec.ts
+			2.- Se modifica number.ts, se crea funcion 
+				export function incrementar(num: number){
+				    if( num > 100){
+				        return 100;
+				    }else{
+				        return num + 1;
+				    }
+				}
+			3.- Se modifica number.spec.ts, se crea prueba 
+				import { incrementar } from "./number";
+
+				describe('Prueba de numeros', () =>{
+				    it('Debe de retornar 100 si el numero es mayor a 100', () =>{
+				        const inc = incrementar(300);
+				        expect( inc ).toBe(100);
+				    });
+				    it('Debe de retornar el numero mas 1 si es menor a 100', () =>{
+				        const inc = incrementar(55);
+				        expect( inc ).toBe(56);
+				    });
+				})
+		***********************************************************************************************************************************
+		275.- Probando boolean***************************************************************************************************************
+		*****************************************************************************************************************************toBeTrue
+		************************************************************************************************************************.not.toBeTrue
+			1.- Se crea folder para pruebas --> testBasic --> boolean	--> boolean.ts
+																																--> boolean.spec.ts
+			2.- Se modifica boolean.ts, se crea funcion 
+				export function testBoolean(){
+				    return true;
+				}
+
+				export function testBooleanFalse(){
+				    return false;
+				}
+			3.- Se modifica boolean.spec.ts, se crea prueba 
+				import { testBoolean, testBooleanFalse } from "./boolean";
+
+				describe('Prueba de Boolean', () => {
+				    it('Probando verdaderos', () => {
+				        const verd = testBoolean();
+				        expect(verd).toBeTrue();
+				    });
+				    it('Probando con negacion', () => {
+				        const verd = testBooleanFalse();
+				        expect(verd).not.toBeTrue();        
+				    })
+				});
+		***********************************************************************************************************************************
+		276.- Probando array***************************************************************************************************************
+		***************************************************************************************************************************toContain
+			1.- Se crea folder para pruebas --> testBasic --> arreglos	--> arreglo.ts
+																																	--> arreglo.spec.ts
+			2.- Se modifica arreglo.ts, se crea funcion 
+				export function getArray(){
+				    return ['Elvis', 'Diego', 'Antonio', 'Ricardo', 'Camila']
+				}
+			3.- Se modifica arreglo.spec.ts, se crea prueba 
+				import { getArray } from "./arreglos";
+
+				describe('Prueba de arreglos', ()=>{
+				    it('Debe retorna el size correcto del arreglo', () => {
+				        const arreglo = getArray();
+				        expect(arreglo.length).toBeGreaterThanOrEqual(5); 
+				    });
+				    it('Debe existir con contain', () => {
+				        const arreglo = getArray();
+				        expect(arreglo).toContain('Elvis'); 
+				        expect(arreglo).toContain('Antonio'); 
+				    });
+				});
+		***********************************************************************************************************************************
+		277.- Probando clases***************************************************************************************************************
+			1.- Se crea folder para pruebas --> testBasic --> clases	--> clase.ts
+																																--> clase.spec.ts
+			2.- Se modifica clase.ts, se crea funcion 
+				export class Jugador{
+
+				    hp: number;
+
+				    constructor(){
+				        this.hp = 100;
+				    }
+
+				    recibeDanio(danio: number): number{
+				        if( danio >= this.hp ){
+				            this.hp = 0;
+				        }else{
+				            this.hp = this.hp - danio;
+				        }
+				        return this.hp;
+				    }
+				}
+			3.- Se modifica clase.spec.ts, se crea prueba 
+				import * as exp from "constants";
+				import { Jugador } from "./clase";
+
+				describe('Pruebas de arrego', () => {
+				    const jugador = new Jugador();
+				    it('Debe retornar el hp correcto', () => {
+				        const danio = jugador.recibeDanio(50);
+				        expect(danio).toBe(50);
+				    });
+				    it('Debe retornar el hp 0', () => {
+				        const danio = jugador.recibeDanio(150);
+				        expect(danio).toBe(0);
+				    });
+				});
+		***********************************************************************************************************************************
+		278.- Ciclos de vida***************************************************************************************************************
+		*************************************************************************************************************************beforeAll()
+		**************************************************************************************************************************afterAll()
+		************************************************************************************************************************beforeEach()
+		*************************************************************************************************************************afterEach()
+			1.- Se modifica clase.spec.ts
+			import { Jugador } from "./clase";
+
+			describe('Pruebas de arrego', () => {
+			    const jugador = new Jugador();
+
+			    afterAll(() => { console.log('afterAll')});
+			    beforeAll(() => { console.log('beforeAll')});
+			    beforeEach(() => { 
+			        const jugador = new Jugador(); 
+			        console.log('beforeEach');
+			    });
+			    afterEach(() => { console.log('afterEach')});
+			    it('Debe retornar el hp correcto', () => {
+			        const danio = jugador.recibeDanio(50);
+			        expect(danio).toBe(50);
+			    });
+			    it('Debe retornar el hp 0', () => {
+			        const danio = jugador.recibeDanio(150);
+			        expect(danio).toBe(0);
+			    });
+			});
+		***********************************************************************************************************************************
+		279. Observar el porcentaje de cobertura de nuestra aplicación - code-coverage*****************************************************
+		************************************************************************************************************ng test --code-coverage
+		***********************************************************************************************************************************
+		284. Event Emitter*****************************************************************************************************************
+			1.- Se crean folder --> testBasico --> intermedio --> eventEmmiter --> jugador2.ts 
+																																					--> jugador.spec.ts  
+			2.- Modificacion en jugador2.ts  
+				import { EventEmitter } from "@angular/core";
+
+				export class Jugador2{
+
+				    hp: number;
+				    hpCambia = new EventEmitter<number>();
+
+				    constructor(){
+				        this.hp = 100;
+				    }
+
+				    recibeDanio(danio: number){
+				        if( danio >= this.hp ){
+				            this.hp = 0;
+				        }else{
+				            this.hp = this.hp - danio;
+				        }
+				        this.hpCambia.emit(this.hp);
+				    }
+				}
+			3.- Modificacion en jugador2.spec.ts 
+				import { Jugador2 } from "./jugador2";
+
+				describe('Pruebas de EventEmmiter', () => {
+				    let jugador: Jugador2;
+				    beforeEach( () => jugador = new Jugador2() );
+				    it('Debe emitir evento cuando recibe daño',()=>{
+				        let nuevoHp= 0;
+				        jugador.hpCambia.subscribe( hp => {
+				            nuevoHp = hp;
+				        });
+				        jugador.recibeDanio(1000);
+				        expect(nuevoHp).toBe(0);
+				    });
+
+				    it('Debe emitir evento cuando recibe daño, sobrevive si es menor a 100',()=>{
+				        let nuevoHp= 0;
+				        jugador.hpCambia.subscribe( hp => {
+				            nuevoHp = hp;
+				        });
+				        jugador.recibeDanio(50);
+				        expect(nuevoHp).toBe(50);
+				    });
+				});
+		***********************************************************************************************************************************
+		284.- Formularios******************************************************************************************************************
+			1.- Se crea formulario.ts 
+				import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+
+
+				export class FormularioRegister{
+				    myForm: FormGroup;
+
+				    constructor( fb: FormBuilder){
+				        this.myForm = fb.group({
+				            email: ['', [ Validators.required, Validators.email]],
+				            password: ['', Validators.required]
+				        })
+				    }
+				}
+			2.- Se modifica formulario.spec.ts 
+				import { FormBuilder } from "@angular/forms";
+				import { FormularioRegister } from "./formulario"
+
+				describe('Formularios', () =>{
+				    let componente: FormularioRegister;
+
+				    beforeEach(() => componente = new FormularioRegister(new FormBuilder()));
+
+				    it('Debe crear un formulario con dos campos, email y password', ()=> {
+				        expect( componente.myForm.contains('email')).toBeTrue();
+				        expect( componente.myForm.contains('password')).toBeTrue();
+
+				    })
+				})
+		***********************************************************************************************************************************
+	*************************************************************************************************************************************
 ******************************************************* Fin Seccion ******************************************************************
 
 
@@ -19368,7 +19630,7 @@ Complementarios*****************************************************************
                 <a class="nav-link" [routerLink]="['usuario']">Usuarios</a>
             </li>
         </ul>
-
+***************************************************************************************************************************************
 
 
 sidebar*******************************************************************************************************************************
@@ -19598,3 +19860,4 @@ sidebar*************************************************************************
 					    expect( existe ).toBeTruthy();
 
 					  });
+**************************************************************************************************************************************
