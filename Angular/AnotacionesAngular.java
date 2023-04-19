@@ -12466,6 +12466,191 @@ cambio de puerto 																	--> ng serve --port 4401
 				    })
 				})
 		***********************************************************************************************************************************
+		286.- Validaciones de formularios**************************************************************************************************
+			1.- Se modifica formulario.spec.ts 
+				import { FormBuilder } from "@angular/forms";
+				import { FormularioRegister } from "./formulario"
+
+				describe('Formularios', () =>{
+				    let componente: FormularioRegister;
+
+				    beforeEach(() => componente = new FormularioRegister(new FormBuilder()));
+
+				    it('Debe crear un formulario con dos campos, email y password', ()=> {
+				        expect( componente.myForm.contains('email')).toBeTrue();
+				        expect( componente.myForm.contains('password')).toBeTrue();
+				    });
+				    it('El mail es obligatorio', () =>{
+				        let control = componente.myForm.get('email');
+				        control.setValue('')
+				        expect( control.valid ).toBeFalse();
+				    });
+				    it('Debe poseer un correo valido', () =>{
+				        let control = componente.myForm.get('email');
+				        control.setValue('dirielfran@gmail.com');
+				        expect( control.valid ).toBeTrue();
+				    });
+
+				})
+		***********************************************************************************************************************************
+		289. Espías************************************************************************************************************************
+		****************************************************************************************************************************spyOn()
+		*************************************************************************************************************************callFake()
+			1.- Se crea archivo de pruebas en kioscoApp --> src/app/configuraciones/proveedores/list/list-proveedores.component.spec.ts
+				import { ProovedoresService } from "src/app/services/proovedores.service";
+				import { ListProovedoresComponent } from "./list-proovedores.component";
+				import 'rxjs/add/observable/from';
+				import { Observable } from "rxjs";
+				import * as exp from "constants";
+
+				describe('Test list-proveedores.component', () => {
+				    let component: ListProovedoresComponent;
+				    const servicio = new ProovedoresService(null, null);
+
+				    beforeEach(() => {
+				        component = new ListProovedoresComponent(servicio);
+				    });
+
+				    it('Init: Debe cargar el listado',()=>{
+				        const promotions = [
+				            {
+				                "id": 28,
+				                "user": null,
+				                "createAt": "2023-04-17T13:22:54",
+				                "updateAt": null,
+				                "deleted": true,
+				                "name": "PromoComboPancho",
+				                "description": "PromoComboPancho",
+				                "codePromotion": "C",
+				                "price": 450.0,
+				                "products": [],
+				                "productos": [],
+				                "percent": null
+				            },
+				            {
+				                "id": 29,
+				                "user": null,
+				                "createAt": "2023-04-17T15:25:20",
+				                "updateAt": null,
+				                "deleted": true,
+				                "name": "PromoCarameloAlka",
+				                "description": "PromoCarameloAlka",
+				                "codePromotion": "C",
+				                "price": 40.0,
+				                "products": [],
+				                "productos": [],
+				                "percent": null
+				            }				            
+				        ];
+				        spyOn( servicio, 'getProovedores').and.callFake( () => {
+				            return Observable.from([ promotions ]);
+				        })
+
+				        component.ngOnInit();
+				        expect( component.proovedor.length ).toBeGreaterThanOrEqual(9)
+				    })
+
+				});
+		***********************************************************************************************************************************
+		290. Confirmar que un método sea llamado*******************************************************************************************
+		*****************************************************************************************************************Observable.empty()
+		*****************************************************************************************************************toHaveBeenCalled()
+			1.- Se modifica list-proveedores.component.spec.ts, se agrega metodo para probar que un metodo del servicio se llamo 
+		    it('Se debe llamar al metodo del servicio',()=>{
+
+		        const spy = spyOn( servicio, 'getProovedores').and.callFake( () => {
+		            return Observable.empty();
+		        })
+
+		        component.ngOnInit();
+		        expect( spy ).toHaveBeenCalled();
+		    })
+		***********************************************************************************************************************************
+		291. Espías: returnValue***********************************************************************************************************
+	    it('Debe agregar un medico',()=>{
+
+	        const proveedor = {
+	            "id": 28,
+	            "user": null,
+	            "createAt": "2023-04-17T13:22:54",
+	            "updateAt": null,
+	            "deleted": true,
+	            "name": "PromoComboPancho",
+	            "description": "PromoComboPancho",
+	            "codePromotion": "C",
+	            "price": 450.0,
+	            "products": [],
+	            "productos": [],
+	            "percent": null,
+	            "email": "",
+	            "descripcion": ""
+	        };
+	        spyOn( servicio, 'getProovedores').and.returnValue( 
+	            Observable.from([ proveedores ])
+	        )
+
+	        component.ngOnInit();
+	        expect( component.proovedor.findIndex( i => i.id = proveedor.id)).toBeGreaterThanOrEqual(0)
+	    })
+	  ***********************************************************************************************************************************
+	  292.- Probar errores en el observable**********************************************************************************************
+	  ********************************************************************************************************************test switalert2
+	    it('Si falla la eliminacion se debe mostrar mensaje',()=>{
+	        const msgError = {
+	            "error": {
+	                "mensaje": "prueba"
+	            }
+	        }
+
+	        const spy = spyOn( servicio, 'deleteProovedor').and.returnValue( 
+	            throwError(msgError)
+	        )
+
+	        component.eliminarProovedor(1);
+	        expect( spy ).toHaveBeenCalledWith(1)
+	    })
+
+	    2.- Probando switalert2
+	    	Referencia --> https://github-wiki-see.page/m/prmkishor/sweetAletUnitTesting/wiki/sweetAlert2-Angular-Unit-Testing
+		    it('should show basic message', (done) => {
+		        const msgError = {
+		            "error": {
+		                "mensaje": "Mensaje de error"
+		            }
+		        }
+		        let title = "Error al Eliminar tipo de Producto."
+		        const spy = spyOn( servicio, 'deleteProovedor').and.returnValue( 
+		            throwError(msgError)
+		        )
+		        component.eliminarProovedor(1);
+		        setTimeout(() => {
+		          expect(Swal.isVisible()).toBeTruthy();
+		          expect(Swal.getTitle().textContent).toEqual(title);
+		          expect(Swal.getContent().textContent).toEqual(msgError.error.mensaje);
+		          Swal.clickConfirm();
+		          done();
+		        });
+		    });
+	  *********************************************************************************************************************************** 
+	  293.- Simular confirmaciones de usurario*******************************************************************************************
+	  	it('Debe llamar al servidor para borrar item', () => {
+	  		spyOn( window , 'confirm').and.returnValue(true);
+
+	  		const spy = spyOn( servicio, 'borrarItem' ).and.returnValue( Observable.empty );
+
+	  		componente.borrarItem(1);
+	  		expect( spy ).toHaveBeenCalledWith(1);
+	  	})
+
+	  	it('NO Debe llamar al servidor para borrar item', () => {
+	  		spyOn( window , 'confirm').and.returnValue(true);
+
+	  		const spy = spyOn( servicio, 'borrarItem' ).and.returnValue( Observable.empty );
+
+	  		componente.borrarItem(1);
+	  		expect( spy ).not.toHaveBeenCalledWith(1);
+	  	})
+	  ***********************************************************************************************************************************
 	*************************************************************************************************************************************
 ******************************************************* Fin Seccion ******************************************************************
 
