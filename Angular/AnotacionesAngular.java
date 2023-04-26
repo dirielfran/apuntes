@@ -7,8 +7,9 @@ ng g c components/heroeTarjeta --skipTests=true  	--> Creacion de componente sin
 ng g c clientes/form --flat 											--> Crea componente con el -- flat se le indica que no cree folder
 ng generate service cliente         							--> Se crea clase de servicio
 ng g s services/user --dry-run  									--> hace una simulacion de creacion de archivo 
+ng g s intermedio2/medico/medico --spec=false --flat  --> Se crea servicio sin test y fuera de un folder
 ng g m miModulo																		--> Genera un modulo propio
-ng g m <nombre del modulo> --routing 												--> Genera modulo con su routing
+ng g m <nombre del modulo> --routing 							--> Genera modulo con su routing
 ng g g usuarios/guard/auth  											--> genera guard en ruta especificada
 ng g p pipes/noimage															--> Creacion de pipe
 ng build --prod 																	--> Creacion de mi carpeta de distribucion con la aplicacion mimificada 
@@ -8848,53 +8849,53 @@ cambio de puerto 																	--> ng serve --port 4401
 
 
 ****************************************************Angular Fit Avanzado**************************************************************
-	**************************************************************************************************************************************
-	**************************************************************************************************************************************
-	*********************************Sección 2: Dominando la creación automática del Angular CLI******************************************
-	7. *****************************************************************************************************Uso de la ayuda del AngularCLI
-		*ng help --> ayuda
-		1.- Se crea la aplicacion --> ng new clitest
-		Referencia --> https://angular.io/cli
-	**************************************************************************************************************************************
-	8. ********************************************************************************************Control de la generación de componentes
-		* ng g c --help --> para solicitar ayuda
-		1.- Se genera componente home
-			ng g c pages/home -is  --> -is para no crear archivo css 
-		2.- Se crea componente about 
-			ng g c pages/about/about --flat --skip-test
-		3.- Se crea componente contact 
-			ng g c pages/contact/contact --flat -is --skip-tests
-		4.- Se modifica app.component.ts 
-			<app-home></app-home>
-			<app-contact></app-contact>
-	**************************************************************************************************************************************
-	9. **********************************************************************************************************Paths, servicios y guards
-		* ng g s --help --> solicitar ayuda 
-		1.- Se genera servicio AuthService
-			ng g s services/auth --skip-test 
-		2.- Se modifica auth.service.ts, se modifica constructor con console.log 
-			  constructor() {
-			    console.log('Hola desde el servicio auth')
-			   }
-		3.- Se modifica home.component.ts, se realiza la injeccion de dependencia del servicio
-			  constructor( private authService: AuthService) { }
-		Nota: se debe probar e inspeccionar en el navegador el mensaje del servicio 
-		4.- Se genera servicio user 
-			ng g s services/user --dry-run  --> hace una simulacion de creacion de archivo 
-			ng g s services/user --skip-tests
-		5.- Generacion de guard 
-			ng g --help  --> para solicitar ayuda 
-			ng g guard guard/auth --skip-tests
-	**************************************************************************************************************************************
-	**************************************************************************************************************************************
-	********************************************************Fin Seccion*******************************************************************
-	****************************************Sección 3: Estructuración de nuestro proyecto*************************************************
-		15. *****************************************************************************************************Inicio de proyecto - AdminPro
+	************************************************************************************************************************************
+	************************************************************************************************************************************
+	*********************************Sección 2: Dominando la creación automática del Angular CLI****************************************
+		7. *************************************************************************************************Uso de la ayuda del AngularCLI
+			*ng help --> ayuda
+			1.- Se crea la aplicacion --> ng new clitest
+			Referencia --> https://angular.io/cli
+		**********************************************************************************************************************************
+		8. ****************************************************************************************Control de la generación de componentes
+			* ng g c --help --> para solicitar ayuda
+			1.- Se genera componente home
+				ng g c pages/home -is  --> -is para no crear archivo css 
+			2.- Se crea componente about 
+				ng g c pages/about/about --flat --skip-test
+			3.- Se crea componente contact 
+				ng g c pages/contact/contact --flat -is --skip-tests
+			4.- Se modifica app.component.ts 
+				<app-home></app-home>
+				<app-contact></app-contact>
+		**********************************************************************************************************************************
+		9. ******************************************************************************************************Paths, servicios y guards
+			* ng g s --help --> solicitar ayuda 
+			1.- Se genera servicio AuthService
+				ng g s services/auth --skip-test 
+			2.- Se modifica auth.service.ts, se modifica constructor con console.log 
+				  constructor() {
+				    console.log('Hola desde el servicio auth')
+				   }
+			3.- Se modifica home.component.ts, se realiza la injeccion de dependencia del servicio
+				  constructor( private authService: AuthService) { }
+			Nota: se debe probar e inspeccionar en el navegador el mensaje del servicio 
+			4.- Se genera servicio user 
+				ng g s services/user --dry-run  --> hace una simulacion de creacion de archivo 
+				ng g s services/user --skip-tests
+			5.- Generacion de guard 
+				ng g --help  --> para solicitar ayuda 
+				ng g guard guard/auth --skip-tests
+		**********************************************************************************************************************************
+		**********************************************************************************************************************************
+	********************************************************Fin Seccion*****************************************************************
+	****************************************Sección 3: Estructuración de nuestro proyecto***********************************************
+		15. *************************************************************************************************Inicio de proyecto - AdminPro
 			1.- Se descarga material  
 			2.- Se accede a link de tempates --> https://www.wrappixel.com/templates/category/dashboard-templates/
 			3.- Se crea proyecto -->  ng new adminpro
-		**************************************************************************************************************************************
-		17. ***********************************************************************Primeros componentes e inicio de la estructura del proyecto
+		**********************************************************************************************************************************
+		17. *******************************************************************Primeros componentes e inicio de la estructura del proyecto
 			1.- Se genera componente login --> ng g c auth/login --skip-tests
 			2.- Se genera componente register --> ng g c auth/register --skip-tests
 			3.- Se genera componente nopagesfound --> ng g c pages/nopagesfound --skip-tests
@@ -8902,8 +8903,8 @@ cambio de puerto 																	--> ng serve --port 4401
 			5.- Se genera componente breadcrumbs --> ng g c shared/breadcrumbs --skip-tests
 			6.- Se genera componente sidebar --> ng g c shared/sidebar --skip-tests
 			7.- Se genera componente header --> ng g c shared/header --skip-tests
-		**************************************************************************************************************************************
-		18. *****************************************************************************************Agregar las librerías externas necesarias
+		**********************************************************************************************************************************
+		18. *************************************************************************************Agregar las librerías externas necesarias
 			1.- Se copian las siguientes carpetas del material de la seccion a la carpeta assets del proyecto 
 				css, images, js, plugins 
 			2.- Se realiza el import de la librerias
@@ -8953,8 +8954,8 @@ cambio de puerto 																	--> ng serve --port 4401
 						    <script src="./assets/plugins/styleswitcher/jQuery.style.switcher.js"></script>
 						</body>
 					</html>				   
-		**************************************************************************************************************************************
-		19. ******************************************************************************Header, SiderBar, Breadcrumbs y contenedor principal
+		**********************************************************************************************************************************
+		19. **************************************************************************Header, SiderBar, Breadcrumbs y contenedor principal
 			1.- Se modifica el index.html, se le agrega clase al body y preloader del archivo pages-banck 
 				<!doctype html>
 				<html lang="en">
@@ -12651,9 +12652,292 @@ cambio de puerto 																	--> ng serve --port 4401
 	  		expect( spy ).not.toHaveBeenCalledWith(1);
 	  	})
 	  ***********************************************************************************************************************************
-	*************************************************************************************************************************************
-******************************************************* Fin Seccion ******************************************************************
+	**************************************************************************************************************************************
+	Seccion 24: Pruebas de Intregracion***************************************************************************************************
+		297.- Configuraciones de Pruebas de integracion*************************************************************************************
+		*****************************************************************************************************************************TestBed
+		********************************************************************************************************************ComponentFixture
+			ComponentFixtureherrmienta que nos permite tener acceso a los elementos de DOM
+			TestBed es una clase con varias funcionalidades para las pruebas
+			
+			1.- Se agrega test a componente ProovedoresComponent 
+				--> src-> configuraciones-> proveedores-> form -> proovedores --> proovedores.component.spec.ts
+			2.- Se agregan configuraciones basicas 
+				import { TestBed, ComponentFixture} from "@angular/core/testing";
+				import { ProovedoresComponent } from "./proovedores.component";
 
+
+				describe('Componente Proveedores Form', () => {
+				    let component: ProovedoresComponent;
+				    /**Se crea componente fixture */
+				    let fixture: ComponentFixture<ProovedoresComponent>;
+
+				    beforeEach(() =>{
+
+				        /** Se crean configuraciones de modulo */
+				        TestBed.configureTestingModule({
+				            declarations: [ProovedoresComponent]
+				        });
+				        /** Se crea componente ya procesado por el testBed y se le asigna al fixture*/
+				        fixture = TestBed.createComponent(ProovedoresComponent);
+				        /** Se obtiene la instancia del componente */
+				        component = fixture.componentInstance;
+
+
+				    })
+
+				});
+		************************************************************************************************************************************
+		298.- Comprobar que el componente se crea correctamente*****************************************************************************
+			1.- Se crea componente --> ng g c testBasic/Integration/medico
+			2.- Se modifica medico.component.spec.ts 
+				import { TestBed, ComponentFixture} from "@angular/core/testing";
+				import { MedicoComponent } from "./medico.component";
+
+
+				describe('Componente MedicoComponent', () => {
+				    let component: MedicoComponent;
+				    /**Se crea componente fixture */
+				    let fixture: ComponentFixture<MedicoComponent>;
+
+				    beforeEach(() =>{
+				        /** Se crean configuraciones de modulo */
+				        TestBed.configureTestingModule({
+				            declarations: [MedicoComponent]
+				        });
+				        /** Se crea componente ya procesado por el testBed y se le asigna al fixture*/
+				        fixture = TestBed.createComponent(MedicoComponent);
+				        /** Se obtiene la instancia del componente */
+				        component = fixture.componentInstance;
+				    })
+
+				    it('Debe crearse el componente', () => {
+				      expect( component ).toBeTruthy();
+				    })
+				    it('Debe retornar el nombre del medico', () => {
+				       const name = 'Juan ';
+				       const res = component.saludarMedico(name);
+				       expect( res ).toContain(name);
+				    })
+
+				});
+		************************************************************************************************************************************
+		299.- Servicio en el TestingModule - Uso del servicio*******************************************************************************
+			1.- Se crea servicio sin test   
+				ng g s testBasic/Integration/medico --skipTests=true --flat
+			2.- Se modifica servicio  
+				@Injectable({
+				  providedIn: 'root'
+				})
+				export class MedicoService {
+
+				  constructor( public http: HttpClient) { }
+
+				  getMedicos(){
+				    return this.http.get('');
+				  }
+				}
+			3.- Se modifica archivo de test 
+				TestBed.configureTestingModule({
+            declarations: [MedicoComponent],
+            providers: [MedicoService],
+            imports: [HttpClientModule]
+        });
+		************************************************************************************************************************************
+		303.- Realizar pruebas en el componente HTML del componente*************************************************************************
+		*************************************************************************************************************fixture.detectChanges()
+		********************************************************************************************************fixture.debugElement.query()
+		*************************************************************************************************************************toContain()
+		********************************************************************************************ComponentFixture<IncrementadorComponent>
+		*****************************************************************fixture.debugElement.query(By.css('#nameComponent1')).nativeElement
+		*****************************************************************fixture.debugElement.nativeElement.querySelector('#nameComponent1')
+		*******************************************************************************************document.getElementById('nameComponent1')
+			Referencia --> https://shashankvivek-7.medium.com/getting-to-know-fixture-debugelement-angular-unit-testing-f8389ea61f02
+			1.- Se agrega al proyecto de KioscoApp el componente de incrementador --> testBasic->Integracion -> Incrementador 
+			2.- Se modifica incrementador.component.spec.t, se agrega primera prueba  
+				import { TestBed, ComponentFixture } from '@angular/core/testing';
+				import { IncrementadorComponent } from './incrementador.component';
+				import { FormsModule } from '@angular/forms';
+				import { By } from '@angular/platform-browser';
+
+
+				describe('Incremendator Component', () => {
+
+				    let component: IncrementadorComponent;
+				    let fixture: ComponentFixture<IncrementadorComponent>;
+
+				    beforeEach( () => {
+				        TestBed.configureTestingModule({
+				            declarations: [ IncrementadorComponent ],
+				            imports: [ FormsModule ]
+				        });
+
+				        fixture = TestBed.createComponent(IncrementadorComponent);
+				        component = fixture.componentInstance;
+
+				    });
+
+				    it('Debe mostrar la leyenda', () => {
+				        component.leyenda = 'Progreso de carga';
+				        /** Disparar la deteccion de cambios */
+				        fixture.detectChanges();
+				        /** Se  obtiene el elemento htlm del fixture*/
+				        const elem: HTMLElement = fixture.debugElement.query(By.css('h3')).nativeElement;
+				        expect(elem.innerHTML).toContain('Progreso de carga');
+				    });
+
+				});
+			3.- Se agrego prueba al componente config de configuraciones --> config.component.spec.ts 
+				import { TestBed, ComponentFixture } from '@angular/core/testing';
+				import { By } from '@angular/platform-browser';
+				import { ConfigComponent } from './config.component';
+				import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+				import {AccordionModule} from 'primeng/accordion';
+				import {MatIconModule} from '@angular/material/icon';
+
+
+				describe('Incremendator Component', () => {
+
+				    let component: ConfigComponent;
+				    let fixture: ComponentFixture<ConfigComponent>;
+
+				    beforeEach( () => {
+				        TestBed.configureTestingModule({
+				            declarations: [ ConfigComponent ],
+				            imports: [AccordionModule, BrowserAnimationsModule, MatIconModule]
+				        });
+
+				        fixture = TestBed.createComponent(ConfigComponent);
+				        component = fixture.componentInstance;
+
+				    });
+
+				    it('Debe mostrar la leyenda', () => {
+				        /** Disparar la deteccion de cambios */
+				        fixture.detectChanges();
+				        /** Se  obtiene el elemento htlm del fixture*/
+				        //const elem: HTMLElement = fixture.debugElement.query(By.css('#nameComponent1')).nativeElement;
+				        //const elem: HTMLElement = fixture.debugElement.nativeElement.querySelector('#nameComponent1');
+				        const elem: HTMLElement = document.getElementById('nameComponent1');
+				        //const elem: HTMLElement = fixture.debugElement.query(By.css('h3')).nativeElement;
+				        expect(elem.innerHTML).toContain('Tipos de Producto');
+				    });
+				});
+		************************************************************************************************************************************
+		304.- Revisar el valor del input fisicamente****************************************************************************************
+		****************************************************************************************************************fixture.whenStable()
+		*************************************************************************************************************fixture.detectChanges()
+			1.- Se modifica incrementador.component.spec.ts, se le agrega test  
+				it('Debe mostrar el valor correcto luego del evento de cambio', () =>{
+		        component.cambiarValor(5);
+		        /** Se dispara el ciclo de vida deteccion de cambios */
+		        fixture.detectChanges();
+		        /** Se espera a que el fixture este estable*/
+		        fixture.whenStable().then(()=>{
+		            const elem = fixture.debugElement.query( By.css('input')).nativeElement;
+		            expect( elem.value ).toBe('55');
+		        })
+		    });
+		************************************************************************************************************************************
+		305.- Confirmar que un elemento HTML tenga los eventos deseados*********************************************************************
+		***************************************************************************************************************triggerEventHandler()
+			1.- Se modifica incrementador.component.spec.ts, se le agrega test
+				it('Debe incrementar/decrementar en 5, con evento click',()=>{
+		        const botones = fixture.debugElement.queryAll( By.css('.btn-primary') );
+		        botones[0].triggerEventHandler('click', null);
+		        expect( component.progreso ).toBe(45);
+
+		        botones[1].triggerEventHandler('click', null);
+		        expect( component.progreso ).toBe(50);
+		    })
+		************************************************************************************************************************************
+	**************************************************************************************************************************************
+	Seccion 25: Pruebas de Integracion intermedias y avanzadas****************************************************************************
+		311.- Probando la existencia de una ruta********************************************************************************************
+			1.- Se crea folder --> testBasic--> avansado--> rutas --> app.route.ts 
+																														--> app.route.spec.ts 
+		  2.- Se modifica app.route.ts   
+		  	export const RUTAS: Routes = [
+				    {path: 'hospital', component: MedicoComponent},
+				    {path: 'incrementador', component: IncrementadorComponent},
+				    {path: 'medico/:id', component: MedicoComponent},
+				];
+			3.- Se modifica app.route.spec.ts   
+					import { MedicoComponent } from "../../Integration/medico/medico.component";
+					import { RUTAS } from "./app.route";
+
+					describe('Rutas principales', ()=>{
+					    it('Debe de existir la ruta /medicos/:id', () =>{
+					        expect(RUTAS).toContain({
+					            path: 'medico/:id',
+					            component: MedicoComponent
+					        })
+					    });
+					});
+		************************************************************************************************************************************
+		312.- Pruebas en routerOulet********************************************************************************************************
+		****************************************************************************************************TestBed.configureTestingModule()
+		****************************************************************************************************RouterTestingModule.withRoutes()
+		***********************************************************************************************************TestBed.createComponent()
+		********************************************************************************************************By.directive( RouterOutlet )
+			Nota: La pruebas se realiza en appKiosco
+			1.- Se crea file --> app.component.spec.ts 
+				import { TestBed } from "@angular/core/testing";
+				import { AppComponent } from "./app.component";
+				import { RouterTestingModule } from "@angular/router/testing";
+				import { By } from "@angular/platform-browser";
+				import { RouterOutlet } from "@angular/router";
+
+				describe('Prueba de componente principal', () => {
+				    beforeEach(()=>{
+				        TestBed.configureTestingModule({
+				            declarations:[ AppComponent ],
+				            imports: [ RouterTestingModule.withRoutes([])]
+				        }).compileComponents();
+				    })
+
+				    it('El componente debe de tener un router-oulet', () => {
+				        const fixture = TestBed.createComponent(AppComponent);
+				        const debugElement = fixture.debugElement.query( By.directive( RouterOutlet ));
+				        expect( debugElement ).not.toBeNull();
+				    })
+				});
+		************************************************************************************************************************************
+		314.- Confirmar que exista un routerLink hacia el componente medicos****************************************************************
+		**************************************************************************************************By.directive( RouterLinkWithHref )
+			1.- Se modifica app.component.ts, se agregan rutas para las pruebas  
+				<a routerLink="/medicos">Medicos</a>
+				<a routerLink="/hospital">Medicos</a>
+				<a routerLink="/usuario">Medicos</a>
+				<router-outlet></router-outlet>
+			2.- Se modifica el test app.component.spec.ts, se agrega pruebas
+				it('El componente debe tener un link a medicos', () => {
+		        const fixture = TestBed.createComponent(AppComponent);
+		        const elementos = fixture.debugElement.queryAll( By.directive( RouterLinkWithHref ));
+		        let existe = false;
+		        for ( const elem of elementos){
+		            if( elem.attributes['routerLink'] === '/medicos'){
+		                existe = true;
+		                break;
+		            }
+		        };
+		        expect(existe).toBeTruthy();
+		    })
+		************************************************************************************************************************************
+		315.- Errores por selectores desconocidos*******************************************************************************************
+		*******************************************************************************************************schemas: [ NO_ERRORS_SCHEMA ]
+			1.- Se modifica proovedores.component.spec.ts, se agrega NO_ERRORS_SCHEMA, para que ignore selectores deconocidos que no esten 
+			en los inmports de los test
+				TestBed.configureTestingModule({
+            declarations: [ProovedoresComponent],
+            providers: [ProovedoresService],
+            imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule] ,
+            schemas: [ NO_ERRORS_SCHEMA ]
+        });
+
+		************************************************************************************************************************************
+	**************************************************************************************************************************************
+******************************************************* Fin Seccion ********************************************************************
 
 
 
@@ -18063,21 +18347,21 @@ Complementarios*****************************************************************
 				</div>
 				<app-footer></app-footer>
 		44.- *******************************************************************************************Directivas estructurales *ngIf y *ngFor
-		1.- Se crea atributo boolean y string[] en el componente body.component.ts
-			bandera:boolean = true;
-			personajes: string[] = ['spiderman', 'superman', 'batman', 'Hulk'];
-		2.- Se modifica body.component.html, se utiliza la directiva *ngIf
-			<div *ngIf="bandera" class="card text-white bg-success mb-3" style="max-width:100%;">
-	            <div class="card-body">
-	                <h5 class="card-title">Autor: {{frase.autor}}</h5>
-	                <p class="card-text">{{frase.mensaje}}</p>
-	            </div>
-	        </div>
-	       	2.1.- Se crea evento onclick en el boton
-	       		<div (click)="bandera = !bandera" class="btn btn-outline-success btn-block">
-		            Mostrar/Ocultar
+			1.- Se crea atributo boolean y string[] en el componente body.component.ts
+				bandera:boolean = true;
+				personajes: string[] = ['spiderman', 'superman', 'batman', 'Hulk'];
+			2.- Se modifica body.component.html, se utiliza la directiva *ngIf
+				<div *ngIf="bandera" class="card text-white bg-success mb-3" style="max-width:100%;">
+		            <div class="card-body">
+		                <h5 class="card-title">Autor: {{frase.autor}}</h5>
+		                <p class="card-text">{{frase.mensaje}}</p>
+		            </div>
 		        </div>
-		3.-	Se modifica body.component.html, se utiliza la directiva *ngIf
+		       	2.1.- Se crea evento onclick en el boton
+		       		<div (click)="bandera = !bandera" class="btn btn-outline-success btn-block">
+			            Mostrar/Ocultar
+			        </div>
+			3.-	Se modifica body.component.html, se utiliza la directiva *ngIf
 		    <ul class="list-group">
 	            <li *ngFor="let personaje of personajes; let i = index" class="list-group-item">
 	                {{i+1}}.- {{personaje}}
