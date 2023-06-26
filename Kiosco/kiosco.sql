@@ -280,9 +280,293 @@ CREATE TABLE `product_group` (
   `update_at` timestamp NULL DEFAULT NULL,
   `deleted` TINYINT DEFAULT '0',
   `name` VARCHAR(100) NOT NULL,
-  `description` varchar(255) DEFAULT NULL
+  `description` varchar(255) DEFAULT NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 ALTER TABLE `db_springboot_backend`.`productos` 
 ADD COLUMN `group_id` BIGINT NULL AFTER `is_promocion_total`;
+
+
+ALTER TABLE `db_springboot_backend`.`productos` ALTER INDEX `FKGroup_idx` VISIBLE;
+ALTER TABLE `db_springboot_backend`.`productos` 
+DROP FOREIGN KEY `FKgroup`;
+ALTER TABLE `db_springboot_backend`.`productos` ADD CONSTRAINT `FKGroup`
+  FOREIGN KEY (`group_id`)
+  REFERENCES `db_springboot_backend`.`product_group` (`id`)
+  ON DELETE SET NULL
+  ON UPDATE NO ACTION;
+
+
+# Se agrega tabla para cuentas requerimiento declaracion de diferencia en cuentas
+CREATE TABLE `account` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `name` VARCHAR(100) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `difference_box` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `amount` double DEFAULT '0',
+  `box_id` BIGINT DEFAULT NULL,
+  `account_id` BIGINT DEFAULT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+ALTER TABLE `db_springboot_backend`.`clientes` 
+ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`,
+CHANGE COLUMN `create_at` `create_at` TIMESTAMP NULL AFTER `user`;
+
+ALTER TABLE `db_springboot_backend`.`clientes` 
+CHANGE COLUMN `update_at` `update_at` TIMESTAMP NULL DEFAULT NULL AFTER `create_at`;
+
+
+ALTER TABLE `db_springboot_backend`.`retiroscaja` 
+ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+ADD COLUMN `create_at` TIMESTAMP NULL DEFAULT NULL AFTER `user`,
+ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`cajas` 
+DROP FOREIGN KEY `FK_clientes`;
+ALTER TABLE `db_springboot_backend`.`cajas` 
+CHANGE COLUMN `cliente_id` `cliente_id` BIGINT NULL DEFAULT NULL ,
+DROP INDEX `FK_cliente` ;
+;
+
+ALTER TABLE `db_springboot_backend`.`facturas` 
+DROP FOREIGN KEY `FK1qiuk10rfkovhlfpsk7oic0v8`;
+ALTER TABLE `db_springboot_backend`.`facturas` 
+DROP INDEX `FK1qiuk10rfkovhlfpsk7oic0v8` ;
+;
+
+ALTER TABLE `db_springboot_backend`.`retiroscaja` 
+DROP FOREIGN KEY `FKclientesid`;
+ALTER TABLE `db_springboot_backend`.`retiroscaja` 
+DROP INDEX `FKclienteid` ;
+;
+
+
+ALTER TABLE `db_springboot_backend`.`clientes` 
+CHANGE COLUMN `id` `id` BIGINT NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `db_springboot_backend`.`retiroscaja` 
+CHANGE COLUMN `cliente_id` `cliente_id` BIGINT NULL DEFAULT NULL ;
+
+ALTER TABLE `db_springboot_backend`.`retiroscaja` 
+ADD CONSTRAINT `FK_retiro_cliente`
+  FOREIGN KEY (`cliente_id`)
+  REFERENCES `db_springboot_backend`.`clientes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+  ALTER TABLE `db_springboot_backend`.`facturas` 
+CHANGE COLUMN `cliente_id` `cliente_id` BIGINT NULL DEFAULT NULL ;
+
+  ALTER TABLE `db_springboot_backend`.`facturas` 
+ADD INDEX `FK_factura_cliente_idx` (`cliente_id` ASC) VISIBLE;
+;
+ALTER TABLE `db_springboot_backend`.`facturas` 
+ADD CONSTRAINT `FK_factura_cliente`
+  FOREIGN KEY (`cliente_id`)
+  REFERENCES `db_springboot_backend`.`clientes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+  ALTER TABLE `db_springboot_backend`.`cajas` 
+CHANGE COLUMN `cliente_id` `cliente_id` BIGINT NULL DEFAULT NULL ;
+
+  ALTER TABLE `db_springboot_backend`.`cajas` 
+ADD CONSTRAINT `FK_caja_cliente`
+  FOREIGN KEY (`cliente_id`)
+  REFERENCES `db_springboot_backend`.`clientes` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+INSERT INTO `db_springboot_backend`.`account` (`id`, `user`, `create_at`, `deleted`, `name`, `description`) VALUES ('1', 'eareiza', null, '0', 'MERCADOPAGO', 'Mecado Pago');
+INSERT INTO `db_springboot_backend`.`account` (`id`, `user`, `create_at`, `deleted`, `name`, `description`) VALUES ('2', 'eareiza', null, '0', 'PEDIDOYA', 'Pedido ya');
+INSERT INTO `db_springboot_backend`.`account` (`id`, `user`, `create_at`, `deleted`, `name`, `description`) VALUES ('3', 'eareiza', null, '0', 'PUNTOVENTA', 'Punto de Venta');
+INSERT INTO `db_springboot_backend`.`account` (`id`, `user`, `create_at`, `deleted`, `name`, `description`) VALUES ('4', 'eareiza', null, '0', 'PEDIDOYAEFECTIVO', 'Pedido ya efectivo');
+INSERT INTO `db_springboot_backend`.`account` (`id`, `user`, `create_at`, `deleted`, `name`, `description`) VALUES ('5', 'eareiza', null, '0', 'EFECTIVO', 'Efectivo');
+INSERT INTO `db_springboot_backend`.`account` (`id`, `user`, `create_at`, `deleted`, `name`, `description`) VALUES ('6', 'eareiza', null, '0', 'DOLAR', 'DOLAR');
+
+UPDATE `db_springboot_backend`.`account` SET `deleted` = '1' WHERE (`id` = '4');
+UPDATE `db_springboot_backend`.`account` SET `deleted` = '1' WHERE (`id` = '2');
+
+ALTER TABLE `db_springboot_backend`.`clientes` 
+ADD COLUMN `deleted` TINYINT NULL DEFAULT '0' AFTER `region_id`;
+
+UPDATE `db_springboot_backend`.`clientes` SET `deleted` = '1' WHERE (`id` = '17');
+UPDATE `db_springboot_backend`.`clientes` SET `deleted` = '1' WHERE (`id` = '20');
+UPDATE `db_springboot_backend`.`clientes` SET `deleted` = '1' WHERE (`id` = '24');
+
+
+
+# Required abaot soft Delete in Invoice entity
+ALTER TABLE `db_springboot_backend`.`facturas` 
+ADD COLUMN `deleted` TINYINT NULL DEFAULT '0' AFTER `usu_aprob_id`;
+
+ALTER TABLE `db_springboot_backend`.`facturas` 
+CHANGE COLUMN `deleted` `deleted` TINYINT NULL DEFAULT '0' AFTER `update_at`;
+
+
+# delete object Cliente
+SET FOREIGN_KEY_CHECKS = 0;
+update usuarios set id = 26 where id = 13;
+update usuarios set id = 13 where id = 4;
+update usuarios set id = 15 where id = 5;
+update usuarios set id = 16 where id = 3;
+update usuarios set id = 17 where id = 6;
+update usuarios set id = 20 where id = 8;
+update usuarios set id = 21 where id = 7;
+update usuarios set id = 22 where id = 9;
+update usuarios set id = 24 where id = 12;
+update usuarios set id = 25 where id = 14;
+update usuarios set id = 27 where id = 15;
+
+DELETE FROM `db_springboot_backend`.`usuarios_roles` WHERE (`usuario_id` = '1') and (`role_id` = '1');
+DELETE FROM `db_springboot_backend`.`usuarios_roles` WHERE (`usuario_id` = '2') and (`role_id` = '1');
+DELETE FROM `db_springboot_backend`.`usuarios_roles` WHERE (`usuario_id` = '3') and (`role_id` = '1');
+DELETE FROM `db_springboot_backend`.`usuarios_roles` WHERE (`usuario_id` = '4') and (`role_id` = '1');
+DELETE FROM `db_springboot_backend`.`usuarios_roles` WHERE (`usuario_id` = '5') and (`role_id` = '1');
+DELETE FROM `db_springboot_backend`.`usuarios_roles` WHERE (`usuario_id` = '6') and (`role_id` = '1');
+UPDATE `db_springboot_backend`.`usuarios_roles` SET `usuario_id` = '16' WHERE (`usuario_id` = '9') and (`role_id` = '1');
+UPDATE `db_springboot_backend`.`usuarios_roles` SET `usuario_id` = '17' WHERE (`usuario_id` = '8') and (`role_id` = '1');
+UPDATE `db_springboot_backend`.`usuarios_roles` SET `usuario_id` = '20' WHERE (`usuario_id` = '7') and (`role_id` = '1');
+INSERT INTO `db_springboot_backend`.`usuarios_roles` (`usuario_id`, `role_id`) VALUES ('21', '1');
+INSERT INTO `db_springboot_backend`.`usuarios_roles` (`usuario_id`, `role_id`) VALUES ('22', '1');
+INSERT INTO `db_springboot_backend`.`usuarios_roles` (`usuario_id`, `role_id`) VALUES ('24', '1');
+INSERT INTO `db_springboot_backend`.`usuarios_roles` (`usuario_id`, `role_id`) VALUES ('25', '1');
+INSERT INTO `db_springboot_backend`.`usuarios_roles` (`usuario_id`, `role_id`) VALUES ('26', '1');
+DELETE FROM `db_springboot_backend`.`usuarios_roles` WHERE (`usuario_id` = '14') and (`role_id` = '1');
+INSERT INTO `db_springboot_backend`.`usuarios_roles` (`usuario_id`, `role_id`) VALUES ('27', '1');
+UPDATE `db_springboot_backend`.`usuarios_roles` SET `usuario_id` = '13' WHERE (`usuario_id` = '2') and (`role_id` = '2');
+UPDATE `db_springboot_backend`.`usuarios_roles` SET `usuario_id` = '15' WHERE (`usuario_id` = '3') and (`role_id` = '2');
+UPDATE `db_springboot_backend`.`usuarios_roles` SET `usuario_id` = '16' WHERE (`usuario_id` = '4') and (`role_id` = '2');
+DELETE FROM `db_springboot_backend`.`usuarios_roles` WHERE (`usuario_id` = '7') and (`role_id` = '2');
+UPDATE `db_springboot_backend`.`usuarios_roles` SET `usuario_id` = '21' WHERE (`usuario_id` = '5') and (`role_id` = '2');
+UPDATE `db_springboot_backend`.`usuarios_roles` SET `usuario_id` = '13' WHERE (`usuario_id` = '3') and (`role_id` = '3');
+UPDATE `db_springboot_backend`.`usuarios_roles` SET `usuario_id` = '15' WHERE (`usuario_id` = '4') and (`role_id` = '3');
+UPDATE `db_springboot_backend`.`usuarios_roles` SET `usuario_id` = '16' WHERE (`usuario_id` = '5') and (`role_id` = '3');
+UPDATE `db_springboot_backend`.`usuarios_roles` SET `usuario_id` = '21' WHERE (`usuario_id` = '6') and (`role_id` = '3');
+UPDATE `db_springboot_backend`.`usuarios_roles` SET `usuario_id` = '26' WHERE (`usuario_id` = '7') and (`role_id` = '3');
+UPDATE `db_springboot_backend`.`usuarios_roles` SET `usuario_id` = '22' WHERE (`usuario_id` = '9') and (`role_id` = '3');
+SET FOREIGN_KEY_CHECKS = 1;
+
+
+
+select distinct(responsable_id) from facturas;
+
+update facturas set responsable_id = 21 where responsable_id = 7; 
+update facturas set responsable_id = 13 where responsable_id = 4;
+update facturas set responsable_id = 17 where responsable_id = 6;
+update facturas set responsable_id = 22 where responsable_id = 9;
+update facturas set responsable_id = 20 where responsable_id = 8;
+update facturas set responsable_id = 15 where responsable_id = 5;
+update facturas set responsable_id = 16 where responsable_id = 3;
+update facturas set responsable_id = 24 where responsable_id = 12;
+
+
+select distinct(usu_cred_id) from facturas;
+update facturas set usu_cred_id = 21 where usu_cred_id = 7; 
+update facturas set usu_cred_id = 13 where usu_cred_id = 4;
+update facturas set usu_cred_id = 17 where usu_cred_id = 6;
+update facturas set usu_cred_id = 22 where usu_cred_id = 9;
+update facturas set usu_cred_id = 20 where usu_cred_id = 8;
+update facturas set usu_cred_id = 15 where usu_cred_id = 5;
+update facturas set usu_cred_id = 16 where usu_cred_id = 3;
+update facturas set usu_cred_id = 24 where usu_cred_id = 12;
+update facturas set usu_cred_id = 25 where usu_cred_id = 14;
+
+
+select distinct(usu_aprob_id) from facturas;
+update facturas set usu_aprob_id = 16 where usu_aprob_id = 3;
+update facturas set usu_aprob_id = 15 where usu_aprob_id = 5;
+update facturas set usu_aprob_id = 13 where usu_aprob_id = 4;
+update facturas set usu_aprob_id = 21 where usu_aprob_id = 7;
+
+
+ALTER TABLE `db_springboot_backend`.`usuarios` 
+ADD COLUMN `user` VARCHAR(45) NULL AFTER `id`,
+ADD COLUMN `create_at` TIMESTAMP NULL AFTER `user`,
+ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`;
+
+
+
+#Modificacion User_update
+ALTER TABLE `db_springboot_backend`.`cajas` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`cajachica` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`comisiones` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`facturas` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`facturas_items` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`gastos` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`inventarios` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`inventarios_items` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`logs` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`perdidas` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`product_group` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`productos` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`promotions` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`promotions_products` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `amount`;
+
+ALTER TABLE `db_springboot_backend`.`proveedores` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`saldos` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`tipo_producto` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`usuarios` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+
+# Requerimiento Retiro de socios  
+ALTER TABLE `db_springboot_backend`.`gastos` 
+ADD COLUMN `is_withdrawal` TINYINT NULL AFTER `proveedor_id`;
+
+ALTER TABLE `db_springboot_backend`.`gastos` 
+DROP COLUMN `Usuario`;
+
+
+
+

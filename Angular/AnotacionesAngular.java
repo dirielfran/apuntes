@@ -12386,6 +12386,7 @@ cambio de puerto 																	--> ng serve --port 4401
 		***********************************************************************************************************************************
 		279. Observar el porcentaje de cobertura de nuestra aplicación - code-coverage*****************************************************
 		************************************************************************************************************ng test --code-coverage
+			Nota: Se crea una carpeta coverage, se abre el archivo invex.html con explorador
 		***********************************************************************************************************************************
 		284. Event Emitter*****************************************************************************************************************
 			1.- Se crean folder --> testBasico --> intermedio --> eventEmmiter --> jugador2.ts 
@@ -12495,8 +12496,8 @@ cambio de puerto 																	--> ng serve --port 4401
 				})
 		***********************************************************************************************************************************
 		289. Espías************************************************************************************************************************
-		****************************************************************************************************************************spyOn()
-		*************************************************************************************************************************callFake()
+		****************************************************************************************************************************spyOn()**
+		*************************************************************************************************************************callFake()**
 			1.- Se crea archivo de pruebas en kioscoApp --> src/app/configuraciones/proveedores/list/list-proveedores.component.spec.ts
 				import { ProovedoresService } from "src/app/services/proovedores.service";
 				import { ListProovedoresComponent } from "./list-proovedores.component";
@@ -12591,7 +12592,7 @@ cambio de puerto 																	--> ng serve --port 4401
 	        )
 
 	        component.ngOnInit();
-	        expect( component.proovedor.findIndex( i => i.id = proveedor.id)).toBeGreaterThanOrEqual(0)
+	        expect( component.proovedor.findIndex( i => i.id == proveedor.id)).toBeGreaterThanOrEqual(0)
 	    })
 	  ***********************************************************************************************************************************
 	  292.- Probar errores en el observable**********************************************************************************************
@@ -12934,7 +12935,94 @@ cambio de puerto 																	--> ng serve --port 4401
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule] ,
             schemas: [ NO_ERRORS_SCHEMA ]
         });
+		************************************************************************************************************************************
+		317.- Reemplazo de servicios de Angular por servicios falsos************************************************************************
+		**************************************************************************************************************TestBed.inject(Router)
+		**********************************************************************************************************spyOn( router, 'navigate')
+		**********************************************************************************************.toHaveBeenCalledWith( ['log', '123'])
+			1.- Se modifica en AppKiosco,se modifica el componente log-detalle.component.ts, se agrega metodo guardar() para pruebas
+			  /** test tutorial method */
+			  guardar(){
+			    this.router.navigate(['log', '123']);
+			  }
+			2.- Se crea componente logs-detalle.component.spec.ts, 
+				import { ComponentFixture, TestBed} from "@angular/core/testing";
+				import { LogsDetalleComponent } from "./logs-detalle.component";
+				import { ActivatedRoute, Router } from "@angular/router";
+				import { LogService } from "../log.service";
+				import { NO_ERRORS_SCHEMA } from "@angular/core";
+				import { Observable } from "rxjs/Observable";
+				import {  of } from 'rxjs'
+				import { HttpClientModule } from "@angular/common/http";
 
+				//fake de Route
+				class FakeRoute{
+				    navigate( params ){}
+				}
+				//fake de ActivatedRoute
+				class FakeActivatedRoute{
+				    paramMap: Observable<any> = of({});
+				}
+
+				describe('LogsDetalleComponent', ()=>{
+				    let component: LogsDetalleComponent;
+				    let fixture: ComponentFixture<LogsDetalleComponent>;
+
+				    beforeEach(async () => {
+				        await TestBed.configureTestingModule({
+				            declarations: [ LogsDetalleComponent ],
+				            //Se realiza el Fake del servicio Router
+				            providers: [    {provide: ActivatedRoute, useClass: FakeActivatedRoute}, 
+				                            { provide: Router, useClass: FakeRoute},  
+				                            LogService
+				                    ],
+				            imports: [HttpClientModule] ,
+				            schemas: [ NO_ERRORS_SCHEMA ]
+				        })
+				        .compileComponents();
+				    });
+
+				    beforeEach(() => {
+				        fixture = TestBed.createComponent(LogsDetalleComponent);
+				        component = fixture.componentInstance;
+				        fixture.detectChanges();
+				    });
+
+				    it('Debe redireccionar a Login cuando guarde', () => {
+				        const router = TestBed.inject(Router);
+				        const spy = spyOn( router, 'navigate');
+				        component.guardar();
+				        expect( spy ).toHaveBeenCalledWith( ['log', '123']);
+				    })
+				});
+		************************************************************************************************************************************
+		318.- Comprobar parametros enviados en un observable********************************************************************************
+			1.- Se modifica logs-detalle.component.spec.ts, se modifica el fake de ActivatedRoute  
+				//fake de ActivatedRoute
+				class FakeActivatedRoute{
+				    //paramMap: Observable<any> = of({});
+				    /** Subject Nos permite insertar valores a un observable*/
+				    private subject = new Subject();
+
+				    /** Se retorna un nuevo observable */
+				    get params(){
+				        return this.subject.asObservable();
+				    }
+
+				    /**Nos permite insertar un valor al subject */
+				    push(valor){
+				        this.subject.next(valor);
+				    }
+				}
+			2.- Se agrega test 
+		    it('Debe de colocar el id = nuevo', ()=>{
+		        /** Se crea referencia al componente */
+		        const component = fixture.componentInstance;
+		        /** Se crea una instancia de servicio fake para poder pasarle un dato */
+		        const activateRoute: FakeActivatedRoute = TestBed.get(ActivatedRoute);
+		        activateRoute.push({id: 1})
+		        expect( component.id ).toBe(1);
+		    });
 		************************************************************************************************************************************
 	**************************************************************************************************************************************
 ******************************************************* Fin Seccion ********************************************************************
