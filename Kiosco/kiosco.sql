@@ -298,7 +298,7 @@ ALTER TABLE `db_springboot_backend`.`productos` ADD CONSTRAINT `FKGroup`
   ON UPDATE NO ACTION;
 
 
-# Se agrega tabla para cuentas requerimiento declaracion de diferencia en cuentas
+# Se agrega tabla para cuentas requerimiento Declaracion de Diferencia en cuentas
 CREATE TABLE `account` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `user` varchar(45) DEFAULT NULL,
@@ -411,17 +411,28 @@ UPDATE `db_springboot_backend`.`clientes` SET `deleted` = '1' WHERE (`id` = '17'
 UPDATE `db_springboot_backend`.`clientes` SET `deleted` = '1' WHERE (`id` = '20');
 UPDATE `db_springboot_backend`.`clientes` SET `deleted` = '1' WHERE (`id` = '24');
 
+ALTER TABLE `db_springboot_backend`.`retiroscaja` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`account` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`difference_box` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`gastos` 
+ADD COLUMN `is_withdrawal` TINYINT NULL AFTER `proveedor_id`;
 
 
-# Required abaot soft Delete in Invoice entity
-ALTER TABLE `db_springboot_backend`.`facturas` 
-ADD COLUMN `deleted` TINYINT NULL DEFAULT '0' AFTER `usu_aprob_id`;
+# Required abaot soft Delete in Invoice entity (esta listo en prod)
+  ALTER TABLE `db_springboot_backend`.`facturas` 
+  ADD COLUMN `deleted` TINYINT NULL DEFAULT '0' AFTER `usu_aprob_id`;
 
 ALTER TABLE `db_springboot_backend`.`facturas` 
 CHANGE COLUMN `deleted` `deleted` TINYINT NULL DEFAULT '0' AFTER `update_at`;
 
 
-# delete object Cliente
+# delete object Cliente (Esta isto en prod)
 SET FOREIGN_KEY_CHECKS = 0;
 update usuarios set id = 26 where id = 13;
 update usuarios set id = 13 where id = 4;
@@ -504,7 +515,7 @@ ADD COLUMN `update_at` TIMESTAMP NULL AFTER `create_at`;
 
 
 
-#Modificacion User_update
+#Modificacion User_update (Listo en prod)
 ALTER TABLE `db_springboot_backend`.`cajas` 
 ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
 
@@ -556,11 +567,22 @@ ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
 ALTER TABLE `db_springboot_backend`.`tipo_producto` 
 ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
 
-ALTER TABLE `db_springboot_backend`.`usuarios` 
+
+ALTER TABLE `db_springboot_backend`.`difference_box` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+
+ALTER TABLE `db_springboot_backend`.`account` 
 ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
 
 
 # Requerimiento Retiro de socios  
+ALTER TABLE `db_springboot_backend`.`retiroscaja` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`usuarios` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
 ALTER TABLE `db_springboot_backend`.`gastos` 
 ADD COLUMN `is_withdrawal` TINYINT NULL AFTER `proveedor_id`;
 
@@ -568,5 +590,49 @@ ALTER TABLE `db_springboot_backend`.`gastos`
 DROP COLUMN `Usuario`;
 
 
+#Se solventa incidencia con pago de producto a consignacion 
+ALTER TABLE `db_springboot_backend`.`gastos` 
+DROP COLUMN `Usuario`;
 
 
+
+# transferencias
+CREATE TABLE `transfer` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `user_update` varchar(45) DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `amount` double DEFAULT '0',
+  `nameTo` varchar(45) DEFAULT NULL,
+  `nameFrom` varchar(45) DEFAULT NULL,
+  `description` varchar(45) DEFAULT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+ALTER TABLE `db_springboot_backend`.`transfer` 
+ADD COLUMN `is_dollar` TINYINT NULL DEFAULT '0' AFTER `description`;
+
+ALTER TABLE `db_springboot_backend`.`transfer` 
+ADD COLUMN `dollar_rate` DOUBLE NULL DEFAULT '0' AFTER `is_dollar`;
+
+ALTER TABLE `db_springboot_backend`.`transfer` 
+CHANGE COLUMN `nameTo` `name_to` VARCHAR(45) NULL DEFAULT NULL ,
+CHANGE COLUMN `nameFrom` `name_from` VARCHAR(45) NULL DEFAULT NULL ;
+
+
+linode2 --> root    --> Danger16225262
+            ip      -->139.144.56.222
+
+            
+
+#Dockerizacion
+ CREATE USER 'alfonso'@'%' IDENTIFIED BY 'danger120-';
+GRANT ALL PRIVILEGES ON db_springboot_backend.* TO 'alfonso'@'%';
+FLUSH PRIVILEGES;
+
+SELECT User, Host FROM mysql.user;
+SHOW GRANTS FOR 'alfonso'@'%';
+use db_springboot_backend;
+select * from productos where codigo = 7790310984253;

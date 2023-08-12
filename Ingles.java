@@ -221,7 +221,54 @@ pour --> servir
 sand --> arena 
 fall --> caer
 shake --> sacudir las manos
+stand --> pararse
+
+I had a geography  profesor 
+who one day was standing to  teach the interaction between pebles and sand over time
+he is doing an experiment with a jar, stones and sand from the sea
+what happens when they are together outside in time
 
    
 
+began 
 
+class the speaking 290623**************************************
+	what is your skin color?
+	how old are you?
+	he is an actor?
+	what is the hair color?
+
+***************************************************************
+mandela sudafrica 
+
+
+
+
+class the speaking 080723****************************************
+	who painted this painting? 
+	who painted it? 
+	Leonardo Davinci painted this painting 
+
+	when did leonardo davinci paint Mona Lisa? 
+	he painted between 1503-1519
+
+	where did he paint the Mona Lisa?
+	he painted in Italy
+*****************************************************************
+
+
+class 100823*****************************************************
+	you always ask questions which are difficult to answer
+	i met a girl who can speak six languages
+	whats the name  of the woman who lives next door
+
+	an DJ its somebody who plays music in a night club 
+	its somewhere where people can see arts  
+	a camera its something which we use to take photos
+	a pass port its a kind of id. we use it when we travel
+	sunbathe for example, you do this when you are on holiday at the beach
+	curly its the opposite of straight 
+*****************************************************************
+
+
+projecting history

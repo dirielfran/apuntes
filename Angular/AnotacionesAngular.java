@@ -12658,7 +12658,7 @@ cambio de puerto 																	--> ng serve --port 4401
 		297.- Configuraciones de Pruebas de integracion*************************************************************************************
 		*****************************************************************************************************************************TestBed
 		********************************************************************************************************************ComponentFixture
-			ComponentFixtureherrmienta que nos permite tener acceso a los elementos de DOM
+			ComponentFixture herramienta que nos permite tener acceso a los elementos de DOM
 			TestBed es una clase con varias funcionalidades para las pruebas
 			
 			1.- Se agrega test a componente ProovedoresComponent 
@@ -20417,4 +20417,28 @@ sidebar*************************************************************************
 					    expect( existe ).toBeTruthy();
 
 					  });
+**************************************************************************************************************************************
+
+
+Instalar appa en ambiente productivo ubuntu*******************************************************************************************
+
+	*Instalar nginx 
+		sudo apt update
+		sudo apt-get install nginx
+	* Iniciar Nginx
+		sudo systemctl start nginx
+	* Habilitar Nginx para que se inicie automáticamente al arrancar el sistema:
+		sudo systemctl enable nginx
+	* Verificar el estado de Nginx para asegurarse de que se está ejecutando sin problemas
+		sudo systemctl status nginx
+	* instalar el firewall de Nginx para que permita el acceso a los usuarios. Nginx viene con un servicio llamado ufw para la gestión de este firewall.
+		Nginx Full: Abre los puertos 8080 (HTTP) y el 443 (HTTPS)
+		Nginx HTTP: Abre solo el puerto 8080 (HTTP)
+		Nginx HTTPS: Abre solo el puerto 443 (HTTPS)
+			sudo ufw allow 'Nginx Full'
+	* Al instalar Nginx Ubuntu lo activa por nosotros, para ver si está funcionando correctamente ejecutamos:
+		sudo systemctl status nginx
+	* colocar los archivos del build de angular en  
+		/var/www/html  
+	* accder a --> http://139.144.56.222/kiosco
 **************************************************************************************************************************************

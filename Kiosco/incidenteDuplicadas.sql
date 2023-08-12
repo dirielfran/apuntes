@@ -1,130 +1,3 @@
-/*Ganancias de turno nocturno*/
-SELECT SUM(((fi.precio-ii.preciocompra)*fi.cantidad)+fi.comision) AS ganancia, DAYOFMONTH(f.create_at) 
-FROM facturas_items fi 
-INNER JOIN facturas f ON f.id = fi.factura_id 
-INNER JOIN itemsfactura_itemsinventario piv ON fi.id = piv.itemfactura_id 
-INNER JOIN inventarios_items ii ON ii.id = piv.iteminventario_id 
-WHERE f.create_at BETWEEN '2022-05-01' AND '2022-05-31' 
-and ((HOUR(f.create_at) between 0 and 6) or (HOUR(f.create_at) between 23 and 24)) 
-GROUP BY DAY(f.create_at);
-
-/*facturas*/
-
-select * from facturas f where is_credito = 1 and mercadopago > 0 order by create_at desc;
-
-select f.descripcion, f.is_credito,f.is_aprobada, f.fecha_aprob, f.mercadopago, f.total,
-(select usu.nombre from usuarios usu where usu.id = f.usu_cred_id) as responsable 
-from facturas f where is_credito = 1 and mercadopago > 0 order by create_at desc;
-
-select * from facturas where is_credito = 1 and fecha_aprob is not null order by create_at desc;
-
-select f.descripcion, f.is_credito,f.is_aprobada, f.fecha_aprob,
-(select usu.nombre from usuarios usu where usu.id = f.usu_cred_id) as responsable 
-from facturas f where is_credito = 1 and fecha_aprob is not null order by create_at desc;
-
-select cc.id as id_caja, cc.user as id_user_caja, cc.create_at as fecha_caja, cc.monto, cc.factura_id, f.descripcion, f.is_credito,f.is_aprobada, f.fecha_aprob,
-(select usu.nombre from usuarios usu where usu.id = f.usu_cred_id) as responsable
-from cajachica cc inner join facturas f on cc.factura_id = f.id
-where f.is_credito = 1 and f.fecha_aprob is not null order by cc.id desc;
-
-select * from cajachica order by id desc;
-
-
-
-/**Qrys de facturas a credito*/
-select * from  facturas where is_credito and fecha_aprob is null and usu_cred_id = 3;
-select f.id as invoice, 
-	f.create_at as date, 
-    u.username as user, 
-    f.total as total,
-    p.id as idProduct,
-    p.nombre as product, 
-    p.preciocosto as priceCost, 
-    fi.cantidad as count,
-    fi.total as PriceItemInvoice,
-    fi.precio as priceInvoice, 
-    p.precio as ActualPrice
-from facturas f 
-	inner join usuarios u on f.usu_cred_id = u.id
-	inner join facturas_items fi on f.id = fi.factura_id 
-    inner join productos p on fi.producto_id = p.id
-where f.is_credito 
-	and fecha_aprob is null 
-    and usu_cred_id = 3
-    and p.id not in (1011,1790,184,560,225,832,375,356,523,793,1788,289,1855,817,1424,1862,1500,909,1806,164,156);
-    
-select sum(fi.total)    
-from facturas f 
-	inner join usuarios u on f.usu_cred_id = u.id
-	inner join facturas_items fi on f.id = fi.factura_id 
-    inner join productos p on fi.producto_id = p.id
-where f.is_credito 
-	and fecha_aprob is null 
-    and usu_cred_id = 3
-    and p.id not in (1011,1790,184,560,225,832,375,356,523,793,1788,289,1855,817,1424,1862,1500,909,1806,164,156);
-    
-select sum(fi.total)    
-from facturas f 
-	inner join usuarios u on f.usu_cred_id = u.id
-	inner join facturas_items fi on f.id = fi.factura_id 
-    inner join productos p on fi.producto_id = p.id
-where f.is_credito 
-	and fecha_aprob is null 
-    and usu_cred_id = 3
-    and p.id in (1011,1790,184,560,225,832,375,356,523,793,1788,289,1855,817,1424,1862,1500,909,1806,164,156);
-
-
-/**qry de facturas al costo*/
-select * from  
-    (select sum(f.total), u.username  
-    from facturas f  
-        inner join usuarios u on u.id =  f.responsable_id  
-    WHERE MONTH(f.create_at) = 5  
-        AND YEAR(f.create_at) = 2023  
-        and costo = 1  
-    group by f.responsable_id) f1  
-union all  
-    select sum(ft.total), null  
-    from facturas ft 
-    WHERE MONTH(ft.create_at) = 5  
-        AND YEAR(ft.create_at) = 2023  
-        and ft.costo = 1   
-        and ft.responsable_id is not null;
-
-
-select * from  
- (select sum(f.total), u.username  
- from facturas f  
- inner join usuarios u on u.id =  f.responsable_id  
- WHERE MONTH(f.create_at) = ?1  
- AND YEAR(f.create_at) = ?2  
- and costo = 1  
- group by f.responsable_id) f1  
- union all  
- select sum(ft.total), null  
- from facturas ft 
- WHERE MONTH(ft.create_at) = ?1  
- AND YEAR(ft.create_at) = ?2  
- and ft.costo = 1   
- and ft.responsable_id is not null 
-
-
-/*Identificar  facturas duplicadas */
-SELECT *
-FROM cajachica
-WHERE factura_id IN (
-    SELECT factura_id
-    FROM cajachica
-    GROUP BY factura_id
-    HAVING COUNT(*) > 1
-);
-
-
-
-
-
-
-
 
 **********************************************************************************
 Modificaciones duplicadas
@@ -541,3 +414,106 @@ delete from cajachica where id >= 148326 and id <=148368;
 UPDATE `db_springboot_backend`.`cajachica` SET `caja_id` = '2200' WHERE (`id` = '148369');
 
 update db_springboot_backend.cajachica set saldomp = saldomp-16918, saldopv = saldopv-11497, saldoefectivo= saldoefectivo - 170538 where id >= 148369 and id <= 148375;
+update db_springboot_backend.cajachica set saldomp = saldomp-16918, saldopv = saldopv-11497, saldoefectivo= saldoefectivo - 170538 where id >= 148376 and id <= 150018;
+
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150019');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150020');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150021');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150022');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150023');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150024');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150025');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150026');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150027');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150028');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150029');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150030');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150031');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150032');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150033');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150034');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150035');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150036');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150037');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150038');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150039');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150040');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150041');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150042');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150043');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150044');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150045');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150046');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150047');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150048');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150049');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150050');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150051');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150052');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150053');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150054');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150055');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150056');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150057');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150058');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150059');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150060');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150061');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150062');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150063');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150064');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150065');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150066');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150067');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150068');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150069');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150070');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150071');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150072');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150073');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150074');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150075');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150076');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150077');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150078');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150079');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150080');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150081');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150082');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150083');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150084');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150085');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150086');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150087');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150088');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150089');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150090');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150091');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150092');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150093');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150094');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150095');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150096');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150097');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150098');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150099');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150100');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150101');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150102');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150103');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150104');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150105');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150106');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150107');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150108');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150109');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150110');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150111');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150112');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150113');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150114');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150115');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150116');
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150117');
+
+update db_springboot_backend.cajachica set saldomp = saldomp-29472, saldopv = saldopv-17497, saldoefectivo= saldoefectivo - 244753 where id >= 150119;

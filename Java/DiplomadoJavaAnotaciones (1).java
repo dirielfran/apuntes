@@ -1397,6 +1397,1390 @@ Genericos
 ***********************************************************************************************
 
 
+Java 8
+
+**************************************************************************@FunctionalInterface
+    @FunctionalInterface La anotación @FunctionalInterface se utiliza para garantizar que la 
+    interfaz funcional no pueda tener más de un método abstracto. En caso de que haya más de 
+    un método abstracto, el compilador marca el mensaje 'Anotación inesperada de @FunctionalInterface'. 
+    Sin embargo, no es obligatorio usar esta anotación.
+**********************************************************************************************
+
+
+*****************************************************************************Expresiones Lambda
+    Una expresión lambda se caracteriza por la siguiente sintaxis.
+
+        parameter -> expression body
+    
+    Las siguientes son las características importantes de una expresión lambda.
+
+        Declaración de tipo opcional : no es necesario declarar el tipo de un parámetro. 
+        El compilador puede deducir lo mismo del valor del parámetro.
+
+        Paréntesis opcional alrededor del parámetro : no es necesario declarar un solo parámetro 
+        entre paréntesis. Para múltiples parámetros, se requieren paréntesis.
+
+        Opcional llaves : no es necesario usar llaves en el cuerpo de la expresión si el cuerpo 
+        contiene una sola declaración.
+
+        Palabra clave opcional return : el compilador devuelve automáticamente el valor si el 
+        cuerpo tiene una sola expresión para devolver el valor. Se requieren llaves para indicar 
+        que la expresión devuelve un valor.
+
+    Ejemplo____________________________________________________________________________
+
+        public void ordenar() {
+        List<String> lista = new ArrayList<>();
+        lista.add("Elvis");
+        lista.add("Ricardo");
+        lista.add("Diego");
+        lista.add("Camila");
+        lista.add("Antonio");
+        
+        
+                //Java 7
+        //      Collections.sort(lista, new Comparator<String>() {
+        //          @Override
+        //          public int compare(String o1, String o2) {
+        //              return o1.compareTo(o2);
+        //          }           
+        //      });
+                //Java 8
+                
+            Collections.sort(lista,  (String o1, String o2) -> o1.compareTo(o2));
+            
+            for (String string : lista) {
+                System.out.println(string);
+            }
+        }
+        -----------------------------------------------------------------------------
+                public void calcular() {
+                //Java 7
+        //      IOperacion oper = new IOperacion() {
+                    
+
+        //      @Override
+        //      public double calcularProm(double n1, double n2) {
+        //              return n1 * n2 / 2;
+        //          }
+        //      };
+                    
+                //java 8 lambda     
+                IOperacion oper = (double n1, double n2) -> (n1+n2)/2;
+                System.out.println(oper.calcularProm(2, 6));
+            }
+    ***Otro tipo de sintaxis
+            public void calcular() {
+        //Java 7
+        //      IOperacion oper = new IOperacion() {
+                    
+
+        //      @Override
+        //      public double calcularProm(double n1, double n2) {
+        //              return n1 * n2 / 2;
+        //          }
+        //      };
+                    
+                //java 8 lambda     
+                //IOperacion oper = (double n1, double n2) -> (n1+n2)/2;
+                
+                //Otro tipo de sintaxis
+                IOperacion oper = (double n1, double n2) -> {
+                    double a = n1;
+                    double b = n2;
+                    return (a+b)/2;
+                };
+                System.out.println(oper.calcularProm(2, 6));
+            }
+
+        ----------------------------------------------------------------------------
+        //Otro tipo de sintaxis
+        IOperacion oper = (n1, n2) -> (6+6)/2;
+        System.out.println(oper.calcularProm(2, 6));
+    
+    *** Alcance en Lambda
+        **Para variables locales tiene el mismo comportamiento, pero no es obligatorio 
+        convertirla en final para llamar una variable local        
+***********************************************************************************************
+
+
+****************************************************************************Metodos por defecto
+    Con la palabra default me permite crear un metodo en la interface sin tener que realzar una 
+    implementacion
+
+        public interface PersonaA {
+            public void caminar();
+            
+            default public void hablar() {
+                System.out.println("hello metodo hablar(), de la interface PersonaA.");
+            }
+        }
+
+        public class DefaultMethod implements PersonaA, PersonaB {
+
+            @Override
+            public void caminar() {
+                System.out.println("Hello methodDefault");
+                
+            }
+
+            public static void main(String[] args) {
+                DefaultMethod app = new DefaultMethod();
+                app.caminar();
+                app.hablar();
+            }
+        }
+
+    ***Puedo implementar dos interfaces con el mismo metodo por defecto y cuando implemente 
+    sobreescribir e indicar cual es el metodo y de que interface es el que se ejecutara
+
+        public interface PersonaA {
+            public void caminar();
+            
+            default public void hablar() {
+                System.out.println("hello metodo hablar(), de la interface PersonaA.");
+            }
+        }
+
+        public interface PersonaB {
+            default public void hablar() {
+                System.out.println("hello metodo hablar(), de la interface Persona B.");
+            }
+        }
+
+        public class DefaultMethod implements PersonaA, PersonaB {
+
+            @Override
+            public void caminar() {
+                System.out.println("Hello methodDefault");
+                
+            }
+
+            @Override
+            public void hablar() {
+                //Se indica el metodo de que interface se utilizara
+                PersonaA.super.hablar();
+            }
+
+            public static void main(String[] args) {
+                DefaultMethod app = new DefaultMethod();
+                app.caminar();
+                app.hablar();
+            }
+        }
+***********************************************************************************************
+
+
+***************************************************************************Interface Functional
+    Java8 incluye muchas novedades y entra ellas destacan las expresiones lambda. Recordemos 
+    que una expresión lambda define el comportamiento de una función.
+        (x, y) -> x + y;
+    Sin embargo ella sola no compila ya que necesitamos igualarla a una variable lo que no 
+    tenemos claro es a qué exactamente.
+
+    Es aquí donde aparece el concepto de Java Functional Interface. Un interface funcional es
+    aquel interface que solo dispone de un método abstracto. Así pues vamos a igualar nuestra 
+    expresión lambda a un interface funcional
+
+        public class Principal {
+     
+            interface Matematicas {         
+                public double operacion(double x, double y);         
+            }
+             
+            public static void main(String[] args) {
+             
+                Matematicas o = (x, y) -> x + y;
+                System.out.println(o.operacion(2, 3));
+             
+            }
+             
+        }
+
+    Java Functional Interface , recordemos que estos únicamente disponen de un método abstracto.
+
+    Para evitar este tipo de problemas se usa la anotación @FunctionalInterface que obliga 
+    al desarrollador a solo incluir un método abstracto.
+
+        public class Principal {
+            @FunctionalInterface
+            interface Matematicas {     
+                public double operacion(double x, double y);     
+            }
+             
+            public static void main(String[] args) {
+                Matematicas o = (x, y) -> x + y;
+                System.out.println(o.operacion(2, 3));
+            }
+        }
+
+    *****************************************************************************Function<T, R>
+        Una de las interfaces funcionales más comunes en Java es la interfaz java.util.function.
+        Function<T, R>, que representa una función que acepta un argumento de tipo T y devuelve 
+        un resultado de tipo R. Esta interfaz tiene el método abstracto R apply(T t).
+
+        Example--------------------------------------------------------------------------------
+            public class Main {
+                public static void main(String[] args) {
+                    Function<Integer, String> convertirNumero = (num) -> Integer.toString(num);
+                    String resultado = convertirNumero.apply(42);
+                    System.out.println(resultado); // Imprime "42"
+                }
+            }
+        ---------------------------------------------------------------------------------------
+
+        La interfaz funcional Function tiene varios métodos además del método apply(). 
+        Algunos de los métodos más comunes son:
+
+            compose(Function before): Este método permite componer una función antes de la 
+            función actual. Toma como argumento otra función (before) y devuelve una nueva 
+            función que primero aplica la función before y luego aplica la función actual. 
+            El tipo de retorno de la función before debe coincidir con el tipo de entrada 
+            de la función actual.
+
+            Ejemplo++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+                public class Main {
+                    public static void main(String[] args) {
+                        Function<Integer, Integer> duplicar = num -> num * 2;
+                        Function<Integer, Integer> restarCinco = num -> num - 5;
+                        
+                        Function<Integer, Integer> duplicarYRestarCinco = duplicar.compose(restarCinco);
+                        
+                        System.out.println(duplicarYRestarCinco.apply(10)); // Imprime "15"
+                        System.out.println(duplicarYRestarCinco.apply(7)); // Imprime "9"
+                    }
+                }
+            +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+            andThen(Function after): Similar al método compose(), el método andThen() permite 
+            componer una función después de la función actual. Toma como argumento otra función 
+            (after) y devuelve una nueva función que primero aplica la función actual y luego 
+            aplica la función after. El tipo de retorno de la función actual debe coincidir con 
+            el tipo de entrada de la función after.
+
+            Ejemplos_____________________________________________________________________________
+
+                public class Main {
+                    public static void main(String[] args) {
+                        Function<Integer, Integer> duplicar = num -> num * 2;
+                        Function<Integer, Integer> sumarDiez = num -> num + 10;
+                        
+                        Function<Integer, Integer> duplicarYSumarDiez = duplicar.andThen(sumarDiez);
+                        
+                        System.out.println(duplicarYSumarDiez.apply(5)); // Imprime "20"
+                        System.out.println(duplicarYSumarDiez.apply(10)); // Imprime "30"
+                    }
+                }
+            _____________________________________________________________________________________
+
+            identity(): Este método estático devuelve una función identidad, es decir, una 
+            función que simplemente devuelve su argumento sin realizar ninguna transformación. 
+            Es útil cuando necesitas proporcionar una función de "paso directo" en ciertos contextos.
+
+            Ejemplo_______________________________________________________________________
+                public class Main {
+                    public static void main(String[] args) {
+                        Function<Integer, Integer> identityFunction = Function.identity();
+                        
+                        int resultado = identityFunction.apply(42);
+                        System.out.println(resultado); // Imprime "42"
+                    }
+                }
+            ______________________________________________________________________________
+    *******************************************************************************************
+
+    *******************************************************************************Predicate<T>
+        La interfaz funcional Predicate<T> en Java es una interfaz genérica que representa 
+        un predicado, es decir, una función booleana que toma un argumento de tipo T y devuelve 
+        un valor booleano (true o false). Se utiliza para evaluar una condición sobre un objeto 
+        de tipo T y determinar si se cumple o no.
+
+        La interfaz Predicate<T> tiene un único método abstracto llamado test(), que acepta un 
+        argumento de tipo T y devuelve un valor booleano.
+
+        Example+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            public class Main {
+                public static void main(String[] args) {
+                    Predicate<Integer> esPar = num -> num % 2 == 0;
+                    
+                    System.out.println(esPar.test(4)); // Imprime "true"
+                    System.out.println(esPar.test(7)); // Imprime "false"
+                }
+            }
+        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    *******************************************************************************************
+
+    ********************************************************************************Consumer<T>
+        La interfaz funcional Consumer<T> en Java es una interfaz genérica que representa una 
+        operación que acepta un argumento de tipo T y no devuelve ningún resultado. Se utiliza 
+        para realizar acciones o consumir (utilizar) un objeto de tipo T, sin producir un 
+        resultado.
+
+        La interfaz Consumer<T> tiene un único método abstracto llamado accept(), que acepta 
+        un argumento de tipo T y no devuelve ningún valor.
+
+        Ejemplo++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            public class Main {
+                public static void main(String[] args) {
+                    Consumer<String> imprimirMensaje = mensaje -> System.out.println(mensaje);
+                    
+                    imprimirMensaje.accept("Hola, mundo!");
+                }
+            }
+        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        La interfaz Consumer<T> se utiliza comúnmente en Java para realizar operaciones en 
+        objetos de una colección, procesar elementos de una secuencia de datos, realizar 
+        acciones sobre valores y en otros escenarios donde se requiere un comportamiento 
+        que acepta un argumento pero no produce un resultado.
+    *******************************************************************************************
+
+    ********************************************************************************Supplier<T>
+        La interfaz funcional Supplier<T> en Java es una interfaz genérica que representa un 
+        proveedor de objetos. Es utilizada cuando se necesita generar o suministrar un objeto 
+        de tipo T sin tomar ningún argumento.
+
+        La interfaz Supplier<T> tiene un único método abstracto llamado get(), que no acepta 
+        ningún argumento y devuelve un objeto de tipo T
+
+        Example++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            public class Producto {
+                private String nombre;
+                private double precio;
+
+                public Producto(String nombre, double precio) {
+                    this.nombre = nombre;
+                    this.precio = precio;
+                }
+
+                // Métodos getter y setter
+
+                @Override
+                public String toString() {
+                    return "Producto [nombre=" + nombre + ", precio=" + precio + "]";
+                }
+
+                public static void main(String[] args) {
+                    Supplier<Producto> generarProductoAleatorio = () -> {
+                        String[] nombres = {"Camiseta", "Pantalón", "Zapatos", "Bolso"};
+                        double[] precios = {19.99, 29.99, 49.99, 39.99};
+
+                        int indiceAleatorio = (int) (Math.random() * nombres.length);
+                        String nombreAleatorio = nombres[indiceAleatorio];
+                        double precioAleatorio = precios[indiceAleatorio];
+
+                        return new Producto(nombreAleatorio, precioAleatorio);
+                    };
+
+                    // Generar 5 productos aleatorios
+                    for (int i = 0; i < 5; i++) {
+                        Producto producto = generarProductoAleatorio.get();
+                        System.out.println(producto);
+                    }
+                }
+            }
+        +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    *******************************************************************************************
+
+    ************************************************************************BiFunction<T, U, R>
+        La interfaz funcional BiFunction<T, U, R> en Java es una interfaz genérica que representa 
+        una función que acepta dos argumentos de tipos T y U y devuelve un resultado de tipo R. 
+        Es utilizada cuando se necesita realizar una operación en dos valores de entrada y producir 
+        un resultado.
+
+        La interfaz BiFunction<T, U, R> tiene un único método abstracto llamado apply(), que 
+        acepta dos argumentos de tipos T y U y devuelve un valor de tipo R.
+
+
+        Example++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            public class Empleado {
+                private String nombre;
+                private double salarioBase;
+
+                public Empleado(String nombre, double salarioBase) {
+                    this.nombre = nombre;
+                    this.salarioBase = salarioBase;
+                }
+
+                // Métodos getter y setter
+
+                public static void main(String[] args) {
+                    BiFunction<Double, Integer, Double> calcularSalarioTotal = (salarioBase, horasExtras) -> {
+                        double salarioExtra = horasExtras * 10.0; // Suponiendo que cada hora extra se paga a $10.
+                        return salarioBase + salarioExtra;
+                    };
+
+                    Empleado empleado1 = new Empleado("Juan", 2000.0);
+                    double salarioTotal1 = calcularSalarioTotal.apply(empleado1.getSalarioBase(), 5);
+                    System.out.println(empleado1.getNombre() + ": " + salarioTotal1);
+
+                    Empleado empleado2 = new Empleado("María", 2500.0);
+                    double salarioTotal2 = calcularSalarioTotal.apply(empleado2.getSalarioBase(), 10);
+                    System.out.println(empleado2.getNombre() + ": " + salarioTotal2);
+                }
+            }
+        +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++    
+    *******************************************************************************************   
+***********************************************************************************************
+
+
+******************************************************************Java Lambda reduce y wrappers
+    Java Lambda reduce es una de las operaciones más utilizadas cuanto trabajamos con colecciones 
+    de objetos y expresiones lambda. Reduce sirve para convertir un Array de elementos en un 
+    único elemento y se usa por ejemplo para calcular la suma de n términos.
+        public static void main(String[] args) {
+            List<Integer> gastos= new ArrayList<Integer>();
+            gastos.add(100);
+            gastos.add(200);
+            gastos.add(300);
+          
+            gastos.stream().reduce((acumulador,numero)-> {
+              return acumulador+numero;
+            }).ifPresent(System.out::println);
+            
+        }
+
+    Gracias a la programación funcional podemos realizar estas operaciones de una forma muy 
+    diferente nos podemos apoyar en el método reduce que recibe 2 parámetros un acumulador 
+    como primero y un elemento como segundo .
+
+    De esta forma realiza una funcionalidad de “reducción” convirtiendo una lista de elementos 
+    en un único resultado.
+    --------------------------------------------------------------------------------------
+    De igual manera que usamos el método de reducción para sumar números podemos usarlo 
+    también por ejemplo para combinar cadenas.
+
+    public class Principal4 {
+      public static void main(String[] args) {
+        List<String> nombres= new ArrayList<String>();
+        nombres.add("juan");
+        nombres.add("gema");
+        nombres.add("maria");
+        nombres.stream().reduce(String::concat).ifPresent(System.out::println);
+      }
+    }
+***********************************************************************************************
+
+
+*************************************************************************Referencias de metodos
+    Cuando referenciamos un método, lo que pasa es que la funcionalidad del método original es 
+    implementada con una referencia al método referenciado, esto quieres decir que cuando ejecutemos 
+    el método de la interface funcional, en realidad lo que pasara es que se ejecutara el método 
+    de la otra clase.   
+
+    La referencia del método Java 8 se usa para referirse a un método y para hacer que el programa 
+    o código sea simple o claro, puede usar la referencia al método en lugar de una expresión lambda.
+
+    En resumen esta notación abrevia la expresión lambda para llamar a cualquier método.
+
+    El operador '::' se usa como referencia de método. 
+
+    Veamos algunos tipos de referencias de método:
+        Referencia a un método de una instancia: object :: instanceMethod
+        Referencia a un método estático: Class :: staticMethod
+        Referencia a un método de instancia de un objeto arbitrario de un tipo particular:  Class :: instanceMethod
+        Referencia a un constructor: Class :: new
+
+
+    Ejemplos_____________________________________________________________________________
+    public class MedRefApp {
+        public static void refMetodoStatico() {
+            System.out.println("Metodo statico referido");
+        }
+    
+        public void referenciaMetodoInstanciaObjArbitrario() {
+            String[] nombres = {"Elvis", "Diego", "Antonio"};
+            //Primera forma para ordenar un array
+    //      Arrays.sort(nombres, new Comparator<String>() {
+    //          @Override
+    //          public int compare(String o1, String o2) {
+    //              return o1.compareToIgnoreCase(o2);
+    //          }
+    //      });
+            //Segunda forma ordenar un array con expresiones lambda
+    //      Arrays.sort(nombres, (s1,s2) -> s1.compareToIgnoreCase(s2) );
+    //      System.out.println(nombres);
+            //Tercera forma de ordenar un array con metodo referenciado
+            Arrays.sort(nombres, String::compareTo);
+            System.out.println(Arrays.toString(nombres));
+        }
+    
+        public void referenciaMetodoInstanciaObjParticular() {
+            System.out.println("metodo referido instancia de clase");
+        }
+        
+        public void referenciaConstructor() {
+            //Implementacion anonima
+    //      IPersona iPer = new IPersona() {            
+    //          @Override
+    //          public Persona crear(int id, String nombre) {
+    //              return new Persona(id, nombre);
+    //          }
+    //      };
+    //      iPer.crear(1, "Elvis");
+            //Utilizando expresiones lambda
+    //      IPersona Iper2 = (id,nombre) -> new Persona(id, nombre);
+    //      Persona per = Iper2.crear(1, "Camila");
+    //      System.out.println(per.getId() + " - " + per.getNombre());
+            //Utilizando metodos referenciados al constructor
+            IPersona Iper3 = Persona::new;
+            Persona per = Iper3.crear(1, "Camila");
+            System.out.println(per.getId() + " - " + per.getNombre());
+        }
+        
+        public void operar() {
+            
+            //IOperacion op = () -> MedRefApp.refMetodoStatico();
+            //op.saludar();
+            //Referencia a un metodo estatico
+            IOperacion op1 = MedRefApp::refMetodoStatico;
+            op1.saludar();
+            
+            
+        }
+        
+        public static void main(String[] args) {
+            MedRefApp app = new MedRefApp();
+            //app.operar();
+            //app.referenciaMetodoInstanciaObjArbitrario();
+            //Se implementa el metodo saludar de la interface Funcional
+    //      IOperacion op = app::referenciaMetodoInstanciaObjParticular;
+    //      op.saludar();
+            app.referenciaConstructor();
+        }
+    }        
+    --------------------------------------------------------------------------------------
+    @FunctionalInterface
+    public interface IOperacion {
+        void saludar();
+    }                       
+    --------------------------------------------------------------------------------------
+      @FunctionalInterface
+        public interface IPersona {
+            Persona crear(int id, String nombre);
+        }  
+    --------------------------------------------------------------------------------------
+        public class Persona {
+            private String nombre;
+            private Integer id;
+            
+            public Persona(Integer id, String nombre ) {
+                super();
+                this.nombre = nombre;
+                this.id = id;
+            }
+            public Persona() {
+                super();
+            }
+            public String getNombre() {
+                return nombre;
+            }
+            public void setNombre(String nombre) {
+                this.nombre = nombre;
+            }
+            public Integer getId() {
+                return id;
+            }
+            public void setId(Integer id) {
+                this.id = id;
+            }
+            
+        }                                                                                   
+***********************************************************************************************
+
+
+************************************************************************forEach, removeIf, sort
+    foreach-----------------------------------------------------------------------------
+            public void usarForEach() {
+                //Foreach java 7
+        //      for (String item : crearLista()) {
+        //          System.out.println(item);
+        //      }
+                //Foreach con metodos lambda
+                //crearLista().forEach(x -> System.out.println(x));
+                //foreach con metodos referenciados
+                lista.forEach(System.out::println);
+            }
+    removeIf-----------------------------------------------------------------------------
+        public void usarRemoveIf() {
+            //Erro al remover elemento de la lista
+    //      for (String item : lista) {
+    //          if(item.compareToIgnoreCase("elvis")==0){
+    //              lista.remove(item);
+    //          }
+    //      }
+            // Utilizando Iterato
+    //      Iterator<String> iter = lista.iterator();
+    //      while (iter.hasNext()) {
+    //          if(iter.next().equalsIgnoreCase("Elvis")) {
+    //              iter.remove();
+    //          }
+    //      }
+            //Utilizando expresiones Lambda y removeIf en una ista
+            lista.removeIf(x -> x.equalsIgnoreCase("yala"));
+        }
+
+    sort---------------------------------------------------------------------------------
+            public void usarSort() {
+                //Utilizando lambada
+        //      lista.sort((x,y) -> x.compareTo(y));
+                //Utilizando metodos de referencia
+                lista.sort(String::compareTo);
+            }
+***********************************************************************************************
+
+
+*****************************************************************************************Stream
+    metodos mas Utilizados
+    ----------------------------------------------------------------------------------
+        //Metodo que filtra las palabras que empiecen por variable indicada
+        public void filtrar() {
+            lista.stream().filter(x -> x.startsWith("E")).forEach(System.out::println);
+        }
+    ----------------------------------------------------------------------------------
+        //Metodo que ordena una lista y la imprime
+        public void ordenar() {
+            //Ordena de forma ascendente
+    //      lista.stream().sorted().forEach(System.out::println);
+            //ordena de forma descendente
+            lista.stream().sorted((x,y)->y.compareTo(x)).forEach(System.out::println);
+        }
+    ----------------------------------------------------------------------------------
+        public void transformar() {
+            //Transforma una cadena a mayusculas
+            lista.stream().map(String::toUpperCase).forEach(System.out::println);
+            //forma iperativa de parsear a numeros
+    //      for (String string : numeros) {
+    //          int num = Integer.parseInt(string) + 1;
+    //          System.out.println(num);
+    //      }
+            //parsea a numeros 
+            numeros.stream().map(x -> Integer.parseInt(x)+1).forEach(System.out::println);
+        }
+    ----------------------------------------------------------------------------------
+         public void limitar() {
+            lista.stream().limit(3).forEach(System.out::println);
+        }
+    ----------------------------------------------------------------------------------
+        public void contar() {
+            System.out.println(lista.stream().count());
+        }
+    ----------------------------------------------------------------------------------
+        distinct()
+        El método distinct nos permitirá remover datos duplicados de una lista.
+
+        public static void main(String[] args) {
+            List numbers = Arrays.asList(7, 7, 7, 7, 2, 2, 2, 3, 3, 3, 3, 100, 100, 200, 200);
+            numbers = numbers.stream().distinct().collect(Collectors.toList());
+            System.out.println(numbers);
+        }
+    ----------------------------------------------------------------------------------
+    Metodo peek
+        Devuelve una secuencia que consta de los elementos de esta secuencia, además 
+        de realizar la acción proporcionada en cada elemento a medida que se consumen 
+        elementos de la secuencia resultante.
+        Ejemplo_______________________________________________________________________
+            List<GrantedAuthority> authorities = usuario.getRoles()
+                .stream()
+                .map(role -> new SimpleGrantedAuthority(role.getNombre()))
+                .peek(authority -> logger.info("Role: "+authority.getAuthority()))
+                .collect(Collectors.toList());
+    **********************************************************************************
+        * Manejo de stream() java 8
+        * Convertir una lista de objetos en una lista de ids 
+            List<String> nombresInstalaciones = instalacionesDto.stream().map(InstalacionUsuarioDTO::getNombreInstalacion).collect(Collectors.toList());
+        * Convertir una lista de string a una cadena separados por comas
+            nombresInstalaciones.stream().collect(Collectors.joining(","));
+        * Partiendo de una lista de long busca objetos y devuelve un atributo de ese objeto, y los muta a una lista de String 
+            List<String> instalacionesDto = idsInstalaciones.stream().map(idIns -> {
+                try {
+                    return iInstalacionBusiness.buscarPorIdPorProjection(idIns).getNombre();
+                } catch (PersistenceException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                return null;
+            }).collect(Collectors.toList());
+        * Partiendo de una cadena separada por comas lo muta a una lista de String 
+            List<String> list = Stream.of(idsConfActuacion.split(",")).map(String::trim).collect(Collectors.toList());
+        * Muta una lista de String a una lista de Long 
+            list.stream().map(Long::valueOf).collect(Collectors.toList())
+        * Filtrado de objeto 
+            List<InstalacionUsuarioDTO> instSinTodElementos = instalacionesUsusDto.stream().filter(x -> !x.getTodosElementosAsignados()).collect(Collectors.toList());
+***********************************************************************************************
+
+
+***************************************************************************************Optional
+    Poder gestionar de una manera adecuada una variable para que no se genere NullPointerException
+
+        
+    El siguiente punto que vamos a ver, es cómo crear la clase, Optional tiene un constructor privado,
+     y nos proporciona tres métodos factoría estáticos para instanciar la clase. 
+        public static<T> Optional<T> empty()
+        public static <T> Optional<T> ofNullable(T value)
+        public static <T> Optional<T> of(T value)
+    
+    Siendo el método  el que nos permite recubrir cualquier objeto en un optional. -->.of
+
+    Los otros dos métodos nos permiten recubrir un valor nulo o devolver un objeto
+    Optional vacío en caso de que queramos avisar de la ausencia de valor. La opción de 
+    recubrir un nulo viene dada principalmente para permitirnos trabajar con APIs que hacen 
+    uso de nulos para avisar de estas ausencias de valor.
+
+    El método isPresent(), método es el equivalente a variable == null y cómo el propio nombre 
+    indica nos dice si el objeto Optional contiene un valor o está vacío. Este método se usa 
+    principalmente si trabajamos de manera imperativa con Optional
+    
+    El método get() es el encargado de devolvernos el valor, devolviendo una excepción si no 
+    estuviera presente.
+
+    get () solo puede devolver un valor si el objeto envuelto no es nulo , de lo contrario, 
+    arroja una excepción
+
+    //metodo que permite detectar si una variable esta null o no inicializada y colocarle un por defecto
+        public void orElse(String valor) {
+            //Creo obj Optional por valor pasado
+    //      Optional<String> opt = Optional.of(valor);
+    //      System.out.println(opt.get());
+            //el metodo ofNullable acepta valores null
+            Optional<String> opt = Optional.ofNullable(valor);
+            System.out.println(opt.orElse("predeterminado"));
+        }
+        
+        //metodo que si es null permite arrojar una exception
+        public void orElseThrow(String valor) {
+            Optional<String> opt = Optional.ofNullable(valor);
+            opt.orElseThrow(NumberFormatException::new);
+        }
+        
+        //metodo que indica nos dice si el objeto Optional contiene un valor o está vacío
+        public void isPresent(String valor) {
+            Optional<String> opt= Optional.ofNullable(valor);
+            System.out.println(opt.isPresent());
+        }
+
+
+        public void ifPresent(String valor) {
+            Optional<String> opt = Optional.of(valor);
+            opt.ifPresent(name -> System.out.println(name.length()));
+        }
+
+        /*
+            El  método orElseGet () es similar a orElse () . Sin embargo, en lugar de
+            tomar un valor para devolver si el valor Opcional no está presente, toma 
+            una interfaz funcional del proveedor que se invoca y devuelve el valor de 
+            la invocación
+        */
+            public void orElseGet(String valor) {
+                System.out.println(Optional.ofNullable(valor).orElseGet(() -> "Elvis"));
+            }
+    Retorno condicional con filtro------------------------------------------------------
+        El método de filtro se usa normalmente de esta manera para rechazar valores 
+        ajustados basados ​​en una regla predefinida. Podríamos usarlo para rechazar un 
+        formato de correo electrónico incorrecto o una contraseña que no sea lo 
+        suficientemente segura.
+
+        Ejemplo____________________________________________________________________
+            public class Modem {
+                private Double price;
+             
+                public Modem(Double price) {
+                    this.price = price;
+                }
+                // standard getters and setters
+            }
+            //Metodo aplicado en java 7
+            public boolean priceIsInRange1(Modem modem) {
+                boolean isInRange = false;
+             
+                if (modem != null && modem.getPrice() != null
+                  && (modem.getPrice() >= 10
+                    && modem.getPrice() <= 15)) {
+             
+                    isInRange = true;
+                }
+                return isInRange;
+            }
+
+            //Metodo aplicado en java 8
+            public boolean priceIsInRange2(Modem modem2) {
+                 return Optional.ofNullable(modem2)
+                   .map(Modem::getPrice)
+                   .filter(p -> p >= 10)
+                   .filter(p -> p <= 15)
+                   .isPresent();
+             }
+
+            La llamada del mapa se usa simplemente para transformar un valor 
+            en otro valor. Tenga en cuenta que esta operación no modifica 
+            el valor original.
+
+            En nuestro caso, estamos obteniendo un objeto de precio de la clase Modelo. 
+            Veremos el método map () en detalle en la siguiente sección.
+
+            En primer lugar, si se pasa un objeto nulo a este método, no esperamos 
+            ningún problema.
+
+            En segundo lugar, la única lógica que escribimos dentro de su cuerpo 
+            es exactamente lo que describe el nombre del método, la verificación del 
+            rango de precios. 
+
+    Transformando valor con map()-------------------------------------------------------
+        El método de mapa devuelve el resultado del cálculo envuelto dentro de Opcional. 
+        Luego tenemos que llamar a un método apropiado en el Opcional devuelto para recuperar 
+        su valor.
+
+        Observe que el método de filtro simplemente realiza una comprobación del valor y 
+        devuelve un valor booleano. Por otro lado, el método de mapa toma el valor existente, 
+        realiza un cálculo utilizando este valor y devuelve el resultado del cálculo envuelto 
+        en un objeto Opcional
+
+        Ejemplos____________________________________________________________________
+            //Metodo que devuelve longitud de una lista por parametro
+            public int map(List<String> lista) {
+                Optional<List<String>> listaCad = Optional.ofNullable(lista);
+                int size = listaCad.map(List::size).orElse(0);
+                return size;
+            }
+
+        En este ejemplo, ajustamos una lista de cadenas dentro de un objeto Opcional y 
+        usamos su método de mapa para realizar una acción en la lista contenida. La 
+        acción que realizamos es recuperar el tamaño de la lista.
+
+        El método de mapa devuelve el resultado del cálculo envuelto dentro de Opcional. 
+        Luego tenemos que llamar a un método apropiado en el Opcional devuelto para recuperar 
+        su valor.
+        --------------------------------------------------------------------------
+        Podemos encadenar el mapa y filtrar juntos para hacer algo más poderoso.
+        //Metodo para verificar la exactitud de una contraseña ingresada por un usuario
+            public boolean verifPass(String pass) {
+                return Optional.of(pass).map(String::trim)
+                        .filter(x -> x.equalsIgnoreCase("password"))
+                        .isPresent();       
+            }
+        Como podemos ver, sin limpiar primero la entrada, se filtrará; sin embargo, los 
+        usuarios pueden dar por sentado que todos los espacios iniciales y finales 
+        constituyen entradas. Así que transformamos la contraseña sucia en una contraseña 
+        limpia con un mapa antes de filtrar las incorrectas.
+
+    Transformando valor con flatMap ()--------------------------------------------------
+        Al igual que el método map () , también tenemos el método flatMap () como alternativa 
+        para transformar valores. La diferencia es que el mapa transforma los valores solo 
+        cuando se desenvuelven, mientras que flatMap toma un valor envuelto y lo desenvuelve 
+        antes de transformarlo.
+
+        Anteriormente, hemos creado simples objetos String e Integer para envolverlos en una 
+        instancia Opcional . Sin embargo, con frecuencia, recibiremos estos objetos de un 
+        descriptor de acceso de un objeto complejo.
+
+        Ejemplo____________________________________________________________________
+        public class Person {
+            private String name;
+            private int age;
+            private String password;
+         
+            public Optional<String> getName() {
+                return Optional.ofNullable(name);
+            }
+         
+            public Optional<Integer> getAge() {
+                return Optional.ofNullable(age);
+            }
+         
+            public Optional<String> getPassword() {
+                return Optional.ofNullable(password);
+            }
+         
+            // normal constructors and setters
+        }
+    Crear Obj Optional------------------------------------------------------------------
+        ***Optional vacio Optional.empty()
+            Optional<String> empty = Optional.empty();
+
+            Tenga en cuenta que utilizamos el método isPresent () para verificar si 
+            hay un valor dentro del objeto Opcional . Un valor está presente solo si 
+            hemos creado Opcional con un valor no nulo .
+
+        ***Optional.of(valor)
+            El argumento pasado al método of () no puede ser nulo. De lo contrario, 
+            obtendremos una NullPointerException
+                Optional<String> opt = Optional.of(name);
+
+        ***En caso de que esperemos valores null método Optional.ofNullable ()
+            String name = null;
+            Optional<String> opt = Optional.ofNullable(name);
+            assertFalse(opt.isPresent());
+
+            Nota: si pasamos una referencia nula , no arroja una excepción, sino 
+            que devuelve un objeto opcional vacío
+***********************************************************************************************
+
+
+****************************************************************************************Map API
+    //Se le añaden items al mapa
+    public void poblar() {
+        mapa = new HashMap<>();
+        mapa.put(0, "Elvis");
+        mapa.put(1, "Antonio");
+        mapa.put(2, "Diego");
+        mapa.put(3, "Camila");
+        mapa.put(4, "Ricardo"); 
+    }
+    
+    //Se maneja mapa con Version 7 de java
+    public void imprimirV7() {
+        System.out.println("Java 7");
+        for (Entry<Integer, String> obj : mapa.entrySet()) {
+            System.out.println("Clave: "+obj.getKey()+" Valor: "+obj.getValue());
+        }
+    }
+    
+    //Maneras de recorrer u mapa con version 8 de Java
+    public void imprimirV8() {
+        System.out.println("Java 8");
+        //Forma 1
+    //      mapa.forEach((k,v) -> System.out.println("Clave: "+k+" Valor: "+v) );
+        //Forma 2
+        mapa.entrySet().stream().forEach(System.out::println);
+    }
+
+    //Inserta un Item si no esta presente la clave
+    public void insertarAusente() {
+        mapa.putIfAbsent(5, "Yalaury");
+    }
+
+    //Modifica item si esta presente
+    public void operarSiPresente() {
+        mapa.computeIfPresent(2, (k,v) -> "Elvis" );
+    }
+    
+    //se recupera item o un valor predeterminado
+    public void obtenerOrPredeterminado() {
+        System.out.println(mapa.getOrDefault(5, "Valor por defecto"));
+    }
+    
+    //Se crea mapa de items filtrados por su contenido
+    public void filtrarMap() {
+        System.out.println("Mapa filtrado.");
+        Map<Integer, String> mapaNew= mapa.entrySet().stream()
+                .filter(e -> e.getValue().contains("o"))
+                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        mapaNew.forEach((k,v) -> System.out.println("Clave: "+k+" Valor: "+v));
+    }
+***********************************************************************************************
+
+
+*******************************************************************************************Date
+    Java 8 nos trae al fin una nueva api para el manejo de fechas. Nos encontramos dentro del 
+    paquete java.time con nuevas clases para resolver los problemas con fechas como LocalDate, 
+    horas con LocalTime o la combinación de fecha y hora con LocalDateTime. También incluye como 
+    es debido dentro de esta api el uso de zonas horarios con ZonedDateTime.
+
+    Además los conceptos de Period para determinar el periodo entre dos fechas y Duration para 
+    determinar la duración entre dos horas.
+
+    ------------------------------------------------------------------------------------
+    //LocalDate  -- LocalDateTime -- LocalTime
+    public void verificar(int version) {
+        if(version == 7) {
+            Calendar fecha1 = Calendar.getInstance();
+            Calendar fecha2 = Calendar.getInstance();
+            fecha1.set(1982, 9, 14);
+            System.out.println(fecha1.after(fecha2));
+        }else if(version == 8) {
+            //Trabajando con fechas
+            System.out.println("Fechas:");
+            LocalDate fecha1 = LocalDate.of(1982, 10, 14);
+            LocalDate fecha2 = LocalDate.now();
+            System.out.println(fecha1.isAfter(fecha2));
+            System.out.println(fecha1.isBefore(fecha2));
+            
+            //Trabajando con tiempo
+            System.out.println("Tiempo:");
+            LocalTime tiempo1 = LocalTime.of(7, 50, 30);
+            LocalTime tiempo2 = LocalTime.now();
+            
+            System.out.println(tiempo1.isAfter(tiempo2));
+            System.out.println(tiempo1.isBefore(tiempo2));
+            
+            //Trabajando con fechas y hora
+            System.out.println("Fecha y Hora:");
+            LocalDateTime fecCom1 = LocalDateTime.of(1982, 10, 14, 23, 12, 35);
+            LocalDateTime fecCom2 = LocalDateTime.of(1982, 10, 14, 23, 12, 15);
+            System.out.println(fecCom1.isAfter(fecCom2));
+            System.out.println(fecCom1.isBefore(fecCom2));
+        }
+    }
+    -----------------------------------------------------------------------------------
+    Puedes además sumar o restar días facilmente,
+
+        LocalDate datePlus = localDateOf.plusDays(7);
+        System.out.println(datePlus.toString());  // 2017-10-17
+
+        LocalDate dateMinus = localDateOf.minusDays(7);
+        System.out.println(dateMinus.toString()); // 2017-10-03
+    -----------------------------------------------------------------------------------
+        LocalDateTime localDateTimePlus = localDateTimeOf.plusDays(5);
+        System.out.println(localDateTimePlus); // 2017-08-25T08:30
+        LocalDateTime localDateTimeMinus = localDateTimePlus.minusMinutes(10);
+        System.out.println(localDateTimeMinus); // 2017-08-25T08:20
+    ------------------------------------------------------------------------------------
+    //Medir tiempo  Instant  -- Duration
+    public void medirTiempo(int version) throws InterruptedException{
+        if (version == 7) {
+            System.out.println(System.currentTimeMillis());
+            long inicio = System.currentTimeMillis();
+            Thread.sleep(1000);
+            long fin = System.currentTimeMillis();
+            System.out.println(fin - inicio);
+        }else if (version == 8) {
+            Instant inicio = Instant.now();
+            Thread.sleep(120000);
+            Instant fin = Instant.now();
+            System.out.println(Duration.between(inicio, fin).toMinutes());
+        }
+    }
+    
+    ------------------------------------------------------------------------------------
+    //Convertir fechas DateTimeFormatter 
+    public void convertir(int version) throws  java.text.ParseException{
+        if (version == 7) {
+            //convertir de cadena a fecha
+            String fechaCad = "1982/10/14";
+            DateFormat fmd =  new SimpleDateFormat("yyyy/MM/dd");
+            Date fecha = fmd.parse(fechaCad);
+            System.out.println(fecha);
+            //convertir de fecha a cadena
+            Date fechaActual = Calendar.getInstance().getTime();
+            fmd = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss a");
+            String fechaCadena = fmd.format(fechaActual);
+            System.out.println(fechaCadena);
+        }else if(version == 8) {
+            //convertir de cadena a fecha
+            String fechaCad = "1982/10/14";
+            DateTimeFormatter fmd = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+            LocalDate fechaNac = LocalDate.parse(fechaCad,fmd);
+            System.out.println(fechaNac);
+            System.out.println(fmd.format(fechaNac));
+            fmd = DateTimeFormatter.ofPattern("yyyyMMdd");
+            System.out.println(fmd.format(fechaNac));
+        }
+    }
+    --------------------------------------------------------------------------------------
+    ZonedDateTime
+        Si necesitas trabajar con zonas horarias puedes utilizar esta clase que te provee 
+        el manejo de fechas con hora para la zona que determines. 
+
+            ZoneId.getAvailableZoneIds().forEach(z -> System.out.println(z)); // list of all zones
+            ZoneId zoneId = ZoneId.of("America/Panama");
+        
+        Para ‘moverse’ a otra zona horaria, por ejemplo Tokyo, haces uso de de LocalDateTime 
+        en conjunto con ZoneDateTime pasando la zona “Asia/Tokyo”
+
+            LocalDateTime localDateTimeOf = LocalDateTime.of(2017, Month.AUGUST, 20, 8, 30);
+            ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTimeOf, zoneId);
+            System.out.println(zonedDateTime); // 2017-08-20T08:30-05:00[America/Panama]
+            ZonedDateTime tokyoDateTime = localDateTimeOf.atZone(ZoneId.of("Asia/Tokyo"));
+            System.out.println(tokyoDateTime); // 2017-08-20T08:30+09:00[Asia/Tokyo]
+
+        //ZonedDateTime -- ZoneId
+        public void zonaHoraria() {
+            System.out.println("Zona Horaria");
+            //ZoneId.getAvailableZoneIds().stream().sorted((x,y)->y.compareTo(x)).forEach(System.out::println);
+            ZoneId zona = ZoneId.of("America/Buenos_Aires");
+            
+            LocalDateTime localDateTimeOf = LocalDateTime.of(2017, Month.AUGUST, 20, 8, 30);
+            ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTimeOf, zona);
+            System.out.println(zonedDateTime); // 2017-08-20T08:30-05:00[America/Buenos_Aires]
+            ZonedDateTime tokyoDateTime = localDateTimeOf.atZone(ZoneId.of("Asia/Tokyo"));
+            System.out.println(tokyoDateTime); // 2017-08-20T08:30+09:00[Asia/Tokyo]
+        }
+    ---------------------------------------------------------------------------------------
+    Period
+        Con la clase Period puedes obtener la diferencia entre dos fechas o utilizarlo para 
+        modificar valores de alguna fecha.
+
+        LocalDate startLocalDate = LocalDate.of(2017, 10, 10);
+        LocalDate endLocalDate = startLocalDate.plus(Period.ofDays(10));  // 2017-10-20
+        int diffDays = Period.between(startLocalDate, endLocalDate).getDays();
+        System.out.println(diffDays); // 10
+
+
+        //Periodo entre fechas Period
+        public void periodoFechas(int version) {
+            if(version == 7) {
+                Calendar nacimiento = Calendar.getInstance();
+                Calendar actual = Calendar.getInstance();           
+                nacimiento.set(1982, 9, 14);            
+                int anios = 0;
+                
+                while(nacimiento.before(actual)) {
+                    nacimiento.add(Calendar.YEAR, 1);
+                    if(nacimiento.before(actual)) {
+                        anios++; 
+                    }
+                }
+                System.out.println(anios);
+            }else if (version == 8) {
+                LocalDate nacimiento = LocalDate.of(1982, 10, 14);
+                LocalDate actual = LocalDate.now();
+                
+                Period periodo = Period.between(nacimiento, actual);
+                System.out.println("Han transcurrido "+periodo.getYears()+" , "+periodo.getMonths()
+                +" meses y "+periodo.getDays()+" dias desde mi nacimiento");
+            }
+        }
+    ------------------------------------------------------------------------------------
+    Duration
+        Duration es el equivalente a Period pero para las horas.
+
+        //Periodo de tiempo, clase Duration 
+        public void periodoTiempo() {
+            System.out.println("Periodo de tiempo");
+            LocalTime startLocalTime = LocalTime.of(8, 30);
+            LocalTime endLocalTime = startLocalTime.plus(Duration.ofHours(3));  // 11:30
+
+            long diffSeconds = Duration.between(startLocalTime, endLocalTime).getSeconds();
+            System.out.println(diffSeconds); // 10800 seconds
+         }
+***********************************************************************************************
+
+
+************************************************************************Funciones de Alto Orden
+    Paso y devolucion de funcones en la programacion
+        public class FuncAltOrder {
+            //Se crea funciones
+            private Function<String, String> converMay = x -> x.toUpperCase();
+            private Function<String, String> converMin = x -> x.toLowerCase();
+            
+            //paso de una funcion
+            public void imprimir(Function<String, String> funcion, String valor) {
+                System.out.println(funcion.apply(valor));
+            }
+            
+            //Devolver una funcion
+            public Function<String, String> mostrar(String mensaje) {
+                return (String x) -> mensaje + x;
+            }
+            
+            //Se crea metodo que filtra por la longitud de una palabra y las imprime
+            public void filtrar(List<String> lista, Consumer<String> consumidor, int longitud) {
+                //convierte la lista en stream, con el metodo filter se le pasa metodo que establece 
+                //si tiene la longitud correcta, recorre la lista pasando una funcion para que realice una tarea
+                lista.stream().filter(this.estableceLongitudFiltro(longitud)).forEach(consumidor);;
+            }
+            
+            //Se crea metodo que filtra si la palabra esta contenida en la lista
+            public void filtrar(List<String> lista, Consumer<String> consumidor, String cadena) {
+                //convierte la lista en stream, con el metodo filter se le pasa metodo que establece 
+                //si la palabra esta contenida en la lista, recorre la lista pasando una funcion para que realice una tarea
+                lista.stream().filter(this.estableceLongitudFiltro(cadena)).forEach(consumidor);;
+            }
+            
+            public Predicate<String> estableceLongitudFiltro(int longitud){
+                return texto -> texto.length() < longitud;
+            }
+            
+            public Predicate<String> estableceLongitudFiltro(String cadena){
+                return texto -> texto.contains(cadena);
+            }
+
+            public static void main(String[] args) {
+                // TODO Auto-generated method stub
+                FuncAltOrder fao = new FuncAltOrder();
+        //      fao.imprimir(fao.converMay, "elvis Areiza");
+        //      fao.imprimir(fao.converMin, "Elvis Areiza");
+        //      System.out.println(fao.mostrar("Hola ").apply("Elvis"));
+        //      System.out.println();
+                List<String> lista = new ArrayList<String>();
+                lista.add("pru");
+                lista.add("prueba");
+                lista.add("Yalaury");
+                
+        //      fao.filtrar(lista, System.out::println, 7);
+                fao.filtrar(lista,System.out::println, "lau");
+            }
+
+        }
+***********************************************************************************************
+
+
+*****************************************************************************************RxJava
+    Referencias --> https://www.youtube.com/watch?v=dD0vE3GGzDM&list=PLvimn1Ins-419yVe5iPfiXrg4mZJl5kLS&index=16
+                --> https://riptutorial.com/es/rx-java
+    Permite hacer el procesamiento asyncrono de manera legible, basandose en Observables, 
+    Los observables están orientados a gestionar flujos asíncronos.
+
+    RxJava es una implementación Java VM de Extensiones reactivas : una biblioteca para componer 
+    programas asíncronos y basados ​​en eventos mediante el uso de secuencias observables.
+
+    Los conceptos centrales de RxJava son sus Observables y Subscribers . Un Observable emite 
+    objetos, mientras que un Subscriber consume.
+
+    Observable
+
+        Observable es una clase que implementa el patrón de diseño reactivo. Estos Observables 
+        proporcionan métodos que permiten a los consumidores suscribirse a cambios de eventos. 
+        Los cambios de evento son activados por lo observable. No hay restricción en el número 
+        de suscriptores que un Observable puede tener, o el número de objetos que un Observable 
+        puede emitir.
+
+            Tomar como ejemplo:
+
+            Observable<Integer> integerObservable = Observable.just(1, 2, 3); // Integer observable
+            Observable<String> stringObservable = Observable.just("Hello, ", "World", "!"); // String observable
+
+            Aquí, un objeto observable llamado integerObservable y stringObservable se crean 
+            a partir del método de fábrica que just proporcionar la biblioteca Rx. Observe 
+            que Observable es genérico y, por lo tanto, puede emitir cualquier objeto.
+    
+    ***Subscriber
+
+        Un Subscriber es el consumidor. Un Subscriber puede suscribirse a un solo observable. 
+        El Observable llama a los onNext() , onCompleted() y onError() del Subscriber .
+
+            Subscriber<Integer> mSubscriber = new Subscriber<Integer>() {
+                // NOTE THAT ALL THESE ARE CALLED BY THE OBSERVABLE
+                @Override
+                public void onCompleted() {
+                    // called when all objects are emitted
+                    System.out.println("onCompleted called!");
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    // called when an error occurs during emitting objects
+                    System.out.println("onError called!");
+                }
+
+                @Override
+                public void onNext(Integer integer) {
+                    // called for each object that is emitted
+                    System.out.println("onNext called with: " + integer);
+                }
+            };
+ 
+        Tenga en cuenta que el Subscriber también es genérico y puede admitir cualquier objeto. 
+        Un Subscriber debe suscribirse al observable llamando al método de subscribe en el observable.
+
+            integerObservable.subscribe(mSubscriber);
+ 
+        
+                //notacion lambda
+                public void hello() {
+                      Observable.just("Hello, World!") // create new observable
+                        .subscribe(onNext -> { // subscribe and perform action
+                             System.out.println(onNext);   
+                        });
+                }
+    --------------------------------------------------------------------------------------
+    ***Se descarga Dependencias
+        <dependency>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava</artifactId>
+            <version>1.2.6</version>
+        </dependency>
+
+    --------------------------------------------------------------------------------------
+        public class RxJava {
+
+            private List<Integer> lista1;
+            private List<Integer> lista2;
+            
+            public RxJava() {
+                super();
+                lista1 = new ArrayList<Integer>();
+                lista2 = new ArrayList<Integer>();
+                this.llenarListas();
+            }
+            
+            public void llenarListas() {
+                for (int i = 0; i < 10; i++) {
+                    lista1.add(i);
+                    lista2.add(i);
+                }
+            }
+
+            //busca los numeros indicados
+            public void buscar() {
+                //Se crean los observables para ambas listas
+                Observable<Integer> obs1= Observable.from(lista1);
+                Observable<Integer> obs2= Observable.from(lista2);
+                //Utilizamos el metodo merge, permite unir dos observables para un unico resultado
+            //    Observable.merge(obs1, obs2).subscribe(new Action1<Integer>() {
+            //        public void call(Integer numero) {
+            //            if(numero == 3) {
+            //                System.out.println(numero);
+            //            }
+            //        }
+            //    });
+
+                //con notacion lambda       
+                Observable.merge(obs1, obs2).filter(x->x==5).subscribe(System.out::println);
+            }
+
+
+            public static void main(String[] args) {
+        //      List<String> listaCad= new ArrayList<String>();
+        //      listaCad.add("mito");
+        //      listaCad.add("code");
+        //      listaCad.add("Mito Code");
+        //      
+        //      //Principio basico de rxJava Observable
+        //      //Se apoya en el patron observer
+        //      Observable<String> obs = Observable.from(listaCad); 
+        //      obs.subscribe(new Action1<String>() {
+        //          @Override 
+        //          public void call(String elemento) {
+        //              System.out.println(elemento);
+        //          }
+        //      });
+                
+                RxJava rx= new RxJava();
+                rx.buscar();
+
+            }
+
+        }
+***********************************************************************************************
+
+
+Recursividad
+******************************************************************************Recursion de Java
+    La recursión es la técnica de hacer que una función se llame a sí misma. Esta técnica 
+    proporciona una manera de dividir problemas complicados en problemas simples que son más 
+    fáciles de resolver.
+
+    La recursión puede ser un poco difícil de entender cuando se encuentra por primera vez, 
+    la mejor manera de descubrir cómo funciona es experimentar con ella.
+
+    Condición de detención
+        Así como los bucles pueden encontrarse con el problema del bucle infinito, las funciones 
+        recursivas pueden encontrarse con el problema de la recursión infinita. La recursión 
+        infinita es cuando la función nunca deja de llamarse a sí misma. Cada función recursiva 
+        debe tener una condición de detención, que es la condición donde la función deja de llamarse 
+        a sí misma. En el ejemplo anterior, la condición de detención es cuando el parámetro se 
+        kconvierte en 0.
+    Ejemplo____________________________________________________________________
+         //Use la recursividad para sumar todos los números hasta el k.
+        public static int sumar(int k){
+            if(k>0) {
+                return k+sumar(k-1);
+            }else {
+                return 0;
+            }
+        }
+
+        //Use la recursividad para sumar todos los números entre 5 y 10.
+        public static int sumarEntre(int ini, int fin) {
+            if(fin > ini) {
+                return fin + sumarEntre(ini, fin-1);
+            }else {
+                return 0;
+            }
+        }
+************************************************************************************************
 
 
 
@@ -3212,1181 +4596,6 @@ Excel
 
 
 
-Java 8
-
-**************************************************************************@FunctionalInterface
-    @FunctionalInterface La anotación @FunctionalInterface se utiliza para garantizar que la 
-    interfaz funcional no pueda tener más de un método abstracto. En caso de que haya más de 
-    un método abstracto, el compilador marca el mensaje 'Anotación inesperada de @FunctionalInterface'. 
-    Sin embargo, no es obligatorio usar esta anotación.
-**********************************************************************************************
-
-
-*****************************************************************************Expresiones Lambda
-    Una expresión lambda se caracteriza por la siguiente sintaxis.
-
-        parameter -> expression body
-    
-    Las siguientes son las características importantes de una expresión lambda.
-
-        Declaración de tipo opcional : no es necesario declarar el tipo de un parámetro. 
-        El compilador puede deducir lo mismo del valor del parámetro.
-
-        Paréntesis opcional alrededor del parámetro : no es necesario declarar un solo parámetro 
-        entre paréntesis. Para múltiples parámetros, se requieren paréntesis.
-
-        Opcional llaves : no es necesario usar llaves en el cuerpo de la expresión si el cuerpo 
-        contiene una sola declaración.
-
-        Palabra clave opcional return : el compilador devuelve automáticamente el valor si el 
-        cuerpo tiene una sola expresión para devolver el valor. Se requieren llaves para indicar 
-        que la expresión devuelve un valor.
-
-    Ejemplo____________________________________________________________________________
-
-        public void ordenar() {
-        List<String> lista = new ArrayList<>();
-        lista.add("Elvis");
-        lista.add("Ricardo");
-        lista.add("Diego");
-        lista.add("Camila");
-        lista.add("Antonio");
-        
-        
-                //Java 7
-        //      Collections.sort(lista, new Comparator<String>() {
-        //          @Override
-        //          public int compare(String o1, String o2) {
-        //              return o1.compareTo(o2);
-        //          }           
-        //      });
-                //Java 8
-                
-            Collections.sort(lista,  (String o1, String o2) -> o1.compareTo(o2));
-            
-            for (String string : lista) {
-                System.out.println(string);
-            }
-        }
-        -----------------------------------------------------------------------------
-                public void calcular() {
-                //Java 7
-        //      IOperacion oper = new IOperacion() {
-                    
-
-        //      @Override
-        //      public double calcularProm(double n1, double n2) {
-        //              return n1 * n2 / 2;
-        //          }
-        //      };
-                    
-                //java 8 lambda     
-                IOperacion oper = (double n1, double n2) -> (n1+n2)/2;
-                System.out.println(oper.calcularProm(2, 6));
-            }
-    ***Otro tipo de sintaxis
-            public void calcular() {
-        //Java 7
-        //      IOperacion oper = new IOperacion() {
-                    
-
-        //      @Override
-        //      public double calcularProm(double n1, double n2) {
-        //              return n1 * n2 / 2;
-        //          }
-        //      };
-                    
-                //java 8 lambda     
-                //IOperacion oper = (double n1, double n2) -> (n1+n2)/2;
-                
-                //Otro tipo de sintaxis
-                IOperacion oper = (double n1, double n2) -> {
-                    double a = n1;
-                    double b = n2;
-                    return (a+b)/2;
-                };
-                System.out.println(oper.calcularProm(2, 6));
-            }
-
-        ----------------------------------------------------------------------------
-        //Otro tipo de sintaxis
-        IOperacion oper = (n1, n2) -> (6+6)/2;
-        System.out.println(oper.calcularProm(2, 6));
-    
-    *** Alcance en Lambda
-        **Para variables locales tiene el mismo comportamiento, pero no es obligatorio 
-        convertirla en final para llamar una variable local        
-***********************************************************************************************
-
-
-****************************************************************************Metodos por defecto
-    Con la palabra default me permite crear un metodo en la interface sin tener que realzar una 
-    implementacion
-
-        public interface PersonaA {
-            public void caminar();
-            
-            default public void hablar() {
-                System.out.println("hello metodo hablar(), de la interface PersonaA.");
-            }
-        }
-
-        public class DefaultMethod implements PersonaA, PersonaB {
-
-            @Override
-            public void caminar() {
-                System.out.println("Hello methodDefault");
-                
-            }
-
-            public static void main(String[] args) {
-                DefaultMethod app = new DefaultMethod();
-                app.caminar();
-                app.hablar();
-            }
-        }
-
-    ***Puedo implementar dos interfaces con el mismo metodo por defecto y cuando implemente 
-    sobreescribir e indicar cual es el metodo y de que interface es el que se ejecutara
-
-        public interface PersonaA {
-            public void caminar();
-            
-            default public void hablar() {
-                System.out.println("hello metodo hablar(), de la interface PersonaA.");
-            }
-        }
-
-        public interface PersonaB {
-            default public void hablar() {
-                System.out.println("hello metodo hablar(), de la interface Persona B.");
-            }
-        }
-
-        public class DefaultMethod implements PersonaA, PersonaB {
-
-            @Override
-            public void caminar() {
-                System.out.println("Hello methodDefault");
-                
-            }
-
-            @Override
-            public void hablar() {
-                //Se indica el metodo de que interface se utilizara
-                PersonaA.super.hablar();
-            }
-
-            public static void main(String[] args) {
-                DefaultMethod app = new DefaultMethod();
-                app.caminar();
-                app.hablar();
-            }
-        }
-***********************************************************************************************
-
-
-***************************************************************************Interface Functional
-    Java8 incluye muchas novedades y entra ellas destacan las expresiones lambda. Recordemos 
-    que una expresión lambda define el comportamiento de una función.
-        (x, y) -> x + y;
-    Sin embargo ella sola no compila ya que necesitamos igualarla a una variable lo que no 
-    tenemos claro es a qué exactamente.
-
-    Es aquí donde aparece el concepto de Java Functional Interface. Un interface funcional es
-    aquel interface que solo dispone de un método abstracto. Así pues vamos a igualar nuestra 
-    expresión lambda a un interface funcional
-
-        public class Principal {
-     
-            interface Matematicas {         
-                public double operacion(double x, double y);         
-            }
-             
-            public static void main(String[] args) {
-             
-                Matematicas o = (x, y) -> x + y;
-                System.out.println(o.operacion(2, 3));
-             
-            }
-             
-        }
-
-    Java Functional Interface , recordemos que estos únicamente disponen de un método abstracto.
-
-    Para evitar este tipo de problemas se usa la anotación @FunctionalInterface que obliga 
-    al desarrollador a solo incluir un método abstracto.
-
-        public class Principal {
-            @FunctionalInterface
-            interface Matematicas {     
-                public double operacion(double x, double y);     
-            }
-             
-            public static void main(String[] args) {
-                Matematicas o = (x, y) -> x + y;
-                System.out.println(o.operacion(2, 3));
-            }
-        }
-***********************************************************************************************
-
-
-******************************************************************Java Lambda reduce y wrappers
-    Java Lambda reduce es una de las operaciones más utilizadas cuanto trabajamos con colecciones 
-    de objetos y expresiones lambda. Reduce sirve para convertir un Array de elementos en un 
-    único elemento y se usa por ejemplo para calcular la suma de n términos.
-        public static void main(String[] args) {
-            List<Integer> gastos= new ArrayList<Integer>();
-            gastos.add(100);
-            gastos.add(200);
-            gastos.add(300);
-          
-            gastos.stream().reduce((acumulador,numero)-> {
-              return acumulador+numero;
-            }).ifPresent(System.out::println);
-            
-        }
-
-    Gracias a la programación funcional podemos realizar estas operaciones de una forma muy 
-    diferente nos podemos apoyar en el método reduce que recibe 2 parámetros un acumulador 
-    como primero y un elemento como segundo .
-
-    De esta forma realiza una funcionalidad de “reducción” convirtiendo una lista de elementos 
-    en un único resultado.
-    --------------------------------------------------------------------------------------
-    De igual manera que usamos el método de reducción para sumar números podemos usarlo 
-    también por ejemplo para combinar cadenas.
-
-    public class Principal4 {
-      public static void main(String[] args) {
-        List<String> nombres= new ArrayList<String>();
-        nombres.add("juan");
-        nombres.add("gema");
-        nombres.add("maria");
-        nombres.stream().reduce(String::concat).ifPresent(System.out::println);
-      }
-    }
-***********************************************************************************************
-
-
-*************************************************************************Referencias de metodos
-    Cuando referenciamos un método, lo que pasa es que la funcionalidad del método original es 
-    implementada con una referencia al método referenciado, esto quieres decir que cuando ejecutemos 
-    el método de la interface funcional, en realidad lo que pasara es que se ejecutara el método 
-    de la otra clase.   
-
-    La referencia del método Java 8 se usa para referirse a un método y para hacer que el programa 
-    o código sea simple o claro, puede usar la referencia al método en lugar de una expresión lambda.
-
-    En resumen esta notación abrevia la expresión lambda para llamar a cualquier método.
-
-    El operador '::' se usa como referencia de método. 
-
-    Veamos algunos tipos de referencias de método:
-        Referencia a un método de una instancia: object :: instanceMethod
-        Referencia a un método estático: Class :: staticMethod
-        Referencia a un método de instancia de un objeto arbitrario de un tipo particular:  Class :: instanceMethod
-        Referencia a un constructor: Class :: new
-
-
-    Ejemplos_____________________________________________________________________________
-    public class MedRefApp {
-        public static void refMetodoStatico() {
-            System.out.println("Metodo statico referido");
-        }
-    
-        public void referenciaMetodoInstanciaObjArbitrario() {
-            String[] nombres = {"Elvis", "Diego", "Antonio"};
-            //Primera forma para ordenar un array
-    //      Arrays.sort(nombres, new Comparator<String>() {
-    //          @Override
-    //          public int compare(String o1, String o2) {
-    //              return o1.compareToIgnoreCase(o2);
-    //          }
-    //      });
-            //Segunda forma ordenar un array con expresiones lambda
-    //      Arrays.sort(nombres, (s1,s2) -> s1.compareToIgnoreCase(s2) );
-    //      System.out.println(nombres);
-            //Tercera forma de ordenar un array con metodo referenciado
-            Arrays.sort(nombres, String::compareTo);
-            System.out.println(Arrays.toString(nombres));
-        }
-    
-        public void referenciaMetodoInstanciaObjParticular() {
-            System.out.println("metodo referido instancia de clase");
-        }
-        
-        public void referenciaConstructor() {
-            //Implementacion anonima
-    //      IPersona iPer = new IPersona() {            
-    //          @Override
-    //          public Persona crear(int id, String nombre) {
-    //              return new Persona(id, nombre);
-    //          }
-    //      };
-    //      iPer.crear(1, "Elvis");
-            //Utilizando expresiones lambda
-    //      IPersona Iper2 = (id,nombre) -> new Persona(id, nombre);
-    //      Persona per = Iper2.crear(1, "Camila");
-    //      System.out.println(per.getId() + " - " + per.getNombre());
-            //Utilizando metodos referenciados al constructor
-            IPersona Iper3 = Persona::new;
-            Persona per = Iper3.crear(1, "Camila");
-            System.out.println(per.getId() + " - " + per.getNombre());
-        }
-        
-        public void operar() {
-            
-            //IOperacion op = () -> MedRefApp.refMetodoStatico();
-            //op.saludar();
-            //Referencia a un metodo estatico
-            IOperacion op1 = MedRefApp::refMetodoStatico;
-            op1.saludar();
-            
-            
-        }
-        
-        public static void main(String[] args) {
-            MedRefApp app = new MedRefApp();
-            //app.operar();
-            //app.referenciaMetodoInstanciaObjArbitrario();
-            //Se implementa el metodo saludar de la interface Funcional
-    //      IOperacion op = app::referenciaMetodoInstanciaObjParticular;
-    //      op.saludar();
-            app.referenciaConstructor();
-        }
-    }        
-    --------------------------------------------------------------------------------------
-    @FunctionalInterface
-    public interface IOperacion {
-        void saludar();
-    }                       
-    --------------------------------------------------------------------------------------
-      @FunctionalInterface
-        public interface IPersona {
-            Persona crear(int id, String nombre);
-        }  
-    --------------------------------------------------------------------------------------
-        public class Persona {
-            private String nombre;
-            private Integer id;
-            
-            public Persona(Integer id, String nombre ) {
-                super();
-                this.nombre = nombre;
-                this.id = id;
-            }
-            public Persona() {
-                super();
-            }
-            public String getNombre() {
-                return nombre;
-            }
-            public void setNombre(String nombre) {
-                this.nombre = nombre;
-            }
-            public Integer getId() {
-                return id;
-            }
-            public void setId(Integer id) {
-                this.id = id;
-            }
-            
-        }                                                                                   
-***********************************************************************************************
-
-
-************************************************************************forEach, removeIf, sort
-    foreach-----------------------------------------------------------------------------
-            public void usarForEach() {
-                //Foreach java 7
-        //      for (String item : crearLista()) {
-        //          System.out.println(item);
-        //      }
-                //Foreach con metodos lambda
-                //crearLista().forEach(x -> System.out.println(x));
-                //foreach con metodos referenciados
-                lista.forEach(System.out::println);
-            }
-    removeIf-----------------------------------------------------------------------------
-        public void usarRemoveIf() {
-            //Erro al remover elemento de la lista
-    //      for (String item : lista) {
-    //          if(item.compareToIgnoreCase("elvis")==0){
-    //              lista.remove(item);
-    //          }
-    //      }
-            // Utilizando Iterato
-    //      Iterator<String> iter = lista.iterator();
-    //      while (iter.hasNext()) {
-    //          if(iter.next().equalsIgnoreCase("Elvis")) {
-    //              iter.remove();
-    //          }
-    //      }
-            //Utilizando expresiones Lambda y removeIf en una ista
-            lista.removeIf(x -> x.equalsIgnoreCase("yala"));
-        }
-
-    sort---------------------------------------------------------------------------------
-            public void usarSort() {
-                //Utilizando lambada
-        //      lista.sort((x,y) -> x.compareTo(y));
-                //Utilizando metodos de referencia
-                lista.sort(String::compareTo);
-            }
-***********************************************************************************************
-
-
-*****************************************************************************************Stream
-    metodos mas Utilizados
-    ----------------------------------------------------------------------------------
-        //Metodo que filtra las palabras que empiecen por variable indicada
-        public void filtrar() {
-            lista.stream().filter(x -> x.startsWith("E")).forEach(System.out::println);
-        }
-    ----------------------------------------------------------------------------------
-        //Metodo que ordena una lista y la imprime
-        public void ordenar() {
-            //Ordena de forma ascendente
-    //      lista.stream().sorted().forEach(System.out::println);
-            //ordena de forma descendente
-            lista.stream().sorted((x,y)->y.compareTo(x)).forEach(System.out::println);
-        }
-    ----------------------------------------------------------------------------------
-        public void transformar() {
-            //Transforma una cadena a mayusculas
-            lista.stream().map(String::toUpperCase).forEach(System.out::println);
-            //forma iperativa de parsear a numeros
-    //      for (String string : numeros) {
-    //          int num = Integer.parseInt(string) + 1;
-    //          System.out.println(num);
-    //      }
-            //parsea a numeros 
-            numeros.stream().map(x -> Integer.parseInt(x)+1).forEach(System.out::println);
-        }
-    ----------------------------------------------------------------------------------
-         public void limitar() {
-            lista.stream().limit(3).forEach(System.out::println);
-        }
-    ----------------------------------------------------------------------------------
-        public void contar() {
-            System.out.println(lista.stream().count());
-        }
-    ----------------------------------------------------------------------------------
-        distinct()
-        El método distinct nos permitirá remover datos duplicados de una lista.
-
-        public static void main(String[] args) {
-            List numbers = Arrays.asList(7, 7, 7, 7, 2, 2, 2, 3, 3, 3, 3, 100, 100, 200, 200);
-            numbers = numbers.stream().distinct().collect(Collectors.toList());
-            System.out.println(numbers);
-        }
-    ----------------------------------------------------------------------------------
-    Metodo peek
-        Devuelve una secuencia que consta de los elementos de esta secuencia, además 
-        de realizar la acción proporcionada en cada elemento a medida que se consumen 
-        elementos de la secuencia resultante.
-        Ejemplo_______________________________________________________________________
-            List<GrantedAuthority> authorities = usuario.getRoles()
-                .stream()
-                .map(role -> new SimpleGrantedAuthority(role.getNombre()))
-                .peek(authority -> logger.info("Role: "+authority.getAuthority()))
-                .collect(Collectors.toList());
-    **********************************************************************************
-        * Manejo de stream() java 8
-        * Convertir una lista de objetos en una lista de ids 
-            List<String> nombresInstalaciones = instalacionesDto.stream().map(InstalacionUsuarioDTO::getNombreInstalacion).collect(Collectors.toList());
-        * Convertir una lista de string a una cadena separados por comas
-            nombresInstalaciones.stream().collect(Collectors.joining(","));
-        * Partiendo de una lista de long busca objetos y devuelve un atributo de ese objeto, y los muta a una lista de String 
-            List<String> instalacionesDto = idsInstalaciones.stream().map(idIns -> {
-                try {
-                    return iInstalacionBusiness.buscarPorIdPorProjection(idIns).getNombre();
-                } catch (PersistenceException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                return null;
-            }).collect(Collectors.toList());
-        * Partiendo de una cadena separada por comas lo muta a una lista de String 
-            List<String> list = Stream.of(idsConfActuacion.split(",")).map(String::trim).collect(Collectors.toList());
-        * Muta una lista de String a una lista de Long 
-            list.stream().map(Long::valueOf).collect(Collectors.toList())
-        * Filtrado de objeto 
-            List<InstalacionUsuarioDTO> instSinTodElementos = instalacionesUsusDto.stream().filter(x -> !x.getTodosElementosAsignados()).collect(Collectors.toList());
-***********************************************************************************************
-
-
-***************************************************************************************Optional
-    Poder gestionar de una manera adecuada una variable para que no se genere NullPointerException
-
-        
-    El siguiente punto que vamos a ver, es cómo crear la clase, Optional tiene un constructor privado,
-     y nos proporciona tres métodos factoría estáticos para instanciar la clase. 
-        public static<T> Optional<T> empty()
-        public static <T> Optional<T> ofNullable(T value)
-        public static <T> Optional<T> of(T value)
-    
-    Siendo el método  el que nos permite recubrir cualquier objeto en un optional. -->.of
-
-    Los otros dos métodos nos permiten recubrir un valor nulo o devolver un objeto
-    Optional vacío en caso de que queramos avisar de la ausencia de valor. La opción de 
-    recubrir un nulo viene dada principalmente para permitirnos trabajar con APIs que hacen 
-    uso de nulos para avisar de estas ausencias de valor.
-
-    El método isPresent(), método es el equivalente a variable == null y cómo el propio nombre 
-    indica nos dice si el objeto Optional contiene un valor o está vacío. Este método se usa 
-    principalmente si trabajamos de manera imperativa con Optional
-    
-    El método get() es el encargado de devolvernos el valor, devolviendo una excepción si no 
-    estuviera presente.
-
-    get () solo puede devolver un valor si el objeto envuelto no es nulo , de lo contrario, 
-    arroja una excepción
-
-    //metodo que permite detectar si una variable esta null o no inicializada y colocarle un por defecto
-        public void orElse(String valor) {
-            //Creo obj Optional por valor pasado
-    //      Optional<String> opt = Optional.of(valor);
-    //      System.out.println(opt.get());
-            //el metodo ofNullable acepta valores null
-            Optional<String> opt = Optional.ofNullable(valor);
-            System.out.println(opt.orElse("predeterminado"));
-        }
-        
-        //metodo que si es null permite arrojar una exception
-        public void orElseThrow(String valor) {
-            Optional<String> opt = Optional.ofNullable(valor);
-            opt.orElseThrow(NumberFormatException::new);
-        }
-        
-        //metodo que indica nos dice si el objeto Optional contiene un valor o está vacío
-        public void isPresent(String valor) {
-            Optional<String> opt= Optional.ofNullable(valor);
-            System.out.println(opt.isPresent());
-        }
-
-
-        public void ifPresent(String valor) {
-            Optional<String> opt = Optional.of(valor);
-            opt.ifPresent(name -> System.out.println(name.length()));
-        }
-
-        /*
-            El  método orElseGet () es similar a orElse () . Sin embargo, en lugar de
-            tomar un valor para devolver si el valor Opcional no está presente, toma 
-            una interfaz funcional del proveedor que se invoca y devuelve el valor de 
-            la invocación
-        */
-            public void orElseGet(String valor) {
-                System.out.println(Optional.ofNullable(valor).orElseGet(() -> "Elvis"));
-            }
-    Retorno condicional con filtro------------------------------------------------------
-        El método de filtro se usa normalmente de esta manera para rechazar valores 
-        ajustados basados ​​en una regla predefinida. Podríamos usarlo para rechazar un 
-        formato de correo electrónico incorrecto o una contraseña que no sea lo 
-        suficientemente segura.
-
-        Ejemplo____________________________________________________________________
-            public class Modem {
-                private Double price;
-             
-                public Modem(Double price) {
-                    this.price = price;
-                }
-                // standard getters and setters
-            }
-            //Metodo aplicado en java 7
-            public boolean priceIsInRange1(Modem modem) {
-                boolean isInRange = false;
-             
-                if (modem != null && modem.getPrice() != null
-                  && (modem.getPrice() >= 10
-                    && modem.getPrice() <= 15)) {
-             
-                    isInRange = true;
-                }
-                return isInRange;
-            }
-
-            //Metodo aplicado en java 8
-            public boolean priceIsInRange2(Modem modem2) {
-                 return Optional.ofNullable(modem2)
-                   .map(Modem::getPrice)
-                   .filter(p -> p >= 10)
-                   .filter(p -> p <= 15)
-                   .isPresent();
-             }
-
-            La llamada del mapa se usa simplemente para transformar un valor 
-            en otro valor. Tenga en cuenta que esta operación no modifica 
-            el valor original.
-
-            En nuestro caso, estamos obteniendo un objeto de precio de la clase Modelo. 
-            Veremos el método map () en detalle en la siguiente sección.
-
-            En primer lugar, si se pasa un objeto nulo a este método, no esperamos 
-            ningún problema.
-
-            En segundo lugar, la única lógica que escribimos dentro de su cuerpo 
-            es exactamente lo que describe el nombre del método, la verificación del 
-            rango de precios. 
-
-    Transformando valor con map()-------------------------------------------------------
-        El método de mapa devuelve el resultado del cálculo envuelto dentro de Opcional. 
-        Luego tenemos que llamar a un método apropiado en el Opcional devuelto para recuperar 
-        su valor.
-
-        Observe que el método de filtro simplemente realiza una comprobación del valor y 
-        devuelve un valor booleano. Por otro lado, el método de mapa toma el valor existente, 
-        realiza un cálculo utilizando este valor y devuelve el resultado del cálculo envuelto 
-        en un objeto Opcional
-
-        Ejemplos____________________________________________________________________
-            //Metodo que devuelve longitud de una lista por parametro
-            public int map(List<String> lista) {
-                Optional<List<String>> listaCad = Optional.ofNullable(lista);
-                int size = listaCad.map(List::size).orElse(0);
-                return size;
-            }
-
-        En este ejemplo, ajustamos una lista de cadenas dentro de un objeto Opcional y 
-        usamos su método de mapa para realizar una acción en la lista contenida. La 
-        acción que realizamos es recuperar el tamaño de la lista.
-
-        El método de mapa devuelve el resultado del cálculo envuelto dentro de Opcional. 
-        Luego tenemos que llamar a un método apropiado en el Opcional devuelto para recuperar 
-        su valor.
-        --------------------------------------------------------------------------
-        Podemos encadenar el mapa y filtrar juntos para hacer algo más poderoso.
-        //Metodo para verificar la exactitud de una contraseña ingresada por un usuario
-            public boolean verifPass(String pass) {
-                return Optional.of(pass).map(String::trim)
-                        .filter(x -> x.equalsIgnoreCase("password"))
-                        .isPresent();       
-            }
-        Como podemos ver, sin limpiar primero la entrada, se filtrará; sin embargo, los 
-        usuarios pueden dar por sentado que todos los espacios iniciales y finales 
-        constituyen entradas. Así que transformamos la contraseña sucia en una contraseña 
-        limpia con un mapa antes de filtrar las incorrectas.
-
-    Transformando valor con flatMap ()--------------------------------------------------
-        Al igual que el método map () , también tenemos el método flatMap () como alternativa 
-        para transformar valores. La diferencia es que el mapa transforma los valores solo 
-        cuando se desenvuelven, mientras que flatMap toma un valor envuelto y lo desenvuelve 
-        antes de transformarlo.
-
-        Anteriormente, hemos creado simples objetos String e Integer para envolverlos en una 
-        instancia Opcional . Sin embargo, con frecuencia, recibiremos estos objetos de un 
-        descriptor de acceso de un objeto complejo.
-
-        Ejemplo____________________________________________________________________
-        public class Person {
-            private String name;
-            private int age;
-            private String password;
-         
-            public Optional<String> getName() {
-                return Optional.ofNullable(name);
-            }
-         
-            public Optional<Integer> getAge() {
-                return Optional.ofNullable(age);
-            }
-         
-            public Optional<String> getPassword() {
-                return Optional.ofNullable(password);
-            }
-         
-            // normal constructors and setters
-        }
-    Crear Obj Optional------------------------------------------------------------------
-        ***Optional vacio Optional.empty()
-            Optional<String> empty = Optional.empty();
-
-            Tenga en cuenta que utilizamos el método isPresent () para verificar si 
-            hay un valor dentro del objeto Opcional . Un valor está presente solo si 
-            hemos creado Opcional con un valor no nulo .
-
-        ***Optional.of(valor)
-            El argumento pasado al método of () no puede ser nulo. De lo contrario, 
-            obtendremos una NullPointerException
-                Optional<String> opt = Optional.of(name);
-
-        ***En caso de que esperemos valores null método Optional.ofNullable ()
-            String name = null;
-            Optional<String> opt = Optional.ofNullable(name);
-            assertFalse(opt.isPresent());
-
-            Nota: si pasamos una referencia nula , no arroja una excepción, sino 
-            que devuelve un objeto opcional vacío
-***********************************************************************************************
-
-
-****************************************************************************************Map API
-    //Se le añaden items al mapa
-    public void poblar() {
-        mapa = new HashMap<>();
-        mapa.put(0, "Elvis");
-        mapa.put(1, "Antonio");
-        mapa.put(2, "Diego");
-        mapa.put(3, "Camila");
-        mapa.put(4, "Ricardo"); 
-    }
-    
-    //Se maneja mapa con Version 7 de java
-    public void imprimirV7() {
-        System.out.println("Java 7");
-        for (Entry<Integer, String> obj : mapa.entrySet()) {
-            System.out.println("Clave: "+obj.getKey()+" Valor: "+obj.getValue());
-        }
-    }
-    
-    //Maneras de recorrer u mapa con version 8 de Java
-    public void imprimirV8() {
-        System.out.println("Java 8");
-        //Forma 1
-    //      mapa.forEach((k,v) -> System.out.println("Clave: "+k+" Valor: "+v) );
-        //Forma 2
-        mapa.entrySet().stream().forEach(System.out::println);
-    }
-
-    //Inserta un Item si no esta presente la clave
-    public void insertarAusente() {
-        mapa.putIfAbsent(5, "Yalaury");
-    }
-
-    //Modifica item si esta presente
-    public void operarSiPresente() {
-        mapa.computeIfPresent(2, (k,v) -> "Elvis" );
-    }
-    
-    //se recupera item o un valor predeterminado
-    public void obtenerOrPredeterminado() {
-        System.out.println(mapa.getOrDefault(5, "Valor por defecto"));
-    }
-    
-    //Se crea mapa de items filtrados por su contenido
-    public void filtrarMap() {
-        System.out.println("Mapa filtrado.");
-        Map<Integer, String> mapaNew= mapa.entrySet().stream()
-                .filter(e -> e.getValue().contains("o"))
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-        mapaNew.forEach((k,v) -> System.out.println("Clave: "+k+" Valor: "+v));
-    }
-***********************************************************************************************
-
-
-*******************************************************************************************Date
-    Java 8 nos trae al fin una nueva api para el manejo de fechas. Nos encontramos dentro del 
-    paquete java.time con nuevas clases para resolver los problemas con fechas como LocalDate, 
-    horas con LocalTime o la combinación de fecha y hora con LocalDateTime. También incluye como 
-    es debido dentro de esta api el uso de zonas horarios con ZonedDateTime.
-
-    Además los conceptos de Period para determinar el periodo entre dos fechas y Duration para 
-    determinar la duración entre dos horas.
-
-    ------------------------------------------------------------------------------------
-    //LocalDate  -- LocalDateTime -- LocalTime
-    public void verificar(int version) {
-        if(version == 7) {
-            Calendar fecha1 = Calendar.getInstance();
-            Calendar fecha2 = Calendar.getInstance();
-            fecha1.set(1982, 9, 14);
-            System.out.println(fecha1.after(fecha2));
-        }else if(version == 8) {
-            //Trabajando con fechas
-            System.out.println("Fechas:");
-            LocalDate fecha1 = LocalDate.of(1982, 10, 14);
-            LocalDate fecha2 = LocalDate.now();
-            System.out.println(fecha1.isAfter(fecha2));
-            System.out.println(fecha1.isBefore(fecha2));
-            
-            //Trabajando con tiempo
-            System.out.println("Tiempo:");
-            LocalTime tiempo1 = LocalTime.of(7, 50, 30);
-            LocalTime tiempo2 = LocalTime.now();
-            
-            System.out.println(tiempo1.isAfter(tiempo2));
-            System.out.println(tiempo1.isBefore(tiempo2));
-            
-            //Trabajando con fechas y hora
-            System.out.println("Fecha y Hora:");
-            LocalDateTime fecCom1 = LocalDateTime.of(1982, 10, 14, 23, 12, 35);
-            LocalDateTime fecCom2 = LocalDateTime.of(1982, 10, 14, 23, 12, 15);
-            System.out.println(fecCom1.isAfter(fecCom2));
-            System.out.println(fecCom1.isBefore(fecCom2));
-        }
-    }
-    -----------------------------------------------------------------------------------
-    Puedes además sumar o restar días facilmente,
-
-        LocalDate datePlus = localDateOf.plusDays(7);
-        System.out.println(datePlus.toString());  // 2017-10-17
-
-        LocalDate dateMinus = localDateOf.minusDays(7);
-        System.out.println(dateMinus.toString()); // 2017-10-03
-    -----------------------------------------------------------------------------------
-        LocalDateTime localDateTimePlus = localDateTimeOf.plusDays(5);
-        System.out.println(localDateTimePlus); // 2017-08-25T08:30
-        LocalDateTime localDateTimeMinus = localDateTimePlus.minusMinutes(10);
-        System.out.println(localDateTimeMinus); // 2017-08-25T08:20
-    ------------------------------------------------------------------------------------
-    //Medir tiempo  Instant  -- Duration
-    public void medirTiempo(int version) throws InterruptedException{
-        if (version == 7) {
-            System.out.println(System.currentTimeMillis());
-            long inicio = System.currentTimeMillis();
-            Thread.sleep(1000);
-            long fin = System.currentTimeMillis();
-            System.out.println(fin - inicio);
-        }else if (version == 8) {
-            Instant inicio = Instant.now();
-            Thread.sleep(120000);
-            Instant fin = Instant.now();
-            System.out.println(Duration.between(inicio, fin).toMinutes());
-        }
-    }
-    
-    ------------------------------------------------------------------------------------
-    //Convertir fechas DateTimeFormatter 
-    public void convertir(int version) throws  java.text.ParseException{
-        if (version == 7) {
-            //convertir de cadena a fecha
-            String fechaCad = "1982/10/14";
-            DateFormat fmd =  new SimpleDateFormat("yyyy/MM/dd");
-            Date fecha = fmd.parse(fechaCad);
-            System.out.println(fecha);
-            //convertir de fecha a cadena
-            Date fechaActual = Calendar.getInstance().getTime();
-            fmd = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss a");
-            String fechaCadena = fmd.format(fechaActual);
-            System.out.println(fechaCadena);
-        }else if(version == 8) {
-            //convertir de cadena a fecha
-            String fechaCad = "1982/10/14";
-            DateTimeFormatter fmd = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-            LocalDate fechaNac = LocalDate.parse(fechaCad,fmd);
-            System.out.println(fechaNac);
-            System.out.println(fmd.format(fechaNac));
-            fmd = DateTimeFormatter.ofPattern("yyyyMMdd");
-            System.out.println(fmd.format(fechaNac));
-        }
-    }
-    --------------------------------------------------------------------------------------
-    ZonedDateTime
-        Si necesitas trabajar con zonas horarias puedes utilizar esta clase que te provee 
-        el manejo de fechas con hora para la zona que determines. 
-
-            ZoneId.getAvailableZoneIds().forEach(z -> System.out.println(z)); // list of all zones
-            ZoneId zoneId = ZoneId.of("America/Panama");
-        
-        Para ‘moverse’ a otra zona horaria, por ejemplo Tokyo, haces uso de de LocalDateTime 
-        en conjunto con ZoneDateTime pasando la zona “Asia/Tokyo”
-
-            LocalDateTime localDateTimeOf = LocalDateTime.of(2017, Month.AUGUST, 20, 8, 30);
-            ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTimeOf, zoneId);
-            System.out.println(zonedDateTime); // 2017-08-20T08:30-05:00[America/Panama]
-            ZonedDateTime tokyoDateTime = localDateTimeOf.atZone(ZoneId.of("Asia/Tokyo"));
-            System.out.println(tokyoDateTime); // 2017-08-20T08:30+09:00[Asia/Tokyo]
-
-        //ZonedDateTime -- ZoneId
-        public void zonaHoraria() {
-            System.out.println("Zona Horaria");
-            //ZoneId.getAvailableZoneIds().stream().sorted((x,y)->y.compareTo(x)).forEach(System.out::println);
-            ZoneId zona = ZoneId.of("America/Buenos_Aires");
-            
-            LocalDateTime localDateTimeOf = LocalDateTime.of(2017, Month.AUGUST, 20, 8, 30);
-            ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTimeOf, zona);
-            System.out.println(zonedDateTime); // 2017-08-20T08:30-05:00[America/Buenos_Aires]
-            ZonedDateTime tokyoDateTime = localDateTimeOf.atZone(ZoneId.of("Asia/Tokyo"));
-            System.out.println(tokyoDateTime); // 2017-08-20T08:30+09:00[Asia/Tokyo]
-        }
-    ---------------------------------------------------------------------------------------
-    Period
-        Con la clase Period puedes obtener la diferencia entre dos fechas o utilizarlo para 
-        modificar valores de alguna fecha.
-
-        LocalDate startLocalDate = LocalDate.of(2017, 10, 10);
-        LocalDate endLocalDate = startLocalDate.plus(Period.ofDays(10));  // 2017-10-20
-        int diffDays = Period.between(startLocalDate, endLocalDate).getDays();
-        System.out.println(diffDays); // 10
-
-
-        //Periodo entre fechas Period
-        public void periodoFechas(int version) {
-            if(version == 7) {
-                Calendar nacimiento = Calendar.getInstance();
-                Calendar actual = Calendar.getInstance();           
-                nacimiento.set(1982, 9, 14);            
-                int anios = 0;
-                
-                while(nacimiento.before(actual)) {
-                    nacimiento.add(Calendar.YEAR, 1);
-                    if(nacimiento.before(actual)) {
-                        anios++; 
-                    }
-                }
-                System.out.println(anios);
-            }else if (version == 8) {
-                LocalDate nacimiento = LocalDate.of(1982, 10, 14);
-                LocalDate actual = LocalDate.now();
-                
-                Period periodo = Period.between(nacimiento, actual);
-                System.out.println("Han transcurrido "+periodo.getYears()+" , "+periodo.getMonths()
-                +" meses y "+periodo.getDays()+" dias desde mi nacimiento");
-            }
-        }
-    ------------------------------------------------------------------------------------
-    Duration
-        Duration es el equivalente a Period pero para las horas.
-
-        //Periodo de tiempo, clase Duration 
-        public void periodoTiempo() {
-            System.out.println("Periodo de tiempo");
-            LocalTime startLocalTime = LocalTime.of(8, 30);
-            LocalTime endLocalTime = startLocalTime.plus(Duration.ofHours(3));  // 11:30
-
-            long diffSeconds = Duration.between(startLocalTime, endLocalTime).getSeconds();
-            System.out.println(diffSeconds); // 10800 seconds
-         }
-***********************************************************************************************
-
-
-************************************************************************Funciones de Alto Orden
-    Paso y devolucion de funcones en la programacion
-        public class FuncAltOrder {
-            //Se crea funciones
-            private Function<String, String> converMay = x -> x.toUpperCase();
-            private Function<String, String> converMin = x -> x.toLowerCase();
-            
-            //paso de una funcion
-            public void imprimir(Function<String, String> funcion, String valor) {
-                System.out.println(funcion.apply(valor));
-            }
-            
-            //Devolver una funcion
-            public Function<String, String> mostrar(String mensaje) {
-                return (String x) -> mensaje + x;
-            }
-            
-            //Se crea metodo que filtra por la longitud de una palabra y las imprime
-            public void filtrar(List<String> lista, Consumer<String> consumidor, int longitud) {
-                //convierte la lista en stream, con el metodo filter se le pasa metodo que establece 
-                //si tiene la longitud correcta, recorre la lista pasando una funcion para que realice una tarea
-                lista.stream().filter(this.estableceLongitudFiltro(longitud)).forEach(consumidor);;
-            }
-            
-            //Se crea metodo que filtra si la palabra esta contenida en la lista
-            public void filtrar(List<String> lista, Consumer<String> consumidor, String cadena) {
-                //convierte la lista en stream, con el metodo filter se le pasa metodo que establece 
-                //si la palabra esta contenida en la lista, recorre la lista pasando una funcion para que realice una tarea
-                lista.stream().filter(this.estableceLongitudFiltro(cadena)).forEach(consumidor);;
-            }
-            
-            public Predicate<String> estableceLongitudFiltro(int longitud){
-                return texto -> texto.length() < longitud;
-            }
-            
-            public Predicate<String> estableceLongitudFiltro(String cadena){
-                return texto -> texto.contains(cadena);
-            }
-
-            public static void main(String[] args) {
-                // TODO Auto-generated method stub
-                FuncAltOrder fao = new FuncAltOrder();
-        //      fao.imprimir(fao.converMay, "elvis Areiza");
-        //      fao.imprimir(fao.converMin, "Elvis Areiza");
-        //      System.out.println(fao.mostrar("Hola ").apply("Elvis"));
-        //      System.out.println();
-                List<String> lista = new ArrayList<String>();
-                lista.add("pru");
-                lista.add("prueba");
-                lista.add("Yalaury");
-                
-        //      fao.filtrar(lista, System.out::println, 7);
-                fao.filtrar(lista,System.out::println, "lau");
-            }
-
-        }
-***********************************************************************************************
-
-
-*****************************************************************************************RxJava
-    Referencias --> https://www.youtube.com/watch?v=dD0vE3GGzDM&list=PLvimn1Ins-419yVe5iPfiXrg4mZJl5kLS&index=16
-                --> https://riptutorial.com/es/rx-java
-    Permite hacer el procesamiento asyncrono de manera legible, basandose en Observables, 
-    Los observables están orientados a gestionar flujos asíncronos.
-
-    RxJava es una implementación Java VM de Extensiones reactivas : una biblioteca para componer 
-    programas asíncronos y basados ​​en eventos mediante el uso de secuencias observables.
-
-    Los conceptos centrales de RxJava son sus Observables y Subscribers . Un Observable emite 
-    objetos, mientras que un Subscriber consume.
-
-    Observable
-
-        Observable es una clase que implementa el patrón de diseño reactivo. Estos Observables 
-        proporcionan métodos que permiten a los consumidores suscribirse a cambios de eventos. 
-        Los cambios de evento son activados por lo observable. No hay restricción en el número 
-        de suscriptores que un Observable puede tener, o el número de objetos que un Observable 
-        puede emitir.
-
-            Tomar como ejemplo:
-
-            Observable<Integer> integerObservable = Observable.just(1, 2, 3); // Integer observable
-            Observable<String> stringObservable = Observable.just("Hello, ", "World", "!"); // String observable
-
-            Aquí, un objeto observable llamado integerObservable y stringObservable se crean 
-            a partir del método de fábrica que just proporcionar la biblioteca Rx. Observe 
-            que Observable es genérico y, por lo tanto, puede emitir cualquier objeto.
-    
-    ***Subscriber
-
-        Un Subscriber es el consumidor. Un Subscriber puede suscribirse a un solo observable. 
-        El Observable llama a los onNext() , onCompleted() y onError() del Subscriber .
-
-            Subscriber<Integer> mSubscriber = new Subscriber<Integer>() {
-                // NOTE THAT ALL THESE ARE CALLED BY THE OBSERVABLE
-                @Override
-                public void onCompleted() {
-                    // called when all objects are emitted
-                    System.out.println("onCompleted called!");
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    // called when an error occurs during emitting objects
-                    System.out.println("onError called!");
-                }
-
-                @Override
-                public void onNext(Integer integer) {
-                    // called for each object that is emitted
-                    System.out.println("onNext called with: " + integer);
-                }
-            };
- 
-        Tenga en cuenta que el Subscriber también es genérico y puede admitir cualquier objeto. 
-        Un Subscriber debe suscribirse al observable llamando al método de subscribe en el observable.
-
-            integerObservable.subscribe(mSubscriber);
- 
-        
-                //notacion lambda
-                public void hello() {
-                      Observable.just("Hello, World!") // create new observable
-                        .subscribe(onNext -> { // subscribe and perform action
-                             System.out.println(onNext);   
-                        });
-                }
-    --------------------------------------------------------------------------------------
-    ***Se descarga Dependencias
-        <dependency>
-            <groupId>io.reactivex</groupId>
-            <artifactId>rxjava</artifactId>
-            <version>1.2.6</version>
-        </dependency>
-
-    --------------------------------------------------------------------------------------
-        public class RxJava {
-
-            private List<Integer> lista1;
-            private List<Integer> lista2;
-            
-            public RxJava() {
-                super();
-                lista1 = new ArrayList<Integer>();
-                lista2 = new ArrayList<Integer>();
-                this.llenarListas();
-            }
-            
-            public void llenarListas() {
-                for (int i = 0; i < 10; i++) {
-                    lista1.add(i);
-                    lista2.add(i);
-                }
-            }
-
-            //busca los numeros indicados
-            public void buscar() {
-                //Se crean los observables para ambas listas
-                Observable<Integer> obs1= Observable.from(lista1);
-                Observable<Integer> obs2= Observable.from(lista2);
-                //Utilizamos el metodo merge, permite unir dos observables para un unico resultado
-            //    Observable.merge(obs1, obs2).subscribe(new Action1<Integer>() {
-            //        public void call(Integer numero) {
-            //            if(numero == 3) {
-            //                System.out.println(numero);
-            //            }
-            //        }
-            //    });
-
-                //con notacion lambda       
-                Observable.merge(obs1, obs2).filter(x->x==5).subscribe(System.out::println);
-            }
-
-
-            public static void main(String[] args) {
-        //      List<String> listaCad= new ArrayList<String>();
-        //      listaCad.add("mito");
-        //      listaCad.add("code");
-        //      listaCad.add("Mito Code");
-        //      
-        //      //Principio basico de rxJava Observable
-        //      //Se apoya en el patron observer
-        //      Observable<String> obs = Observable.from(listaCad); 
-        //      obs.subscribe(new Action1<String>() {
-        //          @Override 
-        //          public void call(String elemento) {
-        //              System.out.println(elemento);
-        //          }
-        //      });
-                
-                RxJava rx= new RxJava();
-                rx.buscar();
-
-            }
-
-        }
-***********************************************************************************************
-
-
-Recursividad
-******************************************************************************Recursion de Java
-    La recursión es la técnica de hacer que una función se llame a sí misma. Esta técnica 
-    proporciona una manera de dividir problemas complicados en problemas simples que son más 
-    fáciles de resolver.
-
-    La recursión puede ser un poco difícil de entender cuando se encuentra por primera vez, 
-    la mejor manera de descubrir cómo funciona es experimentar con ella.
-
-    Condición de detención
-        Así como los bucles pueden encontrarse con el problema del bucle infinito, las funciones 
-        recursivas pueden encontrarse con el problema de la recursión infinita. La recursión 
-        infinita es cuando la función nunca deja de llamarse a sí misma. Cada función recursiva 
-        debe tener una condición de detención, que es la condición donde la función deja de llamarse 
-        a sí misma. En el ejemplo anterior, la condición de detención es cuando el parámetro se 
-        kconvierte en 0.
-    Ejemplo____________________________________________________________________
-         //Use la recursividad para sumar todos los números hasta el k.
-        public static int sumar(int k){
-            if(k>0) {
-                return k+sumar(k-1);
-            }else {
-                return 0;
-            }
-        }
-
-        //Use la recursividad para sumar todos los números entre 5 y 10.
-        public static int sumarEntre(int ini, int fin) {
-            if(fin > ini) {
-                return fin + sumarEntre(ini, fin-1);
-            }else {
-                return 0;
-            }
-        }
-************************************************************************************************
 
 
 Clases Utiles
