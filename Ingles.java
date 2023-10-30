@@ -271,4 +271,37 @@ class 100823*****************************************************
 *****************************************************************
 
 
-projecting history
+class 170823*****************************************************
+	its somebody/someone who shows you around a city or a museum. guide
+	its something which  we use to pay, instead of cash. credit card  
+	its somewhere/a place where people go when they want to send a parcel or a letter. post office
+	its a kind of/sort of fruit. its long and yellow. banana
+	its the opposite of expensive. cheap
+	its like a sweater, but it has buttons. cardigan 
+	its similar to a wallet, but its for a woman. purse
+	its a verb. for example, you do this to the TV when tou´ve finished watching something. turn off
+
+
+	its someone who communicates whith computers through leguages
+*****************************************************************
+
+class speaking 190823********************************************
+	Ways to express opinion  
+	I think ...
+	In my opinion ...  
+	i believe ... 
+	I reckon 
+	from my point of view ... 
+*****************************************************************
+
+
+class 240823*****************************************************
+	At the retaurant 
+		starter 
+		main course 
+		dessert
+*****************************************************************
+
+class 300823*****************************************************
+i sometimes do homework in the night
+*****************************************************************

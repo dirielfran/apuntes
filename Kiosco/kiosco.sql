@@ -636,3 +636,196 @@ SELECT User, Host FROM mysql.user;
 SHOW GRANTS FOR 'alfonso'@'%';
 use db_springboot_backend;
 select * from productos where codigo = 7790310984253;
+
+
+
+# Subir aplicacion angular a servidor nginx
+  Refrencia despliegue de app angular en nginx 
+    --> https://codingpotions.com/clouding-io-despliegue-angular/
+  * Subir contenido de app angular a  --> /var/www/html/kiosco
+
+  Despliegue del back 
+  * Se crea imagen de docker
+    docker build -t kiosco . -f .\KioscoAppSpring\Dockerfile
+  * Se crea el tag de la imagen
+    docker tag kiosco dirielan3/kiosco_app_spring
+  * Se realiza el push de la imagen
+    docker push dirielan3/kiosco_app_spring
+  * Se ejecuta docker-compose en maquina remota
+     sudo docker-compose up --build -d
+
+http://139.144.56.222/KioscoAppSpring/oauth/token
+http://66.228.61.76/KioscoAppSpring/oauth/token
+# Requerimeinto mas de una caja abierta 
+ALTER TABLE `db_springboot_backend`.`cajas` 
+DROP FOREIGN KEY `FK_caja_cliente`;
+ALTER TABLE `db_springboot_backend`.`cajas` 
+DROP INDEX `FK_caja_cliente` ,
+ADD INDEX `FK_caja_cliente_idx` (`cliente_id` ASC);
+;
+ALTER TABLE `db_springboot_backend`.`cajas` 
+ADD CONSTRAINT `FK_caja_cliente`
+  FOREIGN KEY (`cliente_id`)
+  REFERENCES `db_springboot_backend`.`usuarios` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+
+ALTER TABLE `db_springboot_backend`.`facturas` 
+DROP FOREIGN KEY `FK_factura_cliente`;
+ALTER TABLE `db_springboot_backend`.`facturas` 
+;
+ALTER TABLE `db_springboot_backend`.`facturas` RENAME INDEX `FK_factura_cliente` TO `FK_factura_cliente_idx`;
+ALTER TABLE `db_springboot_backend`.`facturas` ALTER INDEX `FK_factura_cliente_idx` VISIBLE;
+ALTER TABLE `db_springboot_backend`.`facturas` 
+ADD CONSTRAINT `FK_factura_cliente`
+  FOREIGN KEY (`cliente_id`)
+  REFERENCES `db_springboot_backend`.`usuarios` (`id`);
+
+
+ALTER TABLE `db_springboot_backend`.`retiroscaja` 
+DROP FOREIGN KEY `FK_retiro_cliente`;
+ALTER TABLE `db_springboot_backend`.`retiroscaja` 
+;
+ALTER TABLE `db_springboot_backend`.`retiroscaja` RENAME INDEX `FK_retiro_cliente` TO `FK_retiro_cliente_idx`;
+ALTER TABLE `db_springboot_backend`.`retiroscaja` ALTER INDEX `FK_retiro_cliente_idx` VISIBLE;
+ALTER TABLE `db_springboot_backend`.`retiroscaja` 
+ADD CONSTRAINT `FK_retiro_cliente`
+  FOREIGN KEY (`cliente_id`)
+  REFERENCES `db_springboot_backend`.`usuarios` (`id`);
+
+
+# Sesarrollo del beneficio
+ALTER TABLE `db_springboot_backend`.`usuarios` 
+ADD COLUMN `benefit` DOUBLE NULL DEFAULT 0 AFTER `username`;
+
+CREATE TABLE `benefit` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `user_update` varchar(45) DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `amount` double DEFAULT '0',
+  `user_id` varchar(45) DEFAULT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+ALTER TABLE `db_springboot_backend`.`benefit` 
+CHANGE COLUMN `user_id` `user_id` BIGINT NULL DEFAULT NULL ;
+
+ALTER TABLE `db_springboot_backend`.`benefit` 
+ADD CONSTRAINT `FK_benefit_user`
+  FOREIGN KEY (`user_id`)
+  REFERENCES `db_springboot_backend`.`usuarios` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+# clean de base de datos
+delete from cajachica where create_at is null;
+delete from cajachica where create_at < '2023-01-01';
+
+delete from itemsfactura_itemsinventario where itemfactura_id in (
+select id from facturas_items where create_at is null);
+select count(*) from itemsfactura_itemsinventario where itemfactura_id in(
+select id from facturas_items where create_at < '2023-01-01'); #140545
+delete from itemsfactura_itemsinventario where itemfactura_id in(
+select id from facturas_items where create_at < '2023-01-01'); #140545
+
+select count(*) from facturas_items where create_at is null; #15599
+delete from facturas_items where create_at is null; #15599
+select count(*) from facturas_items where create_at < '2023-01-01';  #139402
+select * from facturas_items where create_at < '2023-01-01';
+delete from facturas_items where create_at < '2023-01-01';
+
+select count(*) from facturas where create_at is null; # 2
+delete from facturas where create_at is null; # 2
+
+delete from cajachica where factura_id in(
+select id from facturas where create_at < '2023-01-01'); #72
+
+select count(*) from facturas where create_at < '2023-01-01';  #89946
+select * from facturas where create_at < '2023-01-01';
+delete from facturas where create_at < '2023-01-01';
+
+select count(*) from cajas where create_at is null; #271
+delete from cajas where create_at is null;
+select count(*) from cajas where create_at < '2023-01-01'; #1270
+delete from cajas where create_at < '2023-01-01'; #1270
+
+select count(*) from gastos where create_at is null; # 579
+delete from gastos where create_at is null; # 2
+select count(*) from gastos where create_at < '2023-01-01';  #3202
+delete from gastos where create_at < '2023-01-01';
+
+
+select count(*) from itemsperdida_itemsinventario where iteminventario_id in (
+select id from inventarios_items where create_at is null); #186
+delete from itemsperdida_itemsinventario where iteminventario_id in (
+select id from inventarios_items where create_at is null); #186
+
+
+select count(*) from itemsperdida_itemsinventario where iteminventario_id in (
+select id from inventarios_items where create_at < '2023-01-01'); #1576
+delete from itemsperdida_itemsinventario where iteminventario_id in (
+select id from inventarios_items where create_at < '2023-01-01'); #1576
+
+
+select count(*) from perdidas where create_at < '2023-01-01'; #1456
+select * from perdidas where create_at < '2023-01-01';
+delete from perdidas where create_at < '2023-01-01';
+
+select * from inventarios_items where create_at is null;
+select count(*) from inventarios_items where create_at is null; # 1439
+delete from inventarios_items where create_at is null; 
+
+
+select count(*) from itemsfactura_itemsinventario where itemfactura_id in (
+select id from facturas_items where iteminventario_id in (
+select id from inventarios_items where create_at < '2023-01-01')); #838
+
+delete from itemsfactura_itemsinventario where itemfactura_id in (
+select id from facturas_items where iteminventario_id in (
+select id from inventarios_items where create_at < '2023-01-01')); #838
+
+select count(*) from facturas_items where iteminventario_id in (
+select id from inventarios_items where create_at < '2023-01-01'); #773
+
+delete from facturas_items where iteminventario_id in (
+select id from inventarios_items where create_at < '2023-01-01'); #773
+
+
+select count(*) from itemsperdida_itemsinventario where itemperdida_id in ( 
+select id from perdidas where iteminventario_id in (
+select id from inventarios_items where create_at < '2023-01-01')); #8
+
+delete from itemsperdida_itemsinventario where itemperdida_id in ( 
+select id from perdidas where iteminventario_id in (
+select id from inventarios_items where create_at < '2023-01-01')); #8
+
+
+select count(*) from perdidas where iteminventario_id in (
+select id from inventarios_items where create_at < '2023-01-01'); #104
+
+delete from perdidas where iteminventario_id in (
+select id from inventarios_items where create_at < '2023-01-01'); #104
+
+
+select count(*) from itemsfactura_itemsinventario where iteminventario_id in (
+select id from inventarios_items where create_at < '2023-01-01');#8746
+
+delete from itemsfactura_itemsinventario where iteminventario_id in (
+select id from inventarios_items where create_at < '2023-01-01');#8746
+
+
+
+select count(*) from inventarios_items where create_at < '2023-01-01'; #11633 
+select * from inventarios_items where create_at < '2023-01-01';
+delete from inventarios_items where create_at < '2023-01-01';
+
+
+# requirement create spent coordinator
+ALTER TABLE `db_springboot_backend`.`gastos` 
+ADD COLUMN `is_approved` TINYINT(1) NULL DEFAULT 1 AFTER `is_withdrawal`;

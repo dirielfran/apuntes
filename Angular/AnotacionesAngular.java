@@ -18160,7 +18160,7 @@ Complementarios*****************************************************************
 			node -v 
 			npm -v 
 			tsc --version 
-			ng -v --> angular cli 
+			ng -version --> angular cli 
 			npm install -g typescript
 			tsc --version 		
 			npm install -g @angular/cli

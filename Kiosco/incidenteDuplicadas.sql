@@ -1,7 +1,5 @@
-
-**********************************************************************************
-Modificaciones duplicadas
-**********************************************************************************
+/*Duplicadas: 230723 07:14:46
+Se eliminan facturas duplicadas y se modifican saldos de facturas 147871 al 147953*/
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '147871');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '147873');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '147875');
@@ -81,15 +79,18 @@ DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '147950');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '147951');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '147952');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '147953');
-
-
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '147940');
-UPDATE `db_springboot_backend`.`cajachica` SET `saldomp` = '161361.59626710007', `saldopv` = '216625.63999999998', `saldoefectivo` = '1452783.1409885762' WHERE (`id` = '147954');
 
+/*Duplicadas: 230723 07:14:46
+Se realiza update de registro 147954*/
+UPDATE `db_springboot_backend`.`cajachica` SET `saldomp` = '161361.59626710007', `saldopv` = '216625.63999999998', `saldoefectivo` = '1452783.1409885762' WHERE (`id` = '147954');
+/*Duplicadas: 230723 07:14:46
+Se realiza update restando saldos de las duplicadas y diferencias desde 147955 - 147998*/
 update db_springboot_backend.cajachica set saldomp = saldomp-4200, saldopv = saldopv-630, saldoefectivo= saldoefectivo - 78180 where id >= 147955 and id <= 147998;
 
 
-
+/*Duplicadas: 230723 22:22:42
+Se eliminan facturas duplicadas y se modifican saldos de facturas 147999 al 148175*/
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '147999');
 UPDATE `db_springboot_backend`.`cajachica` SET `saldomp` = '168351.59626710007', `saldopv` = '217975.63999999998', `saldoefectivo` = '1496843.5409885761' WHERE (`id` = '148000');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148001');
@@ -218,10 +219,6 @@ DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148123');
 UPDATE `db_springboot_backend`.`cajachica` SET `saldomp` = '170641.59626710007', `saldopv` = '220255.63999999998', `saldoefectivo` = '1549440.9409885763' WHERE (`id` = '148124');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148125');
 UPDATE `db_springboot_backend`.`cajachica` SET `saldomp` = '170641.59626710007', `saldopv` = '220255.63999999998', `saldoefectivo` = '1550370.9409885763' WHERE (`id` = '148126');
-
-
-
-
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148127');
 UPDATE `db_springboot_backend`.`cajachica` SET `saldomp` = '170641.59626710007', `saldopv` = '220255.63999999998', `saldoefectivo` = '1550870.9409885763' WHERE (`id` = '148128');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148129');
@@ -245,11 +242,6 @@ DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148146');
 UPDATE `db_springboot_backend`.`cajachica` SET `saldomp` = '176291.59626710007', `saldopv` = '224458.63999999998', `saldoefectivo` = '1555090.9409885763' WHERE (`id` = '148147');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148148');
 UPDATE `db_springboot_backend`.`cajachica` SET `saldomp` = '176291.59626710007', `saldopv` = '224458.63999999998', `saldoefectivo` = '1556090.9409885763' WHERE (`id` = '148149');
-
-
-
-
-
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148150');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148151');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148152');
@@ -276,17 +268,24 @@ DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148172');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148173');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148174');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148175');
+
+/*Duplicadas: 230723 22:22:42
+Se realiza update de registro 14148176 -148204*/
 UPDATE `db_springboot_backend`.`cajachica` SET `saldomp` = '176731.59626710007', `saldopv` = '225425.63999999998', `saldoefectivo` = '1557431.940988576' WHERE (`id` = '148176');
-
-
 update db_springboot_backend.cajachica set saldomp = saldomp-14600, saldopv = saldopv-5227, saldoefectivo= saldoefectivo - 122429 where id = 148177;
 update db_springboot_backend.cajachica set saldomp = saldomp-14600, saldopv = saldopv-5227, saldoefectivo= saldoefectivo - 122429 where id = 148178;
+
+
+
+/*Duplicadas: 240723 16:04:54
+Se realiza update de registro 14148179 -148204*/
 update db_springboot_backend.cajachica set saldomp = saldomp-14600, saldopv = saldopv-5227, saldoefectivo= saldoefectivo - 122429 where id >= 148179 and id <= 148204;
 
 
 
-
-    DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148205');
+/*Duplicadas: 240723 16:04:54
+Se eliminan facturas duplicadas y se modifican saldos de facturas 148205 al 148369*/
+DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148205');
 UPDATE `db_springboot_backend`.`cajachica` SET `saldomp` = '177461.59626710007', `saldopv` = '157575.63999999998', `saldoefectivo` = '1484104.457601576' WHERE (`id` = '148206');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148207');
 UPDATE `db_springboot_backend`.`cajachica` SET `saldomp` = '177461.59626710007', `saldopv` = '157575.63999999998', `saldoefectivo` = '1484984.457601576' WHERE (`id` = '148208');
@@ -407,15 +406,18 @@ DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148322');
 UPDATE `db_springboot_backend`.`cajachica` SET `saldomp` = '179281.59626710007', `saldopv` = '157575.63999999998', `saldoefectivo` = '1524375.3576015763' WHERE (`id` = '148323');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '148324');
 UPDATE `db_springboot_backend`.`cajachica` SET `saldomp` = '179281.59626710007', `saldopv` = '157575.63999999998', `saldoefectivo` = '1524775.3576015763' WHERE (`id` = '148325');
-
-
-
 delete from cajachica where id >= 148326 and id <=148368;
 UPDATE `db_springboot_backend`.`cajachica` SET `caja_id` = '2200' WHERE (`id` = '148369');
 
+
+/*Duplicadas: 300723 22:19:443
+Se realiza update de registro 148369 -150018*/
 update db_springboot_backend.cajachica set saldomp = saldomp-16918, saldopv = saldopv-11497, saldoefectivo= saldoefectivo - 170538 where id >= 148369 and id <= 148375;
 update db_springboot_backend.cajachica set saldomp = saldomp-16918, saldopv = saldopv-11497, saldoefectivo= saldoefectivo - 170538 where id >= 148376 and id <= 150018;
 
+
+/*Duplicadas: 300723 22:19:443
+Se eliminan facturas duplicadas y se modifican saldos de facturas 150019 al 150117*/
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150019');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150020');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150021');
@@ -516,4 +518,7 @@ DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150115');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150116');
 DELETE FROM `db_springboot_backend`.`cajachica` WHERE (`id` = '150117');
 
+
+/*Duplicadas: 300723 22:19:443
+Se realiza update de registro con la diferencia de saldos desde 150119*/
 update db_springboot_backend.cajachica set saldomp = saldomp-29472, saldopv = saldopv-17497, saldoefectivo= saldoefectivo - 244753 where id >= 150119;
