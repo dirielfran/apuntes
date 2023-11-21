@@ -829,3 +829,166 @@ delete from inventarios_items where create_at < '2023-01-01';
 # requirement create spent coordinator
 ALTER TABLE `db_springboot_backend`.`gastos` 
 ADD COLUMN `is_approved` TINYINT(1) NULL DEFAULT 1 AFTER `is_withdrawal`;
+
+# requerment extra hours  
+CREATE TABLE `extra_hour` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `user_update` varchar(45) DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `justify` varchar(100) DEFAULT NULL,
+  `amount` bigint DEFAULT '0',
+  `date_from` timestamp NULL DEFAULT NULL,
+  `date_to` timestamp NULL DEFAULT NULL,
+  `time_start` timestamp NULL DEFAULT NULL,
+  `time_end` timestamp NULL DEFAULT NULL,
+  `is_approved` TINYINT DEFAULT '0',
+  `user_responsible_id` bigint NOT NULL,
+  `user_owner_id` bigint NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+ALTER TABLE `db_springboot_backend`.`extra_hour` 
+ADD INDEX `FK_extrahour_responsible_idx` (`user_responsible_id` ASC) VISIBLE;
+;
+ALTER TABLE `db_springboot_backend`.`extra_hour` 
+ADD CONSTRAINT `FK_extrahour_responsible`
+  FOREIGN KEY (`user_responsible_id`)
+  REFERENCES `db_springboot_backend`.`usuarios` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+ALTER TABLE `db_springboot_backend`.`extra_hour` 
+ADD INDEX `FK_extrahour_owner_idx` (`user_owner_id` ASC) VISIBLE;
+;
+ALTER TABLE `db_springboot_backend`.`extra_hour` 
+ADD CONSTRAINT `FK_extrahour_owner`
+  FOREIGN KEY (`user_owner_id`)
+  REFERENCES `db_springboot_backend`.`usuarios` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `db_springboot_backend`.`extra_hour` 
+DROP COLUMN `time_end`,
+DROP COLUMN `time_start`;
+
+ALTER TABLE `db_springboot_backend`.`extra_hour` 
+CHANGE COLUMN `is_approved` `state` VARCHAR(45) NOT NULL ;
+
+
+# se agrega saldo de mercancia en la generacion de saldos
+ALTER TABLE `db_springboot_backend`.`saldos` 
+ADD COLUMN `mercancia` DOUBLE NULL DEFAULT 0 AFTER `is_transferencia`;
+
+ALTER TABLE `db_springboot_backend`.`saldos` 
+CHANGE COLUMN `mercancia` `mercancia` DOUBLE NULL DEFAULT '0' AFTER `patrimonio_pesos`;
+
+# Requerimeinto de modulo salary
+ALTER TABLE `db_springboot_backend`.`usuarios` 
+ADD COLUMN `salary` DOUBLE NOT NULL DEFAULT 0 AFTER `benefit`;
+
+# modulo de aumento de sueldo
+CREATE TABLE `increase_user` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `user_update` varchar(45) DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `amount` DOUBLE DEFAULT '0',
+  `type` varchar(45) DEFAULT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+ALTER TABLE `db_springboot_backend`.`increase_user` 
+ADD COLUMN `user_id` BIGINT NOT NULL AFTER `type`;
+
+ALTER TABLE `db_springboot_backend`.`increase_user` 
+ADD COLUMN `salary_old` DOUBLE NOT NULL AFTER `user_id`,
+ADD COLUMN `salary_new` DOUBLE NOT NULL AFTER `salary_old`;
+
+
+CREATE TABLE `pay` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `user_update` varchar(45) DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `user_id` bigint NOT NULL,
+  `type` varchar(45) DEFAULT NULL,
+  `salary_month` DOUBLE DEFAULT '0',
+  `salary_pay` DOUBLE DEFAULT '0',
+  `discount` DOUBLE DEFAULT '0',
+  `extra_hours` DOUBLE DEFAULT '0',
+  `total_pay` DOUBLE DEFAULT '0',
+  `start` timestamp NULL DEFAULT NULL,
+  `end` timestamp NULL DEFAULT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `db_springboot_backend`.`pay` 
+ADD INDEX `FK_pay_user_idx` (`user_id` ASC) VISIBLE;
+;
+ALTER TABLE `db_springboot_backend`.`pay` 
+ADD CONSTRAINT `FK_pay_user`
+  FOREIGN KEY (`user_id`)
+  REFERENCES `db_springboot_backend`.`usuarios` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `db_springboot_backend`.`increase_user` 
+ADD INDEX `FK_increase_user_idx` (`user_id` ASC) VISIBLE;
+;
+ALTER TABLE `db_springboot_backend`.`increase_user` 
+ADD CONSTRAINT `FK_increase_user`
+  FOREIGN KEY (`user_id`)
+  REFERENCES `db_springboot_backend`.`usuarios` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+ALTER TABLE `db_springboot_backend`.`cajachica` 
+ADD COLUMN `pay_id` BIGINT NULL AFTER `tasa`;
+
+ALTER TABLE `db_springboot_backend`.`cajachica` 
+ADD INDEX `FKCaja_pay_idx` (`pay_id` ASC) VISIBLE;
+;
+ALTER TABLE `db_springboot_backend`.`cajachica` 
+ADD CONSTRAINT `FKCaja_pay`
+  FOREIGN KEY (`pay_id`)
+  REFERENCES `db_springboot_backend`.`pay` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+  ALTER TABLE `db_springboot_backend`.`pay` 
+CHANGE COLUMN `amount_holidays` `amount_holidays` INT NULL DEFAULT '0' AFTER `extra_hours`,
+CHANGE COLUMN `salary_holidays` `salary_holidays` DOUBLE NULL DEFAULT '0' AFTER `amount_holidays`;
+
+
+
+  ALTER TABLE `db_springboot_backend`.`gastos` 
+ADD COLUMN `spent_id` BIGINT NULL DEFAULT NULL AFTER `is_approved`,
+ADD INDEX `FK_spent_pay_idx` (`spent_id` ASC) VISIBLE;
+;
+ALTER TABLE `db_springboot_backend`.`gastos` 
+ADD CONSTRAINT `FK_spent_pay`
+  FOREIGN KEY (`spent_id`)
+  REFERENCES `db_springboot_backend`.`pay` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+# Se agregan dias feriados al pago
+ALTER TABLE `db_springboot_backend`.`pay` 
+ADD COLUMN `amount_holidays` INT NULL DEFAULT 0 AFTER `end`;
+
+
+ALTER TABLE `db_springboot_backend`.`pay` 
+ADD COLUMN `salary_holidays` DOUBLE NULL DEFAULT 0 AFTER `amount_holidays`;
+
+

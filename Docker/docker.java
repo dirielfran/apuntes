@@ -2518,25 +2518,33 @@
 ****************************************************************************************************************************************
 
 Puesta en produccion de Lima************************************************************************************************************
-	* Se pone a correr Docker   
+	* Se realiza merge parado en sede lima/irigoyen, se traen datos desde develop (back y front)
+	* Se pone a correr Docker 
+	
+	Despliegue del back 
+	* Se crea imagen de docker parado en workspace
+		- docker build -t ccs_coffee . -f .\KioscoAppSpring\Dockerfile
+		- docker build -t mas58kiosco2 . -f .\KioscoAppSpring\Dockerfile
+	* Se crea el tag de la imagen
+		docker tag ccs_coffee dirielan3/kiosco_app_spring
+		docker tag mas58kiosco2 dirielan3/kiosco_app_free 
+	* Se realiza el push de la imagen
+		docker push dirielan3/kiosco_app_spring
+		docker push dirielan3/kiosco_app_free
+	* Se ejecuta docker-compose en maquina remota
+		sudo docker-compose pull
+		sudo docker-compose up --build -d
+
+    * Ver logs --> docker logs -f  KioscoAppSpring  
 	* Por FilleZilla se ingresa al servidor 
 		linode2 --> root    --> Danger16225262
 	    ip      -->139.144.56.222
-	    * Se ingresa a la carpeta --> var/www/html/kiosco  
+	    * Se ingresa a la carpeta --> var/www/html/kiosco 
+	    	* Se crea backup de los fuentes 
+	    	* Se eliminan 
 	    	* Se modifican los archivos del frontcd 
 
-	  Despliegue del back 
-	  * Se crea imagen de docker
-	    docker build -t kiosco . -f .\KioscoAppSpring\Dockerfile
-	  * Se crea el tag de la imagen
-	    docker tag kiosco dirielan3/kiosco_app_spring
-	  * Se realiza el push de la imagen
-	    docker push dirielan3/kiosco_app_spring
-	  * Se ejecuta docker-compose en maquina remota
-	  	sudo docker-compose pull
-	    sudo docker-compose up --build -d
 
-    * Ver logs --> docker logs -f  KioscoAppSpring
 
 
    * Instalacion************************************************************************************************************************

@@ -333,7 +333,7 @@ Definiciones********************************************************************
 	 eliminadas para cada uno de ellos, y un resumen de toda esta información.
 *********************************************************************************
 
-************************************************Estadisticas de cada confirmacion --> git log --pretty=online/short/fuller
+************************************************Estadisticas de cada confirmacion --> git log --pretty=oneline/short/fuller
 	Otra opción realmente útil es --pretty, que modifica el formato de la salida. 
 	Tienes unos cuantos estilos disponibles. La opción oneline imprime cada confirmación 
 	en una única línea, lo que puede resultar útil si estás analizando gran cantidad de 

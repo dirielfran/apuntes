@@ -211,3 +211,42 @@ select id, user, create_at, REPLACE(saldomp, '.', ',') as saldomp, REPLACE(saldo
 REPLACE(saldoefectivo, '.', ',') as saldoefectivo, REPLACE(saldodollar, '.', ',') as saldodollar, REPLACE(monto, '.', ',') as monto, factura_id, gasto_id, caja_id, transferencia 
 from cajachica 
 where id > 169315;
+
+
+# Validar facturas
+select f.id, f.user, f.create_at, f.deleted, f.descripcion, f.total, f.costo, f.is_credito, f.is_aprobada, fi.id, fi.cantidad, fi.precio, fi.total, fi.factura_id, p.nombre
+from facturas f
+inner join facturas_items fi on f.id = fi.factura_id
+inner join productos p on p.id = fi.producto_id
+where f.id > 163250 and f.id < 163324 order by f.id desc;
+
+# buscar facturas_items con el nombre de los productos
+select * from facturas_items fi inner join productos p on p.id = fi.producto_id where fi.factura_id in (161156, 161167, 161169);
+
+
+
+
+# existencia de productos diferentes a existencia en inventarios items
+
+update productos p set p.existencia = (select sum(existencia) from inventarios_items ii where ii.producto_id = p.id and ii.estado = 'Activo')
+where p.existencia <> (select sum(existencia) 
+                        from inventarios_items ii 
+                        where ii.producto_id = p.id 
+                        and ii.estado = 'Activo');
+                        
+                        select p.id,p.codigo, p.nombre, p.existencia, (select sum(existencia) from inventarios_items ii where ii.producto_id = p.id and ii.estado = 'Activo') ep
+from productos p 
+where deleted <> 1
+and p.existencia <> (select sum(existencia) 
+                        from inventarios_items ii 
+                        where ii.producto_id = p.id 
+                        and ii.estado = 'Activo');
+
+# Consulta de facturas por fecha y hora 
+select sum(total) from facturas
+where create_at > '2023-11-12 07:00:00'
+and create_at < '2023-11-12 15:00:00';
+
+select * from facturas
+where create_at > '2023-11-12 07:00:00'
+and create_at < '2023-11-12 15:00:00';
