@@ -543,4 +543,49 @@ LEFT JOIN (
 ) AS ventas ON gastos.mes = ventas.mes;
 
 
+# todos los gastos del mes
+
+SELECT g.id, g.user, g.create_at, REPLACE(monto_pesos, '.', ',') as monto, descripcion, clasificacion, metodopago, e.name 
+FROM db_springboot_backend.gastos g
+left join expense_type e on g.spent_id = e.id
+where    MONTH(g.create_at) = 3
+    AND YEAR(g.create_at) = 2024;
+  
+
+
+# gastos por tipo
+
+SELECT sum(monto_pesos), e.name 
+FROM db_springboot_backend.gastos g
+left join expense_type e on g.spent_id = e.id
+where    MONTH(g.create_at) = 4
+    AND YEAR(g.create_at) = 2024
+    and e.name is not null
+group by e.id
+union all
+SELECT sum(salary_pay+extra_hours+salary_holidays ), u.nombre 
+FROM  pay p 
+inner join usuarios u on p.user_id = u.id
+where    MONTH(p.create_at) = 4
+    AND YEAR(p.create_at) = 2024
+group by p.user_id
+union all
+select sum(monto_pesos), 'Inventario' from gastos g where clasificacion = 'Inventario'
+and    MONTH(g.create_at) = 4
+    AND YEAR(g.create_at) = 2024
+union all
+select sum(monto_pesos), 'Beneficio' from gastos g where descripcion like '%Beneficio%'
+and    MONTH(g.create_at) = 4
+    AND YEAR(g.create_at) = 2024;
+
+
+# gastos por tipo de gasto
+SELECT * 
+FROM db_springboot_backend.gastos g
+left join expense_type e on g.spent_id = e.id
+where    MONTH(g.create_at) = 4
+    AND YEAR(g.create_at) = 2024
+    and e.name = 'Mantenimiento y reparaciones';
+
+
 
