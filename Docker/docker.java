@@ -1007,7 +1007,7 @@
 							* iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')): 
 							Esta parte del comando descarga y ejecuta el script de instalación de Chocolatey desde la 
 							URL proporcionada. El comando iex ejecuta el contenido descargado como un script.
-						* Se prueba install --> choco -?  --> Chocolatey v1.2.0
+						* Se prueba install --> choco -v  --> Chocolatey v1.2.0
 					* Se instala kubernetes-cli por medio de chocolate 
 						choco install kubernetes-cli
 						kubectl version --client  --> Kustomize Version: v5.0.1
@@ -1652,7 +1652,7 @@
 				* Se aplica el configMap 
 					--> kubectl apply -f .\configMap.yaml
 				* Se aplica deplyment de kioscoApp 
-					--> kubectl apply -f .\deployment-kioscoapp.yam 
+					--> kubectl apply -f .\deployment-kioscoapp.yaml
 				* Se aplica deplyment de kioscoApp 
 					--> kubectl apply -f .\deployment-mysql.yaml 
 				* Se valida el configmap 
@@ -2326,7 +2326,7 @@
 							<artifactId>curso-kubernetes</artifactId>
 							<version>1.0-SNAPSHOT</version>
 						</parent>  
-					* Se modifica version de spring cloud  ala misma de los demas microservicios   
+					* Se modifica version de spring cloud  a la misma de los demas microservicios   
 						<properties>
 							<java.version>17</java.version>
 							<spring-cloud.version>2021.0.1</spring-cloud.version>
@@ -2347,7 +2347,176 @@
 					@EnableDiscoveryClient	
 			*******************************************************************************************
 			167. Configurando rutas de msvcs en Gateway y Dockerizando*********************************
-				
+				* En el proyecto gateway, se crea en resources el archivo application.yml 
+					spring:
+					  cloud:
+					    gateway:
+					      routes:
+					        - id: msvc-cursos
+					          uri: lb://msvc-cursos
+					          predicates:
+					            - Path=/api/cursos/**
+					          filters:
+					            -StripPrefix=2
+					        - id: msvc-usuarios
+					          uri: lb://msvc-usuarios
+					          predicates:
+					            - Path=/api/usuarios/**   -->(para que no quede comentado) **/
+					          filters:
+					            -StripPrefix=2
+
+					Nota: se puede hacer tambien en el application.properties  
+						spring.cloud.gateway.routes[0].id=msvc-cursos
+						spring.cloud.gateway.routes[0].uri=lb://msvc-cursos
+						spring.cloud.gateway.routes[0].predicates=Path=/api/cursos/**  --> **/
+						spring.cloud.gateway.routes[0].filters=StripPrefix=2
+
+						spring.cloud.gateway.routes[1].id=msvc-usuarios
+						spring.cloud.gateway.routes[1].uri=lb://msvc-usuarios
+						spring.cloud.gateway.routes[1].predicates=Path=/api/usuarios/**   --> **/
+						spring.cloud.gateway.routes[1].filters=StripPrefix=2
+
+				* Se copia dockerfile de raiz de ms-cursos en raiz de ms-gateway y se realizan modificaciones 
+					FROM openjdk:17-jdk-alpine as builder
+
+					WORKDIR /app/msvc-gateway
+
+					COPY ./pom.xml /app
+					COPY ./msvc-gateway/.mvn ./.mvn
+					COPY ./msvc-gateway/mvnw .
+					COPY ./msvc-gateway/pom.xml .
+
+					#RUN ./mvnw clean package -Dmaven.test.skip -Dmaven.main.skip -Dspring-boot.repackage.skip && rm -r ./target/
+					RUN ./mvnw dependency:go-offline
+					COPY ./msvc-gateway/src ./src
+
+					RUN ./mvnw clean package -DskipTests
+
+					FROM openjdk:17-jdk-alpine
+
+					#ARG MSVC_NAME
+
+					WORKDIR /app
+
+					RUN mkdir ./logs
+
+					#ARG TARGET_FOLDER=/app/$MSVC_NAME/target
+					#COPY --from=builder $TARGET_FOLDER/msvc-gateway-0.0.1-SNAPSHOT.jar .
+					COPY --from=builder /app/msvc-gateway/target/msvc-gateway-0.0.1-SNAPSHOT.jar .
+					#ARG PORT_APP=8090
+					#ENV PORT $PORT_APP
+					#EXPOSE $PORT
+					EXPOSE 8090
+					#CMD sleep 20 && java -jar msvc-usuarios-0.0.1-SNAPSHOT.jar
+					CMD ["java", "-jar", "msvc-gateway-0.0.1-SNAPSHOT.jar"]
+
+					* Se crea repositorio en github para gateway 
+					* Se construye la imagen 
+						docker build -t gateway . -f .\msvc-gateway\Dockerfile 
+
+						* docker tag: Este es el comando de Docker utilizado para etiquetar una imagen.
+						* gateway: Este es el nombre de la imagen de Docker existente que deseas etiquetar.
+						* dirielan3/gateway:latest: Esta es la nueva etiqueta que estás asignando a la imagen. 
+						Sigue el formato <repositorio>/<nombre-de-la-imagen>:<etiqueta>. 
+						En este caso, el repositorio es dirielan3, el nombre de la imagen es gateway 
+						y la etiqueta es latest.
+					* Se etiqueta una imagen de Docker
+						docker tag gateway dirielan3/gateway:latest
+					* Se pushea la imagen en el repositorio remoto  
+						docker push dirielan3/gateway:latest 
+			*******************************************************************************************
+			169. Escribiendo Deployment y Service de Gateway y probando en Postman*********************
+				* Se describe un Deployment que ejecuta un contenedor llamado msvc-gateway usando la 
+				imagen dirielan3/gateway:latest y expone el puerto 8090.
+					* Se crea en la raiz del proyecto file --> gateway.yml  
+
+					apiVersion: apps/v1
+					kind: Deployment
+					metadata:
+					  name: msvc-gateway
+					spec:
+					  replicas: 1
+					  selector:
+					    matchLabels:
+					      role: msvc-gateway
+					  template:
+					    metadata:
+					      labels:
+					        role: msvc-gateway
+					    spec:
+					      containers:
+					        - name: msvc-gateway
+					          image: dirielan3/gateway:latest
+					          ports:
+					            - containerPort: 8090
+
+
+					Descripcion de lineas  
+						* apiVersion: Indica la versión de la API de Kubernetes que se utilizará.
+							apps/v1: En este caso, estás utilizando la versión 1 de la API de aplicaciones de Kubernetes.
+						* kind: Especifica el tipo de recurso de Kubernetes que estás creando.
+							Deployment: En este caso, estás creando un objeto de tipo Deployment, que se utiliza para gestionar despliegues de aplicaciones.
+						* metadata: Contiene información adicional sobre el recurso, como el nombre, las etiquetas, etc.
+							name: Especifica el nombre del recurso.
+								msvc-gateway: En este caso, el nombre del Deployment es "msvc-gateway".
+						* spec: Define las especificaciones del recurso, en este caso, del Deployment.
+							replicas: Indica el número deseado de réplicas del conjunto de pods manejado por este Deployment.
+								1: En este caso, se especifica que se quiere mantener una réplica del conjunto de pods.
+						* selector: Define cómo se seleccionan los pods que serán gestionados por este Deployment.
+							matchLabels: Indica que los pods deben tener ciertas etiquetas para ser seleccionados.
+								role: msvc-gateway: Especifica que los pods deben tener la etiqueta "role" con el valor "msvc-gateway".
+						* template: Contiene una plantilla que se utiliza para crear nuevos pods.
+							metadata: Define las etiquetas para el pod creado a partir de esta plantilla.
+								labels: Asigna la etiqueta "role: msvc-gateway" al pod.
+							spec: Define las especificaciones del pod.
+								containers: Lista los contenedores que se ejecutarán en el pod.
+									- name: msvc-gateway: Asigna el nombre "msvc-gateway" al contenedor.
+									image: dirielan3/gateway:latest: Especifica la imagen del contenedor que se utilizará.
+									ports: Define los puertos que se expondrán en el contenedor.
+										- containerPort: 8090: Indica que el contenedor expondrá el puerto 8090.
+
+					En resumen, este manifiesto describe un Deployment llamado "msvc-gateway" que mantiene 
+					una réplica de un conjunto de pods. Cada pod tiene un contenedor llamado "msvc-gateway" 
+					que utiliza la imagen "dirielan3/gateway:latest" y expone el puerto 8090. Los pods son 
+					seleccionados mediante la etiqueta "role: msvc-gateway"
+				* Se describe el servicio 
+					apiVersion: v1
+					kind: Service
+					metadata: 
+					  name: msvc-gateway
+					spec: 
+					  type: LoadBalancer 
+					  ports: 
+					    - protocol: TCP
+					      port: 8090
+					      targetPort: 8090
+					  selector:
+					    role: msvc-gateway
+
+					Resumen:
+						* apiVersion: Indica la versión de la API de Kubernetes que se está utilizando.
+							v1: En este caso, estás utilizando la versión 1 de la API de Kubernetes.
+						* kind: Especifica el tipo de recurso de Kubernetes que estás creando.
+							Service: En este caso, estás creando un objeto de tipo Service, que se 
+							utiliza para exponer aplicaciones en una red interna o externa.
+						* metadata: Contiene información adicional sobre el recurso, como el nombre, las etiquetas, etc.
+							name: Especifica el nombre del recurso.
+								msvc-gateway: En este caso, el nombre del Service es "msvc-gateway".
+						* spec: Define las especificaciones del recurso, en este caso, del Service.
+							type: Indica el tipo de Service que se está creando.
+								LoadBalancer: En este caso, estás creando un Service del tipo LoadBalancer. 
+								Esto permite que el servicio sea accesible desde fuera del clúster a través de un balanceador de carga.
+							ports: Define los puertos que se expondrán a través del Service.
+								- protocol: TCP: Indica que el protocolo utilizado es TCP.
+								port: 8090: Especifica el puerto en el que estará disponible el Service externamente.
+								targetPort: 8090: Indica el puerto en el que el Service dirigirá el tráfico dentro del clúster.
+							selector: Especifica cómo el Service encuentra los pods a los que dirigir el tráfico.
+								role: msvc-gateway: Indica que el Service dirigirá el tráfico a los pods que tengan la etiqueta "role: msvc-gateway"
+
+					En resumen, este manifiesto describe un Service llamado "msvc-gateway" que utiliza 
+					el tipo LoadBalancer y dirige el tráfico al puerto 8090 de los pods que tienen la 
+					etiqueta "role: msvc-gateway". Este Service permite exponer la aplicación fuera del 
+					clúster de Kubernetes y redirigir el tráfico a los pods correspondientes.
 			*******************************************************************************************
 		***********************************************************************************************
 	***************************************************************************************************
@@ -2374,6 +2543,8 @@
 		* Eliminar imagenes 
 			--> docker rmi, docker images prune
 			--> docker rmi 06199f47c0dc 47090b710122 e987ce964b7c
+		* Eliminar imagenes que no se esten utilizando 
+			--> docker images -q | grep -v "$(docker ps -q | xargs docker inspect --format='{{.Image}}' | sort -u)" | xargs docker rmi
 		* Analizar imagenes 
 			--> docker inspect 
 		* Nombrar contenedor 
@@ -2523,12 +2694,15 @@ Puesta en produccion de Lima****************************************************
 	
 	Despliegue del back 
 	* Se crea imagen de docker parado en workspace
+		- docker build -t kiosco_58 . -f .\KioscoAppSpring\Dockerfile
 		- docker build -t ccs_coffee . -f .\KioscoAppSpring\Dockerfile
 		- docker build -t mas58kiosco2 . -f .\KioscoAppSpring\Dockerfile
 	* Se crea el tag de la imagen
+		docker tag kiosco_58 dirielan3/kiosco_app_spring_58
 		docker tag ccs_coffee dirielan3/kiosco_app_spring
 		docker tag mas58kiosco2 dirielan3/kiosco_app_free 
 	* Se realiza el push de la imagen
+		docker push dirielan3/kiosco_app_spring_58
 		docker push dirielan3/kiosco_app_spring
 		docker push dirielan3/kiosco_app_free
 	* Se ejecuta docker-compose en maquina remota

@@ -138,11 +138,117 @@ ADD COLUMN `is_promocion` TINYINT(1) NULL DEFAULT 0 AFTER `consignacion`;
 
 # Requerimiento de cuadre de caja
 ALTER TABLE `db_springboot_backend`.`cajas` 
-ADD COLUMN `is_cuadre` BIT(1) NULL DEFAULT b'0' AFTER `ganancia`;
+ADD COLUMN `is_cuadre` BIGINT(1) NULL DEFAULT AFTER `ganancia`;
 
-ALTER TABLE `db_springboot_backend`.`cajas` 
-CHANGE COLUMN `is_cuadre` `is_cuadre` BIGINT(1) NULL DEFAULT 0 ;
+ALTER TABLE `db_springboot_backend`.`account` 
+ADD COLUMN `code_bd` VARCHAR(45) NULL AFTER `code`;
 
+UPDATE `db_springboot_backend`.`account` SET `code_bd` = 'saldomp' WHERE (`id` = '1');
+UPDATE `db_springboot_backend`.`account` SET `code_bd` = 'saldoefectivopy' WHERE (`id` = '4');
+UPDATE `db_springboot_backend`.`account` SET `code_bd` = 'saldopy' WHERE (`id` = '2');
+UPDATE `db_springboot_backend`.`account` SET `code_bd` = 'saldopv' WHERE (`id` = '3');
+UPDATE `db_springboot_backend`.`account` SET `code_bd` = 'saldoefectivo' WHERE (`id` = '5');
+UPDATE `db_springboot_backend`.`account` SET `code_bd` = 'saldoDolar' WHERE (`id` = '6');
+
+ALTER TABLE `db_springboot_backend`.`account` 
+ADD COLUMN `account_color` VARCHAR(45) NULL AFTER `code_bd`;
+
+UPDATE `db_springboot_backend`.`account` SET `account_color` = 'blue' WHERE (`id` = '1');
+UPDATE `db_springboot_backend`.`account` SET `account_color` = 'red' WHERE (`id` = '2');
+UPDATE `db_springboot_backend`.`account` SET `account_color` = 'purple' WHERE (`id` = '3');
+UPDATE `db_springboot_backend`.`account` SET `account_color` = 'yellow' WHERE (`id` = '4');
+UPDATE `db_springboot_backend`.`account` SET `account_color` = 'green' WHERE (`id` = '5');
+UPDATE `db_springboot_backend`.`account` SET `account_color` = 'rose' WHERE (`id` = '6');
+
+CREATE TABLE `sub_account` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `user_update` VARCHAR(45) NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `name` VARCHAR(100) NOT NULL,
+  `balance` DOUBLE NOT NULL DEFAULT 0,
+  `description` varchar(255) DEFAULT NULL,
+  `account_id` bigint DEFAULT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+INSERT INTO `db_springboot_backend`.`sub_account` (`user`, `deleted`, `name`,`balance`, `description`, `account_id`) VALUES ('admin', '0', 'caja_negra', 0, 'Caja Negra', '5');
+INSERT INTO `db_springboot_backend`.`sub_account` (`user`, `deleted`, `name`,`balance`, `description`, `account_id`) VALUES ('admin', '0', 'caja_roja',0, 'Caja Roja', '5');
+
+
+CREATE TABLE `diary` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,  
+  `user_update` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `egress` double DEFAULT '0',
+  `entry` double DEFAULT '0',
+  `ìs_system` TINYINT DEFAULT '0',
+  `ìs_real` TINYINT DEFAULT '0',
+  `description` varchar(255) DEFAULT NULL,
+  `transfer_id` bigint DEFAULT NULL,
+  `spent_id` bigint DEFAULT NULL,
+  `pay_id` bigint DEFAULT NULL,
+  `box_id` bigint DEFAULT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `db_springboot_backend`.`retiroscaja` 
+ADD COLUMN `spent_id` BIGINT NULL AFTER `cliente_id`;
+
+
+
+CREATE TABLE `spent_pending` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,  
+  `user_update` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `description` varchar(255) DEFAULT NULL,
+  `method_pay` varchar(45) DEFAULT NULL,
+  `amount` double default 0,  
+  `spent_id` bigint DEFAULT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+ALTER TABLE `db_springboot_backend`.`spent_pending` 
+ADD INDEX `FK_spent_pending_idx` (`spent_id` ASC) VISIBLE;
+;
+ALTER TABLE `db_springboot_backend`.`spent_pending` 
+ADD CONSTRAINT `FK_spent_pending`
+  FOREIGN KEY (`spent_id`)
+  REFERENCES `db_springboot_backend`.`gastos` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `db_springboot_backend`.`spent_pending` 
+ADD UNIQUE INDEX `spent_id_UNIQUE` (`spent_id` ASC) VISIBLE;
+;
+
+
+CREATE TABLE `credit_note` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,  
+  `user_update` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `description` varchar(255) DEFAULT NULL,
+  `method_pay` varchar(45) DEFAULT NULL,
+  `amount` double default 0,  
+  `invoice_id` bigint DEFAULT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+ALTER TABLE `db_springboot_backend`.`retiroscaja` 
+ADD UNIQUE INDEX `spent_id_UNIQUE` (`spent_id` ASC) VISIBLE;
+;
 
 
 # Facturas al credito
@@ -886,6 +992,10 @@ ADD COLUMN `mercancia` DOUBLE NULL DEFAULT 0 AFTER `is_transferencia`;
 ALTER TABLE `db_springboot_backend`.`saldos` 
 CHANGE COLUMN `mercancia` `mercancia` DOUBLE NULL DEFAULT '0' AFTER `patrimonio_pesos`;
 
+
+
+
+
 # Requerimeinto de modulo salary
 ALTER TABLE `db_springboot_backend`.`usuarios` 
 ADD COLUMN `salary` DOUBLE NOT NULL DEFAULT 0 AFTER `benefit`;
@@ -955,29 +1065,15 @@ ADD CONSTRAINT `FK_increase_user`
 ALTER TABLE `db_springboot_backend`.`cajachica` 
 ADD COLUMN `pay_id` BIGINT NULL AFTER `tasa`;
 
-ALTER TABLE `db_springboot_backend`.`cajachica` 
-ADD INDEX `FKCaja_pay_idx` (`pay_id` ASC) VISIBLE;
-;
-ALTER TABLE `db_springboot_backend`.`cajachica` 
-ADD CONSTRAINT `FKCaja_pay`
-  FOREIGN KEY (`pay_id`)
-  REFERENCES `db_springboot_backend`.`pay` (`id`)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION;
-
-  ALTER TABLE `db_springboot_backend`.`pay` 
-CHANGE COLUMN `amount_holidays` `amount_holidays` INT NULL DEFAULT '0' AFTER `extra_hours`,
-CHANGE COLUMN `salary_holidays` `salary_holidays` DOUBLE NULL DEFAULT '0' AFTER `amount_holidays`;
-
 
 
   ALTER TABLE `db_springboot_backend`.`gastos` 
-ADD COLUMN `spent_id` BIGINT NULL DEFAULT NULL AFTER `is_approved`,
-ADD INDEX `FK_spent_pay_idx` (`spent_id` ASC) VISIBLE;
+ADD COLUMN `pay_id` BIGINT NULL DEFAULT NULL AFTER `is_approved`,
+ADD INDEX `FK_spent_pay_idx` (`pay_id` ASC) VISIBLE;
 ;
 ALTER TABLE `db_springboot_backend`.`gastos` 
 ADD CONSTRAINT `FK_spent_pay`
-  FOREIGN KEY (`spent_id`)
+  FOREIGN KEY (`pay_id`)
   REFERENCES `db_springboot_backend`.`pay` (`id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
@@ -991,4 +1087,173 @@ ADD COLUMN `amount_holidays` INT NULL DEFAULT 0 AFTER `end`;
 ALTER TABLE `db_springboot_backend`.`pay` 
 ADD COLUMN `salary_holidays` DOUBLE NULL DEFAULT 0 AFTER `amount_holidays`;
 
+  ALTER TABLE `db_springboot_backend`.`pay` 
+CHANGE COLUMN `amount_holidays` `amount_holidays` INT NULL DEFAULT '0' AFTER `extra_hours`,
+CHANGE COLUMN `salary_holidays` `salary_holidays` DOUBLE NULL DEFAULT '0' AFTER `amount_holidays`;
 
+
+
+
+
+
+
+
+# se agrega relacion entre horas extras y pagos de sueldo  
+  ALTER TABLE `db_springboot_backend`.`extra_hour` 
+ADD COLUMN `pay_id` BIGINT NULL DEFAULT NULL AFTER `user_owner_id`,
+ADD INDEX `FK_extrahour_pay_idx` (`pay_id` ASC) VISIBLE;
+;
+ALTER TABLE `db_springboot_backend`.`extra_hour` 
+ADD CONSTRAINT `FK_extrahour_pay`
+  FOREIGN KEY (`pay_id`)
+  REFERENCES `db_springboot_backend`.`pay` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `db_springboot_backend`.`gastos` 
+DROP FOREIGN KEY `FK_spent_pay`;
+ALTER TABLE `db_springboot_backend`.`gastos` 
+CHANGE COLUMN `spent_id` `pay_id` BIGINT NULL DEFAULT NULL ;
+ALTER TABLE `db_springboot_backend`.`gastos` 
+ADD CONSTRAINT `FK_spent_pay`
+  FOREIGN KEY (`pay_id`)
+  REFERENCES `db_springboot_backend`.`pay` (`id`);
+
+ALTER TABLE `db_springboot_backend`.`cajachica` 
+DROP FOREIGN KEY `FKgastocaja`,
+DROP FOREIGN KEY `FKCaja_pay`;
+ALTER TABLE `db_springboot_backend`.`cajachica` 
+DROP INDEX `FKCaja_pay` ,
+DROP INDEX `FKgasto` ;
+;
+
+
+
+  ALTER TABLE `db_springboot_backend`.`cajachica` 
+ADD COLUMN `type` VARCHAR(45) NULL DEFAULT NULL AFTER `pay_id`;
+
+
+ALTER TABLE `db_springboot_backend`.`cajachica` 
+ADD COLUMN `factura_revert_id` BIGINT NULL DEFAULT NULL AFTER `pay_id`;
+
+
+
+# facturar productos sin inventario
+ALTER TABLE `db_springboot_backend`.`productos` 
+ADD COLUMN `is_inventory` TINYINT NULL DEFAULT '1' AFTER `group_id`;
+
+
+
+
+# prefactura (Ya estan listas en lima)
+INSERT INTO `db_springboot_backend`.`roles` (`nombre`) VALUES ('ROLE_COFFEE');
+INSERT INTO `db_springboot_backend`.`usuarios_roles` (`usuario_id`, `role_id`) VALUES ('16', '4');
+
+ALTER TABLE `db_springboot_backend`.`facturas` 
+ADD COLUMN `pre_invoice` TIMESTAMP NULL DEFAULT NULL AFTER `usu_aprob_id`,
+ADD COLUMN `pre_invoice_executed` TIMESTAMP NULL DEFAULT NULL AFTER `pre_invoice`;
+
+ALTER TABLE `db_springboot_backend`.`facturas` 
+ADD COLUMN `name` VARCHAR(255) NULL DEFAULT NULL AFTER `pre_invoice_executed`;
+
+
+
+Realizar backup de la base de dato desde el servidos ubuntu*********************************
+  * Se entra en el contenedor de mysql8 
+     docker exec -it cc78e1f9b3b7 bash
+     mysqldump -u root -p db_springboot_backend > prodCerrito290324.sql
+  * Se sale del contenedor con --> exit 
+  * Se pasa el backup al root del servidor ubuntu 
+    docker cp mysql8:prodCerrito290324.sql /root/prodCerrito290324.sql
+
+********************************************************************************************
+
+
+# pedidos Ya 
+UPDATE `db_springboot_backend`.`comisiones` SET `tipo` = 'PY' WHERE (`id` = '3');
+UPDATE `db_springboot_backend`.`comisiones` SET `tipo` = 'Efectivo PY', `code` = 'PYE' WHERE (`id` = '4');
+
+ALTER TABLE `db_springboot_backend`.`account` 
+ADD COLUMN `code` VARCHAR(45) NOT NULL DEFAULT 'C' AFTER `description`;
+
+UPDATE `db_springboot_backend`.`account` SET `code` = 'MP' WHERE (`id` = '1');
+UPDATE `db_springboot_backend`.`account` SET `code` = 'PY' WHERE (`id` = '2');
+UPDATE `db_springboot_backend`.`account` SET `code` = 'PV' WHERE (`id` = '3');
+UPDATE `db_springboot_backend`.`account` SET `code` = 'PYE' WHERE (`id` = '4');
+UPDATE `db_springboot_backend`.`account` SET `code` = 'EF' WHERE (`id` = '5');
+UPDATE `db_springboot_backend`.`account` SET `code` = 'D' WHERE (`id` = '6');
+
+
+# se agrega items_promo a la persistencia (**)
+
+CREATE TABLE `promotions_invoices` (
+  `promotion_id` bigint NOT NULL,
+  `invoice_id` bigint NOT NULL,
+  UNIQUE KEY `UKitems` (`promotion_id`,`invoice_id`),
+  KEY `FKiteminventario` (`invoice_id`),
+  CONSTRAINT `FKinvoices_promotion` FOREIGN KEY (`invoice_id`) REFERENCES `facturas` (`id`),
+  CONSTRAINT `FKpromotion_invoice` FOREIGN KEY (`promotion_id`) REFERENCES `promotions` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+
+# invoice_items_promo(cerrito, Irigoyen, Lima)
+CREATE TABLE `invoice_promotion_items` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `user_update` varchar(45) DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `amount` DOUBLE DEFAULT '0',
+  `promotion_id` bigint NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `db_springboot_backend`.`invoice_promotion_items` 
+ADD COLUMN `factura_id` BIGINT NULL DEFAULT NULL AFTER `promotion_id`,
+ADD INDEX `FK_promo_invoice_idx` (`factura_id` ASC) VISIBLE;
+;
+ALTER TABLE `db_springboot_backend`.`invoice_promotion_items` 
+ADD CONSTRAINT `FK_promo_invoice`
+  FOREIGN KEY (`factura_id`)
+  REFERENCES `db_springboot_backend`.`facturas` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+ALTER TABLE `db_springboot_backend`.`invoice_promotion_items` 
+ADD COLUMN `deleted` TINYINT NULL DEFAULT NULL AFTER `update_at`;
+
+ALTER TABLE `db_springboot_backend`.`facturas_items` 
+ADD COLUMN `deleted` TINYINT NULL DEFAULT '0' AFTER `is_promocion`;
+
+ALTER TABLE `db_springboot_backend`.`facturas_items` 
+CHANGE COLUMN `deleted` `deleted` TINYINT NULL DEFAULT NULL;
+
+
+
+# se agrega componentes de tipo de gasto
+CREATE TABLE `expense_type` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(50) NOT NULL,
+  `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `deleted` TINYINT NULL DEFAULT '0',
+  `description` varchar(255) DEFAULT NULL,
+  `code` varchar(6) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `code_UNIQUE` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+ALTER TABLE `db_springboot_backend`.`expense_type` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+ALTER TABLE `db_springboot_backend`.`gastos` 
+ADD COLUMN `spent_id` BIGINT NULL AFTER `pay_id`;
+
+
+ALTER TABLE `db_springboot_backend`.`expense_type` 
+ADD UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE;
+;

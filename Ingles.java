@@ -79,12 +79,6 @@ Describing personalities********************************************************
 	late  
 	sometimes 
 
-
-
-
-
-
-
 ***************************************************************************************************
 
 Describing photo or painting¨*****************************************************************
@@ -305,3 +299,176 @@ class 240823*****************************************************
 class 300823*****************************************************
 i sometimes do homework in the night
 *****************************************************************
+
+class021123******************************************************
+	75
+	7.000.000.000
+	1,543
+	2.340
+	7.000.000
+	1300
+	1543
+	7.5
+	7500
+	1.76
+	75%
+	33
+	1.3
+	2 3/4
+	33.800.006
+	2.34
+	1/3 
+	34%  
+
+	three thousand five hundred eigth 
+	8.000.000 
+	forty fourt
+
+
+	22 june
+	120000
+	1
+	700009
+
+	60 70 
+*****************************************************************
+
+class 231123*****************************************************
+	find 			lose
+	send   			get 
+	remember 		forget  
+	start 			finish
+	turn on 		turn off
+*****************************************************************
+
+Ingles 4*********************************************************
+Presentation 070324**********************************************
+	my name is Elvis Areiza
+	i am forty one years old
+	i am from Venezuela, but i live in Buenos aires
+	i am conter engineer, i work in Macro Bank
+	i like watching tv, i usually watch series 
+	my favorist serie is mentalist
+	I like to share with my family
+	make tutorials about programming
+	I like to go outdoors, go for a walk
+
+
+	another way:
+		i am teen 
+		i am in my twenties
+		i am in my early thirties (30-31-32)
+		i am in my mind thirties (34-35-36)
+		i am in my late thirties (37-38-39)
+
+		i was born in (province, city, country)
+		i live in (province, city, country)
+
+		i am a computer engineer
+		i am a/an job 
+
+		i work for macro bank
+		i work in Macro Bank
+*****************************************************************
+runtimes 120324**************************************************
+	get up
+	have breakfast 
+	im going to the bet at 
+
+	* every day phrases:
+		get up 
+		have breakfast 
+		have lunch
+		start work  
+		finish work 
+		go to university 
+		go to bed 
+		go back home 
+
+	* Sequences 
+		first 
+		then 
+		next 
+		after that 
+		finally  
+
+	* connector 
+		and (to join similar ideas)
+			i get up at 7 o´clock and i have breakfast
+		but (to contrast idea)
+			i get up at 7 o´clock but i dont have breakfast
+		however (sin embargo)
+			i get up at 7 o´clock however i dont have breakfast then
+		although (aunque)
+			although i get up at 7 o´clock however 
+			i dont have breakfast then
+		also (tambien)
+
+		ej: 
+			I have brakfast and i also prepare my bag 
+			i have brakfast and i prepare my bag, too 
+
+	I attend my classes at university from 4 o´clock to 9 o´clock
+	after that i go home and have dinner. 
+	i usually have meat and sald or pasta 
+	finally, i have a shower and go to bed 
+
+	asking about 
+		what time does he get up? 
+		does he have breakfast?
+		does he have lunch ?
+			yes, he does / no, he doesnt 
+		does he have lunch at school? 
+			yes, he does 
+
+
+	how are you ? 
+		i am happy 
+		i am fine 
+		i am not good 
+		i´m tired 
+
+	what are you like? 
+		i am a happy person 
+		i am nice 
+		i´m a kind, nice, (tidy) person 
+		i´m serious
+
+	Phisical appearance 
+	what do you look like? 
+		i am tall
+		i´m short 
+		i´m overweight 
+
+*****************************************************************
+
+questons 190324**************************************************
+	I worked on the weekend, I didn't rest much.
+
+	what do you eat for breakfast?
+	What do you do at your job?
+	What do you usually eat?
+
+	I am in English class?
+	what are you doing?
+	What do you like to do at home on the weekends?
+		i like relax to waching tv, i usally watch series
+	Have you tried Venezuelan food?
+
+	* infinitive 
+		full infinitive = verb with to 
+		(i want to have a coffee)
+
+		bare infinitive = verb without to 
+		(i must go)
+
+
+*****************************************************************
+
+
+
+
+
+
+
+

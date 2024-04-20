@@ -7761,7 +7761,7 @@ FIN RestFullWebServices, DATA***************************************************
 			ctrl+x --> Se sale de nano
 		7.3.- Se aplican los cambios 
 			 source /etc/profile
-		7.4.- Comprovar si la variable creada existe
+		7.4.- Comprobar si la variable creada existe
 			echo $CATALINA_HOME  --> Se debe visualizar el apache tomcat configurado
 	8.- Se inicia el servidor
 		8.1.- Se ingresa en el directorio de bin de tomcat
