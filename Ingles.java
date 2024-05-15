@@ -461,14 +461,23 @@ questons 190324**************************************************
 
 		bare infinitive = verb without to 
 		(i must go)
+*****************************************************************
 
+
+present continous - simple***************************************
 
 *****************************************************************
 
 
 
+hi teacher,
 
+Righ now. i´m doing my english homework.
+I usually do my homework in my bedroom, so, 
+i love it when i´m studying english because i think it is very easy.
+at the moment I am enjoining my homework and then i am  working until afternoon
 
-
-
+hope you´re well
+best wishes
+see you later, good bye.
 

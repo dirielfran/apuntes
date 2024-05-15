@@ -32,46 +32,66 @@ select * from cajachica order by id desc;
 
 
 /**Qrys de facturas a credito*/
-select * from  facturas where is_credito and fecha_aprob is null and usu_cred_id = 3;
-select f.id as invoice, 
-	f.create_at as date, 
-    u.username as user, 
-    f.total as total,
+SELECT * FROM db_springboot_backend.usuarios;
+/**Qrys de facturas a credito*/
+select sum(total) from  facturas where is_credito and fecha_aprob is null and usu_cred_id = 16;
+select * from  facturas where is_credito and fecha_aprob is null and usu_cred_id = 16;
+
+select f.id as Factura, 
+    f.create_at as Fecha, 
+    u.username as Usuario, 
     p.id as idProduct,
-    p.nombre as product, 
-    p.preciocosto as priceCost, 
-    fi.cantidad as count,
-    fi.total as PriceItemInvoice,
-    fi.precio as priceInvoice, 
-    p.precio as ActualPrice
+    p.nombre as Producto, 
+    REPLACE(ROUND(p.preciocosto, 2),'.',',') as PrecioCosto, 
+    fi.cantidad as Cantidad,
+    REPLACE(ROUND(fi.total, 2),'.',',') as total
 from facturas f 
-	inner join usuarios u on f.usu_cred_id = u.id
-	inner join facturas_items fi on f.id = fi.factura_id 
+    inner join usuarios u on f.usu_cred_id = u.id
+    inner join facturas_items fi on f.id = fi.factura_id 
     inner join productos p on fi.producto_id = p.id
 where f.is_credito 
-	and fecha_aprob is null 
-    and usu_cred_id = 3
-    and p.id not in (1011,1790,184,560,225,832,375,356,523,793,1788,289,1855,817,1424,1862,1500,909,1806,164,156);
+    and fecha_aprob is null 
+    and usu_cred_id = 16
+    and p.id not in (560,614,1780,375,716,2064,560,666,1855,663,1425,406,1480,300,447,1959,620,1017,1519,1937,1402,
+    290,184,192,2195,372,1635,1855,297,2196,1171,1402,778,2195,793,184,1910,31,1587,739,1055,47,2219,1929,2228,156,861,360,1563,1500,1767,1697,
+    1635, 1248, 1248, 398, 184, 2203, 2210, 2036, 156, 323, 1856, 1525, 256, 2289, 1333, 2203, 2222, 774, 156, 2287, 
+    915, 887, 2284, 2306, 2313, 2307, 827, 744, 444, 670, 2277, 2271, 2329, 2312, 2275, 2268, 49, 676,262, 224, 2036, 451,
+    455, 157, 412, 1123, 253, 417, 255, 625, 706, 420, 419, 51, 246, 765, 905, 247, 453, 2329, 447, 2313, 2252, 2340, 2303, 2341,
+    2364, 2346, 2354, 2299, 2305,  2273, 2258, 2369, 1749, 1402, 508, 2317, 2259, 2210, 295, 2083, 300, 2284, 1295, 675, 2403, 465, 466,1171,303,
+    2294, 2311, 2284, 195, 194, 2418, 2274, 2303, 1907);
     
-select sum(fi.total)    
-from facturas f 
-	inner join usuarios u on f.usu_cred_id = u.id
-	inner join facturas_items fi on f.id = fi.factura_id 
-    inner join productos p on fi.producto_id = p.id
-where f.is_credito 
-	and fecha_aprob is null 
-    and usu_cred_id = 3
-    and p.id not in (1011,1790,184,560,225,832,375,356,523,793,1788,289,1855,817,1424,1862,1500,909,1806,164,156);
     
-select sum(fi.total)    
+select sum(fi.total) as total
 from facturas f 
-	inner join usuarios u on f.usu_cred_id = u.id
-	inner join facturas_items fi on f.id = fi.factura_id 
+    inner join usuarios u on f.usu_cred_id = u.id
+    inner join facturas_items fi on f.id = fi.factura_id 
     inner join productos p on fi.producto_id = p.id
 where f.is_credito 
-	and fecha_aprob is null 
-    and usu_cred_id = 3
-    and p.id in (1011,1790,184,560,225,832,375,356,523,793,1788,289,1855,817,1424,1862,1500,909,1806,164,156);
+    and fecha_aprob is null 
+    and usu_cred_id = 16
+    and p.id not in (560,614,1780,375,716,2064,560,666,1855,663,1425,406,1480,300,447,1959,620,1017,1519,1937,1402,
+    290,184,192,2195,372,1635,1855,297,2196,1171,1402,778,2195,793,184,1910,31,1587,739,1055,47,2219,1929,2228,156,861,360,1563,1500,1767,1697,
+    1635, 1248, 1248, 398, 184, 2203, 2210, 2036, 156, 323, 1856, 1525, 256, 2289, 1333, 2203, 2222, 774, 156, 2287, 
+    915, 887, 2284, 2306, 2313, 2307, 827, 744, 444, 670, 2277, 2271, 2329, 2312, 2275, 2268, 49, 676,262, 224, 2036, 451,
+    455, 157, 412, 1123, 253, 417, 255, 625, 706, 420, 419, 51, 246, 765, 905, 247, 453, 2329, 447, 2313, 2252, 2340, 2303, 2341,
+    2364, 2346, 2354, 2299, 2305,  2273, 2258, 2369, 1749, 1402, 508, 2317, 2259, 2210, 295, 2083, 300, 2284, 1295, 675, 2403, 465, 466,1171,303,
+    2294, 2311, 2284, 195, 194, 2418, 2274, 2303, 1907);
+    
+select sum(fi.total) as total
+from facturas f 
+    inner join usuarios u on f.usu_cred_id = u.id
+    inner join facturas_items fi on f.id = fi.factura_id 
+    inner join productos p on fi.producto_id = p.id
+where f.is_credito 
+    and fecha_aprob is null 
+    and usu_cred_id = 16
+    and p.id in (560,614,1780,375,716,2064,560,666,1855,663,1425,406,1480,300,447,1959,620,1017,1519,1937,1402,
+    290,184,192,2195,372,1635,1855,297,2196,1171,1402,778,2195,793,184,1910,31,1587,739,1055,47,2219,1929,2228,156,861,360,1563,1500,1767,1697,
+    1635, 1248, 1248, 398, 184, 2203, 2210, 2036, 156, 323, 1856, 1525, 256, 2289, 1333, 2203, 2222, 774, 156, 2287, 
+    915, 887, 2284, 2306, 2313, 2307, 827, 744, 444, 670, 2277, 2271, 2329, 2312, 2275, 2268, 49, 676,262, 224, 2036, 451,
+    455, 157, 412, 1123, 253, 417, 255, 625, 706, 420, 419, 51, 246, 765, 905, 247, 453, 2329, 447, 2313, 2252, 2340, 2303, 2341,
+    2364, 2346, 2354, 2299, 2305,  2273, 2258, 2369, 1749, 1402, 508, 2317, 2259, 2210, 295, 2083, 300, 2284, 1295, 675, 2403, 465, 466,1171,303,
+    2294, 2311, 2284, 195, 194, 2418, 2274, 2303, 1907);
 
 
 /**qry de facturas al costo*/
@@ -342,6 +362,86 @@ GROUP BY MONTH(c.create_at);
 
 
 
+
+
+
+
+
+
+
+/*Sin  facturas a credito */
+select fi.producto_id, p.nombre, sum(fi.cantidad), sum(fi.total) 
+from facturas_items fi 
+inner join facturas f on f.id = fi.factura_id
+inner join productos p on p.id = fi.producto_id
+where producto_id in (
+SELECT id FROM db_springboot_backend.productos pro where pro.is_inventory is false)
+and fi.create_at > '2024-01-12 09:00:00'
+and fi.create_at < '2024-01-16 10:00:00'
+and f.costo is false
+group by fi.producto_id;
+
+
+
+
+
+# ver productos sin inventarios
+SELECT *
+FROM db_springboot_backend.productos p
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM inventarios_items ii
+    WHERE ii.producto_id = p.id
+    AND ii.create_at > DATE_SUB(NOW(), INTERVAL 6 MONTH)
+)and deleted = 0
+and existencia < 1;
+
+
+
+
+
+
+
+
+  
+-- Perdidas por tipo (CAFETERIA) Marz - Abril
+
+select p.nombre, 
+    SUM(CASE WHEN MONTH(pr.create_at) = 3 THEN pr.cantidad ELSE 0 END) AS marzo,
+    SUM(CASE WHEN MONTH(pr.create_at) = 4 THEN pr.cantidad ELSE 0 END) AS abril
+from perdidas pr 
+inner join productos p ON pr.producto_id = p.id
+where p.tipo_producto_id in (495) and p.deleted=0
+group by p.nombre ;
+
+# Venta por dia del cafe en un mes
+select day(f.create_at), ROUND(sum(fi.total), 2) as venta
+from facturas f
+inner join facturas_items fi on f.id = fi.factura_id
+inner join productos p on p.id = fi.producto_id
+where producto_id in (SELECT p.id FROM db_springboot_backend.productos p
+                        where p.tipo_producto_id = 495
+                        order by p.id desc)
+AND MONTH(f.create_at) = 5
+group by day(f.create_at)
+order by day(f.create_at);
+
+
+
+# Detalle de facturado del cafe por dia
+select f.id, f.user, f.create_at, f.deleted, f.descripcion, f.total, f.mercadopago, f.costo, f.is_credito, f.is_aprobada, fi.id as fi, fi.cantidad, fi.precio, fi.total, fi.factura_id, p.nombre, p.id, p.preciocosto
+from facturas f
+inner join facturas_items fi on f.id = fi.factura_id
+inner join productos p on p.id = fi.producto_id
+where producto_id in (SELECT p.id FROM db_springboot_backend.productos p
+                        where p.tipo_producto_id = 495
+                        order by p.id desc)
+and DATE(f.create_at) = '2024-01-30';
+
+
+
+
+
 # Cafe 
 use db_springboot_backend;
 
@@ -395,6 +495,10 @@ GROUP BY
     DATE(f.create_at)
 order by DATE(f.create_at);
 
+
+
+
+
 # Promedio de venta y ganancias por mes
 select 'Enero',AVG(total) as ventas, AVG(ganancia) as ganancia from (select  sum(fi.total) as total, (sum(fi.total) -sum((p.preciocosto*cantidad))) as ganancia
 from facturas f
@@ -418,37 +522,8 @@ GROUP BY
     DATE(f.create_at)
 order by DATE(f.create_at)) as subconsulta2;
 
-# Venta por dia
-select sum(fi.total)
-from facturas f
-inner join facturas_items fi on f.id = fi.factura_id
-inner join productos p on p.id = fi.producto_id
-where producto_id in (SELECT p.id FROM db_springboot_backend.productos p
-                        where p.tipo_producto_id = 495
-                        order by p.id desc)
-and DATE(f.create_at) = '2024-01-29';
 
-# Detalle de facturado del cafe por dia
-select f.id, f.user, f.create_at, f.deleted, f.descripcion, f.total, f.mercadopago, f.costo, f.is_credito, f.is_aprobada, fi.id as fi, fi.cantidad, fi.precio, fi.total, fi.factura_id, p.nombre, p.id, p.preciocosto
-from facturas f
-inner join facturas_items fi on f.id = fi.factura_id
-inner join productos p on p.id = fi.producto_id
-where producto_id in (SELECT p.id FROM db_springboot_backend.productos p
-                        where p.tipo_producto_id = 495
-                        order by p.id desc)
-and DATE(f.create_at) = '2024-01-30';
 
-/*Sin  facturas a credito */
-select fi.producto_id, p.nombre, sum(fi.cantidad), sum(fi.total) 
-from facturas_items fi 
-inner join facturas f on f.id = fi.factura_id
-inner join productos p on p.id = fi.producto_id
-where producto_id in (
-SELECT id FROM db_springboot_backend.productos pro where pro.is_inventory is false)
-and fi.create_at > '2024-01-12 09:00:00'
-and fi.create_at < '2024-01-16 10:00:00'
-and f.costo is false
-group by fi.producto_id;
 
 
 # consulta de ventas comparacion entre meses y dias
@@ -465,16 +540,67 @@ GROUP BY
     DAY(create_at);
 
 
-# ver productos sin inventarios
-SELECT *
-FROM db_springboot_backend.productos p
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM inventarios_items ii
-    WHERE ii.producto_id = p.id
-    AND ii.create_at > DATE_SUB(NOW(), INTERVAL 6 MONTH)
-)and deleted = 0
-and existencia < 1;
+# Venta por dia
+select sum(fi.total)
+from facturas f
+inner join facturas_items fi on f.id = fi.factura_id
+inner join productos p on p.id = fi.producto_id
+where producto_id in (SELECT p.id FROM db_springboot_backend.productos p
+                        where p.tipo_producto_id = 495
+                        order by p.id desc)
+and DATE(f.create_at) = '2024-01-29';
+
+
+
+
+# Venta por dia del cafe en un mes, compraracion entre meses
+SELECT 
+    DAY(f.create_at) AS dia,
+    ROUND(SUM(CASE WHEN MONTH(f.create_at) = 3 THEN fi.total ELSE 0 END), 2) AS venta_mes_3,
+    ROUND(SUM(CASE WHEN MONTH(f.create_at) = 4 THEN fi.total ELSE 0 END), 2) AS venta_mes_4,
+    ROUND(SUM(CASE WHEN MONTH(f.create_at) = 5 THEN fi.total ELSE 0 END), 2) AS venta_mes_5
+FROM 
+    facturas f
+    INNER JOIN facturas_items fi ON f.id = fi.factura_id
+    INNER JOIN productos p ON p.id = fi.producto_id
+WHERE 
+    p.tipo_producto_id = 495
+    AND (MONTH(f.create_at) = 4 OR MONTH(f.create_at) = 5 OR MONTH(f.create_at) = 3)
+GROUP BY 
+    DAY(f.create_at)
+ORDER BY 
+    DAY(f.create_at);
+
+
+# Ventas promedio por mes
+SELECT AVG(daily_sales) as promedio_ventas
+FROM (
+    SELECT DAY(f.create_at) as dia,
+           SUM(fi.total) as daily_sales
+    FROM facturas f
+    INNER JOIN facturas_items fi ON f.id = fi.factura_id
+    INNER JOIN productos p ON p.id = fi.producto_id
+    WHERE fi.producto_id IN (
+            SELECT p.id 
+            FROM db_springboot_backend.productos p
+            WHERE p.tipo_producto_id = 495
+        )
+    AND MONTH(f.create_at) = 3
+    GROUP BY DAY(f.create_at)
+) as daily_sales_per_day;
+
+-- Ventas por mes cafeteria
+SELECT p.id, p.nombre, 
+    SUM(CASE WHEN MONTH(fi.create_at) = 2 THEN cantidad ELSE 0 END) AS febrero,
+    SUM(CASE WHEN MONTH(fi.create_at) = 3 THEN cantidad ELSE 0 END) AS marzo,
+    SUM(CASE WHEN MONTH(fi.create_at) = 4 THEN cantidad ELSE 0 END) AS abril
+FROM facturas_items fi 
+INNER JOIN productos p ON p.id = fi.producto_id
+WHERE tipo_producto_id IN (495) 
+AND p.deleted=0
+GROUP BY p.id, p.nombre
+ORDER BY p.id DESC;
+
 
 
 
@@ -513,7 +639,6 @@ RIGHT JOIN (
     GROUP BY mes
 ) AS gastos ON ventas.mes = gastos.mes;
 
-
 # query de ventas y gastos solo del cafe
 select 'ventas',MONTH(fi.create_at) as mes, sum(fi.total)
 from facturas_items fi
@@ -543,14 +668,7 @@ LEFT JOIN (
 ) AS ventas ON gastos.mes = ventas.mes;
 
 
-# todos los gastos del mes
 
-SELECT g.id, g.user, g.create_at, REPLACE(monto_pesos, '.', ',') as monto, descripcion, clasificacion, metodopago, e.name 
-FROM db_springboot_backend.gastos g
-left join expense_type e on g.spent_id = e.id
-where    MONTH(g.create_at) = 3
-    AND YEAR(g.create_at) = 2024;
-  
 
 
 # gastos por tipo
@@ -587,5 +705,26 @@ where    MONTH(g.create_at) = 4
     AND YEAR(g.create_at) = 2024
     and e.name = 'Mantenimiento y reparaciones';
 
+# todos los gastos del mes
+
+SELECT g.id, g.user, g.create_at, REPLACE(monto_pesos, '.', ',') as monto, descripcion, clasificacion, metodopago, e.name 
+FROM db_springboot_backend.gastos g
+left join expense_type e on g.spent_id = e.id
+where    MONTH(g.create_at) = 3
+    AND YEAR(g.create_at) = 2024;
 
 
+
+
+openssl req -new -key danger120 -subj "/C=AR/O=ccscoffeeshop/CN=mas58/serialNumber=CUIT 20959697850" -out coffeeshopCSR
+openssl cms -sign -in MiLoginTicketRequest.xml -out MiLoginTicketRequest.xml.cms -signer certificado.pem -inkey danger120 -nodetach -outform PEM
+
+OK. Autorización fue creada (CUITCOMPUTADOR=20959697850, ALIASCOMPUTADOR=ccscoffeeshopDN, CUITREPRESENTADO=20959697850, SERVICIO=ws://wsfe, CUITAUTORIZANTE=20959697850).
+OK. Autorización fue creada (CUITCOMPUTADOR=20959697850, ALIASCOMPUTADOR=ccscoffeeshopDN, CUITREPRESENTADO=20959697850, SERVICIO=ws://wsmtxca, CUITAUTORIZANTE=20959697850).
+
+
+
+URLs
+
+Entorno de Testing del WSAA: https://wsaahomo.afip.gov.ar/ws/services/LoginCms
+Entorno de Producción del WSAA: https://wsaa.afip.gov.ar/ws/services/LoginCms

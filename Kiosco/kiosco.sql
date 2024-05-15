@@ -187,8 +187,8 @@ CREATE TABLE `diary` (
   `deleted` TINYINT DEFAULT '0',
   `egress` double DEFAULT '0',
   `entry` double DEFAULT '0',
-  `ìs_system` TINYINT DEFAULT '0',
-  `ìs_real` TINYINT DEFAULT '0',
+  `is_system` TINYINT DEFAULT '0',
+  `is_real` TINYINT DEFAULT '0',
   `description` varchar(255) DEFAULT NULL,
   `transfer_id` bigint DEFAULT NULL,
   `spent_id` bigint DEFAULT NULL,
@@ -216,6 +216,8 @@ CREATE TABLE `spent_pending` (
   `spent_id` bigint DEFAULT NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+
 
 ALTER TABLE `db_springboot_backend`.`spent_pending` 
 ADD INDEX `FK_spent_pending_idx` (`spent_id` ASC) VISIBLE;
@@ -266,6 +268,15 @@ ADD COLUMN `usu_aprob` BIGINT NULL DEFAULT NULL AFTER `usu_res_pago_id`;
 ALTER TABLE `db_springboot_backend`.`facturas` 
 CHANGE COLUMN `usu_aprob` `usu_aprob_id` BIGINT NULL DEFAULT NULL ;
 
+
+ALTER TABLE `db_springboot_backend`.`diary` 
+ADD COLUMN `effective_balance` DOUBLE NULL DEFAULT 0 AFTER `box_id`;
+
+ALTER TABLE `db_springboot_backend`.`diary` 
+ADD COLUMN `is_block` TINYINT NOT NULL DEFAULT 0 AFTER `effective_balance`;
+
+ALTER TABLE `db_springboot_backend`.`diary` 
+ADD COLUMN `diary_id` BIGINT NULL DEFAULT NULL AFTER `is_block`;
 
 # Modulo de promociones
 
@@ -1158,7 +1169,7 @@ ADD COLUMN `name` VARCHAR(255) NULL DEFAULT NULL AFTER `pre_invoice_executed`;
 
 
 
-Realizar backup de la base de dato desde el servidos ubuntu*********************************
+Realizar backup de la base de dato desde el servidos ubuntu dockerizado*********************
   * Se entra en el contenedor de mysql8 
      docker exec -it cc78e1f9b3b7 bash
      mysqldump -u root -p db_springboot_backend > prodCerrito290324.sql
