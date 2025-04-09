@@ -2697,14 +2697,17 @@ Puesta en produccion de Lima****************************************************
 		- docker build -t kiosco_58 . -f .\KioscoAppSpring\Dockerfile
 		- docker build -t ccs_coffee . -f .\KioscoAppSpring\Dockerfile
 		- docker build -t mas58kiosco2 . -f .\KioscoAppSpring\Dockerfile
+		- docker build -t mas58corrientes . -f .\KioscoAppSpring\Dockerfile
 	* Se crea el tag de la imagen
 		docker tag kiosco_58 dirielan3/kiosco_app_spring_58
 		docker tag ccs_coffee dirielan3/kiosco_app_spring
 		docker tag mas58kiosco2 dirielan3/kiosco_app_free 
+		docker tag mas58corrientes dirielan3/kiosco_corrientes 
 	* Se realiza el push de la imagen
 		docker push dirielan3/kiosco_app_spring_58
 		docker push dirielan3/kiosco_app_spring
 		docker push dirielan3/kiosco_app_free
+		docker push dirielan3/kiosco_corrientes
 	* Se ejecuta docker-compose en maquina remota
 		sudo docker-compose pull
 		sudo docker-compose up --build -d

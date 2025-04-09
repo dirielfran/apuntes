@@ -496,7 +496,32 @@ GROUP BY
 order by DATE(f.create_at);
 
 
+# Cantidad de productos vendidos por producto en un mes
+SELECT 
+    DATE_FORMAT(create_at, '%Y-%m') AS mes,
+    SUM(cantidad) AS total_cantidad
+FROM 
+    db_springboot_backend.facturas_items
+WHERE 
+    producto_id = 1333
+    AND create_at >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+GROUP BY 
+    mes
+ORDER BY 
+    mes DESC;
 
+# Promedio de ventas de productos por dia y fechas
+SELECT p.id, p.nombre, sum(fi.cantidad)/5
+FROM facturas_items fi 
+INNER JOIN productos p ON p.id = fi.producto_id
+WHERE tipo_producto_id IN (495) 
+and YEAR(fi.create_at) = 2024
+and MONTH(fi.create_at) = 7
+and Day(fi.create_at) >=1
+and Day(fi.create_at) <=10
+AND p.deleted=0
+GROUP BY p.id
+ORDER BY p.id DESC;
 
 
 # Promedio de venta y ganancias por mes
@@ -538,6 +563,20 @@ WHERE
     (MONTH(create_at) = 12 AND YEAR(create_at) = 2023 AND DAY(create_at) BETWEEN 15 AND 24)
 GROUP BY 
     DAY(create_at);
+
+# CONSULTA DE VENTAS, TGASTOS Y DIFERENCIAS
+SELECT 
+    (SELECT SUM(total) 
+     FROM facturas 
+     WHERE create_at BETWEEN '2024-06-01' AND '2024-6-30' and deleted = 0 ) AS total_facturado,
+    (SELECT SUM(monto_pesos) 
+     FROM gastos 
+     WHERE create_at BETWEEN '2024-06-01' AND '2024-6-30') AS total_gastos,
+     (SELECT SUM(total) 
+     FROM facturas 
+     WHERE create_at BETWEEN '2024-06-01' AND '2024-6-30' and deleted = 0 ) - (SELECT SUM(monto_pesos) 
+     FROM gastos 
+     WHERE create_at BETWEEN '2024-06-1' AND '2024-6-30')as diferencia;
 
 
 # Venta por dia
@@ -600,6 +639,33 @@ WHERE tipo_producto_id IN (495)
 AND p.deleted=0
 GROUP BY p.id, p.nombre
 ORDER BY p.id DESC;
+
+# venta de empanadas
+select day(f.create_at), ROUND(sum(fi.total), 2) as venta
+from facturas f
+inner join facturas_items fi on f.id = fi.factura_id
+inner join productos p on p.id = fi.producto_id
+where producto_id in (SELECT p.id FROM db_springboot_backend.productos p
+                        where p.tipo_producto_id = 495
+                        and p.id in (2497,2498,2499,2500)
+                        order by p.id desc)
+AND MONTH(f.create_at) = 5
+group by day(f.create_at)
+order by day(f.create_at);
+
+
+/*venta de empanadas agrupadas por tipo y dia*/
+select p.nombre, sum(cantidad), day(f.create_at)
+from facturas f
+inner join facturas_items fi on f.id = fi.factura_id
+inner join productos p on p.id = fi.producto_id
+where producto_id in (SELECT p.id FROM db_springboot_backend.productos p
+                        where p.tipo_producto_id = 495
+                        and p.id in (2497,2498,2499,2500)
+                        order by p.id desc)
+AND MONTH(f.create_at) = 10
+group by day(f.create_at), producto_id
+order by day(f.create_at);
 
 
 
@@ -669,6 +735,19 @@ LEFT JOIN (
 
 
 
+SELECT 
+    (SELECT SUM(total) 
+     FROM facturas 
+     WHERE create_at BETWEEN '2024-07-15' AND '2024-7-31' and deleted = 0 ) AS total_facturado,
+    (SELECT SUM(monto_pesos) 
+     FROM gastos 
+     WHERE create_at BETWEEN '2024-07-15' AND '2024-7-31') AS total_gastos,
+     (SELECT SUM(total) 
+     FROM facturas 
+     WHERE create_at BETWEEN '2024-07-15' AND '2024-7-31' and deleted = 0 ) - (SELECT SUM(monto_pesos) 
+     FROM gastos 
+     WHERE create_at BETWEEN '2024-07-15' AND '2024-7-31')as diferencia;
+
 
 
 # gastos por tipo
@@ -716,15 +795,63 @@ where    MONTH(g.create_at) = 3
 
 
 
-openssl req -new -key danger120 -subj "/C=AR/O=ccscoffeeshop/CN=mas58/serialNumber=CUIT 20959697850" -out coffeeshopCSR
-openssl cms -sign -in MiLoginTicketRequest.xml -out MiLoginTicketRequest.xml.cms -signer certificado.pem -inkey danger120 -nodetach -outform PEM
+# totales de ventas y de gastos desglosados por quincena sin los gastos
+SELECT COALESCE(ventas.mes, gastos.mes) AS mes,
+       ventas.total AS total_ventas,
+       gastos.total AS total_gastos,
+       COALESCE(ventas.total, 0) - COALESCE(gastos.total, 0) AS diferencia
+FROM (
+    SELECT MONTH(f.create_at) AS mes, SUM(f.total) AS total
+    FROM facturas f
+    WHERE YEAR(f.create_at) = 2024
+    and month(f.create_at) = 09
+    and day(f.create_at) >=16
+    and day(f.create_at) <=30
+    GROUP BY mes
+) AS ventas
+LEFT JOIN (
+    SELECT MONTH(g.create_at) AS mes, SUM(monto_pesos) AS total
+    FROM gastos g
+    WHERE YEAR(g.create_at) = 2024
+    and clasificacion <> 'Socios'
+    and month(g.create_at) = 09
+    and day(g.create_at) >=16
+    and day(g.create_at) <=30
+    GROUP BY mes
+) AS gastos ON ventas.mes = gastos.mes
+UNION
+SELECT COALESCE(ventas.mes, gastos.mes) AS mes,
+       ventas.total AS total_ventas,
+       gastos.total AS total_gastos,
+       COALESCE(ventas.total, 0) - COALESCE(gastos.total, 0) AS diferencia
+FROM (
+    SELECT MONTH(f.create_at) AS mes, SUM(f.total) AS total
+    FROM facturas f
+    WHERE YEAR(f.create_at) = 2024
+    and month(f.create_at) = 09
+    and day(f.create_at) >=16
+    and day(f.create_at) <=30
+    GROUP BY mes
+) AS ventas
+RIGHT JOIN (
+    SELECT MONTH(g.create_at) AS mes, SUM(monto_pesos) AS total
+    FROM gastos g
+    WHERE YEAR(g.create_at) = 2024
+    and clasificacion <> 'Socios'
+    and month(g.create_at) = 09
+    and day(g.create_at) >=16
+    and day(g.create_at) <=30
+    GROUP BY mes
+) AS gastos ON ventas.mes = gastos.mes;
 
-OK. Autorización fue creada (CUITCOMPUTADOR=20959697850, ALIASCOMPUTADOR=ccscoffeeshopDN, CUITREPRESENTADO=20959697850, SERVICIO=ws://wsfe, CUITAUTORIZANTE=20959697850).
-OK. Autorización fue creada (CUITCOMPUTADOR=20959697850, ALIASCOMPUTADOR=ccscoffeeshopDN, CUITREPRESENTADO=20959697850, SERVICIO=ws://wsmtxca, CUITAUTORIZANTE=20959697850).
 
 
+SELECT create_at, descripcion, REPLACE(monto_pesos, '.', ',') as monto , clasificacion, metodopago
+    FROM gastos g
+    WHERE YEAR(g.create_at) = 2024
+    and clasificacion <> 'Socios'
+    and month(g.create_at) = 09
+    and day(g.create_at) >=16
+    and day(g.create_at) <=30;
 
-URLs
 
-Entorno de Testing del WSAA: https://wsaahomo.afip.gov.ar/ws/services/LoginCms
-Entorno de Producción del WSAA: https://wsaa.afip.gov.ar/ws/services/LoginCms

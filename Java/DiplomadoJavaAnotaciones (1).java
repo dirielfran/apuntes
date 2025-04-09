@@ -431,9 +431,7 @@ Arquitectura y Modelos
             y en donde usar constructores para crear el objeto no es una solución cómoda.
 
             Se trata de un patrón de diseño bastante útil también en la ejecución de test 
-            (unit test por ejemplo) en donde debemos crear el objeto con atribu
-
-            tos válidos o 
+            (unit test por ejemplo) en donde debemos crear el objeto con atribu tos válidos o 
             por defecto.
 
             Necesitaremos entonces un objeto Builder que nos creará el objeto que concreto en base a 
@@ -1266,13 +1264,44 @@ Colecciones
               Integer key = it.next();
               System.out.println("Clave: " + key + " -> Valor: " + map.get(key));
             }
-    Ejemplo___________________________________________________________________________
+        Ejemplo___________________________________________________________________________
         Se agrega registro a un array
         lista = new ArrayList<String>(Arrays.asList(arrayLinExp_1));
         lista.add(25,alicuota.toString());                  
         String[] arrayNew = new String[lista.size()];
         arrayNew = lista.toArray(arrayNew);
         lineaActual = StringUtils.join(arrayNew, ";");
+***********************************************************************************************
+
+Java8******************************************************************************************
+    Expresiones Lambda:
+    2. Streams API
+    3. Métodos de Referencia
+    4. Interfaces Funcionales
+    5. Mejoras en las Interfaces
+    6. Mejoras en la API de Colecciones
+***********************************************************************************************
+
+Hilos******************************************************************************************
+    https://romeralvarez.me/blog/introducci%C3%B3n-a-hilos-y-concurrencia/
+
+    class MiTarea implements Runnable {
+
+        Nos permite establecer una jerarquía de clases ¿Qué quiere decir esto? Si ya estás 
+        heredando de una clase no puedes extender de la clase Threads a,por lo tanto no podemos 
+        establecer una jerarquía de clases.
+
+        Al implementar la interfaz Runnable, puedes mantener la herencia de la otra clase, 
+        y al mismo tiempo, tener un hilo en tu clase.
+
+        La interfaz Runnable permite separar la lógica del hilo de ejecución (el método **run()**) 
+        de la lógica de control de hilo (**Thread** como **start()** **sleep()**, etc.) De 
+        esta manera puedes reutilizar la lógica del hilo (**Runnable**)en diferentes contextos.
+
+        Facilita el uso de frameworks y APIs modernas: Muchos frameworks y APIs de concurrencia 
+        modernos en Java, como ExecutorService o CompletableFuture, trabajan con objetos Runnable 
+        o Callable (una variante de Runnable que permite devolver un valor) en lugar de instancias 
+        de la clase Thread.
 ***********************************************************************************************
 
 
@@ -1379,6 +1408,49 @@ Genericos
     ----------------------------------------------------------------------------------------------
 ***********************************************************************************************
 
+Clase Abstracta Vs Interface*******************************************************************
+    La decisión de implementar una clase abstracta o una interfaz depende de la situación específica 
+    y los requisitos de tu diseño de software. Aquí hay algunas pautas que pueden ayudarte a decidir 
+    cuándo usar cada uno:
+
+    Cuándo usar una clase abstracta:
+        Compartir Código Común:
+            Si varias clases comparten un comportamiento común y deseas proporcionar una implementación 
+            base que todas ellas puedan utilizar, utiliza una clase abstracta. Esto te permite evitar 
+            la duplicación de código.
+
+        Definir Estado:
+            Si necesitas manejar un estado compartido (atributos) entre las clases, las clases abstractas 
+            son más adecuadas, ya que pueden contener variables de instancia.
+        
+        Extensión Controlada:
+            Cuando quieres que las subclases estén limitadas a una jerarquía de herencia específica (es decir, 
+                solo puedes heredar de una clase abstracta), elige una clase abstracta.
+        
+        Métodos Comunes Completos y Abstractos:
+
+            Si tienes métodos que deberían tener una implementación por defecto, así como métodos que deben 
+            ser obligatoriamente implementados por las subclases, entonces una clase abstracta es una buena opción.
+
+    Cuándo usar una interfaz:
+        Polimorfismo:
+            Si deseas permitir que distintas clases que no están relacionadas entre sí implementen el mismo conjunto 
+            de métodos, utiliza interfaces. Esto promueve la flexibilidad y la interoperabilidad.
+
+        Múltiples Implementaciones:
+            Si una clase necesita heredar comportamientos de múltiples fuentes, puedes usar interfaces, ya que una 
+            clase puede implementar múltiples interfaces.
+
+        Definir un Contrato:
+            Si lo que deseas es definir un contrato para que diferentes clases implementen, sin preocuparte por la 
+            implementación específica, utiliza una interfaz. Esto es especialmente útil en arquitecturas que siguen 
+            el principio de separación de preocupaciones.
+
+        Evolución en el Tiempo:
+            Las interfaces son más adecuadas si esperas que el conjunto de métodos evolucione con 
+            el tiempo. Las interfaces pueden expandirse sin romper las implementaciones existentes, 
+            siempre que agregues métodos por defecto o mantengas exclusivas las adiciones.
+***********************************************************************************************
 
 *******************************************************************************Lectura de bytes
     //Se creaarray de tipo de dato byte de solo 20 de longitud
@@ -8313,3 +8385,95 @@ se usa para trabajar con un flujo de datos, y que se emiten eventos que uno lueg
 Los observables son asíncronos. Ese flujo de datos que mencionas antes es asíncrono, quiere decir que no se sabe en qué momento el observable emitirá un valor.
 
 observables pueden tener muchos observadores así cuando se emite un valor todos pueden recibirlo
+
+
+
+Preguntas tecnicas de entrevista*************************************************************************
+    Preguntas Técnicas
+    Java
+    Fundamentos de Java
+
+    ¿Qué es la JVM y cuál es su papel?
+    Diferencia entre JDK, JRE y JVM.
+    Explica el concepto de sobrecarga y sobrescritura de métodos.
+    ¿Qué son las excepciones y cómo se manejan en Java?
+    ¿Qué es el recolector de basura en Java?
+    Programación Orientada a Objetos
+
+    Define los principios de la POO: encapsulamiento, herencia, polimorfismo y abstracción.
+    ¿Qué es una interfaz y cómo se diferencia de una clase abstracta?
+    ¿Qué es la herencia múltiple y cómo se maneja en Java?
+    Colecciones y Frameworks
+
+    Explica las interfaces principales de la colección: List, Set y Map.
+    ¿Cuál es la diferencia entre ArrayList y LinkedList?
+    ¿Qué es un HashMap y cómo funciona internamente?
+    Java 8+ Features
+
+    Explica las expresiones lambda y las referencias a métodos.
+    ¿Qué son las Streams y cómo se usan?
+    ¿Qué es la API de fecha y hora en Java 8?
+    Hilos y Concurrencia
+
+    Diferencia entre hilos y procesos.
+    ¿Qué es una condición de carrera y cómo se puede evitar?
+    Uso de synchronized y bloqueos explícitos (Lock).
+    Angular
+    Fundamentos de Angular
+
+    ¿Qué es Angular y cuáles son sus ventajas?
+    Explica el patrón MVC y cómo se implementa en Angular.
+    ¿Qué es TypeScript y por qué se usa en Angular?
+    Componentes y Plantillas
+
+    ¿Qué es un componente en Angular?
+    Explica el ciclo de vida de un componente.
+    ¿Qué son las directivas y para qué se usan?
+    Servicios y Dependencias
+
+    ¿Qué es un servicio en Angular?
+    Explica la inyección de dependencias en Angular.
+    ¿Cómo se configura un servicio en Angular?
+    Rutas y Navegación
+
+    ¿Cómo se configuran las rutas en Angular?
+    ¿Qué es un router outlet?
+    Explica las guardas de rutas (route guards).
+    HTTP Client
+
+    ¿Cómo se realiza una solicitud HTTP en Angular?
+    Manejo de observables y promesas en Angular.
+    ¿Qué es RxJS y cómo se utiliza con Angular?
+    Preguntas de Comportamiento
+    Trabajo en equipo
+
+    Describe una vez en la que trabajaste en un proyecto en equipo.
+    ¿Cómo manejas los conflictos en un equipo?
+    Resolución de Problemas
+
+    Cuéntame sobre un desafío técnico que hayas enfrentado y cómo lo resolviste.
+    ¿Cómo priorizas las tareas cuando tienes múltiples plazos?
+    Adaptabilidad
+
+    Describe una situación en la que tuviste que aprender una nueva tecnología rápidamente.
+    ¿Cómo manejas los cambios en los requisitos del proyecto?
+    Consejos Adicionales
+    Proyectos y Experiencia: Prepárate para hablar sobre tus proyectos anteriores, especialmente aquellos que involucran Java y Angular. Destaca los desafíos que enfrentaste y cómo los resolviste.
+    Habilidades de Comunicación: Practica explicar conceptos técnicos de manera clara y concisa. Los entrevistadores apreciarán tu capacidad para comunicarte efectivamente.
+    Preparación Técnica: Realiza ejercicios de codificación en línea en plataformas como LeetCode, HackerRank o CodeSignal para afinar tus habilidades de programación.
+    Simulación de Entrevista: Pídele a un amigo o colega que te haga una entrevista simulada. Esto puede ayudarte a identificar áreas donde necesitas mejorar.
+    Recursos Recomendados
+    Documentación Oficial:
+
+    Java
+    Angular
+    Cursos en Línea:
+
+    Java Programming and Software Engineering Fundamentals (Coursera)
+    Angular - The Complete Guide (Udemy)
+    Libros:
+
+    Effective Java de Joshua Bloch
+    Pro Angular de Adam Freeman
+    Buena suerte en tu entrevista. ¡Estoy seguro de que te irá muy bien!
+*********************************************************************************************************

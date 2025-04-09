@@ -138,7 +138,7 @@ ADD COLUMN `is_promocion` TINYINT(1) NULL DEFAULT 0 AFTER `consignacion`;
 
 # Requerimiento de cuadre de caja
 ALTER TABLE `db_springboot_backend`.`cajas` 
-ADD COLUMN `is_cuadre` BIGINT(1) NULL DEFAULT AFTER `ganancia`;
+ADD COLUMN `is_cuadre` BIGINT(1) NULL DEFAULT NULL AFTER `ganancia`;
 
 ALTER TABLE `db_springboot_backend`.`account` 
 ADD COLUMN `code_bd` VARCHAR(45) NULL AFTER `code`;
@@ -252,6 +252,15 @@ ALTER TABLE `db_springboot_backend`.`retiroscaja`
 ADD UNIQUE INDEX `spent_id_UNIQUE` (`spent_id` ASC) VISIBLE;
 ;
 
+ALTER TABLE `db_springboot_backend`.`diary` 
+ADD COLUMN `effective_balance` DOUBLE NULL DEFAULT 0 AFTER `box_id`;
+
+ALTER TABLE `db_springboot_backend`.`diary` 
+ADD COLUMN `is_block` TINYINT NOT NULL DEFAULT 0 AFTER `effective_balance`;
+
+ALTER TABLE `db_springboot_backend`.`diary` 
+ADD COLUMN `diary_id` BIGINT NULL DEFAULT NULL AFTER `is_block`;
+
 
 # Facturas al credito
 ALTER TABLE `db_springboot_backend`.`facturas` 
@@ -269,14 +278,7 @@ ALTER TABLE `db_springboot_backend`.`facturas`
 CHANGE COLUMN `usu_aprob` `usu_aprob_id` BIGINT NULL DEFAULT NULL ;
 
 
-ALTER TABLE `db_springboot_backend`.`diary` 
-ADD COLUMN `effective_balance` DOUBLE NULL DEFAULT 0 AFTER `box_id`;
 
-ALTER TABLE `db_springboot_backend`.`diary` 
-ADD COLUMN `is_block` TINYINT NOT NULL DEFAULT 0 AFTER `effective_balance`;
-
-ALTER TABLE `db_springboot_backend`.`diary` 
-ADD COLUMN `diary_id` BIGINT NULL DEFAULT NULL AFTER `is_block`;
 
 # Modulo de promociones
 
@@ -1171,7 +1173,7 @@ ADD COLUMN `name` VARCHAR(255) NULL DEFAULT NULL AFTER `pre_invoice_executed`;
 
 Realizar backup de la base de dato desde el servidos ubuntu dockerizado*********************
   * Se entra en el contenedor de mysql8 
-     docker exec -it cc78e1f9b3b7 bash
+     docker exec -it mysql8 bash
      mysqldump -u root -p db_springboot_backend > prodCerrito290324.sql
   * Se sale del contenedor con --> exit 
   * Se pasa el backup al root del servidor ubuntu 
@@ -1268,3 +1270,338 @@ ADD COLUMN `spent_id` BIGINT NULL AFTER `pay_id`;
 ALTER TABLE `db_springboot_backend`.`expense_type` 
 ADD UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE;
 ;
+
+
+
+# Modulo de bandejas
+
+ CREATE TABLE `trays` (
+    `id` bigint NOT NULL AUTO_INCREMENT,
+    `user` varchar(45) DEFAULT NULL,
+    `create_at` timestamp NULL DEFAULT NULL,
+    `update_at` timestamp NULL DEFAULT NULL,
+    `deleted` TINYINT DEFAULT '0',
+    `name` VARCHAR(100) NOT NULL,
+    `amount` int DEFAULT '0',
+    PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+  
+     ALTER TABLE `db_springboot_backend`.`trays` 
+  ADD UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE;
+  ;
+  
+    CREATE TABLE `tray_products` (
+    `tray_id` bigint NOT NULL,
+    `product_id` bigint NOT NULL,
+    UNIQUE KEY `UKitems` (`tray_id`,`product_id`),
+    KEY `FKtryProduct` (`product_id`),
+    CONSTRAINT `FKtrayProduct` FOREIGN KEY (`tray_id`) REFERENCES `trays` (`id`),
+    CONSTRAINT `FKproductsTray` FOREIGN KEY (`product_id`) REFERENCES `productos` (`id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  
+  ALTER TABLE `db_springboot_backend`.`trays` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+
+ALTER TABLE `db_springboot_backend`.`trays` 
+ADD COLUMN `code` VARCHAR(6) NULL DEFAULT NULL AFTER `deleted`;
+
+ALTER TABLE `db_springboot_backend`.`trays` 
+ADD UNIQUE INDEX `code_UNIQUE` (`code` ASC) VISIBLE;
+
+ALTER TABLE `db_springboot_backend`.`productos` 
+ADD COLUMN `is_production` TINYINT NULL DEFAULT 0 AFTER `is_inventory`;
+
+
+
+ CREATE TABLE `productions` (
+    `id` bigint NOT NULL AUTO_INCREMENT,
+    `user` varchar(45) DEFAULT NULL,
+    `create_at` timestamp NULL DEFAULT NULL,
+    `update_at` timestamp NULL DEFAULT NULL,
+    `deleted` TINYINT DEFAULT '0',
+    `product_id` bigint NOT NULL,
+    `tray_id` bigint NOT NULL,
+    PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+ ALTER TABLE `db_springboot_backend`.`productions` 
+ADD COLUMN `user_update` VARCHAR(45) NULL AFTER `create_at`;
+
+
+
+CREATE TABLE `productions_products` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `user_update` VARCHAR(45) NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `quantity` double DEFAULT '0',
+  `production_id` bigint NOT NULL,
+  `product_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UKitems` (`production_id`,`product_id`),
+  KEY `FKproductions_products` (`product_id`),
+  CONSTRAINT `FKproduction` FOREIGN KEY (`production_id`) REFERENCES `Productions` (`id`),
+  CONSTRAINT `FKproducts_production` FOREIGN KEY (`product_id`) REFERENCES `productos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+
+// facturacion afip
+
+CREATE TABLE `invoice_afip` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `user_update` VARCHAR(45) NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `client_id` bigint NOT NULL,
+  `vaucher_id` bigint NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+CREATE TABLE `vaucher_afip` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `user_update` VARCHAR(45) NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+    `rubro` VARCHAR(255),
+    `percepciones_iva` BIGINT,
+    `tipo` VARCHAR(255),
+    `numero` BIGINT,
+    `operacion` VARCHAR(255),
+    `fecha` VARCHAR(255),
+    `vencimiento` VARCHAR(255),
+    `rubro_grupo_contable` VARCHAR(255),
+    `total` DOUBLE,
+    `cotizacion` BIGINT,
+    `moneda` VARCHAR(255),
+    `punto_venta` BIGINT,
+    `impuestos_internos` TEXT,
+    `impuestos_internos_base` TEXT,
+    `impuestos_internos_alicuota` TEXT
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+CREATE TABLE detail_afip (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `user_update` VARCHAR(45) NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+    `vaucher_id` BIGINT,
+    `cantidad` BIGINT,
+    `afecta_stock` VARCHAR(255),
+    `actualiza_precio` VARCHAR(255),
+    `bonificacion_porcentaje` BIGINT,
+    `product_id` BIGINT,
+    FOREIGN KEY (vaucher_id) REFERENCES vaucher_afip(id),
+    FOREIGN KEY (producto_id) REFERENCES product(id)
+);
+
+
+CREATE TABLE client_afip (
+    `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `user_update` VARCHAR(45) NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+    `documento_tipo` VARCHAR(255),
+    `condicion_iva` VARCHAR(255),
+    `domicilio` VARCHAR(255),
+    `condicion_pago` VARCHAR(255),
+    `documento_nro` VARCHAR(255),
+    `razon_social` VARCHAR(255),
+    `provincia` VARCHAR(255),
+    `email` VARCHAR(255),
+    `envia_por_mail` VARCHAR(255),
+    `deleted` BOOLEAN,
+  PRIMARY KEY (`id`)
+);
+
+ALTER TABLE vaucher_afip ADD FOREIGN KEY (client_id) REFERENCES client_afip(id);
+
+
+
+CREATE TABLE product_afip (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `user_update` VARCHAR(45) NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+    `descripcion` VARCHAR(255) DEFAULT 'standard',
+    `codigo` BIGINT,
+    `lista_precios` VARCHAR(255) DEFAULT 'standard',
+    `leyenda` VARCHAR(255) DEFAULT 'standard',
+    `unidad_bulto` BIGINT DEFAULT 1,
+    `alicuota` BIGINT DEFAULT 21,
+    `actualiza_precio` VARCHAR(1) DEFAULT 'N',
+    `rg5329` VARCHAR(1) DEFAULT 'N',
+    `precio_unitario_sin_iva` DOUBLE,
+      PRIMARY KEY (`id`)
+);
+
+CREATE TABLE error_afip (
+    `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `user_update` VARCHAR(45) NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+    vaucher_id BIGINT,
+    message VARCHAR(255),
+    deleted BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_vaucher_afip FOREIGN KEY (vaucher_id) REFERENCES vaucher_afip(id)
+);
+
+
+
+# modulo de qr
+CREATE TABLE quick_response (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `user_update` VARCHAR(45) NULL DEFAULT NULL,
+    name VARCHAR(100),
+    url VARCHAR(255),
+    type VARCHAR(255),
+    PRIMARY KEY (id)
+);
+
+
+# Requerimiento de promocion Uber
+INSERT INTO `db_springboot_backend`.`promotions` (`user`, `deleted`, `name`, `description`, `percent`, `code`) VALUES ('system', '0', 'promoUber', 'Promocion para uber', '10', 'UB');
+
+ALTER TABLE `db_springboot_backend`.`facturas` 
+ADD COLUMN `is_promo_uber` TINYINT(1) NULL AFTER `name`;
+
+
+
+
+# Requerimiento nuevo app coffee
+INSERT INTO `db_springboot_backend`.`roles` (`nombre`) VALUES ('ROLE_SYSTEM');
+INSERT INTO `db_springboot_backend`.`roles` (`nombre`) VALUES ('ROLE_PEOPLE');
+
+CREATE TABLE category_product (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `user_update` VARCHAR(45) NULL DEFAULT NULL,
+    name VARCHAR(100),
+    PRIMARY KEY (id)
+);
+
+
+CREATE TABLE sub_category_product (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `user_update` VARCHAR(45) NULL DEFAULT NULL,
+    name VARCHAR(100),
+    category_product_id bigint NOT NULL,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE `db_springboot_backend`.`productos` 
+ADD COLUMN `sub_category__product` BIGINT NULL DEFAULT NULL AFTER `is_production`;
+
+INSERT INTO `db_springboot_backend`.`category_product` (`user`, `name`) VALUES ('system', 'Pastelitos');
+INSERT INTO `db_springboot_backend`.`category_product` (`user`, `name`) VALUES ('system', 'Panaderia');
+
+INSERT INTO `db_springboot_backend`.`sub_category_product` (`user`, `name`, `category_product_id`) VALUES ('system', 'Hojaldre', '1');
+INSERT INTO `db_springboot_backend`.`sub_category_product` (`user`, `name`, `category_product_id`) VALUES ('system', 'Fritos', '1');
+INSERT INTO `db_springboot_backend`.`sub_category_product` (`user`, `name`, `category_product_id`) VALUES ('system', 'Cervesas', '2');
+INSERT INTO `db_springboot_backend`.`sub_category_product` (`user`, `name`, `category_product_id`) VALUES ('system', 'Gaseosas', '2');
+
+
+# Requerimiento nueva Cuenta
+ALTER TABLE `db_springboot_backend`.`account` 
+ADD COLUMN `is_invoice` TINYINT NULL DEFAULT 0 AFTER `account_color`;
+
+UPDATE `db_springboot_backend`.`account` SET `is_invoice` = '1' WHERE (`id` = '1');
+UPDATE `db_springboot_backend`.`account` SET `is_invoice` = '1' WHERE (`id` = '2');
+UPDATE `db_springboot_backend`.`account` SET `is_invoice` = '1' WHERE (`id` = '3');
+UPDATE `db_springboot_backend`.`account` SET `is_invoice` = '1' WHERE (`id` = '4');
+UPDATE `db_springboot_backend`.`account` SET `is_invoice` = '1' WHERE (`id` = '5');
+
+ALTER TABLE `db_springboot_backend`.`facturas` 
+ADD COLUMN `account_id` BIGINT NULL DEFAULT NULL AFTER `amount`;
+
+UPDATE `db_springboot_backend`.`comisiones` SET `comision` = '30' WHERE (`id` = '3');
+UPDATE `db_springboot_backend`.`comisiones` SET `comision` = '30' WHERE (`id` = '4');
+UPDATE `db_springboot_backend`.`comisiones` SET `comision` = '30' WHERE (`id` = '5');
+UPDATE `db_springboot_backend`.`comisiones` SET `comision` = '5' WHERE (`id` = '6');
+UPDATE `db_springboot_backend`.`comisiones` SET `comision` = '5' WHERE (`id` = '7');
+UPDATE `db_springboot_backend`.`comisiones` SET `comision` = '12' WHERE (`id` = '8');
+UPDATE `db_springboot_backend`.`comisiones` SET `comision` = '12' WHERE (`id` = '9');
+
+
+ALTER TABLE `db_springboot_backend`.`comisiones` 
+ADD COLUMN `type` ENUM('PERCENT', 'VALUE') NOT NULL DEFAULT 'PERCENT' AFTER `code`;
+
+
+
+CREATE TABLE `box_account` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `user_update` VARCHAR(45) NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `box_id` bigint NOT NULL,
+  `account_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `FKboxAccount` FOREIGN KEY (`box_id`) REFERENCES `cajas` (`id`),
+  CONSTRAINT `FKaccountBox` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+ALTER TABLE `db_springboot_backend`.`box_account` 
+ADD COLUMN `amount` DOUBLE NOT NULL AFTER `account_id`;
+
+ALTER TABLE `db_springboot_backend`.`cajachica` 
+ADD COLUMN `saldo_galicia` DOUBLE NOT NULL DEFAULT 0 AFTER `type`;
+
+ALTER TABLE `db_springboot_backend`.`cajachica` 
+CHANGE COLUMN `saldo_galicia` `saldo_galicia` DOUBLE NOT NULL DEFAULT '0' AFTER `saldoefectivo`;
+
+UPDATE `db_springboot_backend`.`account` SET `code_bd` = 'saldoGalicia' WHERE (`id` = '7');
+
+
+# Requerimiento merge ccs
+INSERT INTO `db_springboot_backend`.`usuarios_roles` (`usuario_id`, `role_id`) VALUES ('16', '11');
+
+
+CREATE TABLE `properties` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` varchar(45) DEFAULT NULL,
+  `create_at` timestamp NULL DEFAULT NULL,
+  `update_at` timestamp NULL DEFAULT NULL,
+  `user_update` VARCHAR(45) NULL DEFAULT NULL,
+  `deleted` TINYINT DEFAULT '0',
+  `name` VARCHAR(100) NOT NULL,
+  `value` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`id`),
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+ALTER TABLE `db_springboot_backend`.`properties` 
+ADD UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE;
+;
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+
+
+                
+
